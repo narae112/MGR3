@@ -18,18 +18,8 @@ public class Attraction {
     @Column(length = 10)
     private String condition;
 //    boolean condition;
-//pull test 2
-    //pull test 4
+    
     @Column(columnDefinition = "TEXT")
     private String information;
 
-    //test 0928
-//test 0927
-    //나래 0202
-    //나래 0214
-    //나래 0255
-    //나래 0218
-    //나래 0244
-    // 혜원 0516
 }
-// test 혜원 0226
