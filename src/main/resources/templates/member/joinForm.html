@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+
+<div layout:fragment="content">
+
+    <form action="/member/create" role="form" th:object="${memberFormDto}" method="POST">
+        <div class="mb-3">
+            <label th:for="email">이메일</label>
+            <input th:field="*{email}" class="form-control" type="email"/>
+        </div>
+        <div class="mb-3">
+            <label for="password">비밀번호</label>
+            <input class="form-control" type="password" id="password" th:field="*{password}"/>
+        </div>
+        <div class="mb-3">
+            <label for="password2">비밀번호 확인</label>
+            <input class="form-control" type="password" id="password2" th:field="*{password2}"/>
+        </div>
+        <div class="mb-3">
+            <label for="name">이름</label>
+            <input class="form-control" type="text" id="name" th:field="*{name}"/>
+        </div>
+        <div class="mb-3">
+            <label for="nickname">별명</label>
+            <input class="form-control" type="text" id="nickname" th:field="*{nickname}"/>
+        </div>
+        <div class="mb-3">
+            <label for="birth">생일</label>
+            <input class="form-control" type="date" id="birth" th:field="*{birth}"/>
+        </div>
+        <button class="btn btn-primary" type="submit" id="member-create">가입</button>
+    </form>
+
+</div>
+</html>
