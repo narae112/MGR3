@@ -21,5 +21,6 @@ public class Attraction {
 
     @Column(columnDefinition = "TEXT")
     private String information;
+
 }
 
