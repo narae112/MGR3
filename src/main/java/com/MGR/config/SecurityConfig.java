@@ -12,7 +12,8 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity //스프링 시큐리티 핉터가 필터 체인에 등록
-public class SecurityConfig extends WebSecurityConfiguration {
+public class SecurityConfig {
+
 //protected 로 메서드 설정 주의
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
