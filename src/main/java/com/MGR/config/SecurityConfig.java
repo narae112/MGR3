@@ -3,35 +3,49 @@ package com.MGR.config;
 import com.MGR.constant.Role;
 import com.MGR.entity.Member;
 import com.MGR.repository.MemberRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import java.time.LocalDateTime;
-
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+//    private final CustomAuthenticationProvider customAuthenticationProvider;
+//    private final MemberRepository memberRepository;
+
+
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//        auth.authenticationProvider(customAuthenticationProvider);
+//    }
 
 //protected 로 메서드 설정 주의
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
-            .formLogin((login) -> login
+//        http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+        // csrf 토큰 나중에 다시 생성
+        http.csrf(AbstractHttpConfigurer::disable);
+
+        http.formLogin((login) -> login
                     .loginPage("/member/login")
                     .usernameParameter("email")
                     .passwordParameter("password")
                     .failureUrl("/member/login/error")
-                    .defaultSuccessUrl("/"))
+                    .defaultSuccessUrl("/")
+                    .loginProcessingUrl("/member/login"))
             .logout((logout) -> logout
                     .logoutRequestMatcher(new AntPathRequestMatcher("/member/logout"))
                     .logoutSuccessUrl("/")
@@ -39,18 +53,22 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/**").permitAll()
-//                        .requestMatchers("/css/**", "/js/**").permitAll()
-//                        .requestMatchers("/", "/**", "/member/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+//                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/admin").hasRole("ADMIN")
                         .anyRequest().authenticated());
 
         return http.build();
     }
 
     @Bean
-    protected PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
+
+//    @Bean
+//    public CustomAuthenticationProvider customAuthenticationProvider() {
+//        return new CustomAuthenticationProvider(memberRepository, passwordEncoder);
+//    }
 
     @Bean
     public CommandLineRunner initDb(MemberRepository memberRepository){

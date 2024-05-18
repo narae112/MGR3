@@ -5,6 +5,7 @@ import com.MGR.constant.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Entity
-@Setter @Getter
+@Setter @Getter @ToString
 public class Member {
 
     @Id
@@ -22,7 +23,7 @@ public class Member {
     @Column
     private String name;
 
-    @Column
+    @Column(unique = true)
     private String email;
 
     @Column
