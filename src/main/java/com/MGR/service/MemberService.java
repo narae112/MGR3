@@ -19,12 +19,15 @@ public class MemberService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
 
+    //멤버 저장
     public void saveMember(Member member) {
         memberRepository.save(member);
     }
 
+    //시큐리티 로그인
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
         Optional<Member> memberOptional = memberRepository.findByEmail(email);
         Member member = memberOptional.orElseThrow(() -> new UsernameNotFoundException(email));
 
@@ -35,5 +38,21 @@ public class MemberService implements UserDetailsService {
                 .roles(member.getRole().toString())
                 .build()
                 ;
+    }
+
+    //닉네임 중복체크
+    public int nicknameCheck(String nickname){
+        Optional<Member> member = memberRepository.findByNickname(nickname);
+        int result = member.isPresent()? 1 : 0; //1이면 중복
+
+        return result;
+    }
+
+    //이메일 중복 체크
+    public int emailCheck(String email) {
+        Optional<Member> member = memberRepository.findByEmail(email);
+        int result = member.isPresent()? 1 : 0;
+
+        return result;
     }
 }

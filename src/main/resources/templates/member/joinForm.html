@@ -4,35 +4,165 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
 
+<!-- css -->
+<th:block layout:fragment="css">
+    <style>
+    .email_ok{
+        color: blue;
+        display: none;
+    }
+    .email_already{
+        color: red;
+        display: none;
+    }
+    .nickname_ok{
+        color: blue;
+        display: none;
+    }
+    .nickname_already{
+        color: red;
+        display: none;
+    }
+    .password_ok{
+        color: blue;
+        display: none;
+    }
+    .password_already{
+        color: red;
+        display: none;
+    }
+    .validationError{
+        color: red;
+    }
+    </style>
+</th:block>
+
+<!-- js -->
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+
+        var prevEmail = "";
+        function checkEmail(){
+            var email = $('#email').val(); // #email 에서 입력받은 값 변수 저장
+            prevEmail = email;
+            $.ajax({
+                url:'/member/emailCheck', //controller 에서 요청 받을 주소
+                type:'POST',
+                data:{email:email},
+                success:function(result){
+
+                //controller 에서 넘어온 result 값이 1이면 중복
+                    if(result == 0){
+                        $('.email_ok').css("display","inline-block");
+                        $('.email_already').css("display", "none");
+                        $('.email_error').css("display", "none");
+                    } else {
+                        $('.email_already').css("display","inline-block");
+                        $('.email_ok').css("display", "none");
+                        $('#email').val(prevEmail);
+                    }
+
+                }
+            });
+        };
+
+        var prevNickname = "";
+        function checkNickname(){
+            var nickname = $('#nickname').val();
+            prevNickname = nickname;
+            $.ajax({
+                url:'/member/nicknameCheck',
+                type:'POST',
+                data:{nickname:nickname},
+                success:function(result){
+
+                    if(result == 0){
+                        $('.nickname_ok').css("display","inline-block");
+                        $('.nickname_already').css("display", "none");
+                    } else {
+                        $('.nickname_already').css("display","inline-block");
+                        $('.nickname_ok').css("display", "none");
+                        $('#nickname').val(prevNickname);
+                    }
+
+                }
+            });
+        };
+
+        function checkPassword() {
+            var password = $('#password').val();
+            var password2 = $('#password2').val();
+
+            $.ajax({
+                url: '/member/passwordCheck',
+                type: 'POST',
+                data: {
+                    password: password,
+                    password2: password2
+                },
+                success: function(result) {
+                    if (result === 0) {
+                        $('.password_ok').css("display", "inline-block");
+                        $('.password_already').css("display", "none");
+                    } else {
+                        $('.password_already').css("display", "inline-block");
+                        $('.password_ok').css("display", "none");
+                    }
+                }
+            });
+        }
+
+    </script>
+</th:block>
+
 <div layout:fragment="content">
 
     <form action="/member/create" role="form" th:object="${memberFormDto}" method="POST">
         <div class="mb-3">
             <label th:for="email">이메일</label>
-            <input th:field="*{email}" class="form-control" type="email"/>
+            <input th:field="*{email}" class="form-control" type="email" onblur="checkEmail()"/>
+            <span class="email_ok">사용 가능한 이메일 입니다</span>
+            <span class="email_already">이미 사용증인 이메일 입니다</span>
+            <span class="validationError" th:if="${#fields.hasErrors('email')}"
+                  th:errors="*{email}"></span>
         </div>
         <div class="mb-3">
             <label for="password">비밀번호</label>
             <input class="form-control" type="password" id="password" th:field="*{password}"/>
+            <span class="validationError" th:if="${#fields.hasErrors('password')}"
+                  th:errors="*{password}"></span>
         </div>
         <div class="mb-3">
             <label for="password2">비밀번호 확인</label>
-            <input class="form-control" type="password" id="password2" th:field="*{password2}"/>
+            <input class="form-control" type="password" id="password2" th:field="*{password2}" onblur="checkPassword()"/>
+            <span class="password_ok">비밀번호가 일치합니다</span>
+            <span class="password_already">비밀번호가 일치하지 않습니다</span>
+
         </div>
+
         <div class="mb-3">
             <label for="name">이름</label>
             <input class="form-control" type="text" id="name" th:field="*{name}"/>
+            <span class="validationError" th:if="${#fields.hasErrors('name')}"
+                  th:errors="*{name}"></span>
         </div>
         <div class="mb-3">
-            <label for="nickname">별명</label>
-            <input class="form-control" type="text" id="nickname" th:field="*{nickname}"/>
+            <label for="nickname">닉네임</label>
+            <input class="form-control" type="text" id="nickname" th:field="*{nickname}" onkeyup="checkNickname()"/>
+            <span class="nickname_ok">사용 가능한 닉네임 입니다</span>
+            <span class="nickname_already">이미 사용중인 닉네임 입니다</span>
+            <span class="validationError" th:if="${#fields.hasErrors('nickname')}"
+                  th:errors="*{nickname}"></span>
         </div>
         <div class="mb-3">
-            <label for="birth">생일</label>
-            <input class="form-control" type="date" id="birth" th:field="*{birth}"/>
+            <label for="birth">생일(선택)</label>
+            <input class="form-control" type="date" id="birth" th:field="*{birth}"
+                   th:max="2024-05-09"/>
         </div>
         <button class="btn btn-primary" type="submit" id="member-create">가입</button>
     </form>
 
 </div>
 </html>
+
+
