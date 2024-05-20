@@ -52,6 +52,11 @@ dependencies {
 	//google mail
 	implementation 'org.springframework.boot:spring-boot-starter-mail:3.1.2'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+	//gson json
+//	implementation 'com.google.code.gson:gson:2.8.8'
 }
 
 tasks.named('bootBuildImage') {

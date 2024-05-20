@@ -48,6 +48,10 @@ public class MemberController {
             return "member/joinForm";
         }
 
+        if(memberFormDto.getAuthCode().equals(memberFormDto.getCode())){
+            return "member/joinForm";
+        }
+
         try {
             Member member = Member.createMember(memberFormDto, passwordEncoder);
             memberService.saveMember(member);
@@ -56,7 +60,6 @@ public class MemberController {
             return "member/joinForm";
         }
         return "redirect:/";
-
     }
 
     @PostMapping("/emailCheck")
@@ -82,8 +85,13 @@ public class MemberController {
     }
 
     @GetMapping("/sendEmail")
-    public ResponseEntity<String> sendEmail(@RequestParam("email") String email) throws MessagingException {
-        mailService.sendMail(email);
+    public ResponseEntity<String> sendEmail(@RequestParam("email") String email,
+                                            Model model) throws MessagingException {
+        //인증 메일 보내기
+        String code = mailService.createCode();
+        mailService.createMailForm(email, code);
+        mailService.sendMail(email, code);
+        model.addAttribute("authCode", code);
         return ResponseEntity.ok("인증 메일이 발송되었습니다");
     }
 
