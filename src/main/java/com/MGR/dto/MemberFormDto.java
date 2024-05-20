@@ -1,4 +1,4 @@
-package com.MGR.Dto;
+package com.MGR.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
