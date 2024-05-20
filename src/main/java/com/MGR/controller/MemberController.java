@@ -21,7 +21,6 @@ public class MemberController {
 
     private final MemberService memberService;
     private final PasswordEncoder passwordEncoder;
-    private final MailService mailService;
 
     @GetMapping("/login")
     public String memberLogin(){
@@ -48,6 +47,11 @@ public class MemberController {
             return "member/joinForm";
         }
 
+        if(memberFormDto.getAuthCode().equals(memberFormDto.getCode())){
+            //메일 인증번호 검증
+            return "member/joinForm";
+        }
+
         try {
             Member member = Member.createMember(memberFormDto, passwordEncoder);
             memberService.saveMember(member);
@@ -56,7 +60,6 @@ public class MemberController {
             return "member/joinForm";
         }
         return "redirect:/";
-
     }
 
     @PostMapping("/emailCheck")
@@ -79,12 +82,6 @@ public class MemberController {
                              @RequestParam("password2") String password2){
         return password.equals(password2)? 0 : 1;
         //비밀번호, 비밀번호 확인 일치 확인
-    }
-
-    @GetMapping("/sendEmail")
-    public ResponseEntity<String> sendEmail(@RequestParam("email") String email) throws MessagingException {
-        mailService.sendMail(email);
-        return ResponseEntity.ok("인증 메일이 발송되었습니다");
     }
 
 }

@@ -178,8 +178,9 @@
         </div>
         <div class="mb-3">
             <label for="nickname">메일인증</label>
-            <input class="form-control" type="text" id="code" th:field="*{nickname}"/>
+            <input class="form-control" type="text" id="code" th:field="*{code}"/>
             <button class="btn btn-primary" type="button" id="code-button" onclick="sendEmail()">인증 메일 발송</button>
+            <input type="hidden" name="authCode" th:value="*{authCode}">
         </div>
         <button class="btn btn-primary" type="submit" id="member-create">가입</button>
     </form>

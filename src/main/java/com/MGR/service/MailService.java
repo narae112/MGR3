@@ -18,6 +18,8 @@ public class MailService {
     public String createCode(){
     //메일 인증 코드 생성
         StringBuilder code = new StringBuilder();
+
+        String numberCode = code.toString();
         Random random = new Random();
         int number = 0;
         random.nextInt(10);
@@ -30,9 +32,7 @@ public class MailService {
         return code.toString();
     }
 
-    public MimeMessage createMailForm(String email) throws MessagingException {
-
-        String code = createCode();
+    public MimeMessage createMailForm(String email, String code) throws MessagingException {
 
         MimeMessage message = javaMailSender.createMimeMessage();
         try {
@@ -41,17 +41,19 @@ public class MailService {
             message.setSubject("Merry Go Ride 회원가입 인증 메일입니다.");
             message.setText("인증 번호: " + code);
         }catch (Exception e){
-            System.out.println("오류내용 = " + e.getMessage());
+            System.out.println("MailService_createMailForm 오류내용 = " + e.getMessage());
         }
 
         return message;
 
     }
 
-    public void sendMail(String email) throws MessagingException {
-        MimeMessage message = createMailForm(email);
+    public String sendMail(String email, String code) throws MessagingException {
+        MimeMessage message = createMailForm(email, code);
         javaMailSender.send(message);
+        return code;
     }
+
 
 
 }
