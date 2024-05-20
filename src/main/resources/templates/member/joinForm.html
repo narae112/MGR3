@@ -76,7 +76,7 @@
                 data:{nickname:nickname},
                 success:function(result){
 
-                    if(result == 0){
+                    if(result === 0){
                         $('.nickname_ok').css("display","inline-block");
                         $('.nickname_already').css("display", "none");
                     } else {
@@ -112,6 +112,20 @@
             });
         }
 
+       function sendEmail() {
+             var email = $('#email').val();
+             console.log(email);
+            $.ajax({
+                url:'/member/sendEmail',
+                type:'POST',
+                data:{email:email},
+                success:function(result){
+                    console.log("인증 메일이 발송되었습니다.");
+                }
+            });
+        }
+
+
     </script>
 </th:block>
 
@@ -121,10 +135,11 @@
         <div class="mb-3">
             <label th:for="email">이메일</label>
             <input th:field="*{email}" class="form-control" type="email" onblur="checkEmail()"/>
-            <span class="email_ok">사용 가능한 이메일 입니다</span>
+<!--            <span class="email_ok">사용 가능한 이메일 입니다</span>-->
             <span class="email_already">이미 사용증인 이메일 입니다</span>
             <span class="validationError" th:if="${#fields.hasErrors('email')}"
                   th:errors="*{email}"></span>
+            <p class="emailError" th:text="${errors}"></p>
         </div>
         <div class="mb-3">
             <label for="password">비밀번호</label>
@@ -158,6 +173,11 @@
             <label for="birth">생일(선택)</label>
             <input class="form-control" type="date" id="birth" th:field="*{birth}"
                    th:max="2024-05-09"/>
+        </div>
+        <div class="mb-3">
+            <label for="nickname">메일인증</label>
+            <input class="form-control" type="text" id="code" th:field="*{nickname}"/>
+            <button class="btn btn-primary" type="button" id="code-button" onclick="sendEmail()">인증 메일 발송</button>
         </div>
         <button class="btn btn-primary" type="submit" id="member-create">가입</button>
     </form>

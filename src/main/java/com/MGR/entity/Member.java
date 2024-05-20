@@ -1,16 +1,12 @@
 package com.MGR.entity;
 
-import com.MGR.Dto.MemberFormDto;
+import com.MGR.dto.MemberFormDto;
 import com.MGR.constant.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Entity
 @Setter @Getter @ToString
