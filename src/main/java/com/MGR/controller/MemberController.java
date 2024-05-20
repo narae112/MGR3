@@ -7,6 +7,7 @@ import com.MGR.service.MemberService;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -80,11 +81,10 @@ public class MemberController {
         //비밀번호, 비밀번호 확인 일치 확인
     }
 
-    @PostMapping("/sendEmail")
-    public String sendEmail(@RequestParam("email") String email) throws MessagingException {
+    @GetMapping("/sendEmail")
+    public ResponseEntity<String> sendEmail(@RequestParam("email") String email) throws MessagingException {
         mailService.sendMail(email);
-        System.out.println("email = " + email);
-        return email;
+        return ResponseEntity.ok("인증 메일이 발송되었습니다");
     }
 
 }
