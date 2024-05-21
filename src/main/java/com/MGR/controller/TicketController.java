@@ -5,6 +5,7 @@ import com.MGR.dto.MainTicketDto;
 import com.MGR.dto.TicketFormDto;
 import com.MGR.dto.TicketSearchDto;
 import com.MGR.entity.Ticket;
+import com.MGR.service.FileService;
 import com.MGR.service.TicketService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -73,21 +74,19 @@ public class TicketController {
     @PostMapping(value = "/admin/ticket/{ticketId}")
     public String ticketUpdate(@Valid TicketFormDto ticketFormDto, BindingResult bindingResult,
                                Model model, @RequestParam("ticketImgFile") List<MultipartFile> ticketImgFileList
-                             ) {
-        if (bindingResult.hasErrors()) {
+    ) {
+        if(ticketImgFileList.get(0).isEmpty() && ticketFormDto.getId() == null) {
+            model.addAttribute("errorMessage", "상품 이미지는 필수 입력 값 입니다.");
             return "ticket/ticketForm";
         }
-        if (ticketImgFileList.get(0).isEmpty() && ticketFormDto.getId() == null) {
-            model.addAttribute("errorMessage", "티켓 이미지는 필수 입력 값입니다.");
-            return "ticket/ticketForm";
-        }
+
         try {
             ticketService.updateTicket(ticketFormDto, ticketImgFileList);
-
         } catch (Exception e) {
             model.addAttribute("errorMessage", "티켓 수정 중 오류가 발생했습니다.");
             return "ticket/ticketForm";
         }
+
         return "redirect:/ticket"; // 성공 시 메인 페이지로 리다이렉트
     }
 
