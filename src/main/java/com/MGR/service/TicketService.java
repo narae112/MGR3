@@ -35,7 +35,7 @@ public class TicketService {
         ticketRepository.save(ticket);
 
         //이미지 등록
-        for(int i =0; i< ticketImgFileList.size(); i++){
+        for(int i = 0; i< ticketImgFileList.size(); i++){
             Image ticketImage = new Image();
             ticketImage.setTicket(ticket);
 
@@ -44,11 +44,12 @@ public class TicketService {
             }else{
                 ticketImage.setRepImgYn(false);
             }
-            imageService.saveTicketImage(ticketImage,  ticketImgFileList.get(i));
-        }
 
+            imageService.saveTicketImage(ticketImage, ticketImgFileList.get(i));
+        }
         return  ticket.getId();
     }
+
     //티켓 데이터를 읽어오는 함수
     @Transactional(readOnly = true)
     public TicketFormDto getTicketDtl(Long ticketId){
@@ -64,6 +65,7 @@ public class TicketService {
         ticketFormDto.setTicketImgDtoList(ticketImgDtoList);
         return ticketFormDto;
     }
+
     public Long updateTicket(TicketFormDto ticketFormDto, List<MultipartFile> ticketImgFileList) throws Exception {
         //티켓수정
         Ticket ticket = ticketRepository.findById(ticketFormDto.getId())
@@ -81,6 +83,7 @@ public class TicketService {
             } else {
                 ticketImage.setRepImgYn(false);
             }
+
             imageService.saveTicketImage(ticketImage, ticketImgFileList.get(i));
         }
         return ticket.getId(); // 업데이트된 티켓의 ID 반환
