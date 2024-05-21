@@ -37,7 +37,6 @@ public class MemberController {
         System.out.println("로그인 인증안됨");
         return "member/login";
     }
-
     private boolean isAuthenticated() {
         // 로그인 인증 확인 로직 - 삭제예정
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

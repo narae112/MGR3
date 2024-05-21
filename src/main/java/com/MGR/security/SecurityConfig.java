@@ -54,7 +54,9 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/**").permitAll()
 //                        .requestMatchers("/admin/**").hasRole("ADMIN")
+
 //                .requestMatchers("/admin").hasRole("ADMIN")
+
                 .anyRequest().authenticated());
 
         http.userDetailsService(customUserDetailsService);
