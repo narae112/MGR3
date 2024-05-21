@@ -33,7 +33,7 @@ public class MailService {
     }
 
     public MimeMessage createMailForm(String email, String code) throws MessagingException {
-
+        //메일로 보낼 메세지 작성
         MimeMessage message = javaMailSender.createMimeMessage();
         try {
             message.addRecipients(Message.RecipientType.TO, email);
@@ -49,6 +49,7 @@ public class MailService {
     }
 
     public String sendMail(String email, String code) throws MessagingException {
+        //메일 발송
         MimeMessage message = createMailForm(email, code);
         javaMailSender.send(message);
         return code;
