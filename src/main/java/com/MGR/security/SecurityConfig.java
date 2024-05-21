@@ -27,17 +27,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-//    private final CustomAuthenticationProvider customAuthenticationProvider;
-//    private final MemberRepository memberRepository;
+    private final CustomUserDetailsService customUserDetailsService;
 
-
-//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.authenticationProvider(customAuthenticationProvider);
-//    }
-
-//protected 로 메서드 설정 주의
     @Bean
-    protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
 //        http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
         // csrf 토큰 나중에 다시 생성
@@ -60,6 +53,8 @@ public class SecurityConfig {
 //                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .anyRequest().authenticated());
+
+        http.userDetailsService(customUserDetailsService);
 
         return http.build();
     }
@@ -92,51 +87,5 @@ public class SecurityConfig {
                 memberRepository.save(admin);
             }
         };
-    }
-
-    @RequiredArgsConstructor
-    @Transactional
-    @Getter
-    public static class CustomUserDetails1 implements UserDetails {
-
-        //시큐리티 로그인
-    //    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-    //
-    //        Optional<Member> memberOptional = memberRepository.findByEmail(email);
-    //        Member member = memberOptional.orElseThrow(() -> new UsernameNotFoundException(email));
-    //
-    //        return User.builder()
-    //                .username(member.getEmail())
-    //                .password(member.getPassword())
-    //                .roles(member.getRole().toString())
-    //                .build()
-    //                ;
-    //    }
-
-
-        @Override
-        public boolean isEnabled() {
-            return true;
-        }
-
-        @Override
-        public boolean isCredentialsNonExpired() {
-            return true;
-        }
-
-        @Override
-        public boolean isAccountNonLocked() {
-            return true;
-        }
-
-        @Override
-        public boolean isAccountNonExpired() {
-            return true;
-        }
-
-        @Override
-        public Collection<? extends GrantedAuthority> getAuthorities() {
-            return List.of();
-        }
     }
 }
