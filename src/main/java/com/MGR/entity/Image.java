@@ -2,11 +2,14 @@ package com.MGR.entity;
 
 import com.MGR.constant.ImageCategory;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
-@Setter @Getter
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
 public class Image extends BaseEntity{
 
     @Id
@@ -35,7 +38,7 @@ public class Image extends BaseEntity{
     private Ticket ticket;
 
     @ManyToOne(fetch=FetchType.LAZY)
-    private QnAComment qnAComment;
+    private EventBoard eventBoard;
 
     @ManyToOne(fetch=FetchType.LAZY)
     private ReviewComment reviewComment;
@@ -45,6 +48,7 @@ public class Image extends BaseEntity{
         this.imgName = imgName;
         this.imgUrl = imgUrl;
     }
+
 
 }
 

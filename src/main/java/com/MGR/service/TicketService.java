@@ -28,11 +28,11 @@ public class TicketService {
     private final ImageRepository imageRepository;
     private final ImageService imageService;
 
-
     public Long saveTicket(TicketFormDto ticketFormDto, List<MultipartFile> ticketImgFileList) throws Exception{
         // 티켓등록
         Ticket ticket = ticketFormDto.createTicket();
         ticketRepository.save(ticket);
+
 
         //이미지 등록
         for(int i =0; i< ticketImgFileList.size(); i++){

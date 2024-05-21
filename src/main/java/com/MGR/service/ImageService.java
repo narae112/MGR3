@@ -27,16 +27,16 @@ public class ImageService {
     @Value("${boardImgLocation}")
     private String boardImgLocation;
 
-    public void saveTicketImage(Image image, MultipartFile ticketImgFile) throws Exception {
-        saveImage(image, ticketImgFile, ticketImgLocation);
+    public void saveTicketImage(Image ticketImage, MultipartFile ticketImgFile) throws Exception {
+        saveImage(ticketImage, ticketImgFile, ticketImgLocation);
     }
 
-    public void saveReviewImage(Image image, MultipartFile reviewImgFile) throws Exception {
-        saveImage(image, reviewImgFile, reviewImgLocation);
+    public void saveReviewImage(Image reviewImage, MultipartFile reviewImgFile) throws Exception {
+        saveImage(reviewImage, reviewImgFile, reviewImgLocation);
     }
 
-    public void saveBoardImage(Image image, MultipartFile boardImgFile) throws Exception {
-        saveImage(image, boardImgFile, boardImgLocation);
+    public void saveBoardImage(Image boardImage, MultipartFile boardImgFile) throws Exception {
+        saveImage(boardImage, boardImgFile, boardImgLocation);
     }
 
     private void saveImage(Image image, MultipartFile imgFile, String imgLocation) throws Exception {
@@ -47,7 +47,9 @@ public class ImageService {
             // 파일 업로드
             if (!StringUtils.isEmpty(imgOriName)) {
                 imgName = fileService.uploadFile(imgLocation, imgOriName, imgFile.getBytes());
-                imgUrl = "/images/object/" + imgName;
+                // 이미지 URL 생성
+                String imgDirName = imgLocation.substring(imgLocation.lastIndexOf("/") + 1);
+                imgUrl = "/images/" + imgDirName + "/" + imgName;
             }
             // 이미지 정보 저장
             image.updateImg(imgOriName, imgName, imgUrl);
@@ -58,17 +60,16 @@ public class ImageService {
             throw new Exception("이미지 저장에 실패하였습니다.", e);
         }
     }
-
-    public void updateTicketImage(Long imageId, MultipartFile imgFile) throws Exception {
-        updateImage(imageId, imgFile, ticketImgLocation);
+    public void updateTicketImage(Long imageId, MultipartFile ticketImgFile) throws Exception {
+        updateImage(imageId, ticketImgFile, ticketImgLocation);
     }
 
-    public void updateReviewImage(Long imageId, MultipartFile imgFile) throws Exception {
-        updateImage(imageId, imgFile, reviewImgLocation);
+    public void updateReviewImage(Long imageId, MultipartFile reviewImageFile) throws Exception {
+        updateImage(imageId, reviewImageFile, reviewImgLocation);
     }
 
-    public void updateBoardImage(Long imageId, MultipartFile imgFile) throws Exception {
-        updateImage(imageId, imgFile, boardImgLocation);
+    public void updateBoardImage(Long imageId, MultipartFile boardImgFile) throws Exception {
+        updateImage(imageId, boardImgFile, boardImgLocation);
     }
 
     private void updateImage(Long imageId, MultipartFile imgFile, String imgLocation) throws Exception {
@@ -81,7 +82,7 @@ public class ImageService {
             }
             String imgOriName = imgFile.getOriginalFilename();
             String imgName = fileService.uploadFile(imgLocation, imgOriName, imgFile.getBytes());
-            String imgUrl = "/images/object/" + imgName;
+            String imgUrl = "/images/" + imgLocation.substring(imgLocation.lastIndexOf("/") + 1) + "/" + imgName;
             savedImg.updateImg(imgOriName, imgName, imgUrl);
             // 이미지 정보 저장
             imageRepository.save(savedImg);
