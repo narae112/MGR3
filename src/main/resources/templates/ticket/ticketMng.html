@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+
+<th:block layout:fragment="script">
+    <!--스크립트-->
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            /* 성공 메시지 처리 */
+            var successMessage = /*[[${successMessage}]]*/ '[[${successMessage}]]';
+            if (successMessage) {
+                alert(successMessage);
+            }
+
+            /* 오류 메시지 처리 */
+            var errorMessage = /*[[${errorMessage}]]*/ '[[${errorMessage}]]';
+            if (errorMessage) {
+                alert(errorMessage);
+            }
+
+            bindDomEvent();
+        });
+
+
+        function page(page){
+            var searchDateType = $("#searchDateType").val();
+            var searchTicketCategory = $("#searchTicketCategory").val();
+            var searchBy = $("#searchBy").val();
+            var searchQuery = $("#searchQuery").val();
+
+            location.href="/admin/tickets/" + page + "?searchDateType=" + searchDateType
+            + "&searchTicketCategory=" + searchTicketCategory
+            + "&searchBy=" + searchBy
+            + "&searchQuery=" + searchQuery;
+        }
+</script>
+</th:block>
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+    <style>
+        select{
+            margin-right:10px;
+        }
+    </style>
+</th:block>
+
+<div layout:fragment="content">
+    <form th:action="@{'/admin/tickets/' + ${tickets.number}}" role="form" method="get" th:object="${tickets}">
+        <table class="table">
+            <thead>
+                <tr>
+                    <td>티켓아이디</td>
+                    <td>티켓명</td>
+                    <td>티켓구분</td>
+                    <td>등록일</td>
+                    <td>등록자</td>
+                </tr>
+            </thead>
+            <tbody>
+            <tr th:each="ticket, status: ${tickets.getContent()}">
+                <td th:text="${ticket.id}"></td>
+                <td>
+                    <a th:href="'/admin/ticket/'+${ticket.name}" th:text="${ticket.name}"></a>
+                </td>
+                <td th:text="${ticket.ticketCategory == T(com.MGR.constant.TicketCategory).PUBLIC} ? '단체' : '개인'"></td>
+                <td th:text="${ticket.regTime}"></td>
+            </tr>
+            </tbody>
+        </table>
+<!--        현재페이지-->
+        <div th:with="start=${(tickets.number/maxPage)*maxPage + 1}, end=(${(tickets.totalPages == 0) ? 1
+       : (start + (maxPage - 1) < tickets.totalPages ? start + (maxPage - 1) : tickets.totalPages)})" >
+            <ul class="pagination justify-content-center">
+
+                <li class="page-ticket" th:classappend="${tickets.first}?'disabled'">
+                    <a th:onclick="'javascript:page(' + ${tickets.number - 1} + ')'" aria-label='Previous' class="page-link">
+                        <span aria-hidden='true'>Previous</span>
+                    </a>
+                </li>
+
+                <li class="page-ticket" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${tickets.number eq page-1}?'active':''">
+                    <a th:onclick="'javascript:page(' + ${page - 1} + ')'" th:inline="text" class="page-link">[[${page}]]</a>
+                </li>
+
+                <li class="page-ticket" th:classappend="${tickets.last}?'disabled'">
+                    <a th:onclick="'javascript:page(' + ${tickets.number + 1} + ')'" aria-label='Next' class="page-link">
+                        <span aria-hidden='true'>Next</span>
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+
+        <div class="form-inline d-flex justify-content-center" th:object="${ticketSearchDto}">
+            <select th:field="*{searchDateType}" class="form-control" style="width:auto;">
+                <option value="all">전체기간</option>
+                <option value="1d">1일</option>
+                <option value="1w">1주</option>
+                <option value="1m">1개월</option>
+                <option value="6m">6개월</option>
+            </select>
+            <select th:field="*{ticketCategory}" class="form-control" style="width:auto;">
+                <option value="">회원 구분(전체)</option>
+                <option value="PUBLIC">단체</option>
+                <option value="PRIVATE">개인</option>
+            </select>
+            <select th:field="*{searchBy}" class="form-control" style="width:auto;">
+                <option value="name">티켓명</option>
+            </select>
+
+            <input th:field="*{searchQuery}" type="text" class="form-control" placeholder="검색어를 입력해주세요">
+            <button id="searchBtn" type="submit" class="btn btn-primary">검색</button>
+        </div>
+    </form>
+
+</div>
+</html>
