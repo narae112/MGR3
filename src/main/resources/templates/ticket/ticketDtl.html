@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
@@ -44,11 +45,11 @@
             <img th:src="${ticket.ticketImgDtoList[0].imgUrl}" class="rounded repImg" th:alt="${ticket.name}">
         </div>
         <div class="wd50">
-            <span th:if="${ticket.ticketCategory == T(com.MGR.constant.TicketCategory).PUBLIC}" class="badge badge-primary mgb-15">
-                단체
+            <span th:if="${ticket.ticketCategory == T(com.MGR.constant.TicketCategory).CHILD}" class="badge badge-primary mgb-15">
+                어린이
             </span>
-            <span th:unless="${ticket.ticketCategory == T(com.MGR.constant.TicketCategory).PRIVATE}" class="badge btn-primary mgb-15">
-                개인
+            <span th:unless="${ticket.ticketCategory == T(com.MGR.constant.TicketCategory).ADULT}" class="badge btn-primary mgb-15">
+                성인
             </span>
             <div class="h4" th:text="${ticket.name}"></div>
             <hr class="my-4">
@@ -71,11 +72,11 @@
                 <h5>결제 금액</h5>
                 <h3 name="totalPrice" id="totalPrice" class="font-weight-bold"></h3>
             </div>
-            <div th:if="${ticket.ticketCategory == T(com.MGR.constant.TicketCategory).PRIVATE}" class="text-right">
+            <div th:if="${ticket.ticketCategory == T(com.MGR.constant.TicketCategory).CHILD}" class="text-right">
                 <button type="button" class="btn btn-light border border-primary btn-lg" onclick="addCart()">장바구니 담기</button>
                 <button type="button" class="btn btn-primary btn-lg" onclick="order()">주문하기</button>
             </div>
-            <div th:if="${ticket.ticketCategory == T(com.MGR.constant.TicketCategory).PRIVATE}" class="text-right">
+            <div th:if="${ticket.ticketCategory == T(com.MGR.constant.TicketCategory).ADULT}" class="text-right">
                 <button type="button" class="btn btn-light border border-primary btn-lg" onclick="addCart()">장바구니 담기</button>
                 <button type="button" class="btn btn-primary btn-lg" onclick="order()">주문하기</button>
             </div>
@@ -90,9 +91,9 @@
         </div>
     </div>
 
-    <div th:each="image : ${ticket.ticketImgDtoList}" class="text-center">
-        <img th:if="${not #strings.isEmpty(image.imgUrl)}"
-             th:src="${image.imgUrl}" class="rounded mgb-15" width="800">
+    <div th:each="ticketImage : ${ticket.ticketImgDtoList}" class="text-center">
+        <img th:if="${not #strings.isEmpty(ticketImage.imgUrl)}"
+             th:src="${ticketImage.imgUrl}" class="rounded mgb-15" width="800">
     </div>
 
 </div>
