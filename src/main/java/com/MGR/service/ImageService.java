@@ -60,32 +60,5 @@ public class ImageService {
             throw new Exception("이미지 저장에 실패하였습니다.", e);
         }
     }
-    public void updateTicketImage(Long imageId, MultipartFile ticketImgFile) throws Exception {
-        updateImage(imageId, ticketImgFile, ticketImgLocation);
-    }
 
-    public void updateReviewImage(Long imageId, MultipartFile reviewImageFile) throws Exception {
-        updateImage(imageId, reviewImageFile, reviewImgLocation);
-    }
-
-    public void updateBoardImage(Long imageId, MultipartFile boardImgFile) throws Exception {
-        updateImage(imageId, boardImgFile, boardImgLocation);
-    }
-
-    private void updateImage(Long imageId, MultipartFile imgFile, String imgLocation) throws Exception {
-        if (!imgFile.isEmpty()) {
-            Image savedImg = imageRepository.findById(imageId)
-                    .orElseThrow(EntityNotFoundException::new);
-            // 기존 이미지 파일 삭제
-            if (!StringUtils.isEmpty(savedImg.getImgName())) {
-                fileService.deleteFile(imgLocation + "/" + savedImg.getImgName());
-            }
-            String imgOriName = imgFile.getOriginalFilename();
-            String imgName = fileService.uploadFile(imgLocation, imgOriName, imgFile.getBytes());
-            String imgUrl = "/images/" + imgLocation.substring(imgLocation.lastIndexOf("/") + 1) + "/" + imgName;
-            savedImg.updateImg(imgOriName, imgName, imgUrl);
-            // 이미지 정보 저장
-            imageRepository.save(savedImg);
-        }
-    }
 }

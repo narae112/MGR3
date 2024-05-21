@@ -11,7 +11,7 @@ import java.time.LocalDate;
 public class TicketSearchDto {
     private String searchDateType; // 현재시간과 상품등록일을 비교하여 조회
 
-    private TicketCategory ticketCategory; // 개인. 단체
+    private TicketCategory ticketCategory; // 어린이, 성인
 
     private String searchBy; // 티켓 조회
 

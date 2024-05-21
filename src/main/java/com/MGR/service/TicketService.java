@@ -64,7 +64,7 @@ public class TicketService {
         ticketFormDto.setTicketImgDtoList(ticketImgDtoList);
         return ticketFormDto;
     }
-    public Long updateTicket(TicketFormDto ticketFormDto, List<MultipartFile>  ticketImgFileList) throws Exception{
+    public Long updateTicket(TicketFormDto ticketFormDto, List<MultipartFile> ticketImgFileList) throws Exception {
         //티켓수정
         Ticket ticket = ticketRepository.findById(ticketFormDto.getId())
                 .orElseThrow(EntityNotFoundException::new);
@@ -72,12 +72,20 @@ public class TicketService {
         List<Long> ticketImgIds = ticketFormDto.getTicketImgIds();
         //이미지번호
         //이미지 수정
-        for(int i=0; i<ticketImgFileList.size(); i++){
-            imageService.updateTicketImage(ticketImgIds.get(i),
-                ticketImgFileList.get(i));
+        for (int i = 0; i < ticketImgFileList.size(); i++) {
+            Image ticketImage = new Image();
+            ticketImage.setTicket(ticket);
+
+            if (i == 0) {
+                ticketImage.setRepImgYn(true);
+            } else {
+                ticketImage.setRepImgYn(false);
+            }
+            imageService.saveTicketImage(ticketImage, ticketImgFileList.get(i));
         }
-        return ticket.getId();
+        return ticket.getId(); // 업데이트된 티켓의 ID 반환
     }
+
     @Transactional(readOnly = true)
     public Page<Ticket> getAdminTicketPage(TicketSearchDto ticketSearchDto, Pageable pageable){
         return ticketRepository.getAdminTicketPage(ticketSearchDto, pageable);
