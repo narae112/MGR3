@@ -8,6 +8,9 @@ import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,11 +30,32 @@ public class MemberController {
         return "/member/loginForm";
     }
 
+    @RequestMapping("/login")
+    public String login() {
+        // 로그인 인증 확인 - 삭제예정
+        if (isAuthenticated()) {
+            System.out.println("로그인 인증됨");
+            return "index";
+        }
+
+        System.out.println("로그인 인증안됨");
+        return "member/login";
+    }
+    private boolean isAuthenticated() {
+        // 로그인 인증 확인 로직 - 삭제예정
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+            return false;
+        }
+        return authentication.isAuthenticated();
+    }
+
     @GetMapping("/login/error")
     public String memberLoginError(Model model){
         model.addAttribute("loginError", "이메일 주소나 비밀번호가 일치하지 않습니다");
         return "/member/loginForm";
     }
+
 
     @GetMapping("/join")
     public String memberJoin(Model model){
