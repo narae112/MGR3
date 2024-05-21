@@ -51,12 +51,10 @@ public class EventBoardController {
         try {
             Member findMember = memberService.findById(member.getId()).orElseThrow();
             eventBoardService.saveBoard(BoardFormDto,findMember);
-
         } catch (IllegalStateException e){
             model.addAttribute("errors", e.getMessage());
             return "board/event/eventBoardForm";
         }
-
         return "board/event/eventBoardList";
     }
 

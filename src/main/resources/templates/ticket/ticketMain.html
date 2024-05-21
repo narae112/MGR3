@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
@@ -34,6 +35,8 @@
 
 <!-- 페이지 내용 -->
 <div layout:fragment="content">
+
+    <input type="hidden" name="searchQuery" th:value="${ticketSearchDto.searchQuery}">
     <!-- 검색 결과 표시 -->
     <div th:if="${not #strings.isEmpty(ticketSearchDto.searchQuery)}" class="center">
         <p class="h3 font-weight-bold" th:text="${ticketSearchDto.searchQuery} + '검색 결과'"></p>
