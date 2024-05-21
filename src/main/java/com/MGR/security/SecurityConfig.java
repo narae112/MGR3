@@ -1,22 +1,26 @@
-package com.MGR.config;
+package com.MGR.security;
 
 import com.MGR.constant.Role;
 import com.MGR.entity.Member;
 import com.MGR.repository.MemberRepository;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collection;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -88,5 +92,51 @@ public class SecurityConfig {
                 memberRepository.save(admin);
             }
         };
+    }
+
+    @RequiredArgsConstructor
+    @Transactional
+    @Getter
+    public static class CustomUserDetails1 implements UserDetails {
+
+        //시큐리티 로그인
+    //    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    //
+    //        Optional<Member> memberOptional = memberRepository.findByEmail(email);
+    //        Member member = memberOptional.orElseThrow(() -> new UsernameNotFoundException(email));
+    //
+    //        return User.builder()
+    //                .username(member.getEmail())
+    //                .password(member.getPassword())
+    //                .roles(member.getRole().toString())
+    //                .build()
+    //                ;
+    //    }
+
+
+        @Override
+        public boolean isEnabled() {
+            return true;
+        }
+
+        @Override
+        public boolean isCredentialsNonExpired() {
+            return true;
+        }
+
+        @Override
+        public boolean isAccountNonLocked() {
+            return true;
+        }
+
+        @Override
+        public boolean isAccountNonExpired() {
+            return true;
+        }
+
+        @Override
+        public Collection<? extends GrantedAuthority> getAuthorities() {
+            return List.of();
+        }
     }
 }
