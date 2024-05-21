@@ -64,7 +64,7 @@
                 <td>
                     <a th:href="'/admin/ticket/'+${ticket.name}" th:text="${ticket.name}"></a>
                 </td>
-                <td th:text="${ticket.ticketCategory == T(com.MGR.constant.TicketCategory).PUBLIC} ? '단체' : '개인'"></td>
+                <td th:text="${ticket.ticketCategory == T(com.MGR.constant.TicketCategory).CHILD} ? '어린이' : '성인'"></td>
                 <td th:text="${ticket.regTime}"></td>
             </tr>
             </tbody>
@@ -103,8 +103,8 @@
             </select>
             <select th:field="*{ticketCategory}" class="form-control" style="width:auto;">
                 <option value="">회원 구분(전체)</option>
-                <option value="PUBLIC">단체</option>
-                <option value="PRIVATE">개인</option>
+                <option value="CHILD">성인</option>
+                <option value="ADULT">어린이</option>
             </select>
             <select th:field="*{searchBy}" class="form-control" style="width:auto;">
                 <option value="name">티켓명</option>
