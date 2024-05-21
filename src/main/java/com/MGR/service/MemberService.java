@@ -40,4 +40,8 @@ public class MemberService{
 
         return result;
     }
+
+    public Optional<Member> findById(Long id){
+        return memberRepository.findById(id);
+    }
 }

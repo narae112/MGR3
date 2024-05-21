@@ -2,12 +2,9 @@ package com.MGR.controller;
 
 import com.MGR.dto.MemberFormDto;
 import com.MGR.entity.Member;
-import com.MGR.service.MailService;
 import com.MGR.service.MemberService;
-import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,10 +34,10 @@ public class MemberController {
             System.out.println("로그인 인증됨");
             return "index";
         }
-
         System.out.println("로그인 인증안됨");
         return "member/login";
     }
+
     private boolean isAuthenticated() {
         // 로그인 인증 확인 로직 - 삭제예정
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
