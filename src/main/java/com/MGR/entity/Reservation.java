@@ -1,5 +1,6 @@
 package com.MGR.entity;
 
+import com.MGR.constant.ReservationStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import java.util.List;
 @Entity
 @Getter @Setter
 public class Reservation { // = 예약 List
+    // 회원 한 명 당 하나의 예약 List 를 갖는다
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "reservation_id")
@@ -20,10 +22,20 @@ public class Reservation { // = 예약 List
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @OneToMany(mappedBy = "reservation" ,cascade=CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<ReservationTicket> reservationTickets = new ArrayList<>();
+
+    @Enumerated(EnumType.STRING)
+    private ReservationStatus reservationStatus;
+
     public static Reservation createReservation(Member member) {
         Reservation reservation = new Reservation();
         reservation.setMember(member);
         return reservation;
     }
-    // 회원 한 명 당 하나의 예약 List 를 갖는다
+
+    public void cancelReservation() {
+        this.reservationStatus = ReservationStatus.CANCEL;
+    }
+
 }
