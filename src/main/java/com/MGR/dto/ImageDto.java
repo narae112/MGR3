@@ -9,14 +9,14 @@ import org.modelmapper.ModelMapper;
 public class ImageDto {
 
     private Long id;
-    private String imgTitle;
+
     private String imgName;
 
     private String imgOriName;
 
     private String imgUrl;
 
-    private String repImgYn;
+    private Boolean repImgYn;
     private static ModelMapper modelMapper = new ModelMapper();
 
     public static ImageDto of(Image image){
