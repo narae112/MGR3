@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -16,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,37 +35,67 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-//        http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+        http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
         // csrf 토큰 나중에 다시 생성
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeRequests(authorize -> authorize
-                        .requestMatchers("/admin").hasRole("ADMIN")
-                        .anyRequest().permitAll()
-                )
-                .formLogin(login -> login
+        //http.csrf(AbstractHttpConfigurer::disable);
+
+        http.formLogin((login) -> login
                         .loginPage("/member/login")
                         .usernameParameter("email")
                         .passwordParameter("password")
                         .failureUrl("/member/login/error")
                         .defaultSuccessUrl("/")
-                        .loginProcessingUrl("/member/login")
-                )
-                .oauth2Login(oauth2Login -> oauth2Login
-                        .loginPage("/member/kakao/login")
-                        .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint
-                                .userService(customOAuth2UserService)
-                        )
-                )
-                .logout(logout -> logout
+                        .loginProcessingUrl("/member/login"))
+                .logout((logout) -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/member/logout"))
                         .logoutSuccessUrl("/")
-                        .invalidateHttpSession(true)
-                )
-                .userDetailsService(customUserDetailsService);
+                        .invalidateHttpSession(true)); // 세션 삭제
+
+        http.authorizeHttpRequests(authorize -> authorize
+                .requestMatchers("/**").permitAll()
+//                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/admin").hasRole("ADMIN")
+                .anyRequest().authenticated());
+
+        http.userDetailsService(customUserDetailsService);
 
         return http.build();
     }
+//    @Bean
+//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//
+////        http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+//        // csrf 토큰 나중에 다시 생성
+//        http
+//                .authorizeRequests(authorize -> authorize
+//                        .requestMatchers("/admin").hasRole("ADMIN")
+//                        .anyRequest().permitAll()
+//                )
+//                .formLogin(login -> login
+//                        .loginPage("/member/login")
+//                        .usernameParameter("email")
+//                        .passwordParameter("password")
+//                        .failureUrl("/member/login/error")
+//                        .defaultSuccessUrl("/")
+//                        .loginProcessingUrl("/member/login")
+//                )
+//                .oauth2Login(oauth2Login -> oauth2Login
+//                        .loginPage("/member/login")
+//                        .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint
+//                                .userService(customOAuth2UserService)
+//                        )
+//                )
+//                .logout(logout -> logout
+//                        .logoutRequestMatcher(new AntPathRequestMatcher("/member/logout"))
+//                        .logoutSuccessUrl("/")
+//                        .invalidateHttpSession(true)
+//                )
+//                .userDetailsService(customUserDetailsService);
+//
+//        return http.build();
+//    }
+
+
 
     @Bean
     public PasswordEncoder passwordEncoder(){
