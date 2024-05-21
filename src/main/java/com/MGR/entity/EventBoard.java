@@ -25,19 +25,18 @@ public class EventBoard {
     private String content;
 
     @Column
-    private int count = 0;
-    //조회수 초기값 0 설정
+    private int count = 0; //조회수 초기값 0 설정
 
-    @Column(columnDefinition = "DATETIME")
+    @Column(columnDefinition = "DATE")
     private LocalDateTime createDate;
 
-    @Column(columnDefinition = "DATETIME")
+    @Column(columnDefinition = "DATE")
     private LocalDateTime modifiedDate;
 
-    @Column(columnDefinition = "DATETIME")
+    @Column(columnDefinition = "DATE")
     private LocalDateTime startDate;
 
-    @Column(columnDefinition = "DATETIME")
+    @Column(columnDefinition = "DATE")
     private LocalDateTime endDate;
 
     @ManyToOne
