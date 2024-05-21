@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
@@ -39,11 +40,9 @@
     </div>
 
     <div class="row">
-        <th:block th:each="ticket, status: ${tickets.getContent()}">
-            <div class="col-md-4 margin">
-                <div class="card">
+        <th:block th:each="ticket, status: ${tickets.getContent()}">             <div class="card">
                     <a th:href="'/ticket/' +${ticket.id}" class="text-dark">
-                        <img th:src="${ticket.imgUrl}" class="card-img-top" th:alt="${ticket.name}" height="400">
+                        <img th:src="${ticket.imgUrl}" class="card-img-top" th:alt="${ticket.id}" height="400">
                         <div class="card-body">
                             <h4 class="card-title">[[${ticket.name}]]</h4>
                             <p class="card-text">[[${ticket.memo}]]</p>
