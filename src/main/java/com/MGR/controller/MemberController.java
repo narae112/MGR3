@@ -1,14 +1,16 @@
 package com.MGR.controller;
 
-import com.MGR.Dto.MemberFormDto;
+import com.MGR.dto.MemberFormDto;
 import com.MGR.entity.Member;
+import com.MGR.service.MailService;
 import com.MGR.service.MemberService;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,9 +41,14 @@ public class MemberController {
 
     @PostMapping("/create")
     public String createMember(@Valid MemberFormDto memberFormDto,
-                               Errors errors){
+                               Errors errors, Model model){
 
         if(errors.hasErrors()) {
+            return "member/joinForm";
+        }
+
+        if(memberFormDto.getAuthCode().equals(memberFormDto.getCode())){
+            //메일 인증번호 검증
             return "member/joinForm";
         }
 
@@ -49,10 +56,10 @@ public class MemberController {
             Member member = Member.createMember(memberFormDto, passwordEncoder);
             memberService.saveMember(member);
         } catch (IllegalStateException e){
+            model.addAttribute("errors", e.getMessage());
             return "member/joinForm";
         }
         return "redirect:/";
-
     }
 
     @PostMapping("/emailCheck")

@@ -1,8 +1,6 @@
-package com.MGR.Dto;
+package com.MGR.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
@@ -28,6 +26,13 @@ public class MemberFormDto {
     private String nickname; //중복 확인
 
     private String birth;
+
+    @NotEmpty(message = "메일 인증 코드는 필수 입력 값입니다")
+    @Size(min=8, max=8, message="인증코드 8자리를 입력해주세요")
+    @Pattern(regexp = "^[a-zA-Z0-9]*$")
+    private String code;
+
+    private String authCode;
 
 
 }

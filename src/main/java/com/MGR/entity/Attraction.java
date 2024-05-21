@@ -17,10 +17,7 @@ public class Attraction {
 
     @Column(length = 10)
     private String condition;
-//    boolean condition;
 
     @Column(columnDefinition = "TEXT")
     private String information;
-
 }
-

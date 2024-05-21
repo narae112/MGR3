@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+
+
+<th:block layout:fragment="script">
+    <!--스크립트-->
+    <script th:inline="javascript">
+
+        $(document).ready(function(){
+            var errorMessage = [[${errorMessage}]];
+            if(errorMessage != null){
+                alert(errorMessage);
+            }
+
+            bindDomEvent();
+
+        });
+
+        function bindDomEvent() {
+            $(".custom-file-input").on("change", function() {
+                var fileName = $(this).val().split("\\").pop();  //이미지 파일명
+                var fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase(); // 확장자 추출 및 소문자 변환
+
+                if (fileExt != "jpg" && fileExt != "jpeg" && fileExt != "gif" && fileExt != "png" && fileExt != "bmp") {
+                    alert("이미지 파일만 등록이 가능합니다.");
+                    return;
+                }
+
+                $(this).siblings(".custom-file-label").html(fileName);
+            });
+        }
+
+        function initializeDatePickers() {
+            $('.datepicker').datepicker({
+                format: 'yyyy-mm-dd',
+                autoclose: true,
+                todayHighlight: true
+            });
+        }
+
+
+        // 시작날짜 < 종료날짜
+        function checkEndDateInput() {
+            var startDate = document.getElementById("startDate").value;
+            var endDate = document.getElementById("endDate").value;
+            var startDateObj = new Date(startDate);
+            var endDateObj = new Date(endDate);
+
+            if (endDateObj < startDateObj) {
+                alert("종료 날짜는 시작 날짜 이후여야 합니다.");
+                document.getElementById("endDate").value = "";
+                return false;
+            }
+            return true;
+        }
+        function checkStartDate() {
+        var selectedDate = document.getElementById("startDate").value;
+        var currentDate = new Date().toISOString().split('T')[0]; // 현재 날짜를 ISO 형식으로 가져옴
+
+        if (selectedDate < currentDate) {
+            alert("과거 날짜는 선택할 수 없습니다.");
+            document.getElementById("startDate").value = ""; // 입력 필드를 비워줍니다.
+        }
+    }
+
+    </script>
+    </script>
+</th:block>
+
+<!--폼-->
+<div layout:fragment="content">
+    <form role="form" method="post" enctype="multipart/form-data" th:object="${ticketFormDto}">
+        <p class="h2">
+            티켓 등록
+        </p>
+        <input type="hidden" th:field="*{id}">
+        <div class="form-group">
+<!--            개인, 단체 할인구분-->
+            <select th:field="*{ticketCategory}" class="ticket-select">
+                    <option value="PUBLIC">단체</option>
+                    <option value="PRIVATE">개인</option>
+            </select>
+<!--            티켓명 등록-->
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">티켓명</span>
+                </div>
+                <input type="text" th:field="*{name}" class="form-control" placeholder="티켓을 등록해주세요">
+            </div>
+            <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="fieldError">Incorrect data</p>
+<!--            가격 등록-->
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">가격</span>
+                </div>
+                <input type="number" th:field="*{price}" id="price" class="form-control" placeholder="티켓의 가격을 입력해주세요" min="0" onchange="checkPrice()">
+            </div>
+            <p th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="fieldError">가격은 0원 이상이어야 합니다.</p>
+
+        <!--            지점-->
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text">지점</span>
+            </div>
+            <select th:field="*{location}" class="form-control">
+                <option value="" disabled selected>지점을 선택해주세요</option>
+                <option value="Busan">부산</option>
+                <option value="Seoul">서울</option>
+            </select>
+        </div>
+        <p th:if="${#fields.hasErrors('location')}" th:errors="*{location}" class="fieldError">Incorrect data</p>
+<!--        메모 등록-->
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text">티켓 세부사항</span>
+            </div>
+            <input type="text" th:field="*{memo}" class="form-control" placeholder="티켓의 세부사항을 입력해주세요">
+        </div>
+        <p th:if="${#fields.hasErrors('memo')}" th:errors="*{memo}" class="fieldError">Incorrect data</p>
+
+            <!-- startDate -->
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">티켓 이용 시작 날짜</span>
+                </div>
+                <input type="datetime-local" th:field="*{startDate}" id="startDate" class="form-control" placeholder="티켓 이용 시작 날짜를 입력해주세요" onchange="checkStartDate()">
+            </div>
+            <!-- endDate -->
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">티켓 이용 종료 날짜</span>
+                </div>
+                <input type="datetime-local" id="endDate" th:field="*{endDate}" class="form-control" placeholder="티켓 이용 종료 날짜를 입력해주세요" onchange="checkEndDateInput()">
+            </div>
+            <p th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}" class="fieldError">잘못된 데이터입니다.</p>
+
+            <!-- 이미지 저장 -->
+            <div th:if="${#lists.isEmpty(ticketFormDto.ticketImgDtoList)}">
+                <div class="form-group">
+                    <div class="custom-file img-div">
+                        <input type="file" class="custom-file-input" name="ticketImgFile" required>
+                        <label class="custom-file-label">상품이미지 1</label>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${not #lists.isEmpty(ticketFormDto.ticketImgDtoList)}">
+                <div class="form-group">
+                    <div class="custom-file img-div">
+                        <input type="file" class="custom-file-input" name="ticketImgFile" required>
+                        <label class="custom-file-label" th:if="${#lists.isEmpty(ticketFormDto.ticketImgDtoList)}">상품이미지 1</label>
+                        <label class="custom-file-label" th:if="${not #lists.isEmpty(ticketFormDto.ticketImgDtoList)}" th:each="ticketImgDto, idx: ${ticketFormDto.ticketImgDtoList}" th:text="${ticketImgDto.imgOriName} ? ${ticketImgDto.imgOriName} : '상품이미지 ' + ${idx.index+1}"></label>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${#strings.isEmpty(ticketFormDto.id)}" style="text-align: center">
+                <button th:formaction="@{/admin/ticket/new}" type="submit" class="btn btn-primary">저장</button>
+            </div>
+            <div th:unless="${#strings.isEmpty(ticketFormDto.id)}" style="text-align: center">
+                <button th:formaction="@{'/admin/ticket/' + ${ticketFormDto.id} }" type="submit" class="btn btn-primary">수정</button>
+            </div>
+        </div>
+    </form>
+</div>
+</html>
