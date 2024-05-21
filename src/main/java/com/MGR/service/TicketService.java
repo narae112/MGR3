@@ -35,7 +35,7 @@ public class TicketService {
         ticketRepository.save(ticket);
 
         //이미지 등록
-        for(int i = 0; i< ticketImgFileList.size(); i++){
+        for(int i =0; i< ticketImgFileList.size(); i++){
             Image ticketImage = new Image();
             ticketImage.setTicket(ticket);
 
@@ -44,12 +44,11 @@ public class TicketService {
             }else{
                 ticketImage.setRepImgYn(false);
             }
-
-            imageService.saveTicketImage(ticketImage, ticketImgFileList.get(i));
+            imageService.saveTicketImage(ticketImage,  ticketImgFileList.get(i));
         }
+
         return  ticket.getId();
     }
-
     //티켓 데이터를 읽어오는 함수
     @Transactional(readOnly = true)
     public TicketFormDto getTicketDtl(Long ticketId){
@@ -61,6 +60,7 @@ public class TicketService {
         }
         Ticket ticket = ticketRepository.findById(ticketId).
                 orElseThrow(EntityNotFoundException::new);
+
         TicketFormDto ticketFormDto = TicketFormDto.of(ticket);
         ticketFormDto.setTicketImgDtoList(ticketImgDtoList);
         return ticketFormDto;
@@ -74,19 +74,11 @@ public class TicketService {
         List<Long> ticketImgIds = ticketFormDto.getTicketImgIds();
         //이미지번호
         //이미지 수정
-        for (int i = 0; i < ticketImgFileList.size(); i++) {
-            Image ticketImage = new Image();
-            ticketImage.setTicket(ticket);
-
-            if (i == 0) {
-                ticketImage.setRepImgYn(true);
-            } else {
-                ticketImage.setRepImgYn(false);
-            }
-
-            imageService.saveTicketImage(ticketImage, ticketImgFileList.get(i));
+        for(int i=0; i<ticketImgFileList.size(); i++){
+            imageService.updateTicketImage(ticketImgIds.get(i),
+                    ticketImgFileList.get(i));
         }
-        return ticket.getId(); // 업데이트된 티켓의 ID 반환
+        return ticket.getId();
     }
 
     @Transactional(readOnly = true)

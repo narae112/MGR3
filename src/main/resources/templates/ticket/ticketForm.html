@@ -34,7 +34,7 @@
 
         function initializeDatePickers() {
             $('.datepicker').datepicker({
-                format: 'yyyy-mm-dd',
+                format: 'yyyy-MM-ddThh:mm',
                 autoclose: true,
                 todayHighlight: true
             });
@@ -150,7 +150,7 @@
                 <div class="form-group">
                     <div class="custom-file img-div">
                         <input type="file" class="custom-file-input" name="ticketImgFile" required>
-                        <label class="custom-file-label" th:if="${#lists.isEmpty(ticketFormDto.ticketImgDtoList)}">상품이미지 1</label>
+                        <input type="hidden" name="ticketImgIds" th:value="${ticketImgDto.id}">
                         <label class="custom-file-label" th:if="${not #lists.isEmpty(ticketFormDto.ticketImgDtoList)}" th:each="ticketImgDto, idx: ${ticketFormDto.ticketImgDtoList}" th:text="${ticketImgDto.imgOriName} ? ${ticketImgDto.imgOriName} : '상품이미지 ' + ${idx.index+1}"></label>
                     </div>
                 </div>
