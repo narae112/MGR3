@@ -29,13 +29,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String email = "";
         String name = "";
 
-        switch (provider){
-            case "kakao":
-                Map<String,Object> kakaoAccount = user.getAttribute("kakao_account");
-                email = (String) kakaoAccount.get("email");
-                name = (String) ((Map<String, Object>) kakaoAccount.get("profile")).get("nickname");
-                break;
-        }
+//        switch (provider){
+//            case "kakao":
+//                Map<String,Object> kakaoAccount = user.getAttribute("kakao_account");
+//                email = (String) kakaoAccount.get("email");
+//                name = (String) ((Map<String, Object>) kakaoAccount.get("profile")).get("nickname");
+//                break;
+//        }
 
         log.info("provider: {} -> email: {}, name{}", provider, email, name);
 

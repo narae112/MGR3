@@ -1,6 +1,7 @@
 package com.MGR.entity;
 
 import com.MGR.constant.EventType;
+import com.MGR.dto.EventBoardFormDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,26 +32,39 @@ public class EventBoard {
     private LocalDateTime createDate;
 
     @Column(columnDefinition = "DATE")
-    private LocalDateTime modifiedDate;
+    private LocalDateTime modifiedDate = null;
 
-    @Column(columnDefinition = "DATE")
-    private LocalDateTime startDate;
+    private String startDate;
 
-    @Column(columnDefinition = "DATE")
-    private LocalDateTime endDate;
+    private String endDate;
 
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @PrePersist
-    private void onCreate() {
-        createDate = LocalDateTime.now();
-    }
+//    @PrePersist
+//    private void onCreate() {
+//        createDate = LocalDateTime.now();
+//    }
+//
+//    @PreUpdate
+//    private void onUpdate() {
+//        modifiedDate = LocalDateTime.now();
+//    }
 
-    @PreUpdate
-    private void onUpdate() {
-        modifiedDate = LocalDateTime.now();
+    public static EventBoard createBoard(EventBoardFormDto boardFormDto, Member member){
+        EventBoard board = new EventBoard();
+        board.setType(boardFormDto.getType());
+        board.setTitle(boardFormDto.getTitle());
+        board.setContent(boardFormDto.getContent());
+        board.setStartDate(boardFormDto.getStartDate());
+        board.setEndDate(boardFormDto.getEndDate());
+        board.setCreateDate(LocalDateTime.now());
+        board.setCreateDate(LocalDateTime.now());
+        board.setMember(member);
+
+        return board;
+
     }
 
 }
