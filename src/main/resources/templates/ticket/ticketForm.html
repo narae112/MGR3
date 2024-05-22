@@ -121,6 +121,8 @@
             </div>
             <p th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="fieldError">가격은 0원 이상이어야 합니다.</p>
             <!-- 지점 -->
+<!--************************** 혹시 지점 value 값 부산, 서울 < 한글로 바꿔도 될까요? **********************************-->
+<!--****************** 왜냐하면 티켓 상세페이지에 지점을 명시하려고 하는데 영어로 나와서 조금 당황쓰^^; **********************-->
             <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text">지점</span>
