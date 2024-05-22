@@ -5,8 +5,16 @@ import com.MGR.entity.EventBoard;
 import com.MGR.entity.Member;
 import com.MGR.repository.EventBoardRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -19,5 +27,18 @@ public class EventBoardService {
     public void saveBoard(EventBoardFormDto boardFormDto,Member member) {
         EventBoard board = EventBoard.createBoard(boardFormDto, member);
         eventBoardRepository.save(board);
+    }
+
+    public List<EventBoard> findAll() {
+        return  eventBoardRepository.findAll();
+    }
+
+    public Page<EventBoard> getBordeList(int page) {
+
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createDate"));
+        Pageable pageable = PageRequest.of(page, 5, Sort.by(sorts));
+
+        return eventBoardRepository.findAll(pageable);
     }
 }

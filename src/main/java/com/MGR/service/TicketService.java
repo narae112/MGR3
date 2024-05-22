@@ -65,7 +65,8 @@ public class TicketService {
         ticketFormDto.setTicketImgDtoList(ticketImgDtoList);
         return ticketFormDto;
     }
-    public Long updateTicket(TicketFormDto ticketFormDto, List<MultipartFile>  ticketImgFileList) throws Exception{
+
+    public Long updateTicket(TicketFormDto ticketFormDto, List<MultipartFile> ticketImgFileList) throws Exception {
         //티켓수정
         Ticket ticket = ticketRepository.findById(ticketFormDto.getId())
                 .orElseThrow(EntityNotFoundException::new);

@@ -20,4 +20,5 @@ public class TicketDto {
     private String memo;
     private LocalDateTime regTime;
     private LocalDateTime updateTime;
+
 }

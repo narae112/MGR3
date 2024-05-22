@@ -20,11 +20,58 @@
 </th:block>
 
 <div layout:fragment="content">
+<!--    <h2 th:text="#{page.boards}">글 목록</h2>-->
+    <h3>이벤트/공지 게시판</h3>
+    <hr class="my-4">
+    <div>
+        <table class="table">
+            <thead>
+                <tr>
+<!--                    <th>글번호</th>-->
+                    <th>제목</th>
+                    <th>작성자</th>
+                    <th>조회수</th>
+                    <th>등록일</th>
+                </tr>
+            </thead>
+            <tbody>
 
-<!--    <button class="btn btn-primary" type="submit" id="eventBoard-create"-->
-<!--            onClick="location.href='event/eventBoardForm'">글쓰기</button>-->
-    <button class="btn btn-primary" onClick="location.href='/board/eventBoard/new'">글쓰기</button>
-<!--    0521 관리자만 버튼 보이게 설정-->
+                <tr th:each="boardList, loop : ${paging}">
+<!--                    <td><a th:text="${boardList.id}" th:href="@{'/board/event/' + ${boardList.id}}">글 ID</a></td>-->
+                    <td><a th:text="${boardList.title}" th:href="@{'/board/event/' + ${boardList.id}}">제목</a></td>
+                    <td th:text="${boardList.member.nickname}">작성자</td>
+                    <td th:text="${boardList.count}">조회수</td>
+                    <td th:text="${#temporals.format(boardList.createDate, 'MM-dd')}">등록일</td>
+<!--                    <td th:text="${#temporals.format(boardList.createDate, 'yyyy-MM-dd HH:mm:ss')}">등록일</td>-->
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+        <button class="btn btn-primary" onClick="location.href='/board/eventBoard/new'">글쓰기</button>
+<!--    0521 관리자만 버튼 보이게 설정해야함-->
+
+    <div th:if="${!paging.isEmpty()}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${!paging.hasPrevious} ? 'disabled'">
+                <a class="page-link" th:href="@{|?page=${paging.number-1}|}">
+                    <span>이전</span>
+                </a>
+            </li>
+            <li th:each="page: ${#numbers.sequence(0, paging.totalPages-1)}"
+                th:if="${page >= paging.number-5 and page <= paging.number+5}"
+                th:classappend="${page == paging.number} ? 'active'" class="page-item">
+                <a th:text="${page+1}" class="page-link" th:href="@{|?page=${page}|}"></a>
+            </li>
+            <li class="page-item" th:classappend="${!paging.hasNext} ? 'disabled'">
+                <a class="page-link" th:href="@{|?page=${paging.number+1}|}">
+                    <span>다음</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
 </div>
 </html>
 

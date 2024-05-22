@@ -1,22 +1,19 @@
 package com.MGR.controller;
 
 import com.MGR.dto.EventBoardFormDto;
+import com.MGR.entity.EventBoard;
 import com.MGR.entity.Member;
-import com.MGR.repository.EventBoardRepository;
 import com.MGR.security.CustomUserDetails;
 import com.MGR.service.EventBoardService;
 import com.MGR.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.util.Optional;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/board")
@@ -26,8 +23,11 @@ public class EventBoardController {
     private final MemberService memberService;
     private final EventBoardService eventBoardService;
 
-    @GetMapping("/event")
-    public String eventBoardList(){
+    @GetMapping({"/events", "/events/{page}"})
+    public String eventBoardList(Model model, @RequestParam(value = "page", defaultValue = "0") int page) {
+        Page<EventBoard> paging = eventBoardService.getBordeList(page);
+        model.addAttribute("paging", paging);
+
         return "board/event/eventBoardList";
     }
 
@@ -51,13 +51,19 @@ public class EventBoardController {
         try {
             Member findMember = memberService.findById(member.getId()).orElseThrow();
             eventBoardService.saveBoard(BoardFormDto,findMember);
-
         } catch (IllegalStateException e){
             model.addAttribute("errors", e.getMessage());
             return "board/event/eventBoardForm";
         }
+        return "redirect:/board/event";
+    }
 
-        return "board/event/eventBoardList";
+    @GetMapping("/event/{id}")
+    public String eventBoardDetail(@RequestParam("id") Long id){
+
+
+
+        return "event/eventBoardDtl/" + id;
     }
 
 }

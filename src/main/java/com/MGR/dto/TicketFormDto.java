@@ -39,6 +39,7 @@ public class TicketFormDto {
     private TicketCategory ticketCategory;
 
     private List<ImageDto> ticketImgDtoList = new ArrayList<>();
+
     private List<Long> ticketImgIds = new ArrayList<>();
 
     private static ModelMapper modelMapper = new ModelMapper();
