@@ -24,6 +24,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional
 public class ReservationService {
+
     private final TicketRepository ticketRepository;
     private final MemberRepository memberRepository;
     private final ReservationRepository reservationRepository;

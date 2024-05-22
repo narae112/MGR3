@@ -30,14 +30,17 @@ import java.util.List;
 public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
-    private final CustomOAuth2UserService customOAuth2UserService;
+//    private final CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
-        // csrf 토큰 나중에 다시 생성
+        http.csrf(csrf -> csrf
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
+        //토큰 켜기
+
         //http.csrf(AbstractHttpConfigurer::disable);
+        //토큰 끄기
 
         http.formLogin((login) -> login
                         .loginPage("/member/login")
@@ -53,6 +56,7 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/**").permitAll()
+//                        .requestMatchers("/board/**").permitAll()
                         .requestMatchers("/admin/**").permitAll()
                         .requestMatchers("/member/**").permitAll()
 //                      .requestMatchers("/admin/**").hasRole("ADMIN")
