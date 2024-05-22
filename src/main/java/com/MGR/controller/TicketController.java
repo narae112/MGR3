@@ -122,18 +122,11 @@ public class TicketController {
 
         return "ticket/ticketMain";
     }
-    @DeleteMapping("/admin/ticket/delete/{ticketId}")
-    public ResponseEntity<String> deleteTicket(@PathVariable Long ticketId) {
-        try {
-            Ticket ticket = this.ticketService.getTicket(ticketId);
-            if (ticket != null) {
-                ticketService.ticketDelete(ticket);
-                return ResponseEntity.ok("티켓이 삭제되었습니다.");
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("티켓을 찾을 수 없습니다.");
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("티켓 삭제 중 오류가 발생했습니다.");
-        }
+   @GetMapping("/admin/ticket/delete/{ticketId}")
+    public String deleteTicket(@PathVariable("ticketId") Long ticketId) {
+        // 티켓과 연결된 이미지를 모두 삭제한 후에 티켓을 삭제합니다.
+        ticketService.deleteTicket(ticketId);
+
+        return "redirect:/ticket";
     }
 }
