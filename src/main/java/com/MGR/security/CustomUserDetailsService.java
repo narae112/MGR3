@@ -3,7 +3,6 @@ package com.MGR.security;
 import com.MGR.entity.Member;
 import com.MGR.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,12 +24,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         Optional<Member> memberOptional = memberRepository.findByEmail(email);
         Member member = memberOptional.orElseThrow(() -> new UsernameNotFoundException(email));
 
-//        return User.builder()
-//                .username(member.getEmail())
-//                .password(member.getPassword())
-//                .roles(member.getRole().toString())
-//                .build()
-//                ;
         return new CustomUserDetails(member);
     }
 }

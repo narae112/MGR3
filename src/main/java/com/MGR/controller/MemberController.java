@@ -2,12 +2,9 @@ package com.MGR.controller;
 
 import com.MGR.dto.MemberFormDto;
 import com.MGR.entity.Member;
-import com.MGR.service.MailService;
 import com.MGR.service.MemberService;
-import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -66,14 +63,14 @@ public class MemberController {
     @ResponseBody
     public int emailCheck(@RequestParam("email") String email){
         return memberService.emailCheck(email);
-        //이메일 중복 체크 - 비동기
+        //이메일 중복 체크 - 비동기 - 엣지에서 안됨
     }
 
     @PostMapping("/nicknameCheck")
     @ResponseBody
     public int nicknameCheck(@RequestParam("nickname") String nickname){
         return memberService.nicknameCheck(nickname);
-        //닉네임 중복 체크 - 비동기
+        //닉네임 중복 체크 - 비동기 - 엣지에서 안됨
     }
 
     @PostMapping("/passwordCheck")

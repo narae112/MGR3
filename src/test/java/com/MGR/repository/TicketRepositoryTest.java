@@ -31,7 +31,7 @@ class TicketRepositoryTest {
         Ticket ticket = new Ticket();
         ticket.setName("테스트 티켓");
         ticket.setPrice(100000);
-        ticket.setTicketCategory(TicketCategory.PUBLIC);
+        ticket.setTicketCategory(TicketCategory.ADULT);
         ticket.setRegTime(LocalDateTime.now());
         ticket.setUpdateTime(LocalDateTime.now());
         ticket.setLocation("부산");
@@ -46,7 +46,7 @@ class TicketRepositoryTest {
             ticket.setPrice(10000+i);
             ticket.setMemo("롯데월드 상품입니다");
             ticket.setLocation("부산");
-            ticket.setTicketCategory(TicketCategory.PUBLIC);
+            ticket.setTicketCategory(TicketCategory.ADULT);
             ticket.setRegTime(LocalDateTime.now());
             ticket.setUpdateTime(LocalDateTime.now());
             Ticket savedTicket = ticketRepository.save(ticket);
@@ -70,7 +70,7 @@ class TicketRepositoryTest {
         //쿼리객체생성
         QTicket qTicket = QTicket.ticket;
         JPAQuery<Ticket> query = queryFactory.selectFrom(qTicket)
-                .where(qTicket.ticketCategory.eq(TicketCategory.PUBLIC))
+                .where(qTicket.ticketCategory.eq(TicketCategory.ADULT))
                 .where(qTicket.memo.like("%"+"테스트 상품 상세 설명"+"%"))
                 .orderBy(qTicket.price.desc());
 

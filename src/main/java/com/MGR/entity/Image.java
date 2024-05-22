@@ -13,12 +13,6 @@ public class Image extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    private ImageCategory imageCategory;
-
-    @Column(length = 50)
-    private String imgTitle;
-
     @Column(length = 50)
     private String imgName;
 

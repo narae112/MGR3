@@ -7,7 +7,6 @@ import java.util.List;
 
 public interface ImageRepository extends JpaRepository<Image, Long> {
     List<Image> findByTicketIdOrderByIdAsc(Long ticketId);
-
     //상품이미지 아이디의 오름차순으로 가져오는 쿼리 메소드
 
     Image findByIdAndRepImgYn(Long ticketId, Boolean repImgYn);

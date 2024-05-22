@@ -1,6 +1,6 @@
 //package com.MGR.controller;
 //
-//import com.MGR.service.KakaoService;
+////import com.MGR.service.KakaoService;
 //import jakarta.servlet.http.HttpSession;
 //import lombok.RequiredArgsConstructor;
 //import org.springframework.stereotype.Controller;
@@ -13,18 +13,18 @@
 //@RequiredArgsConstructor
 //public class KaKaoController {
 //
-//    private final KakaoService kakaoService;
+////    private final KakaoService kakaoService;
 //
-//    @GetMapping("/login")
-//    public String kakaoLogin(){
-//        StringBuffer url = new StringBuffer();
-//        url.append("https://kauth.kakao.com/oauth/authorize?");
-//        url.append("client_id=" + "ac3e1526cd9839b6cf1cc8b52c393ff0");
-//        url.append("&redirect_uri=http://localhost:8080/member/login/kakao");
-//        url.append("&response_type=code");
-//
-//        return "redirect:" + url.toString();
-//    }
+////    @GetMapping("/login")
+////    public String kakaoLogin(){
+////        StringBuffer url = new StringBuffer();
+////        url.append("https://kauth.kakao.com/oauth/authorize?");
+////        url.append("client_id=" + "ac3e1526cd9839b6cf1cc8b52c393ff0");
+////        url.append("&redirect_uri=http://localhost:8080/member/login/kakao");
+////        url.append("&response_type=code");
+////
+////        return "redirect:" + url.toString();
+////    }
 //
 ///*    @RequestMapping("/")
 //    public String kakaoLogin(@RequestParam("code") String code, HttpSession session) throws Exception {
