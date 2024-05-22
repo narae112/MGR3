@@ -54,6 +54,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/**").permitAll()
                         .requestMatchers("/admin/**").permitAll()
+                        .requestMatchers("/member/**").permitAll()
 //                      .requestMatchers("/admin/**").hasRole("ADMIN")
 //                      .requestMatchers("/admin").hasRole("ADMIN")
                         .anyRequest().authenticated());
@@ -119,26 +120,6 @@ public class SecurityConfig {
                 admin.setRole(Role.ADMIN);
 
                 memberRepository.save(admin);
-            }
-        };
-    }
-
-    @Bean
-    public CommandLineRunner initDbUser(MemberRepository memberRepository){
-
-        return createAdmin -> {
-            boolean isAdminPresent = memberRepository.findByName("사용자").isPresent();
-
-            if (!isAdminPresent) {
-                Member user = new Member();
-
-                user.setName("사용자");
-                user.setEmail("user@mgr.com");
-                user.setNickname("초기사용자");
-                user.setPassword(passwordEncoder().encode("USER"));
-                user.setRole(Role.USER);
-
-                memberRepository.save(user);
             }
         };
     }
