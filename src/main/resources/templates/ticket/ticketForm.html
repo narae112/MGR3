@@ -63,33 +63,6 @@
                 document.getElementById("startDate").value = "";
             }
         }
-
-<!--        티켓 삭제 확인 및 처리-->
-    function deleteTicket(ticketId) {
-    if (confirm("정말로 이 티켓을 삭제하시겠습니까?")) {
-        fetch(`/admin/ticket/delete/${ticketId}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('input[name="_csrf"]').value
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('삭제할 수 없습니다.');
-            }
-            return response.text();
-        })
-        .then(result => {
-            alert(result);
-            window.location.href = '/ticket'; // 티켓 목록 페이지로 리다이렉트
-        })
-        .catch(error => {
-            console.error('삭제 에러:', error.message); // 에러 메시지 출력
-            alert('삭제 중 오류가 발생했습니다.');
-        });
-    }
-}
     </script>
 </th:block>
 
@@ -181,11 +154,11 @@
             <div th:unless="${#strings.isEmpty(ticketFormDto.id)}" style="text-align: center">
                 <button th:formaction="@{'/admin/ticket/' + ${ticketFormDto.id} }" type="submit" class="btn btn-primary">수정</button>
 <!--                삭제 버튼-->
-                <button type="button" class="btn btn-danger" onclick="deleteTicket(/*[[${ticketFormDto.id}]]*/)">삭제</button>
+                <a th:href="@{/admin/ticket/delete/{ticketId}(ticketId=${ticketFormDto.id})}" class="btn btn-danger" onclick="return confirm('정말로 삭제하시겠습니까?')">삭제</a>
             </div>
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
         </div>
-      
+
     </form>
 </div>
 </html>
