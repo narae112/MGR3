@@ -66,4 +66,7 @@ public class EventBoard {
 
     }
 
+    public int viewCount() {
+        return this.count += 1;
+    }
 }
