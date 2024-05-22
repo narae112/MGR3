@@ -1,6 +1,7 @@
 package com.MGR.controller;
 
 import com.MGR.dto.EventBoardFormDto;
+import com.MGR.entity.EventBoard;
 import com.MGR.entity.Member;
 import com.MGR.repository.EventBoardRepository;
 import com.MGR.security.CustomUserDetails;
@@ -8,14 +9,16 @@ import com.MGR.service.EventBoardService;
 import com.MGR.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -26,8 +29,11 @@ public class EventBoardController {
     private final MemberService memberService;
     private final EventBoardService eventBoardService;
 
-    @GetMapping("/event")
-    public String eventBoardList(){
+    @GetMapping({"/event", "/event/{page}"})
+    public String eventBoardList(Model model, @RequestParam(value = "page", defaultValue = "0") int page) {
+        Page<EventBoard> paging = eventBoardService.getBordeList(page);
+        model.addAttribute("paging", paging);
+
         return "board/event/eventBoardList";
     }
 
@@ -55,7 +61,15 @@ public class EventBoardController {
             model.addAttribute("errors", e.getMessage());
             return "board/event/eventBoardForm";
         }
-        return "board/event/eventBoardList";
+        return "redirect:/board/event";
+    }
+
+    @GetMapping("/event/{id}")
+    public String eventBoardDetail(@RequestParam("id") Long id){
+
+
+
+        return "board/event/eventBoardDtl/" + id;
     }
 
 }
