@@ -25,7 +25,7 @@ public class EventBoardController {
 
     @GetMapping({"/events", "/events/{page}"})
     public String eventBoardList(Model model, @RequestParam(value = "page", defaultValue = "0") int page) {
-        Page<EventBoard> paging = eventBoardService.getBordeList(page);
+        Page<EventBoard> paging = eventBoardService.getBoardList(page);
         model.addAttribute("paging", paging);
 
         return "board/event/eventBoardList";
@@ -55,12 +55,13 @@ public class EventBoardController {
             model.addAttribute("errors", e.getMessage());
             return "board/event/eventBoardForm";
         }
-        return "redirect:/board/event";
+        return "redirect:/board/events";
     }
 
-    @GetMapping("/event/{id}")
+    @GetMapping("/event/{id}") //이벤트 게시판 게시글 id
     public String eventBoardDetail(@RequestParam("id") Long id){
 
+//        eventBoardService.findById(id);
 
 
         return "event/eventBoardDtl/" + id;

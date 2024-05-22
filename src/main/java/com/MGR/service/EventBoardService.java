@@ -33,7 +33,7 @@ public class EventBoardService {
         return  eventBoardRepository.findAll();
     }
 
-    public Page<EventBoard> getBordeList(int page) {
+    public Page<EventBoard> getBoardList(int page) {
 
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("createDate"));
@@ -41,4 +41,9 @@ public class EventBoardService {
 
         return eventBoardRepository.findAll(pageable);
     }
+
+//    public EventBoard findById(Long id) {
+//
+//        return ;
+//    }
 }

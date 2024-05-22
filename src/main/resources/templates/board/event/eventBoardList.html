@@ -28,8 +28,8 @@
             <thead>
                 <tr>
 <!--                    <th>글번호</th>-->
-                    <th>제목</th>
                     <th>작성자</th>
+                    <th>제목</th>
                     <th>조회수</th>
                     <th>등록일</th>
                 </tr>
@@ -38,8 +38,8 @@
 
                 <tr th:each="boardList, loop : ${paging}">
 <!--                    <td><a th:text="${boardList.id}" th:href="@{'/board/event/' + ${boardList.id}}">글 ID</a></td>-->
-                    <td><a th:text="${boardList.title}" th:href="@{'/board/event/' + ${boardList.id}}">제목</a></td>
                     <td th:text="${boardList.member.nickname}">작성자</td>
+                    <td><a th:text="${boardList.title}" th:href="@{'/board/event/' + ${boardList.id}}">제목</a></td>
                     <td th:text="${boardList.count}">조회수</td>
                     <td th:text="${#temporals.format(boardList.createDate, 'MM-dd')}">등록일</td>
 <!--                    <td th:text="${#temporals.format(boardList.createDate, 'yyyy-MM-dd HH:mm:ss')}">등록일</td>-->
