@@ -64,6 +64,9 @@ public class EventBoardController {
     public String eventBoardDetail(@PathVariable("id") Long id,Model model){
 
         EventBoard eventBoard = eventBoardService.findById(id).orElseThrow();
+        int count = eventBoard.viewCount();
+        eventBoard.setCount(count);
+        eventBoardService.saveBoard(eventBoard);
 
         model.addAttribute("eventBoard",eventBoard);
 

@@ -30,6 +30,10 @@ public class EventBoardService {
         eventBoardRepository.save(board);
     }
 
+    public void saveBoard(EventBoard board) {
+        eventBoardRepository.save(board);
+    }
+
     public List<EventBoard> findAll() {
         return  eventBoardRepository.findAll();
     }
