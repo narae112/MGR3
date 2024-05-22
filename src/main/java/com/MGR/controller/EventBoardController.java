@@ -15,6 +15,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @Controller
 @RequestMapping("/board")
 @RequiredArgsConstructor
@@ -59,12 +61,26 @@ public class EventBoardController {
     }
 
     @GetMapping("/event/{id}") //이벤트 게시판 게시글 id
-    public String eventBoardDetail(@RequestParam("id") Long id){
+    public String eventBoardDetail(@PathVariable("id") Long id,Model model){
 
-//        eventBoardService.findById(id);
+        EventBoard eventBoard = eventBoardService.findById(id).orElseThrow();
 
+        model.addAttribute("eventBoard",eventBoard);
 
-        return "event/eventBoardDtl/" + id;
+        return "board/event/eventBoardDtl";
+    }
+
+    @PostMapping("/event/delete/{id}") //게시글 삭제
+    @ResponseBody
+    public String eventBoardDelete(@PathVariable("id") Long id){
+
+        Optional<EventBoard> findBoard = eventBoardService.findById(id);
+        if(findBoard.isPresent()){
+            EventBoard eventBoard = findBoard.get();
+            eventBoardService.delete(eventBoard);
+            return "게시글이 삭제되었습니다";
+        }
+        return "작성자가 아니면 삭제가 불가능합니다.";
     }
 
 }

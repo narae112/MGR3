@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -42,8 +43,12 @@ public class EventBoardService {
         return eventBoardRepository.findAll(pageable);
     }
 
-//    public EventBoard findById(Long id) {
-//
-//        return ;
-//    }
+    public Optional<EventBoard> findById(Long id) {
+        Optional<EventBoard> eventBoard = eventBoardRepository.findById(id);
+        return eventBoard;
+    }
+
+    public void delete(EventBoard eventBoard) {
+        eventBoardRepository.delete(eventBoard);
+    }
 }

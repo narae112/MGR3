@@ -49,7 +49,7 @@
 
         <div class="mb-3">
             <label th:for="content">내용</label>
-            <input th:field="*{content}" class="form-control" type="text"/>
+            <textarea name ="content" th:field="*{content}" class="form-control"></textarea>
             <p class="contentError" th:text="${errors}"></p>
         </div>
 
