@@ -162,8 +162,9 @@
             <div th:unless="${#strings.isEmpty(ticketFormDto.id)}" style="text-align: center">
                 <button th:formaction="@{'/admin/ticket/' + ${ticketFormDto.id} }" type="submit" class="btn btn-primary">수정</button>
             </div>
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
         </div>
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+      
     </form>
 </div>
 </html>
