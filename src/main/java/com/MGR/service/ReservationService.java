@@ -88,31 +88,7 @@ public class ReservationService {
         reservation.cancelReservation();
     }
 
-    // 결제 - 수정 필요(예약 내역에서 사라지면 안되니까 수정하기)
-//    public Long orderReservationTicket(List<ReservationOrderDto> reservationOrderDtoList, String email) {
-//        List<OrderDto> orderDtoList = new ArrayList<>();
-//
-//        for(ReservationOrderDto reservationOrderDto : reservationOrderDtoList) {
-//            ReservationTicket reservationTicket = reservationTicketRepository.findById(reservationOrderDto.getReservationTicketId())
-//                    .orElseThrow(EntityNotFoundException::new);
-//
-//            OrderDto orderDto = new OrderDto();
-//            orderDto.setTicketId(reservationTicket.getTicket().getId());
-//            orderDto.setCount(reservationTicket.getTicketCount());
-//            orderDtoList.add(orderDto);
-//        }
-//
-//        Long orderId = orderService.orders(orderDtoList, email);
-//
-//        for(ReservationOrderDto reservationOrderDto : reservationOrderDtoList) {
-//            ReservationTicket reservationTicket = reservationTicketRepository
-//                    .findById(reservationOrderDto.getReservationTicketId)
-//                    .orElseThrow(EntityNotFoundException::new);
-//            reservationTicketRepository.delete(reservationTicket);
-//        }
-//
-//        return orderId;
-//    }
+    // 결제
 
     // 검증
     @Transactional(readOnly = true)

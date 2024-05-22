@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/layout1}">
+      layout:decorate="~{layouts/default}">
 <head>
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
@@ -37,7 +37,7 @@
         }
 
         function checkAll(){
-            if($("#checkall").prop("checked")){
+            if($("#checkAll").prop("checked")){
                 $("input[name=reserveChkBox]").prop("checked", true);
             } else{
                 $("input[name=reserveChkBox]").prop("checked", false);
@@ -49,7 +49,7 @@
             var token = $("meta[name='_csrf']").attr("content");
             var header = $("meta[name='_csrf_header']").attr("content");
 
-            var url = "/reservationTicket/" + reservationTicketId + "?count=" + count;
+            var url = "/member/reservationTicket/" + reservationTicketId + "?count=" + count;
 
             $.ajax({
                 url      : url,
@@ -75,85 +75,6 @@
             });
         }
 
-        function deleteReservationTicket(obj) {
-            var cartItemId = obj.dataset.id; // id 값 불러오기
-            // var cartItemId = $(obj).attr("data-id");
-
-            var token = $("meta[name='_csrf']").attr("content");
-            var header = $("meta[name='_csrf_header']").attr("content");
-
-            var url = "/cartItem/" + cartItemId;
-
-            $.ajax({
-                url      : url,
-                type     : "DELETE",
-                beforeSend : function(xhr){
-                    /* 데이터를 전송하기 전에 헤더에 csrf 값을 설정 */
-                    xhr.setRequestHeader(header, token);
-                },
-                dataType : "json",
-                cache   : false,
-                success  : function(result, status){
-                    location.href='/cart';
-                },
-                error : function(jqXHR, status, error){
-
-                    if(jqXHR.status == '401'){
-                        alert('로그인 후 이용해주세요');
-                        location.href='/members/login';
-                    } else{
-                        alert(jqXHR.responseJSON.message);
-                    }
-                }
-            });
-        }
-
-            function orders() {
-
-            var token = $("meta[name='_csrf']").attr("content");
-            var header = $("meta[name='_csrf_header']").attr("content");
-
-            var url = "/cart/orders";
-
-            var dataList = new Array();
-            var paramData = new Object();
-
-            $("input[name=cartChkBox]:checked").each(function(){
-                var cartItemId = $(this).val();
-                var data = new Object();
-                data["cartItemId"] = cartItemId;
-                dataList.push(data);
-            });
-
-            paramData["cartOrderDtoList"] = dataList;
-            var param = JSON.stringify(paramData);
-
-            $.ajax({
-                url      : url,
-                type     : "POST",
-                contentType : "application/json",
-                data     : param,
-                beforeSend : function(xhr){
-                    /* 데이터를 전송하기 전에 헤더에 csrf 값을 설정 */
-                    xhr.setRequestHeader(header, token);
-                },
-                dataType : "json",
-                cache   : false,
-                success  : function(result, status){
-                    alert("주문이 완료되었습니다");
-                    location.href='/orders';
-                },
-                error : function(jqXHR, status, error){
-
-                    if(jqXHR.status == '401'){
-                        alert('로그인 후 이용해주세요');
-                        location.href='/members/login';
-                    } else{
-                        alert(jqXHR.responseJSON.message);
-                    }
-                }
-            });
-        }
     </script>
 </th:block>
 <!-- 사용자 CSS 추가 -->
@@ -186,11 +107,10 @@
 <div layout:fragment="content" class="content-mg">
 
     <h2 class="mb-4">
-        장바구니 목록
+        티켓 예약 내역
     </h2>
 
     <div>
-
         <table class="table">
             <colgroup>
                 <col width="15%"/>
@@ -200,43 +120,37 @@
             <thead>
             <tr class="text-center">
                 <td>
-                    <input type="checkbox" id="checkall" onclick="checkAll()"> 전체선택
+                    <input type="checkbox" id="checkAll" onclick="checkAll()"> 전체선택
                 </td>
-                <td>상품정보</td>
-                <td>상품금액</td>
+                <td>티켓 정보</td>
+                <td>티켓 금액</td>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="cartItem : ${cartItems}">
+            <!-- 예약 티켓 항목 -->
+            <tr th:each="reservationTicket : ${reservationTickets}">
                 <td class="text-center align-middle">
-                    <input type="checkbox" name="cartChkBox" th:value="${cartItem.cartItemId}">
+                    <input type="checkbox" name="reserveChkBox" th:value="${reservationTicket.reservationTicketId}"><!-- 체크박스 -->
                 </td>
                 <td class="d-flex">
-                    <div class="repImgDiv align-self-center">
-                        <img th:src="${cartItem.imgUrl}" class = "rounded repImg" th:alt="${cartItem.itemNm}">
-                    </div>
                     <div class="align-self-center">
-                        <span th:text="${cartItem.itemNm}" class="fs24 font-weight-bold"></span>
+                        <span th:text="${reservationTicket.ticketNm}" class="fs24 font-weight-bold"></span><!-- 티켓 이름 -->
                         <div class="fs18 font-weight-light">
                             <span class="input-group mt-2">
-                                <span th:id="'price_' + ${cartItem.cartItemId}"
-                                      th:data-price="${cartItem.price}"
-                                      th:text="${cartItem.price} + '원'" class="align-self-center mr-2">
+                                <span th:id="'price_' + ${reservationTicket.reservationTicketId}"
+                                      th:data-price="${reservationTicketItem.price}"
+                                      th:text="${reservationTicketItem.price} + '원'" class="align-self-center mr-2"><!-- 예약 티켓 금액 -->
                                 </span>
-                                <input type="number" name="count" th:id="'count_' + ${cartItem.cartItemId}"
-                                       th:value="${cartItem.count}" min="1" onchange="changeCount(this)" class="form-control mr-2" >
-                                <!-- 삭제 버튼 -->
-                                <button type="button" class="close" aria-label="Close">
-                                    <span aria-hidden="true" th:data-id="${cartItem.cartItemId}"
-                                          onclick="deleteCartItem(this)">&times;</span>
-                                </button>
+                                <input type="number" name="count" th:id="'count_' + ${reservationTicket.reservationTicketId}"
+                                       th:value="${reservationTicket.count}" min="1" onchange="changeCount(this)" class="form-control mr-2" ><!-- 티켓 수량 수정 -->
+
                             </span>
                         </div>
                     </div>
                 </td>
                 <td class="text-center align-middle">
-                    <span th:id="'totalPrice_' + ${cartItem.cartItemId}"
-                          name="totalPrice" th:text="${cartItem.price * cartItem.count} + '원'">
+                    <span th:id="'totalPrice_' + ${reservationTicket.reservationTicketId}"
+                          name="totalPrice" th:text="${reservationTicket.price * reservationTicket.count} + '원'"><!-- 티켓 수량 * 가격 -->
                     </span>
                 </td>
             </tr>
@@ -244,11 +158,11 @@
         </table>
 
         <h2 class="text-center">
-            총 주문 금액 : <span id="orderTotalPrice" class="text-danger">0원</span>
+            총 결제 금액 : <span id="orderTotalPrice" class="text-danger">0원</span><!-- 체크된 예약 티켓 항목 전체 금액 -->
         </h2>
 
         <div class="text-center mt-3">
-            <button type="button" class="btn btn-primary btn-lg" onclick="orders()">주문하기</button>
+            <button type="button" class="btn btn-primary btn-lg" >결제하기</button> onclick="orders()"
         </div>
     </div>
 

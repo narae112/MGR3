@@ -13,7 +13,7 @@ public interface ReservationTicketRepository extends JpaRepository<ReservationTi
     ReservationTicket findByReservationIdAndTicketId(Long reservationId, Long ticketId);
 
     //jpql 에서는 new 연산자를 이용하여 결과를 객체로 직접 변환할 수 있음
-    @Query("Select new com.MGR.dto.ReservationDtlDto(rt.id, t.name, t.price, rt.ticketCount) " +
+    @Query("Select new com.MGR.dto.ReservationDtlDto(rt.id, t.name, t.price, rt.ticketCount, rt.visitDate) " +
             "from ReservationTicket rt " + // 조회 대상 테이블
             "join rt.ticket t " + // ReservationTicket 엔티티의 ticket 연관관계를 이용, ticket 엔티티를 t 라는 별칭으로 조인, 예약내역의 티켓과 연결된 정보를 가져옴
             "where rt.reservation.id = :reservationId " + // 연관관계를 이용, 예약 id 필터링 [reservationId 파라미터값과 일치하는 예약내역]에 속한 [예약 티켓]만 조회

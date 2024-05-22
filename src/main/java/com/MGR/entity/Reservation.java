@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +21,9 @@ public class Reservation { // = 예약 List
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @OneToMany
+    @JoinColumn(name = "ticket_id")
+    private List<Ticket> ticketList;
     @OneToMany(mappedBy = "reservation" ,cascade=CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ReservationTicket> reservationTickets = new ArrayList<>();
 
