@@ -3,10 +3,12 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
-
 <!-- css -->
+
+
 <th:block layout:fragment="css">
     <style>
+
     .email_ok{
         color: blue;
         display: none;
@@ -40,6 +42,8 @@
 <!-- js -->
 <th:block layout:fragment="script">
     <script th:inline="javascript">
+        var token = $("meta[name='_csrf']").attr('content');
+        var header = $("meta[name='_csrf_header']").attr('content');
 
         var prevEmail = "";
         function checkEmail(){
@@ -49,6 +53,9 @@
                 url:'/member/emailCheck', //controller 에서 요청 받을 주소
                 type:'POST',
                 data:{email:email},
+                beforeSend : function(xhr){
+                    xhr.setRequestHeader(header, token);
+                },
                 success:function(result){
 
                 //controller 에서 넘어온 result 값이 1이면 중복
@@ -74,6 +81,9 @@
                 url:'/member/nicknameCheck',
                 type:'POST',
                 data:{nickname:nickname},
+                beforeSend : function(xhr){
+                    xhr.setRequestHeader(header, token);
+                },
                 success:function(result){
 
                     if(result === 0){
@@ -100,6 +110,9 @@
                     password: password,
                     password2: password2
                 },
+                beforeSend : function(xhr){
+                    xhr.setRequestHeader(header, token);
+                },
                 success: function(result) {
                     if (result === 0) {
                         $('.password_ok').css("display", "inline-block");
@@ -118,6 +131,9 @@
                 url:'/member/sendEmail',
                 type:'GET',
                 data:{email:email},
+                beforeSend : function(xhr){
+                    xhr.setRequestHeader(header, token);
+                },
                 success:function(result){
                     alert(result);
                 },
