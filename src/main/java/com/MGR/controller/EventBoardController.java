@@ -9,11 +9,13 @@ import com.MGR.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -45,7 +47,6 @@ public class EventBoardController {
     public String eventBoardCreate(@Valid EventBoardFormDto BoardFormDto,
                                    Errors errors, Model model,
                                    @AuthenticationPrincipal CustomUserDetails member){
-        //게시글 생성
         if(errors.hasErrors()) {
             return "board/event/eventBoardForm";
         }
@@ -58,6 +59,24 @@ public class EventBoardController {
             return "board/event/eventBoardForm";
         }
         return "redirect:/board/events";
+    }
+
+    @GetMapping("/eventBoard/edit/{id}")
+    public String eventBoardCreate(@PathVariable("id") Long id, Model model,
+                                   @AuthenticationPrincipal CustomUserDetails member){
+
+        EventBoard eventBoard = eventBoardService.findById(id).orElseThrow();
+        Member findMember = memberService.findById(member.getId()).orElseThrow();
+        Long authorId = eventBoard.getMember().getId();
+        Long findMemberId = findMember.getId();
+
+        if(!findMemberId.equals(authorId)){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "작성자만 수정할 수 있습니다.");
+        }
+
+        model.addAttribute("eventBoardFormDto",eventBoard);
+
+        return "board/event/eventBoardForm";
     }
 
     @GetMapping("/event/{id}") //이벤트 게시판 게시글 id
