@@ -47,7 +47,12 @@
         </table>
     </div>
 
-        <button class="btn btn-primary" onClick="location.href='/board/eventBoard/new'">글쓰기</button>
+        <button class="btn btn-primary"
+                onClick="location.href='/board/eventBoard/new'"
+                sec:authorize="hasRole('ROLE_ADMIN')"
+
+
+        >글쓰기</button>
 <!--    0521 관리자만 버튼 보이게 설정해야함-->
 
     <div th:if="${!paging.isEmpty()}">
