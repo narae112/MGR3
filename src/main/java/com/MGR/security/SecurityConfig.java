@@ -52,10 +52,11 @@ public class SecurityConfig {
                         .invalidateHttpSession(true)); // 세션 삭제
 
         http.authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/**").permitAll()
-//                        .requestMatchers("/admin/**").hasRole("ADMIN")
-//                .requestMatchers("/admin").hasRole("ADMIN")
-                .anyRequest().authenticated());
+                        .requestMatchers("/**").permitAll()
+                        .requestMatchers("/admin/**").permitAll()
+//                      .requestMatchers("/admin/**").hasRole("ADMIN")
+//                      .requestMatchers("/admin").hasRole("ADMIN")
+                        .anyRequest().authenticated());
 
         http.userDetailsService(customUserDetailsService);
 
