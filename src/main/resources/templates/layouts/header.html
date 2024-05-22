@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:with="lang=${#locale.language}" th:lang="${lang}">
 <head th:fragment="head">
     <meta charset="utf-8" />
@@ -12,19 +13,19 @@
 <div th:fragment="header">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container px-4 px-lg-5">
-            <a class="navbar-brand" href="#">MGR</a>
+            <a class="navbar-brand" href="/">MGR</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/member/login}">로그인</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/member/logout}">로그아웃</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/member/join}">회원가입</a></li>
+                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/member/login}">로그인</a></li>
+                    <li class="nav-item"><a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/member/logout}">로그아웃</a></li>
+                    <li class="nav-item"><a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/member/join}">회원가입</a></li>
                     <li class="nav-item"><a class="nav-link" th:href="@{/board/events}">이벤트/공지</a></li>
                     <li class="nav-item"><a class="nav-link" th:href="@{/member/reservation}">예약내역</a></li>
                     <li class="nav-item"><a class="nav-link" th:href="@{/ticket}">티켓 확인</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/admin/ticket/new}">티켓 등록</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/admin/tickets}">티켓 관리</a></li>
+                    <li class="nav-item"><a class="nav-link" sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/admin/ticket/new}">티켓 등록</a></li>
+                    <li class="nav-item"><a class="nav-link" sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/admin/tickets}">티켓 관리</a></li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">family site</a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">

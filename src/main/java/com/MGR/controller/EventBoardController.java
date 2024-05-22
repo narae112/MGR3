@@ -61,6 +61,7 @@ public class EventBoardController {
         return "redirect:/board/events";
     }
 
+
     @GetMapping("/eventBoard/edit/{id}")
     public String eventBoardCreate(@PathVariable("id") Long id, Model model,
                                    @AuthenticationPrincipal CustomUserDetails member){
