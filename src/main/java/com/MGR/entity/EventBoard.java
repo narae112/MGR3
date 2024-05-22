@@ -1,10 +1,12 @@
 package com.MGR.entity;
 
 import com.MGR.constant.EventType;
+import com.MGR.dto.EventBoardFormDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 
 @Entity
@@ -25,33 +27,43 @@ public class EventBoard {
     private String content;
 
     @Column
-    private int count = 0;
-    //조회수 초기값 0 설정
+    private int count = 0; //조회수 초기값 0 설정
 
-    @Column(columnDefinition = "DATETIME")
+    @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime createDate;
 
-    @Column(columnDefinition = "DATETIME")
-    private LocalDateTime modifiedDate;
+    @Column(columnDefinition = "TIMESTAMP")
+    private LocalDateTime modifiedDate = null;
 
-    @Column(columnDefinition = "DATETIME")
-    private LocalDateTime startDate;
+    @Column(columnDefinition = "DATE")
+    private String startDate;
 
-    @Column(columnDefinition = "DATETIME")
-    private LocalDateTime endDate;
+    @Column(columnDefinition = "DATE")
+    private String endDate;
 
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @PrePersist
-    private void onCreate() {
-        createDate = LocalDateTime.now();
+    public String dateFormat(){
+        LocalDateTime dateTime = LocalDateTime.now();
+        SimpleDateFormat createDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return createDate.format(dateTime);
     }
 
-    @PreUpdate
-    private void onUpdate() {
-        modifiedDate = LocalDateTime.now();
+    public static EventBoard createBoard(EventBoardFormDto boardFormDto, Member member){
+        EventBoard board = new EventBoard();
+
+        board.setType(boardFormDto.getType());
+        board.setTitle(boardFormDto.getTitle());
+        board.setContent(boardFormDto.getContent());
+        board.setStartDate(boardFormDto.getStartDate());
+        board.setEndDate(boardFormDto.getEndDate());
+        board.setCreateDate(LocalDateTime.now());
+        board.setMember(member);
+
+        return board;
+
     }
 
 }

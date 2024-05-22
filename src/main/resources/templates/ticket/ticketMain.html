@@ -1,80 +1,86 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
 
+<!-- CSS 스타일 시트 -->
 <th:block layout:fragment="css">
     <style>
         .carousel-inner > .ticket {
             height: 350px;
         }
-        .margin{
-            margin-bottom:30px;
+        .margin {
+            margin-bottom: 30px;
         }
-        .banner{
+        .banner {
             height: 300px;
             position: absolute; top:0; left: 0;
             width: 100%;
             height: 100%;
         }
-        .card-text{
+        .card-text {
             text-overflow: ellipsis;
             white-space: nowrap;
             overflow: hidden;
         }
-        a:hover{
-            text-decoration:none;
+        a:hover {
+            text-decoration: none;
         }
-        .center{
-            text-align:center;
+        .center {
+            text-align: center;
         }
     </style>
 </th:block>
+
+<!-- 페이지 내용 -->
 <div layout:fragment="content">
 
-
-    <input type="hidden" name="searchQuery" th:value="${ticketSearchDto.searchQuery}">
+    <!-- 검색 결과 표시 -->
     <div th:if="${not #strings.isEmpty(ticketSearchDto.searchQuery)}" class="center">
         <p class="h3 font-weight-bold" th:text="${ticketSearchDto.searchQuery} + '검색 결과'"></p>
     </div>
 
+    <!-- 티켓 목록 -->
     <div class="row">
         <th:block th:each="ticket, status: ${tickets.getContent()}">
             <div class="col-md-4 margin">
-                <div class="card">
-                    <a th:href="'/ticket/' +${ticket.id}" class="text-dark">
-                        <img th:src="${ticket.imgUrl}" class="card-img-top" th:alt="${ticket.name}" height="400">
-                        <div class="card-body">
-                            <h4 class="card-title">[[${ticket.name}]]</h4>
-                            <p class="card-text">[[${ticket.memo}]]</p>
-                            <h3 class="card-title text-danger">[[${ticket.price}]]원</h3>
-                        </div>
-                    </a>
-                </div>
+                <a th:href="'/ticket/' + ${ticket.id}" class="text-dark">
+                    <img th:src="${ticket.imgUrl}" class="card-img-top" th:alt="${ticket.id}" height="400">
+                    <div class="card-body">
+                        <h4 class="card-title" th:text="${ticket.name}"></h4>
+                        <p class="card-text" th:text="${ticket.memo}"></p>
+                        <h3 class="card-title text-danger" th:text="${ticket.price} + '원'"></h3>
+                    </div>
+                </a>
             </div>
         </th:block>
     </div>
 
-    <div th:if="${ticket != null}" th:with="start=${(ticket.number/maxPage)*maxPage + 1}, end=(${(tickets.totalPages == 0) ? 1 : (start + (maxPage - 1) < tickets.totalPages ? start + (maxPage - 1) : tickets.totalPages)})" >
+    <!-- 페이징 -->
+    <div th:if="${ticket != null}" th:with="start=${(ticket.number / maxPage) * maxPage + 1}, end=(${(tickets.totalPages == 0) ? 1 : (start + (maxPage - 1) < tickets.totalPages ? start + (maxPage - 1) : tickets.totalPages)}">
         <ul class="pagination justify-content-center">
 
-            <li class="page-ticket" th:classappend="${tickets.number eq 0}?'disabled':''">
-                <a th:href="@{'/' + '?searchQuery=' + ${ticketSearchDto.searchQuery} + '&page=' + ${tickets.number-1}}" aria-label='Previous' class="page-link">
+            <!-- 이전 페이지 링크 -->
+            <li class="page-ticket" th:classappend="${tickets.number eq 0} ? 'disabled' : ''">
+                <a th:href="@{'/' + '?searchQuery=' + ${ticketSearchDto.searchQuery} + '&page=' + ${tickets.number - 1}}" aria-label='Previous' class="page-link">
                     <span aria-hidden='true'>Previous</span>
                 </a>
             </li>
 
-            <li class="page-ticket" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${tickets.number eq page-1}?'active':''">
-                <a th:href="@{'/' +'?searchQuery=' + ${ticketSearchDto.searchQuery} + '&page=' + ${page-1}}" th:inline="text" class="page-link">[[${page}]]</a>
+            <!-- 페이지 번호 링크 -->
+            <li class="page-ticket" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${tickets.number eq page - 1} ? 'active' : ''">
+                <a th:href="@{'/' +'?searchQuery=' + ${ticketSearchDto.searchQuery} + '&page=' + ${page - 1}}" th:inline="text" class="page-link" th:text="${page}"></a>
             </li>
 
-            <li class="page-ticket" th:classappend="${tickets.number+1 ge tickets.totalPages}?'disabled':''">
-                <a th:href="@{'/' +'?searchQuery=' + ${ticketSearchDto.searchQuery} + '&page=' + ${tickets.number+1}}" aria-label='Next' class="page-link">
+            <!-- 다음 페이지 링크 -->
+            <li class="page-ticket" th:classappend="${tickets.number + 1 ge tickets.totalPages} ? 'disabled' : ''">
+                <a th:href="@{'/' +'?searchQuery=' + ${ticketSearchDto.searchQuery} + '&page=' + ${tickets.number + 1}}" aria-label='Next' class="page-link">
                     <span aria-hidden='true'>Next</span>
                 </a>
             </li>
 
         </ul>
     </div>
-
 </div>
+</html>

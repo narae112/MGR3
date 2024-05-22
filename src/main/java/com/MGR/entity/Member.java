@@ -47,7 +47,21 @@ public class Member {
         member.setName(memberFormDto.getName());
         member.setNickname(memberFormDto.getNickname());
         member.setBirth(memberFormDto.getBirth());
-        member.setRole(Role.ADMIN);
+        member.setRole(Role.USER);
+        member.setIsSuspended(false);
+
+        return member;
+    }
+
+    public static Member createMember(String email,String name,String password,
+                                      PasswordEncoder passwordEncoder) {
+
+        Member member = new Member();
+
+        member.setEmail(email);
+        member.setPassword(passwordEncoder.encode(password));
+        member.setNickname(name);
+        member.setRole(Role.USER);
         member.setIsSuspended(false);
 
         return member;
