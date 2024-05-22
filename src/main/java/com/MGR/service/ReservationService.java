@@ -28,7 +28,7 @@ public class ReservationService {
     private final MemberRepository memberRepository;
     private final ReservationRepository reservationRepository;
     private final ReservationTicketRepository reservationTicketRepository;
-    private final OrderService orderService; // 결제
+    // private final OrderService orderService; // 결제
 
     // 예약 내역에 추가
     public Long addReservation(ReservationTicketDto reservationTicketDto, String email) {
