@@ -123,23 +123,23 @@ public class SecurityConfig {
         };
     }
 
-//    @Bean
-//    public CommandLineRunner initDbUser(MemberRepository memberRepository){
-//
-//        return createAdmin -> {
-//            boolean isAdminPresent = memberRepository.findByName("사용자").isPresent();
-//
-//            if (!isAdminPresent) {
-//                Member user = new Member();
-//
-//                user.setName("사용자");
-//                user.setEmail("mrg2024@kakao.com");
-//                user.setNickname("초기사용자");
-//                user.setPassword(passwordEncoder().encode("USER"));
-//                user.setRole(Role.USER);
-//
-//                memberRepository.save(user);
-//            }
-//        };
-//    }
+    @Bean
+    public CommandLineRunner initDbUser(MemberRepository memberRepository){
+
+        return createAdmin -> {
+            boolean isAdminPresent = memberRepository.findByName("사용자").isPresent();
+
+            if (!isAdminPresent) {
+                Member user = new Member();
+
+                user.setName("사용자");
+                user.setEmail("user@mgr.com");
+                user.setNickname("초기사용자");
+                user.setPassword(passwordEncoder().encode("USER"));
+                user.setRole(Role.USER);
+
+                memberRepository.save(user);
+            }
+        };
+    }
 }

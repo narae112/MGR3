@@ -3,23 +3,17 @@ package com.MGR.controller;
 import com.MGR.dto.EventBoardFormDto;
 import com.MGR.entity.EventBoard;
 import com.MGR.entity.Member;
-import com.MGR.repository.EventBoardRepository;
 import com.MGR.security.CustomUserDetails;
 import com.MGR.service.EventBoardService;
 import com.MGR.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/board")
@@ -29,7 +23,7 @@ public class EventBoardController {
     private final MemberService memberService;
     private final EventBoardService eventBoardService;
 
-    @GetMapping({"/event", "/event/{page}"})
+    @GetMapping({"/events", "/events/{page}"})
     public String eventBoardList(Model model, @RequestParam(value = "page", defaultValue = "0") int page) {
         Page<EventBoard> paging = eventBoardService.getBordeList(page);
         model.addAttribute("paging", paging);
@@ -69,7 +63,7 @@ public class EventBoardController {
 
 
 
-        return "board/event/eventBoardDtl/" + id;
+        return "event/eventBoardDtl/" + id;
     }
 
 }
