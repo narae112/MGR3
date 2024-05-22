@@ -1,99 +1,68 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
 
 <th:block layout:fragment="script">
     <script th:inline="javascript">
-        var token = $("meta[name='_csrf']").attr('content');
-         var header = $("meta[name='_csrf_header']").attr('content');
+        $(document).ready(function(){
+            var errorMessage = /*[[${errorMessage}]]*/ '';
+            if(errorMessage != null){
+                alert(errorMessage);
+            }
 
-       $(document).ready(function(){
-           var errorMessage = /*[[${errorMessage}]]*/ '';
-           if(errorMessage != null){
-               alert(errorMessage);
-           }
-
-           bindDomEvent();
-       });
+            bindDomEvent();
+        });
 
 <!--       이미지 파일 처리-->
-       function bindDomEvent() {
-           $(".custom-file-input").on("change", function() {
-               var fileName = $(this).val().split("\\").pop();
-               var fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+        function bindDomEvent() {
+            $(".custom-file-input").on("change", function() {
+                var fileName = $(this).val().split("\\").pop();
+                var fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
 
-               if (fileExt != "jpg" && fileExt != "jpeg" && fileExt != "gif" && fileExt != "png" && fileExt != "bmp") {
-                   alert("이미지 파일만 등록이 가능합니다.");
-                   return;
-               }
+                if (fileExt != "jpg" && fileExt != "jpeg" && fileExt != "gif" && fileExt != "png" && fileExt != "bmp") {
+                    alert("이미지 파일만 등록이 가능합니다.");
+                    return;
+                }
 
-               $(this).siblings(".custom-file-label").html(fileName);
-           });
-       }
+                $(this).siblings(".custom-file-label").html(fileName);
+            });
+        }
 
 <!--       달력 초기화-->
-       function initializeDatePickers() {
-           $('.datepicker').datepicker({
-               format: 'yyyy-MM-ddTHH:mm',
-               autoclose: true,
-               todayHighlight: true
-           });
-       }
+        function initializeDatePickers() {
+            $('.datepicker').datepicker({
+                format: 'yyyy-MM-ddTHH:mm',
+                autoclose: true,
+                todayHighlight: true
+            });
+        }
 
 <!--        종료 날짜 검증-->
-       function checkEndDateInput() {
-           var startDate = document.getElementById("startDate").value;
-           var endDate = document.getElementById("endDate").value;
-           var startDateObj = new Date(startDate);
-           var endDateObj = new Date(endDate);
+        function checkEndDateInput() {
+            var startDate = document.getElementById("startDate").value;
+            var endDate = document.getElementById("endDate").value;
+            var startDateObj = new Date(startDate);
+            var endDateObj = new Date(endDate);
 
-           if (endDateObj < startDateObj) {
-               alert("종료 날짜는 시작 날짜 이후여야 합니다.");
-               document.getElementById("endDate").value = "";
-               return false;
-           }
-           return true;
-       }
+            if (endDateObj < startDateObj) {
+                alert("종료 날짜는 시작 날짜 이후여야 합니다.");
+                document.getElementById("endDate").value = "";
+                return false;
+            }
+            return true;
+        }
 
 <!--        시작 날짜 검증-->
-       function checkStartDate() {
-           var selectedDate = document.getElementById("startDate").value;
-           var currentDate = new Date().toISOString().split('T')[0];
+        function checkStartDate() {
+            var selectedDate = document.getElementById("startDate").value;
+            var currentDate = new Date().toISOString().split('T')[0];
 
-           if (selectedDate < currentDate) {
-               alert("과거 날짜는 선택할 수 없습니다.");
-               document.getElementById("startDate").value = "";
-           }
-       }
-
-<!--        티켓 삭제 확인 및 처리-->
-   function deleteTicket(ticketId) {
-   if (confirm("정말로 이 티켓을 삭제하시겠습니까?")) {
-       fetch(`/admin/ticket/delete/${ticketId}`, {
-           method: 'DELETE',
-           headers: {
-               'Content-Type': 'application/json',
-               'X-CSRF-TOKEN': document.querySelector('input[name="_csrf"]').value
-           }
-       })
-       .then(response => {
-           if (!response.ok) {
-               throw new Error('삭제할 수 없습니다.');
-           }
-           return response.text();
-       })
-       .then(result => {
-           alert(result);
-           window.location.href = '/ticket'; // 티켓 목록 페이지로 리다이렉트
-       })
-       .catch(error => {
-           console.error('삭제 에러:', error.message); // 에러 메시지 출력
-           alert('삭제 중 오류가 발생했습니다.');
-       });
-   }
-}
+            if (selectedDate < currentDate) {
+                alert("과거 날짜는 선택할 수 없습니다.");
+                document.getElementById("startDate").value = "";
+            }
+        }
     </script>
 </th:block>
 
@@ -185,11 +154,11 @@
             <div th:unless="${#strings.isEmpty(ticketFormDto.id)}" style="text-align: center">
                 <button th:formaction="@{'/admin/ticket/' + ${ticketFormDto.id} }" type="submit" class="btn btn-primary">수정</button>
 <!--                삭제 버튼-->
-                <button type="button" class="btn btn-danger" onclick="deleteTicket(/*[[${ticketFormDto.id}]]*/)">삭제</button>
+                <a th:href="@{/admin/ticket/delete/{ticketId}(ticketId=${ticketFormDto.id})}" class="btn btn-danger" onclick="return confirm('정말로 삭제하시겠습니까?')">삭제</a>
             </div>
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
         </div>
-      
+
     </form>
 </div>
 </html>
