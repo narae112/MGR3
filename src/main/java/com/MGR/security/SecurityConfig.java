@@ -137,4 +137,24 @@ public class SecurityConfig {
             }
         };
     }
+
+    @Bean
+    public CommandLineRunner initDb2(MemberRepository memberRepository){
+
+        return createAdmin -> {
+            boolean isAdminPresent = memberRepository.findByName("관리자2").isPresent();
+
+            if (!isAdminPresent) {
+                Member admin = new Member();
+
+                admin.setName("관리자2");
+                admin.setEmail("admin2@mgr.com");
+                admin.setNickname("초기관리자2");
+                admin.setPassword(passwordEncoder().encode("admin"));
+                admin.setRole(Role.ADMIN);
+
+                memberRepository.save(admin);
+            }
+        };
+    }
 }
