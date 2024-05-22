@@ -63,6 +63,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 //    @Bean
 //    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 //
@@ -87,6 +88,15 @@ public class SecurityConfig {
 //                                .userService(customOAuth2UserService)
 //                        )
 //                )
+
+    //======== 민재씨 코드============
+//    .oauth2Login(oauth2Login -> oauth2Login
+//            .loginPage("/login") // 로그인 페이지 지정
+//            .defaultSuccessUrl("/") // 기본 OAuth2 로그인 성공 후 이동할 페이지 설정
+//                        .userInfoEndpoint(userInfo -> userInfo
+//            .userService(principalOauth2UserService) // OAuth2 사용자 정보 엔드포인트 설정
+//            )
+
 //                .logout(logout -> logout
 //                        .logoutRequestMatcher(new AntPathRequestMatcher("/member/logout"))
 //                        .logoutSuccessUrl("/")
