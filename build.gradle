@@ -57,6 +57,8 @@ dependencies {
 
 	//gson json
 //	implementation 'com.google.code.gson:gson:2.8.8'
+
+//	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
 }
 
 tasks.named('bootBuildImage') {
@@ -80,4 +82,9 @@ tasks.withType(JavaCompile) {
 
 clean.doLast {
 	file(querydslDir).deleteDir()
+}
+
+bootRun {
+	systemProperties['spring.devtools.restart.enabled'] = 'true'
+	systemProperties['spring.devtools.livereload.enabled'] = 'true'
 }
