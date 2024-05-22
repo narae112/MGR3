@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -66,6 +67,11 @@ public class TicketService {
         return ticketFormDto;
     }
 
+    @Transactional
+    public void deleteTicket(Ticket ticket) {
+        ticketRepository.delete(ticket);
+    }
+
     public Long updateTicket(TicketFormDto ticketFormDto, List<MultipartFile> ticketImgFileList) throws Exception {
         //티켓수정
         Ticket ticket = ticketRepository.findById(ticketFormDto.getId())
@@ -79,6 +85,14 @@ public class TicketService {
                     ticketImgFileList.get(i));
         }
         return ticket.getId();
+    }
+    public Ticket getTicket(Long ticketId) {
+        Optional<Ticket> ticket = this.ticketRepository.findById(ticketId);
+        return ticket.orElse(null); // orElse(null)를 사용하여 값이 없을 때 null을 반환하도록 설정
+    }
+
+    public void ticketDelete(Ticket ticket) {
+        this.ticketRepository.delete(ticket);
     }
 
     @Transactional(readOnly = true)
