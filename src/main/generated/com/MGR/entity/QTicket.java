@@ -28,7 +28,7 @@ public class QTicket extends EntityPathBase<Ticket> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final StringPath location = createString("location");
+    public final EnumPath<com.MGR.constant.LocationCategory> locationCategory = createEnum("locationCategory", com.MGR.constant.LocationCategory.class);
 
     public final StringPath memo = createString("memo");
 
