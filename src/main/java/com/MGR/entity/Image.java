@@ -1,6 +1,5 @@
 package com.MGR.entity;
 
-import com.MGR.constant.ImageCategory;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,7 +28,7 @@ public class Image extends BaseEntity{
     private Ticket ticket;
 
     @ManyToOne(fetch=FetchType.LAZY)
-    private QnAComment qnAComment;
+    private QnAAnswer qnAAnswer;
 
     @ManyToOne(fetch=FetchType.LAZY)
     private ReviewComment reviewComment;

@@ -101,7 +101,7 @@
             <img th:src="${ticket.ticketImgDtoList[0].imgUrl}" class="rounded repImg" th:alt="${ticket.name}">
         </div>
         <div class="wd50">
-            <div class="h4" th:text="${ticket.name} + '(' + ${ticket.location} + '점)'"></div> <!-- 티켓이름 / 지점 -->
+            <div class="h4" th:text="${ticket.name} + ' (' + ${ticket.locationCategory.displayName} + '점)'"></div>
             <hr class="my-4">
             <!-- my-4 y축(상하) 마진 4-->
             <div>
