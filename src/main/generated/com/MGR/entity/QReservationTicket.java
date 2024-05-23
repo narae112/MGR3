@@ -31,7 +31,7 @@ public class QReservationTicket extends EntityPathBase<ReservationTicket> {
     public final QTicket ticket;
 
     public final NumberPath<Integer> ticketCount = createNumber("ticketCount", Integer.class);
-
+  
     public final DatePath<java.time.LocalDate> visitDate = createDate("visitDate", java.time.LocalDate.class);
 
     public QReservationTicket(String variable) {

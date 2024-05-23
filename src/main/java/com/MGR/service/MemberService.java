@@ -1,5 +1,6 @@
 package com.MGR.service;
 
+import com.MGR.constant.Role;
 import com.MGR.entity.Member;
 import com.MGR.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +37,7 @@ public class MemberService{
     //이메일 중복 체크
     public int emailCheck(String email) {
         Optional<Member> member = memberRepository.findByEmail(email);
-        int result = member.isPresent()? 1 : 0;
+        int result = member.isPresent()? 1 : 0; //DB에 동일한 이메일이 없으면 1
 
         return result;
     }
@@ -44,4 +45,6 @@ public class MemberService{
     public Optional<Member> findById(Long id){
         return memberRepository.findById(id);
     }
+
+
 }
