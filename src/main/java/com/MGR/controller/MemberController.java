@@ -1,5 +1,6 @@
 package com.MGR.controller;
 
+import com.MGR.dto.EventBoardFormDto;
 import com.MGR.dto.MemberFormDto;
 import com.MGR.entity.Member;
 import com.MGR.security.CustomUserDetails;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/member")
@@ -62,8 +65,34 @@ public class MemberController {
     }
 
     @GetMapping("/edit")
-    public String memberInfoEdit(Model model){
+    public String memberEdit(Model model, @AuthenticationPrincipal CustomUserDetails member){
+
+        Member memberInfo = memberService.findByEmail(member.getUsername()).orElseThrow();
+        model.addAttribute("memberInfo", memberInfo);
+
         return "/member/editForm";
+    }
+
+    @PostMapping("/editNickname/{id}")
+    public String memberInfoEditNickname(@PathVariable("id") Long id,
+                                 @AuthenticationPrincipal CustomUserDetails member,
+                                 MemberFormDto memberInfo){
+
+        Optional<Member> findMember = memberService.findByEmail(member.getUsername());
+        memberService.updateNickname(id,memberInfo.getNickname());
+
+        return "redirect:/member/edit";
+    }
+
+    @PostMapping("/editPassword/{id}")
+    public String memberInfoEditPassword(@PathVariable("id") Long id,
+                                 @AuthenticationPrincipal CustomUserDetails member,
+                                 MemberFormDto memberInfo){
+
+        Optional<Member> findMember = memberService.findByEmail(member.getUsername());
+        memberService.updatePassword(id,memberInfo.getPassword());
+
+        return "redirect:/member/edit";
     }
 
     @PostMapping("/emailCheck")
