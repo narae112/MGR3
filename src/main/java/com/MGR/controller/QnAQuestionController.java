@@ -1,6 +1,7 @@
 package com.MGR.controller;
 
 import com.MGR.dto.QnAQuestionForm;
+import com.MGR.dto.QnaAnswerForm;
 import com.MGR.entity.Member;
 import com.MGR.entity.QnABoard;
 import com.MGR.service.MemberService;
