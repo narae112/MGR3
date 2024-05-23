@@ -3,7 +3,7 @@ package com.MGR.controller;
 import com.MGR.dto.QnAQuestionForm;
 import com.MGR.dto.QnaAnswerForm;
 import com.MGR.entity.Member;
-import com.MGR.entity.QnABoard;
+import com.MGR.entity.QnAQuestion;
 import com.MGR.service.MemberService;
 import com.MGR.service.QnAQuestionService;
 import jakarta.validation.Valid;
@@ -29,7 +29,7 @@ public class QnAQuestionController {
     @GetMapping("/list")
     public String list(Model model, @RequestParam(value = "page", defaultValue = "0") int page,
                        @RequestParam(value = "kw", defaultValue = "") String kw) {
-        Page<QnABoard> paging = this.questionService.getList(page, kw);
+        Page<QnAQuestion> paging = this.questionService.getList(page, kw);
         model.addAttribute("paging", paging);
         model.addAttribute("kw", kw);
         return "board/qna/question_list";
@@ -37,7 +37,7 @@ public class QnAQuestionController {
 
     @GetMapping(value = "/detail/{id}")
     public String detail(Model model, @PathVariable("id") Integer id, QnaAnswerForm qnaAnswerForm) {
-        QnABoard question = this.questionService.getQnaBoard(id);
+        QnAQuestion question = this.questionService.getQnaBoard(id);
         model.addAttribute("question", question);
         return "board/qna/question_detail";
     }
@@ -54,7 +54,7 @@ public class QnAQuestionController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify/{id}")
     public String questionModify(QnAQuestionForm questionForm, @PathVariable("id") Integer id, Principal principal) {
-        QnABoard question = this.questionService.getQnaBoard(id);
+        QnAQuestion question = this.questionService.getQnaBoard(id);
         if (!question.getAuthor().getName().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
@@ -69,7 +69,7 @@ public class QnAQuestionController {
         if (bindingResult.hasErrors()) {
             return "board/qna/question_form";
         }
-        QnABoard question = this.questionService.getQnaBoard(id);
+        QnAQuestion question = this.questionService.getQnaBoard(id);
         if (!question.getAuthor().getName().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
@@ -80,7 +80,7 @@ public class QnAQuestionController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/delete/{id}")
     public String questionDelete(Principal principal, @PathVariable("id") Integer id) {
-        QnABoard question = this.questionService.getQnaBoard(id);
+        QnAQuestion question = this.questionService.getQnaBoard(id);
         if (!question.getAuthor().getName().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");
         }
@@ -91,7 +91,7 @@ public class QnAQuestionController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/vote/{id}")
     public String questionVote(Principal principal, @PathVariable("id") Integer id) {
-        QnABoard question = this.questionService.getQnaBoard(id);
+        QnAQuestion question = this.questionService.getQnaBoard(id);
         Member siteUser = this.memberService.getUser(principal.getName());
         this.questionService.vote(question, siteUser);
         return String.format("redirect:/qnaQuestion/detail/%s", id);

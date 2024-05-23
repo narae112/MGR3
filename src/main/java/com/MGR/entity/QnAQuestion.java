@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Entity(name = "QNA_BOARD")
 @Setter @Getter
-public class QnABoard {
+public class QnAQuestion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,5 +44,5 @@ public class QnABoard {
     Set<Member> voter;
 
     @OneToMany(mappedBy = "qnABoard", cascade = CascadeType.REMOVE)
-    private List<QnAComment> qnACommentList = new ArrayList<>();
+    private List<QnAAnswer> qnACommentList = new ArrayList<>();
 }

@@ -1,6 +1,6 @@
 package com.MGR.repository;
 
-import com.MGR.entity.QnABoard;
+import com.MGR.entity.QnAQuestion;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -10,12 +10,12 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface QnAQuestionRepository extends JpaRepository<QnABoard, Integer> {
-    QnABoard findBySubject(String subject);
-    QnABoard findBySubjectAndContent(String subject, String content);
-    List<QnABoard> findBySubjectLise(String subject);
-    Page<QnABoard> findAll(Pageable pageable);
-    Page<QnABoard> findAll(Specification<QnABoard> spec, Pageable pageable);
+public interface QnAQuestionRepository extends JpaRepository<QnAQuestion, Integer> {
+    QnAQuestion findBySubject(String subject);
+    QnAQuestion findBySubjectAndContent(String subject, String content);
+    List<QnAQuestion> findBySubjectLise(String subject);
+    Page<QnAQuestion> findAll(Pageable pageable);
+    Page<QnAQuestion> findAll(Specification<QnAQuestion> spec, Pageable pageable);
 
     @Query("select "
             + "distinct q "
@@ -29,5 +29,5 @@ public interface QnAQuestionRepository extends JpaRepository<QnABoard, Integer> 
             + "   or u1.name like %:kw% "
             + "   or a.content like %:kw% "
             + "   or u2.name like %:kw% ")
-    Page<QnABoard> findAllByKeyword(@Param("kw") String kw, Pageable pageable);
+    Page<QnAQuestion> findAllByKeyword(@Param("kw") String kw, Pageable pageable);
 }
