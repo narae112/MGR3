@@ -2,6 +2,7 @@ package com.MGR.service;
 
 import com.MGR.constant.Role;
 import com.MGR.entity.Member;
+import com.MGR.exception.DataNotFoundException;
 import com.MGR.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
@@ -49,6 +50,13 @@ public class MemberService{
     public Optional<Member> findById(Long id){
         return memberRepository.findById(id);
     }
-
-
+//qna question
+    public Member getUser(String username) {
+        Optional<Member> siteUser = this.memberRepository.findByName(username);
+        if (siteUser.isPresent()) {
+            return siteUser.get();
+        } else {
+            throw new DataNotFoundException("siteuser not found");
+        }
+    }
 }

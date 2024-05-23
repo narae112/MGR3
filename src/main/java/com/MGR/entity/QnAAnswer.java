@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Setter @Getter
 @Entity(name = "QNA_COMMENT")
-public class QnAComment {
+public class QnAAnswer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +25,7 @@ public class QnAComment {
 
     @ManyToOne
     @JoinColumn(name = "qna_board_id")
-    private QnABoard qnABoard;
+    private QnAQuestion author;
 
     @PrePersist
     protected void onCreate() {
