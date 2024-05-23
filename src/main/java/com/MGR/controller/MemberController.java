@@ -2,9 +2,11 @@ package com.MGR.controller;
 
 import com.MGR.dto.MemberFormDto;
 import com.MGR.entity.Member;
+import com.MGR.security.CustomUserDetails;
 import com.MGR.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -83,7 +85,15 @@ public class MemberController {
     public int passwordCheck(@RequestParam("password") String password,
                              @RequestParam("password2") String password2){
         return password.equals(password2)? 0 : 1;
-        //비밀번호, 비밀번호 확인 일치 확인
+        //비밀번호, 비밀번호2 일치 확인
+    }
+
+    @GetMapping("/verifyPassword")
+    @ResponseBody
+    public int verifyPassword(@RequestParam("verifyPassword") String password,
+                              @AuthenticationPrincipal CustomUserDetails member){
+        return passwordEncoder.matches(password,member.getPassword())? 0 : 1;
+        //회원정보 변경 전 비밀번호 인증
     }
 
 }
