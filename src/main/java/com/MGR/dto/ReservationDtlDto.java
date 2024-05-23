@@ -3,6 +3,7 @@ package com.MGR.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter @Setter
@@ -11,9 +12,9 @@ public class ReservationDtlDto {
     private String ticketNm; // 티켓 이름
     private int price; // 금액
     private int ticketCount; // 수량
-    private String visitDate; // 방문예정일
+    private LocalDate visitDate; // 방문예정일
 
-    public ReservationDtlDto(Long reservationTicketId, String ticketNm, int price, int ticketCount, String visitDate) {
+    public ReservationDtlDto(Long reservationTicketId, String ticketNm, int price, int ticketCount, LocalDate visitDate) {
         this.reservationTicketId = reservationTicketId;
         this.ticketNm = ticketNm;
         this.price = price;

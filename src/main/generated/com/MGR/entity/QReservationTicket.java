@@ -32,7 +32,7 @@ public class QReservationTicket extends EntityPathBase<ReservationTicket> {
 
     public final NumberPath<Integer> ticketCount = createNumber("ticketCount", Integer.class);
 
-    public final DateTimePath<java.time.LocalDateTime> visitDate = createDateTime("visitDate", java.time.LocalDateTime.class);
+    public final DatePath<java.time.LocalDate> visitDate = createDate("visitDate", java.time.LocalDate.class);
 
     public QReservationTicket(String variable) {
         this(ReservationTicket.class, forVariable(variable), INITS);

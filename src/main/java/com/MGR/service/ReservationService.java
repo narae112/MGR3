@@ -42,17 +42,19 @@ public class ReservationService {
         if(reservation == null) {
             reservation = Reservation.createReservation(member.orElse(null));
             reservationRepository.save(reservation);
-        }
+        } // 로그인 된 회원이 예약 내역을 가지고 있는지 확인하고 없으면 만듦
 
         ReservationTicket savedReservationTicket = reservationTicketRepository.findByReservationIdAndTicketId(reservation.getId(), ticket.getId());
+        // 예약할 티켓이 이미 예약되어있는 티켓이면
 
         if(savedReservationTicket != null) {
-            savedReservationTicket.addCount(reservationTicketDto.getTicketCount());
+            savedReservationTicket.addCount(reservationTicketDto.getTicketCount()); // 수량만 증가
 
-            return savedReservationTicket.getId();
-        } else {
-            ReservationTicket reservationTicket = ReservationTicket.createReservationTicket(reservation, ticket, reservationTicketDto.getTicketCount());
-            reservationTicketRepository.save(reservationTicket);
+            return savedReservationTicket.getId(); // 예약 티켓 아이디 반환
+        } else { // 예약 된 티켓이 아니면
+            ReservationTicket reservationTicket = ReservationTicket.createReservationTicket(reservation, ticket,
+                    reservationTicketDto.getTicketCount(), reservationTicketDto.getVisitDate());
+            reservationTicketRepository.save(reservationTicket); // 새로 예약
 
             return reservationTicket.getId();
         }
