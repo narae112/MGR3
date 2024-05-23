@@ -41,7 +41,7 @@ public class EventBoard {
     @Column(columnDefinition = "DATE")
     private String endDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "member_id")
     private Member member;
 

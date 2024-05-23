@@ -63,31 +63,32 @@ public class EventBoardController {
 
 
     @GetMapping("/eventBoard/edit/{id}")
-    public String eventBoardEdit(@PathVariable("id") Long id, Model model,
+    public String editEventBoard(@PathVariable("id") Long id, Model model,
                                  @AuthenticationPrincipal CustomUserDetails member){
 
         EventBoard eventBoard = eventBoardService.findById(id).orElseThrow();
-        Member findMember = memberService.findById(member.getId()).orElseThrow();
-        Long authorId = eventBoard.getMember().getId();
-        Long findMemberId = findMember.getId();
-
-        if(!findMemberId.equals(authorId)){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "작성자만 수정할 수 있습니다.");
-        }
+//        String authorEmail = eventBoard.getMember().getEmail(); //작성자의 이메일 구하기
+//        String userEmail = member.getUsername(); //로그인 되어있는 사용자의 이메일 구하기
+//
+//        if(!userEmail.equals(authorEmail)){
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "작성자만 수정할 수 있습니다.");
+//        }
 
         model.addAttribute("eventBoardFormDto",eventBoard);
 
         return "board/event/eventBoardForm";
     }
 
-    @PostMapping("/eventBoard/edit/{id}")
-    public String eventBoardUpdate(@PathVariable("id") Long id){
+    @PatchMapping("/eventBoard/edit/{id}")
+    @ResponseBody
+    public String UpdateEventBoard(@PathVariable("id") Long id,
+                                   @RequestBody EventBoard eventBoardFormDto){
 
         Optional<EventBoard> findBoard = eventBoardService.findById(id);
-//        eventBoardService.saveBoard(eventBoard);
+
         if(findBoard.isPresent()){
             EventBoard eventBoard = findBoard.get();
-            eventBoardService.delete(eventBoard);
+            eventBoardService.saveBoard(eventBoardFormDto);
             return "수정됐습니다";
         }
         return "오류발생";
