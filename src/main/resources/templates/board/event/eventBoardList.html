@@ -36,7 +36,7 @@
             <tbody>
 
                 <tr th:each="boardList, loop : ${paging}">
-                    <td th:text="${boardList.member.nickname}">작성자</td>
+                    <td th:if="${boardList.member != null}" th:text="${boardList.member.nickname}">작성자</td>
                     <td><a th:text="${boardList.title}" th:href="@{|/board/event/${boardList.id}|}">제목</a></td>
                     <td th:text="${boardList.count}">조회수</td>
                     <td th:text="${#temporals.format(boardList.createDate, 'MM-dd')}">등록일</td>

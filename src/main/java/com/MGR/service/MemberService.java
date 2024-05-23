@@ -21,6 +21,10 @@ public class MemberService{
 
     private final MemberRepository memberRepository;
 
+    public Optional<Member> findByEmail(String email) {
+        return memberRepository.findByEmail(email);
+    }
+
     //멤버 저장
     public void saveMember(Member member) {
         memberRepository.save(member);

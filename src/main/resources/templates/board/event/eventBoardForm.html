@@ -15,6 +15,48 @@
 <th:block layout:fragment="script">
     <script th:inline="javascript">
 
+        var token = $("meta[name='_csrf']").attr('content');
+        var header = $("meta[name='_csrf_header']").attr('content');
+
+        var eventBoardId = [[${eventBoardFormDto.id}]];
+
+        function eventBoardEdit(){
+
+            var url = "/board/eventBoard/edit/" + eventBoardId;
+            var data = {
+                id: eventBoardId,
+                nickname: $('#nickname').val(),
+                title: $('#title').val(),
+                content: $('#content').val(),
+                count: $('#count').val(),
+                startDate: $('#startDate').val(),
+                endDate: $('#endDate').val(),
+                createDate: $('#createDate').val(),
+                type: $('#type').val(),
+                modifiedDate: new Date()
+            };
+
+            console.log(eventBoardId)
+            console.log(url)
+
+             $.ajax({
+                    url: url,
+                    type: 'PATCH',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function(result) {
+                        alert(result);
+
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader(header, token);
+                    },
+                    error: function(xhr, status, error) {
+                        var errorMessage = xhr.status + ': ' + xhr.statusText;
+                        alert("수정에 실패했습니다 " + errorMessage);
+                    }
+                });
+        }
 
     </script>
 </th:block>
@@ -22,6 +64,19 @@
 <div layout:fragment="content">
 
     <form th:action="@{/board/eventBoard/create}" method="POST" th:object="${eventBoardFormDto}">
+        <label th:for="type">eventBoardId</label>
+        <input type="text" id="eventBoardId" name="id" class="form-control"
+               th:field="*{id}">
+
+<!--        <label for="startDate">작성일</label>-->
+<!--        <input class="form-control" type="date" id="createDate"-->
+<!--               th:field="${#temporals.format(createDate, 'yyyy-MM-dd HH:mm:ss')}"-->
+<!--               />-->
+
+
+        <label th:for="type">작성자</label>
+        <input type="text" id="memberId" name="memberId" class="form-control"
+               th:field="*{member.nickname}">
 
         <div class="mb-3">
             <label th:for="type">게시글 타입</label>
@@ -53,7 +108,20 @@
             <p class="contentError" th:text="${errors}"></p>
         </div>
 
-        <button class="btn btn-primary" type="submit" id="eventBoard-create">등록</button>
+        <button th:if="${#strings.isEmpty(eventBoardFormDto.id)}"
+                th:formaction="@{'/board/eventBoard/create'}"
+                class="btn btn-primary" type="submit" id="eventBoard-create">등록</button>
+
+        <button th:unless="${#strings.isEmpty(eventBoardFormDto.id)}"
+                th:formaction="@{'/board/eventBoard/update/' + ${eventBoardFormDto.id}}"
+                class="btn btn-primary" type="submit" id="eventBoard-edit">수정완료</button>
+
+<!--        <button th:unless="${#strings.isEmpty(eventBoardFormDto.id)}"-->
+<!--                onclick="eventBoardEdit()"-->
+<!--                th:formaction="@{'/board/eventBoard/edit/' + ${eventBoardFormDto.id}}"-->
+<!--                class="btn btn-primary" type="button" id="eventBoard-edit">수정완료</button>-->
+
+
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
     </form>
 </div>

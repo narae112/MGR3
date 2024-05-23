@@ -17,7 +17,9 @@
 
         var token = $("meta[name='_csrf']").attr('content');
         var header = $("meta[name='_csrf_header']").attr('content');
+
         var eventBoardId = [[${eventBoard.id}]];
+
         function eventDelete() {
 
             var url = "/board/event/delete/" + eventBoardId;
@@ -55,7 +57,7 @@
 
 <!--        <input input type="hidden" id="eventBoardId" name="eventBoardId" class="form-control"-->
 <!--                th:value="${eventBoard.id}" readonly>-->
-        <input input type="text" id="eventBoardId" name="eventBoardId" class="form-control"
+        <input type="text" id="eventBoardId" name="eventBoardId" class="form-control"
                th:value="${eventBoard.id}" readonly>
     <div>
         <label for="title">제목</label>

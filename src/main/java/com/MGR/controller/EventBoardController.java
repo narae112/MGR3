@@ -38,7 +38,7 @@ public class EventBoardController {
     @GetMapping("/eventBoard/new")
     public String eventBoardForm(Model model){
         //게시글 입력 폼
-        model.addAttribute("eventBoardFormDto",new EventBoardFormDto());
+        model.addAttribute("eventBoardFormDto",new EventBoard());
 
         return "board/event/eventBoardForm";
     }
@@ -63,21 +63,34 @@ public class EventBoardController {
 
 
     @GetMapping("/eventBoard/edit/{id}")
-    public String eventBoardCreate(@PathVariable("id") Long id, Model model,
-                                   @AuthenticationPrincipal CustomUserDetails member){
+    public String editEventBoard(@PathVariable("id") Long id, Model model,
+                                 @AuthenticationPrincipal CustomUserDetails member){
 
         EventBoard eventBoard = eventBoardService.findById(id).orElseThrow();
-        Member findMember = memberService.findById(member.getId()).orElseThrow();
-        Long authorId = eventBoard.getMember().getId();
-        Long findMemberId = findMember.getId();
-
-        if(!findMemberId.equals(authorId)){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "작성자만 수정할 수 있습니다.");
-        }
+//        String authorEmail = eventBoard.getMember().getEmail(); //작성자의 이메일 구하기
+//        String userEmail = member.getUsername(); //로그인 되어있는 사용자의 이메일 구하기
+//
+//        if(!userEmail.equals(authorEmail)){
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "작성자만 수정할 수 있습니다.");
+//        }
 
         model.addAttribute("eventBoardFormDto",eventBoard);
 
         return "board/event/eventBoardForm";
+    }
+
+    @PostMapping("/eventBoard/update/{id}")
+    public String UpdateEventBoard(@Valid EventBoardFormDto boardFormDto,
+                                   Errors errors, Model model,
+                                   @PathVariable("id") Long id){
+        if(errors.hasErrors()) {
+            return "board/event/eventBoardForm";
+        }
+
+        EventBoard update = eventBoardService.update(id, boardFormDto);
+        model.addAttribute("eventBoardFormDto",update);
+
+        return "redirect:/board/event/" + id;
     }
 
     @GetMapping("/event/{id}") //이벤트 게시판 게시글 id

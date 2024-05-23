@@ -13,6 +13,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -54,5 +55,17 @@ public class EventBoardService {
 
     public void delete(EventBoard eventBoard) {
         eventBoardRepository.delete(eventBoard);
+    }
+
+
+    public EventBoard update(Long id, EventBoardFormDto boardFormDto) {
+        EventBoard eventBoard = eventBoardRepository.findById(id).orElseThrow();
+        eventBoard.setContent(boardFormDto.getContent());
+        eventBoard.setTitle(boardFormDto.getTitle());
+        eventBoard.setStartDate(boardFormDto.getStartDate());
+        eventBoard.setEndDate(boardFormDto.getEndDate());
+        eventBoard.setModifiedDate(LocalDateTime.now());
+//        eventBoard.setType(boardFormDto.getType());
+        return eventBoard;
     }
 }
