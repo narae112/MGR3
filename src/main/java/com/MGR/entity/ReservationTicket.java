@@ -22,17 +22,22 @@ public class ReservationTicket {
     @JoinColumn(name="ticket_id")
     private Ticket ticket;
 
+    @Column(name = "reservation_date")
     private LocalDateTime reservationDate; // 예약일
-    private String visitDate; // 방문예정일
+
+//    @Column(name = "visit_date")
+//    private String visitDate; // 방문예정일
+
+    @Column(name = "ticket_count")
     private int ticketCount; // 인원수
 
     public static ReservationTicket createReservationTicket(Reservation reservation,
-                                                            Ticket ticket, int ticketCount, String visitDate){
+                                                            Ticket ticket, int ticketCount){
         ReservationTicket reservationTicket = new ReservationTicket();
         reservationTicket.setReservation(reservation);
         reservationTicket.setTicket(ticket);
         reservationTicket.setTicketCount(ticketCount);
-        reservationTicket.setVisitDate(visitDate);
+        reservationTicket.setReservationDate(LocalDateTime.now());
 
         return reservationTicket;
     }

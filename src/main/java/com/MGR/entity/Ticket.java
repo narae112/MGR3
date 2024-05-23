@@ -24,10 +24,10 @@ public class Ticket extends BaseEntity {
     private Long id;
 
     @Column(columnDefinition = "DATE")
-    private LocalDateTime startDate;
+    private String startDate;
 
     @Column(columnDefinition = "DATE")
-    private LocalDateTime endDate;
+    private String endDate;
 
     @Column(nullable = false)
     private String location;

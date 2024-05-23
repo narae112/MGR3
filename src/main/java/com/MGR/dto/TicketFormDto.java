@@ -31,10 +31,10 @@ public class TicketFormDto {
     private String location;
 
     @NotNull(message = "시작 날짜는 필수 입력 값입니다.")
-    private LocalDateTime startDate;
+    private String startDate;
 
     @NotNull(message = "종료 날짜는 필수 입력 값입니다.")
-    private LocalDateTime endDate;
+    private String endDate;
 
     private TicketCategory ticketCategory;
 

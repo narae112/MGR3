@@ -5,6 +5,7 @@ import com.MGR.dto.ReservationTicketDto;
 import com.MGR.service.ReservationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -26,9 +27,7 @@ public class ReservationController {
     // 예약하기
     @PostMapping("/reservation")
     public @ResponseBody ResponseEntity reservation(@RequestBody @Valid ReservationTicketDto reservationTicketDto,
-                                                    BindingResult bindingResult, Principal principal, Model model, @RequestParam("visitDate") String visitDate) {
-
-
+                                                    BindingResult bindingResult, Principal principal) {
 
         if(bindingResult.hasErrors()){
             StringBuilder sb = new StringBuilder();
@@ -40,15 +39,12 @@ public class ReservationController {
 
             return new ResponseEntity<String>(sb.toString(), HttpStatus.BAD_REQUEST);
         }
-        if(visitDate == null) {
-            model.addAttribute("errorMessage", "이용 예정일을 선택해주세요");
-        }
 
         String email = principal.getName(); // 로그인 한 이용자 이메일
         Long reservationTicketId;
 
         try {
-            reservationTicketId = reservationService.addReservation(reservationTicketDto, email, visitDate);
+            reservationTicketId = reservationService.addReservation(reservationTicketDto, email);
         } catch (Exception e) {
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

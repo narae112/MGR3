@@ -33,7 +33,7 @@ public class ReservationService {
     // private final OrderService orderService; // 결제
 
     // 예약 내역에 추가
-    public Long addReservation(ReservationTicketDto reservationTicketDto, String email, String visitDate) {
+    public Long addReservation(ReservationTicketDto reservationTicketDto, String email) {
         Ticket ticket = ticketRepository.findById(reservationTicketDto.getTicketId())
                 .orElseThrow(EntityNotFoundException::new);
         // 예약할 티켓 정보를 데이터베이스에서 찾는다
@@ -41,10 +41,10 @@ public class ReservationService {
         Optional<Member> member = memberRepository.findByEmail(email);
         // 로그인 한 사용자를 데이터베이스에서 찾는다
 
-        Reservation reservation = reservationRepository.findByMemberId(member.get().getId());
+        Reservation reservation = reservationRepository.findByMemberId(member.orElseThrow(null).getId());
 
         if(reservation == null) {
-            reservation = Reservation.createReservation(member.orElse(null));
+            reservation = Reservation.createReservation(member.orElseThrow(null));
             reservationRepository.save(reservation);
         } // 로그인 된 회원이 예약 내역을 가지고 있는지 확인하고 없으면 만듦
 
@@ -57,7 +57,7 @@ public class ReservationService {
             return savedReservationTicket.getId(); // 예약 티켓 아이디 반환
         } else { // 예약 된 티켓이 아니면
             ReservationTicket reservationTicket = ReservationTicket.createReservationTicket(reservation, ticket,
-                    reservationTicketDto.getTicketCount(), visitDate);
+                    reservationTicketDto.getTicketCount());
             reservationTicketRepository.save(reservationTicket); // 새로 예약
 
             return reservationTicket.getId();
@@ -70,8 +70,8 @@ public class ReservationService {
 
         List<ReservationDtlDto> reservationDtlDtoList = new ArrayList<>();
         Optional<Member> member = memberRepository.findByEmail(email);
-
         Reservation reservation = reservationRepository.findByMemberId(member.get().getId());
+
         if(reservation == null){
             return reservationDtlDtoList;
         }

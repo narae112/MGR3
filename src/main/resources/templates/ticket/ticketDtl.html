@@ -4,6 +4,9 @@
 <head>
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 </head>
 <th:block layout:fragment="script">
 <script th:inline="javascript">
@@ -26,10 +29,10 @@
         var header = $("meta[name='_csrf_header']").attr("content");
 
         var url = "/member/reservation";
+
         var paramData = {
             ticketId : $("#ticketId").val(),
-            ticketCount : $("#ticketCount").val(),
-            visitDate : $("#visitDate").val(),
+            ticketCount : $("#ticketCount").val()
         };
 
         var param = JSON.stringify(paramData);
@@ -46,7 +49,7 @@
             dataType : "json",
             cache   : false,
             success  : function(result, status){
-                alert("티켓을 예약했습니다.");
+                alert("예약이 완료되었습니다");
                 location.href='/';
             },
             error : function(jqXHR, status, error){
@@ -61,15 +64,6 @@
         });
     }
 
-    function checkVisitDate() {
-            var selectedDate = document.getElementById("visitDate").value;
-            var currentDate = new Date().toISOString().split('T')[0];
-
-            if (selectedDate < currentDate) {
-                alert("과거 날짜는 선택할 수 없습니다.");
-                document.getElementById("visitDate").value = "";
-            }
-        }
 </script>
 </th:block>
 <!-- css -->
@@ -114,16 +108,10 @@
             <hr class="my-4">
             <!-- my-4 y축(상하) 마진 4-->
 
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">이용 예정일</span>
-                </div>
-                <input type="date" th:value="${visitDate}" id="visitDate" class="form-control" onchange="checkVisitDate()">
-            </div>
             <!--<div id="datePicker" class="mb-4"></div>  달력 Flatpickr 써서 넣고 싶은데 잘 안됨;; 일단 보류 -->
             <div class="text-end">
                 <div class="h4 text-danger text-start ms-3">
-                    <input type="hidden" th:value="${ticket.price}" id="ticket" name="ticket">
+                    <input type="hidden" th:value="${ticket.price}" id="price" name="price">
                     <span th:text="${ticket.price}"></span>원
                 </div>
                 <div class="input-group w-50">

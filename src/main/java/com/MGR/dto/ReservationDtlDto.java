@@ -11,13 +11,12 @@ public class ReservationDtlDto {
     private String ticketNm; // 티켓 이름
     private int price; // 금액
     private int ticketCount; // 수량
-    private LocalDateTime visitDate; // 방문예정일
+//    private String visitDate; // 방문예정일
 
-    public ReservationDtlDto(Long reservationTicketId, String ticketNm, int price, int ticketCount, LocalDateTime visitDate) {
+    public ReservationDtlDto(Long reservationTicketId, String ticketNm, int price, int ticketCount) {
         this.reservationTicketId = reservationTicketId;
         this.ticketNm = ticketNm;
         this.price = price;
         this.ticketCount = ticketCount;
-        this.visitDate = visitDate;
     }
 }

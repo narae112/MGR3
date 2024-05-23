@@ -15,5 +15,6 @@ public class ReservationTicketDto {
     @Min(value = 1, message = "인원 수를 입력해주세요")
     private int ticketCount;
 
-    private String visitDate;
+//    @NotNull(message = "이용 예정일을 선택해주세요")
+//    private String visitDate;
 }
