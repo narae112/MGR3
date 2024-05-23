@@ -171,16 +171,16 @@ public class TicketRepositoryCustomImpl implements TicketRepositoryCustom {
             return QTicket.ticket.endDate.between(now, futureDate);
         } else if (StringUtils.equals("1w", searchPeriodType)) {
             LocalDateTime futureDate = now.plusWeeks(1); // 1주일 후
-            return QTicket.ticket.endDate.between(now.plusDays(1), futureDate);
+            return QTicket.ticket.endDate.between(now, futureDate); // 1주일 후까지로 수정
         } else if (StringUtils.equals("1m", searchPeriodType)) {
             LocalDateTime futureDate = now.plusMonths(1); // 한 달 후
-            return QTicket.ticket.endDate.between(now.plusDays(7), futureDate);
+            return QTicket.ticket.endDate.between(now, futureDate); // 한 달 후까지로 수정
         } else if (StringUtils.equals("6m", searchPeriodType)) {
             LocalDateTime futureDate = now.plusMonths(6); // 6개월 후
-            return QTicket.ticket.endDate.between(now.plusDays(30), futureDate);
+            return QTicket.ticket.endDate.between(now, futureDate); // 6개월 후까지로 수정
         }
 
-        return QTicket.ticket.endDate.after(now);
+        return QTicket.ticket.endDate.after(now); // 기본 조건으로 현재 시간 이후
     }
 
 
