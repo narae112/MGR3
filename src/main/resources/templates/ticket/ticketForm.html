@@ -98,13 +98,12 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text">지점</span>
                 </div>
-                <select th:field="*{location}" class="form-control">
-                    <option value="" disabled selected>지점을 선택해주세요</option>
-                    <option value="Busan">부산</option>
-                    <option value="Seoul">서울</option>
+                <select th:field="*{locationCategory}" class="ticket-select">
+                    <option value="BUSAN">부산</option>
+                    <option value="SEOUL">서울</option>
                 </select>
             </div>
-            <p th:if="${#fields.hasErrors('location')}" th:errors="*{location}" class="fieldError">Incorrect data</p>
+
             <!-- 메모 등록 -->
             <div class="input-group">
                 <div class="input-group-prepend">

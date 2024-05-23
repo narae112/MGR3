@@ -1,8 +1,25 @@
-
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
+<th:block layout:fragment="script">
+    <!--스크립트-->
+    <script th:inline="javascript">
+        function search() {
+    var searchPeriodType = $("#searchPeriodType").val();
+    var ticketCategory = $("#ticketCategory").val();
+    var locationCategory = $("#locationCategory").val(); // 수정된 부분
+    var searchBy = $("#searchBy").val();
+    var searchQuery = $("#searchQuery").val();
+
+    location.href = "/tickets?searchPeriodType=" + searchPeriodType
+        + "&ticketCategory=" + ticketCategory
+        + "&locationCategory=" + locationCategory // 수정된 부분
+        + "&searchBy=" + searchBy
+        + "&searchQuery=" + searchQuery;
+}
+    </script>
+</th:block>
 
 <!-- CSS 스타일 시트 -->
 <th:block layout:fragment="css">
@@ -35,8 +52,33 @@
 
 <!-- 페이지 내용 -->
 <div layout:fragment="content">
+    <!-- 검색 폼 -->
+    <div class="form-inline d-flex justify-content-center" th:object="${ticketSearchDto}">
+        <select id="searchPeriodType" class="form-control" style="width:auto;">
+            <option value="all">남은 유효 기간(전체)</option>
+            <option value="1d">1일 이내</option>
+            <option value="1w">1주 이내</option>
+            <option value="1m">1개월 이내</option>
+            <option value="6m">6개월 이내</option>
+        </select>
+        <select id="ticketCategory" class="form-control" style="width:auto;">
+            <option value="">회원 구분(전체)</option>
+            <option value="CHILD">어린이</option>
+            <option value="ADULT">성인</option>
+        </select>
+        <select id="locationCategory" class="form-control" style="width:auto;">
+            <option value="">지역 구분(전체)</option>
+            <option value="BUSAN">부산</option>
+            <option value="SEOUL">서울</option>
+        </select>
+        <select id="searchBy" class="form-control" style="width:auto;">
+            <option value="name">티켓명</option>
+        </select>
+        <input id="searchQuery" type="text" class="form-control" placeholder="검색어를 입력해주세요">
+        <button onclick="search()" class="btn btn-primary">검색</button>
+    </div>
 
-    <!-- 검색 결과 표시 -->
+    <!-- 검색 결과 -->
     <div th:if="${not #strings.isEmpty(ticketSearchDto.searchQuery)}" class="center">
         <p class="h3 font-weight-bold" th:text="${ticketSearchDto.searchQuery} + '검색 결과'"></p>
     </div>
@@ -44,8 +86,9 @@
     <!-- 티켓 목록 -->
     <div class="row">
         <th:block th:each="ticket, status: ${tickets.getContent()}">
+            <!-- 티켓 카드 영역 -->
             <div class="col-md-4 margin">
-                <a th:href="'/ticket/' + ${ticket.id}" class="text-dark">
+                <a th:href="@{'/ticket/' + ${ticket.id}}" class="text-dark">
                     <img th:src="${ticket.imgUrl}" class="card-img-top" th:alt="${ticket.id}" height="400">
                     <div class="card-body">
                         <h4 class="card-title" th:text="${ticket.name}"></h4>
@@ -58,29 +101,28 @@
     </div>
 
     <!-- 페이징 -->
-    <div th:if="${ticket != null}" th:with="start=${(ticket.number / maxPage) * maxPage + 1}, end=(${(tickets.totalPages == 0) ? 1 : (start + (maxPage - 1) < tickets.totalPages ? start + (maxPage - 1) : tickets.totalPages)}">
+    <div th:with="start=${(tickets.number/maxPage)*maxPage + 1}, end=(${(tickets.totalPages == 0) ? 1
+       : (start + (maxPage - 1) < tickets.totalPages ? start + (maxPage - 1) : tickets.totalPages)})" >
         <ul class="pagination justify-content-center">
 
-            <!-- 이전 페이지 링크 -->
-            <li class="page-ticket" th:classappend="${tickets.number eq 0} ? 'disabled' : ''">
-                <a th:href="@{'/' + '?searchQuery=' + ${ticketSearchDto.searchQuery} + '&page=' + ${tickets.number - 1}}" aria-label='Previous' class="page-link">
+            <li class="page-ticket" th:classappend="${tickets.first}?'disabled'">
+                <a th:onclick="'javascript:page(' + ${tickets.number - 1} + ')'" aria-label='Previous' class="page-link">
                     <span aria-hidden='true'>Previous</span>
                 </a>
             </li>
 
-            <!-- 페이지 번호 링크 -->
-            <li class="page-ticket" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${tickets.number eq page - 1} ? 'active' : ''">
-                <a th:href="@{'/' +'?searchQuery=' + ${ticketSearchDto.searchQuery} + '&page=' + ${page - 1}}" th:inline="text" class="page-link" th:text="${page}"></a>
+            <li class="page-ticket" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${tickets.number eq page-1}?'active':''">
+                <a th:onclick="'javascript:page(' + ${page - 1} + ')'" th:inline="text" class="page-link">[[${page}]]</a>
             </li>
 
-            <!-- 다음 페이지 링크 -->
-            <li class="page-ticket" th:classappend="${tickets.number + 1 ge tickets.totalPages} ? 'disabled' : ''">
-                <a th:href="@{'/' +'?searchQuery=' + ${ticketSearchDto.searchQuery} + '&page=' + ${tickets.number + 1}}" aria-label='Next' class="page-link">
+            <li class="page-ticket" th:classappend="${tickets.last}?'disabled'">
+                <a th:onclick="'javascript:page(' + ${tickets.number + 1} + ')'" aria-label='Next' class="page-link">
                     <span aria-hidden='true'>Next</span>
                 </a>
             </li>
 
         </ul>
     </div>
+
 </div>
 </html>
