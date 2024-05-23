@@ -25,7 +25,7 @@ public class QnAComment {
 
     @ManyToOne
     @JoinColumn(name = "qna_board_id")
-    private QnABoard qnABoard;
+    private QnABoard author;
 
     @PrePersist
     protected void onCreate() {
