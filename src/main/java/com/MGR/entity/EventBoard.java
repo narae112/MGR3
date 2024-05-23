@@ -69,4 +69,8 @@ public class EventBoard {
     public int viewCount() {
         return this.count += 1;
     }
+
+    public void update(EventBoardFormDto boardFormDto) {
+
+    }
 }

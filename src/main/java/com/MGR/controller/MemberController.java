@@ -59,18 +59,23 @@ public class MemberController {
         return "redirect:/";
     }
 
+    @GetMapping("/edit")
+    public String memberInfoEdit(Model model){
+        return "/member/editForm";
+    }
+
     @PostMapping("/emailCheck")
     @ResponseBody
     public int emailCheck(@RequestParam("email") String email){
         return memberService.emailCheck(email);
-        //이메일 중복 체크 - 비동기 - 엣지에서 안됨
+        //이메일 중복 체크 - 비동기
     }
 
     @PostMapping("/nicknameCheck")
     @ResponseBody
     public int nicknameCheck(@RequestParam("nickname") String nickname){
         return memberService.nicknameCheck(nickname);
-        //닉네임 중복 체크 - 비동기 - 엣지에서 안됨
+        //닉네임 중복 체크 - 비동기
     }
 
     @PostMapping("/passwordCheck")

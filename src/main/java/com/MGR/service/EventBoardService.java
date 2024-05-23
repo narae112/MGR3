@@ -55,4 +55,9 @@ public class EventBoardService {
     public void delete(EventBoard eventBoard) {
         eventBoardRepository.delete(eventBoard);
     }
+
+
+    public void update(EventBoard eventBoard) {
+
+    }
 }

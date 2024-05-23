@@ -38,7 +38,7 @@ public class EventBoardController {
     @GetMapping("/eventBoard/new")
     public String eventBoardForm(Model model){
         //게시글 입력 폼
-        model.addAttribute("eventBoardFormDto",new EventBoardFormDto());
+        model.addAttribute("eventBoardFormDto",new EventBoard());
 
         return "board/event/eventBoardForm";
     }
@@ -63,8 +63,8 @@ public class EventBoardController {
 
 
     @GetMapping("/eventBoard/edit/{id}")
-    public String eventBoardCreate(@PathVariable("id") Long id, Model model,
-                                   @AuthenticationPrincipal CustomUserDetails member){
+    public String eventBoardEdit(@PathVariable("id") Long id, Model model,
+                                 @AuthenticationPrincipal CustomUserDetails member){
 
         EventBoard eventBoard = eventBoardService.findById(id).orElseThrow();
         Member findMember = memberService.findById(member.getId()).orElseThrow();
@@ -78,6 +78,19 @@ public class EventBoardController {
         model.addAttribute("eventBoardFormDto",eventBoard);
 
         return "board/event/eventBoardForm";
+    }
+
+    @PostMapping("/eventBoard/edit/{id}")
+    public String eventBoardUpdate(@PathVariable("id") Long id){
+
+        Optional<EventBoard> findBoard = eventBoardService.findById(id);
+//        eventBoardService.saveBoard(eventBoard);
+        if(findBoard.isPresent()){
+            EventBoard eventBoard = findBoard.get();
+            eventBoardService.delete(eventBoard);
+            return "수정됐습니다";
+        }
+        return "오류발생";
     }
 
     @GetMapping("/event/{id}") //이벤트 게시판 게시글 id
