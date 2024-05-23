@@ -70,7 +70,5 @@ public class EventBoard {
         return this.count += 1;
     }
 
-    public void update(EventBoardFormDto boardFormDto) {
 
-    }
 }

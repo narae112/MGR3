@@ -113,9 +113,14 @@
                 class="btn btn-primary" type="submit" id="eventBoard-create">등록</button>
 
         <button th:unless="${#strings.isEmpty(eventBoardFormDto.id)}"
-                onclick="eventBoardEdit()"
-                th:formaction="@{'/board/eventBoard/edit/' + ${eventBoardFormDto.id}}"
-                class="btn btn-primary" type="button" id="eventBoard-edit">수정완료</button>
+                th:formaction="@{'/board/eventBoard/update/' + ${eventBoardFormDto.id}}"
+                class="btn btn-primary" type="submit" id="eventBoard-edit">수정완료</button>
+
+<!--        <button th:unless="${#strings.isEmpty(eventBoardFormDto.id)}"-->
+<!--                onclick="eventBoardEdit()"-->
+<!--                th:formaction="@{'/board/eventBoard/edit/' + ${eventBoardFormDto.id}}"-->
+<!--                class="btn btn-primary" type="button" id="eventBoard-edit">수정완료</button>-->
+
 
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
     </form>

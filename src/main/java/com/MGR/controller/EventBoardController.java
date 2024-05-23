@@ -79,19 +79,18 @@ public class EventBoardController {
         return "board/event/eventBoardForm";
     }
 
-    @PatchMapping("/eventBoard/edit/{id}")
-    @ResponseBody
-    public String UpdateEventBoard(@PathVariable("id") Long id,
-                                   @RequestBody EventBoard eventBoardFormDto){
-
-        Optional<EventBoard> findBoard = eventBoardService.findById(id);
-
-        if(findBoard.isPresent()){
-            EventBoard eventBoard = findBoard.get();
-            eventBoardService.saveBoard(eventBoardFormDto);
-            return "수정됐습니다";
+    @PostMapping("/eventBoard/update/{id}")
+    public String UpdateEventBoard(@Valid EventBoardFormDto boardFormDto,
+                                   Errors errors, Model model,
+                                   @PathVariable("id") Long id){
+        if(errors.hasErrors()) {
+            return "board/event/eventBoardForm";
         }
-        return "오류발생";
+
+        EventBoard update = eventBoardService.update(id, boardFormDto);
+        model.addAttribute("eventBoardFormDto",update);
+
+        return "redirect:/board/event/" + id;
     }
 
     @GetMapping("/event/{id}") //이벤트 게시판 게시글 id
