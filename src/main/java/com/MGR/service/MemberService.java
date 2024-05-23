@@ -4,10 +4,12 @@ import com.MGR.constant.Role;
 import com.MGR.entity.Member;
 import com.MGR.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,7 @@ import java.util.Optional;
 public class MemberService{
 
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public Optional<Member> findByEmail(String email) {
         return memberRepository.findByEmail(email);
@@ -51,4 +54,13 @@ public class MemberService{
     }
 
 
+    public void updateNickname(Long id, String nickname) {
+        Member member = memberRepository.findById(id).get();
+        member.setNickname(nickname);
+    }
+
+    public void updatePassword(Long id, String password) {
+        Member member = memberRepository.findById(id).get();
+        member.setPassword(passwordEncoder.encode(password));
+    }
 }

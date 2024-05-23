@@ -73,7 +73,6 @@ public class EventBoardController {
 //        if(!userEmail.equals(authorEmail)){
 //            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "작성자만 수정할 수 있습니다.");
 //        }
-
         model.addAttribute("eventBoardFormDto",eventBoard);
 
         return "board/event/eventBoardForm";
@@ -84,7 +83,7 @@ public class EventBoardController {
                                    Errors errors, Model model,
                                    @PathVariable("id") Long id){
         if(errors.hasErrors()) {
-            return "board/event/eventBoardForm";
+            return "/event/eventBoardForm";
         }
 
         EventBoard update = eventBoardService.update(id, boardFormDto);

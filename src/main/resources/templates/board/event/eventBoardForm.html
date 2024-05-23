@@ -64,8 +64,7 @@
 <div layout:fragment="content">
 
     <form th:action="@{/board/eventBoard/create}" method="POST" th:object="${eventBoardFormDto}">
-        <label th:for="type">eventBoardId</label>
-        <input type="text" id="eventBoardId" name="id" class="form-control"
+        <input type="hidden" id="eventBoardId" name="id" class="form-control"
                th:field="*{id}">
 
 <!--        <label for="startDate">작성일</label>-->
@@ -73,9 +72,7 @@
 <!--               th:field="${#temporals.format(createDate, 'yyyy-MM-dd HH:mm:ss')}"-->
 <!--               />-->
 
-
-        <label th:for="type">작성자</label>
-        <input type="text" id="memberId" name="memberId" class="form-control"
+        <input type="hidden" id="memberId" name="memberId" class="form-control"
                th:field="*{member.nickname}">
 
         <div class="mb-3">
