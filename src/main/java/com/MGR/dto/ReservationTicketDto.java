@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter @Setter
@@ -16,6 +15,5 @@ public class ReservationTicketDto {
     @Min(value = 1, message = "인원 수를 입력해주세요")
     private int ticketCount;
 
-    @NotNull(message = "방문 예정일을 선택해주세요")
-    private LocalDate visitDate;
+    private String visitDate;
 }

@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -24,11 +23,11 @@ public class ReservationTicket {
     private Ticket ticket;
 
     private LocalDateTime reservationDate; // 예약일
-    private LocalDate visitDate; // 방문예정일
+    private String visitDate; // 방문예정일
     private int ticketCount; // 인원수
 
     public static ReservationTicket createReservationTicket(Reservation reservation,
-                                                            Ticket ticket, int ticketCount, LocalDate visitDate){
+                                                            Ticket ticket, int ticketCount, String visitDate){
         ReservationTicket reservationTicket = new ReservationTicket();
         reservationTicket.setReservation(reservation);
         reservationTicket.setTicket(ticket);

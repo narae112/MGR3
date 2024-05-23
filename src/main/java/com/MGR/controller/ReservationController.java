@@ -14,6 +14,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -25,7 +26,10 @@ public class ReservationController {
     // 예약하기
     @PostMapping("/reservation")
     public @ResponseBody ResponseEntity reservation(@RequestBody @Valid ReservationTicketDto reservationTicketDto,
-                                              BindingResult bindingResult, Principal principal) {
+                                                    BindingResult bindingResult, Principal principal, Model model, @RequestParam("visitDate") String visitDate) {
+
+
+
         if(bindingResult.hasErrors()){
             StringBuilder sb = new StringBuilder();
             List<FieldError> fieldErrors = bindingResult.getFieldErrors();
@@ -36,12 +40,15 @@ public class ReservationController {
 
             return new ResponseEntity<String>(sb.toString(), HttpStatus.BAD_REQUEST);
         }
+        if(visitDate == null) {
+            model.addAttribute("errorMessage", "이용 예정일을 선택해주세요");
+        }
 
-        String email = principal.getName();
+        String email = principal.getName(); // 로그인 한 이용자 이메일
         Long reservationTicketId;
 
         try {
-            reservationTicketId = reservationService.addReservation(reservationTicketDto, email);
+            reservationTicketId = reservationService.addReservation(reservationTicketDto, email, visitDate);
         } catch (Exception e) {
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

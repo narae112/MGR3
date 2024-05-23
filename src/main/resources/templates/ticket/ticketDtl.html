@@ -29,7 +29,7 @@
         var paramData = {
             ticketId : $("#ticketId").val(),
             ticketCount : $("#ticketCount").val(),
-            <!-- visitDate : 달력 구현해서 방문예정일 넣기 -->
+            visitDate : $("#visitDate").val(),
         };
 
         var param = JSON.stringify(paramData);
@@ -61,6 +61,15 @@
         });
     }
 
+    function checkVisitDate() {
+            var selectedDate = document.getElementById("visitDate").value;
+            var currentDate = new Date().toISOString().split('T')[0];
+
+            if (selectedDate < currentDate) {
+                alert("과거 날짜는 선택할 수 없습니다.");
+                document.getElementById("visitDate").value = "";
+            }
+        }
 </script>
 </th:block>
 <!-- css -->
@@ -104,10 +113,14 @@
             <div class="h4" th:text="${ticket.name} + '(' + ${ticket.location} + '점)'"></div> <!-- 티켓이름 / 지점 -->
             <hr class="my-4">
             <!-- my-4 y축(상하) 마진 4-->
-            <div>
-                <p>방문예정일</p>
-                <div id="datePicker" class="mb-4"></div> <!-- 달력 Flatpickr 써서 넣고 싶은데 잘 안됨;; 일단 보류 -->
+
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">이용 예정일</span>
+                </div>
+                <input type="date" th:value="${visitDate}" id="visitDate" class="form-control" onchange="checkVisitDate()">
             </div>
+            <!--<div id="datePicker" class="mb-4"></div>  달력 Flatpickr 써서 넣고 싶은데 잘 안됨;; 일단 보류 -->
             <div class="text-end">
                 <div class="h4 text-danger text-start ms-3">
                     <input type="hidden" th:value="${ticket.price}" id="ticket" name="ticket">

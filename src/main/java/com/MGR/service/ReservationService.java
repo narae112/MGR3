@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,11 +33,13 @@ public class ReservationService {
     // private final OrderService orderService; // 결제
 
     // 예약 내역에 추가
-    public Long addReservation(ReservationTicketDto reservationTicketDto, String email) {
+    public Long addReservation(ReservationTicketDto reservationTicketDto, String email, String visitDate) {
         Ticket ticket = ticketRepository.findById(reservationTicketDto.getTicketId())
                 .orElseThrow(EntityNotFoundException::new);
+        // 예약할 티켓 정보를 데이터베이스에서 찾는다
 
         Optional<Member> member = memberRepository.findByEmail(email);
+        // 로그인 한 사용자를 데이터베이스에서 찾는다
 
         Reservation reservation = reservationRepository.findByMemberId(member.get().getId());
 
@@ -54,7 +57,7 @@ public class ReservationService {
             return savedReservationTicket.getId(); // 예약 티켓 아이디 반환
         } else { // 예약 된 티켓이 아니면
             ReservationTicket reservationTicket = ReservationTicket.createReservationTicket(reservation, ticket,
-                    reservationTicketDto.getTicketCount(), reservationTicketDto.getVisitDate());
+                    reservationTicketDto.getTicketCount(), visitDate);
             reservationTicketRepository.save(reservationTicket); // 새로 예약
 
             return reservationTicket.getId();
