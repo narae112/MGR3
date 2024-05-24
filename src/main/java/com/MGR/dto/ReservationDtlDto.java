@@ -1,11 +1,12 @@
 package com.MGR.dto;
 
+import com.MGR.constant.LocationCategory;
 import com.MGR.constant.ReservationStatus;
+import com.MGR.entity.ReservationTicket;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Getter @Setter
 public class ReservationDtlDto {
@@ -13,18 +14,19 @@ public class ReservationDtlDto {
     private String name; // 티켓 이름
     private int price; // 금액
     private int ticketCount; // 수량
+    private LocationCategory locationCategory; // 지점
     private String visitDate; // 방문예정일
-    private LocalDateTime reservationDate; // 예약일
+    private String reservationDate; // 예약일
     private ReservationStatus reservationStatus; // 예약 상태
 
-    public ReservationDtlDto(Long reservationTicketId, String name, int price, int ticketCount,
-                             String visitDate, LocalDateTime reservationDate, ReservationStatus reservationStatus) {
-        this.reservationTicketId = reservationTicketId;
-        this.name = name;
-        this.price = price;
-        this.ticketCount = ticketCount;
-        this.visitDate = visitDate;
-        this.reservationDate = reservationDate;
-        this.reservationStatus = reservationStatus;
+    public ReservationDtlDto(ReservationTicket reservationTicket) {
+        this.reservationTicketId = reservationTicket.getId();
+        this.name = reservationTicket.getTicket().getName();
+        this.price = reservationTicket.getTicket().getPrice();
+        this.ticketCount = reservationTicket.getTicketCount();
+        this.visitDate = reservationTicket.getVisitDate();
+        this.reservationDate = reservationTicket.getReservationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        this.reservationStatus = reservationTicket.getReservationStatus();
     }
+
 }

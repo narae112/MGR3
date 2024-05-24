@@ -12,6 +12,9 @@ import com.MGR.repository.ReservationTicketRepository;
 import com.MGR.repository.TicketRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.util.StringUtils;
@@ -46,11 +49,10 @@ public class ReservationService {
         } // 로그인 된 회원이 예약 내역을 가지고 있는지 확인하고 없으면 만듦
 
         ReservationTicket savedReservationTicket = reservationTicketRepository.findByReservationIdAndTicketId(reservation.getId(), ticket.getId());
-        // 예약할 티켓이 이미 예약되어있는 티켓이면
+        // 예약할 티켓이 이미 예약되어있는 티켓이면서 방문예정일이 같으면
 
-        if(savedReservationTicket != null) {
+        if(savedReservationTicket != null && savedReservationTicket.getVisitDate().equals(reservationTicketDto.getVisitDate())) {
             savedReservationTicket.addCount(reservationTicketDto.getTicketCount()); // 수량만 증가
-
             return savedReservationTicket.getId(); // 예약 티켓 아이디 반환
         } else { // 예약 된 티켓이 아니면
             ReservationTicket reservationTicket = ReservationTicket.createReservationTicket(reservation, ticket,
@@ -63,20 +65,17 @@ public class ReservationService {
 
     // 예약 내역 불러오기
     @Transactional(readOnly = true)
-    public List<ReservationDtlDto> getReservationList(String email){
-
-        List<ReservationDtlDto> reservationDtlDtoList = new ArrayList<>(); // 예약 내역을 담을 리스트
-        Optional<Member> member = memberRepository.findByEmail(email); // 받아온 이메일로 데이터베이스에서 멤버 찾기
-
+    public Page<ReservationDtlDto> getReservationList(String email, Pageable pageable) {
+        Optional<Member> member = memberRepository.findByEmail(email);
         Reservation reservation = reservationRepository.findByMemberId(member.get().getId());
-        // 예약 데이터베이스에 로그인 한 멤버가 있는지 찾기
-        if(reservation == null){
-            // 없으면 해당 멤버의 예약 내역이 없는 것
-            return reservationDtlDtoList;
-        }
-        // 있으면 예약 내역 리스트를 가져옴
-        reservationDtlDtoList = reservationTicketRepository.findReservationDtlDtoList(reservation.getId());
-        return reservationDtlDtoList;
+
+        List<ReservationDtlDto> reservationDtlDtos = new ArrayList<>();
+        reservationDtlDtos = reservationTicketRepository.findReservations(reservation.getId(), pageable);
+        // 주문 목록 조회
+        Long totalCount = reservationTicketRepository.countReservation(reservation.getId());
+        // 총 주문 갯수
+
+        return new PageImpl<ReservationDtlDto>(reservationDtlDtos, pageable, totalCount);
     }
 
     // 티켓 수량 update
