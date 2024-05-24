@@ -68,10 +68,10 @@ public class ReservationService {
         List<ReservationDtlDto> reservationDtlDtoList = new ArrayList<>(); // 예약 내역을 담을 리스트
         Optional<Member> member = memberRepository.findByEmail(email); // 받아온 이메일로 데이터베이스에서 멤버 찾기
 
-        Reservation reservation = reservationRepository.findByMemberId(member.orElseThrow(null).getId());
+        Reservation reservation = reservationRepository.findByMemberId(member.get().getId());
         // 예약 데이터베이스에 로그인 한 멤버가 있는지 찾기
         if(reservation == null){
-            // 없으면 예약 내역이 없는 것
+            // 없으면 해당 멤버의 예약 내역이 없는 것
             return reservationDtlDtoList;
         }
         // 있으면 예약 내역 리스트를 가져옴

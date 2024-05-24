@@ -17,8 +17,8 @@ public class ReservationDtlDto {
     private LocalDateTime reservationDate; // 예약일
     private ReservationStatus reservationStatus; // 예약 상태
 
-    public ReservationDtlDto(Long reservationTicketId, String name,
-                             int price, int ticketCount, String visitDate, LocalDateTime reservationDate, ReservationStatus reservationStatus) {
+    public ReservationDtlDto(Long reservationTicketId, String name, int price, int ticketCount,
+                             String visitDate, LocalDateTime reservationDate, ReservationStatus reservationStatus) {
         this.reservationTicketId = reservationTicketId;
         this.name = name;
         this.price = price;
