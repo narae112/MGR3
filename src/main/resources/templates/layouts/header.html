@@ -18,8 +18,8 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
                     <li class="nav-item"><a class="nav-link active" aria-current="page" href="/">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/member/login}">로그인</a></li>
-                    <li class="nav-item"><a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/member/logout}">로그아웃</a></li>
+                    <li class="nav-item"><a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/login}">로그인</a></li>
+                    <li class="nav-item"><a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/logout}">로그아웃</a></li>
                     <li class="nav-item"><a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/member/join}">회원가입</a></li>
                     <li class="nav-item"><a class="nav-link" sec:authorize="hasAnyRole('ROLE_USER')" th:href="@{/member/edit}">회원정보수정</a></li>
                     <li class="nav-item"><a class="nav-link" th:href="@{/board/events}">이벤트/공지</a></li>
@@ -30,8 +30,8 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">family site</a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">1</a></li>
-                            <li><a class="dropdown-item" href="#">2</a></li>
+                            <li><a class="dropdown-item" href="https://www.everland.com/gateway">부산지점 바로가기</a></li>
+                            <li><a class="dropdown-item" href="https://www.lotteworld.com/gate.html">제주지점 바로가기</a></li>
                         </ul>
                     </li>
                 </ul>
