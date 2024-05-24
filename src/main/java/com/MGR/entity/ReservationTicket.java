@@ -1,5 +1,6 @@
 package com.MGR.entity;
 
+import com.MGR.constant.ReservationStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,6 +31,10 @@ public class ReservationTicket {
     private String visitDate; // 방문예정일
     private int ticketCount; // 인원수
 
+
+    @Enumerated(EnumType.STRING)
+    private ReservationStatus reservationStatus; // 예약 상태(예약 / 취소 / 결제완료)
+
     public static ReservationTicket createReservationTicket(Reservation reservation,
                                                             Ticket ticket, int ticketCount, String visitDate){
         ReservationTicket reservationTicket = new ReservationTicket();
@@ -38,6 +43,7 @@ public class ReservationTicket {
         reservationTicket.setTicketCount(ticketCount);
         reservationTicket.setVisitDate(visitDate);
         reservationTicket.setReservationDate(LocalDateTime.now());
+        reservationTicket.setReservationStatus(ReservationStatus.RESERVE);
 
         return reservationTicket;
     }
@@ -48,6 +54,10 @@ public class ReservationTicket {
 
     public void updateCount(int ticketCount) {
         this.ticketCount = ticketCount;
+    }
+
+    public void cancelReservation() {
+        this.reservationStatus = ReservationStatus.CANCEL;
     }
 
 }
