@@ -1,5 +1,6 @@
 package com.MGR.controller;
 
+
 import com.MGR.dto.QnaQuestionForm;
 import com.MGR.dto.QnaAnswerForm;
 import com.MGR.entity.Member;
@@ -18,7 +19,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
 
 
 @RequiredArgsConstructor
@@ -109,5 +109,6 @@ public class QnaQuestionController {
         Member siteUser = this.memberService.getUser(member.getName());
         this.questionService.vote(question, siteUser);
         return String.format("redirect:/qna/question/detail/%s", id);
+
     }
 }

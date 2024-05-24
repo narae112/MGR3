@@ -11,6 +11,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,41 +26,20 @@ public class MemberController {
     private final MemberService memberService;
     private final PasswordEncoder passwordEncoder;
 
-    @GetMapping("/login")
-    public String memberLogin(){
-        return "/member/loginForm";
-    }
-
-    @GetMapping("/login/error")
-    public String memberLoginError(Model model){
-        model.addAttribute("loginError", "이메일 주소나 비밀번호가 일치하지 않습니다");
-        return "/member/loginForm";
-    }
-
-    @GetMapping("/join")
-    public String memberJoin(Model model){
-        model.addAttribute("memberFormDto", new MemberFormDto());
-        return "/member/joinForm";
-    }
-
     @PostMapping("/create")
     public String createMember(@Valid MemberFormDto memberFormDto,
-                               Errors errors, Model model){
+                               BindingResult result, Model model){
 
-        if(errors.hasErrors()) {
-            return "member/joinForm";
-        }
 
         if(memberFormDto.getAuthCode().equals(memberFormDto.getCode())){
             //메일 인증번호 검증
             return "member/joinForm";
         }
-
         try {
             Member member = Member.createMember(memberFormDto, passwordEncoder);
             memberService.saveMember(member);
         } catch (IllegalStateException e){
-            model.addAttribute("errors", e.getMessage());
+            model.addAttribute("errors2", e.getMessage());
             return "member/joinForm";
         }
         return "redirect:/";
@@ -75,11 +56,22 @@ public class MemberController {
 
     @PostMapping("/editNickname/{id}")
     public String memberInfoEditNickname(@PathVariable("id") Long id,
-                                 @AuthenticationPrincipal CustomUserDetails member,
-                                 MemberFormDto memberInfo){
+                                         @AuthenticationPrincipal CustomUserDetails member,
+                                         @Valid MemberFormDto memberInfo,
+                                         BindingResult result, Model model){
 
-        Optional<Member> findMember = memberService.findByEmail(member.getUsername());
-        memberService.updateNickname(id,memberInfo.getNickname());
+        if(!StringUtils.hasText(memberInfo.getNickname())) {
+            model.addAttribute("stringError", "닉네임을 입력하세요");
+            return "/member/edit";
+        }
+
+        try {
+            Optional<Member> findMember = memberService.findByEmail(member.getUsername());
+            memberService.updateNickname(id,memberInfo.getNickname());
+        } catch (IllegalStateException e){
+            model.addAttribute("errors", e.getMessage());
+            return "/member/edit";
+        }
 
         return "redirect:/member/edit";
     }

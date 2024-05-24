@@ -27,17 +27,10 @@ public class Reservation { // = 예약 List
     @OneToMany(mappedBy = "reservation" ,cascade=CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ReservationTicket> reservationTickets = new ArrayList<>();
 
-    @Enumerated(EnumType.STRING)
-    private ReservationStatus reservationStatus;
-
     public static Reservation createReservation(Member member) {
         Reservation reservation = new Reservation();
         reservation.setMember(member);
         return reservation;
-    }
-
-    public void cancelReservation() {
-        this.reservationStatus = ReservationStatus.CANCEL;
     }
 
 }

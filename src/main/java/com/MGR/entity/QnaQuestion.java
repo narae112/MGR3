@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+
 @Entity
 @Setter
 @Getter
@@ -43,4 +44,5 @@ public class QnaQuestion {
 
     @OneToMany(mappedBy = "qnaQuestion", cascade = CascadeType.ALL)
     private List<QnaAnswer> answerList;
+
 }

@@ -5,7 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+
 import java.util.Set;
+
 
 @Setter
 @Getter
@@ -33,6 +35,7 @@ public class QnaAnswer {
 
     @ManyToMany
     Set<Member> voter;
+
 
     @PrePersist
     protected void onCreate() {

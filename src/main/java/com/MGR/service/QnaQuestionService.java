@@ -53,10 +53,12 @@ public class QnaQuestionService {
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
         return this.qnaquestionRepository.findAllByKeyword(kw, pageable);
     }
+
     public QnaQuestion getQnaQuestion(Long id){
         Optional<QnaQuestion> qnaQuestion = this.qnaquestionRepository.findById(id);
         if(qnaQuestion.isPresent()){
             return qnaQuestion.get();
+
         }else{
             throw new DataNotFoundException("question not found");
         }
@@ -69,6 +71,7 @@ public class QnaQuestionService {
         q.setAuthor(user);
         this.qnaquestionRepository.save(q);
     }
+
     public void update(QnaQuestion qnaQuestion, String subject, String content){
         qnaQuestion.setSubject(subject);
         qnaQuestion.setContent(content);
@@ -88,6 +91,7 @@ public class QnaQuestionService {
     public void delete(QnaQuestion Question){
         this.qnaquestionRepository.delete(Question);
     }
+
 
     public void vote(QnaQuestion question, Member siteUser){
         question.getVoter().add(siteUser);
