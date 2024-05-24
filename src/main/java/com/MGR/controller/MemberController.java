@@ -11,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
@@ -55,18 +56,22 @@ public class MemberController {
 
     @PostMapping("/editNickname/{id}")
     public String memberInfoEditNickname(@PathVariable("id") Long id,
-                                 @AuthenticationPrincipal CustomUserDetails member,
-                                 @Valid MemberFormDto memberInfo,Errors errors,
-                                         Model model){
+                                         @AuthenticationPrincipal CustomUserDetails member,
+                                         @Valid MemberFormDto memberInfo,
+                                         BindingResult result, Model model){
 
-        Optional<Member> findMember = memberService.findByEmail(member.getUsername());
-
-        if(errors.hasErrors()) {
-            model.addAttribute("errors", errors);
+        if(!StringUtils.hasText(memberInfo.getNickname())) {
+            model.addAttribute("stringError", "닉네임을 입력하세요");
             return "/member/edit";
         }
 
-        memberService.updateNickname(id,memberInfo.getNickname());
+        try {
+            Optional<Member> findMember = memberService.findByEmail(member.getUsername());
+            memberService.updateNickname(id,memberInfo.getNickname());
+        } catch (IllegalStateException e){
+            model.addAttribute("errors", e.getMessage());
+            return "/member/edit";
+        }
 
         return "redirect:/member/edit";
     }

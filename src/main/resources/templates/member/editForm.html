@@ -26,8 +26,14 @@
             color: red;
             display: none;
         }
-        .password_ok{
-            color: blue;
+        .nickname_null{
+            color: red;
+            display: none;
+        }
+        .nickname-btn{
+            display: inline-block;
+        }
+        .empty-nickname-btn{
             display: none;
         }
         .password_already{
@@ -44,6 +50,7 @@
 <!-- js -->
 <th:block layout:fragment="script">
     <script th:inline="javascript">
+
 
         var token = $("meta[name='_csrf']").attr('content');
         var header = $("meta[name='_csrf_header']").attr('content');
@@ -82,12 +89,12 @@
         function checkNickname(){
             var nickname = $('#nickname').val();
             prevNickname = nickname;
+
             $.ajax({
                 url:'/member/nicknameCheck',
                 type:'POST',
                 data:{nickname:nickname},
                 success:function(result){
-
                     if(result === 0){
                         $('.nickname_ok').css("display","inline-block");
                         $('.nickname_already').css("display", "none");
@@ -95,6 +102,13 @@
                         $('.nickname_already').css("display","inline-block");
                         $('.nickname_ok').css("display", "none");
                         $('#nickname').val(prevNickname);
+                    }
+                    if(!nickname){
+                        $('.nickname_null').css("display","inline-block");
+                        $('.nickname_ok').css("display", "none");
+                        $('.nickname_already').css("display", "none");
+                    }else{
+                        $('.nickname_null').css("display","none");
                     }
                 },
                 beforeSend: function(xhr) {
@@ -120,7 +134,6 @@
                         $('.password_already').css("display", "none");
                     } else {
                         $('.password_already').css("display", "inline-block");
-                        $('.password_ok').css("display", "none");
                     }
                 },
                 beforeSend: function(xhr) {
@@ -128,6 +141,19 @@
                 }
             });
         }
+
+        function emptyNickname(){
+            var nickname = $('#nickname').val().trim(); // 입력된 닉네임 값 (공백 제거)
+
+            // 닉네임 값이 없거나 공백인 경우
+            if (!nickname) {
+                $('.empty-nickname-btn').css("display", "inline-block");
+                $('.nickname-btn').css("display", "none");
+            } else { // 닉네임 값이 있는 경우
+                $('.nickname-btn').css("display", "inline-block");
+                $('.empty-nickname-btn').css("display", "none");
+            }
+        };
 
     </script>
 </th:block>
@@ -159,11 +185,12 @@
             <label for="nickname">닉네임</label>
             <div class="input-group">
                 <input type="text" id="nickname" name="nickname" class="form-control"
-                       th:value="${memberInfo.nickname}" onkeyup="checkNickname()">
+                       th:value="${memberInfo.nickname}" onkeyup="checkNickname(); emptyNickname();">
 
                 <span class="input-group-btn">
-            <button th:formaction="@{'/member/editNickname/' + ${memberInfo.id}}"
-                    class="btn btn-primary" type="submit" id="member-info-edit">닉네임 변경</button>
+                    <button th:formaction="@{'/member/editNickname/' + ${memberInfo.id}}"
+                            class="btn btn-primary nickname-btn" type="submit" id="member-info-edit">닉네임 변경</button>
+                    <button class="btn btn-secondary empty-nickname-btn" type="button">닉네임 변경</button>
                 </span>
             </div>
             <span class="nickname_ok">사용 가능한 닉네임 입니다</span>
@@ -179,8 +206,9 @@
         <div class="mb-3">
             <label for="password2">비밀번호 확인</label>
             <input class="form-control" type="password" id="password2" onblur="checkPassword()"/>
-            <span class="password_ok">비밀번호가 일치합니다</span>
-            <span class="password_already">비밀번호가 일치하지 않습니다</span>
+            <div class="password_already">비밀번호가 일치하지 않습니다</div>
+            <span class="validationError" th:if="${#fields.hasErrors('nickname')}"
+                  th:errors="*{nickname}"></span>
         </div>
         <button th:formaction="@{'/member/editPassword/' + ${memberInfo.id}}"
                 class="btn btn-primary" type="submit" id="member-info-password">비밀번호 변경</button>
