@@ -117,17 +117,17 @@
             <!-- 시작 날짜 -->
             <div class="input-group">
                 <div class="input-group-prepend">
+                    <!-- 시작 날짜 -->
                     <span class="input-group-text">티켓 이용 시작 날짜</span>
                 </div>
-                <input type="datetime-local" th:field="*{startDate}" id="startDate" class="form-control" placeholder="티켓 이용 시작 날짜를 입력해주세요" onchange="checkStartDate()">
+<!--                <input type="datetime-local" th:field="*{startDate}" id="startDate" class="form-control" placeholder="티켓 이용 시작 날짜를 입력해주세요" onchange="checkStartDate()">-->
+                <input type="date" th:field="*{startDate}" id="startDate" class="form-control" placeholder="티켓 이용 시작 날짜를 입력해주세요" onchange="checkStartDate()">
+                <!-- 종료 날짜 -->
+                <span class="input-group-text">~ 티켓 이용 종료 날짜</span>
+            <!--                <input type="datetime-local" id="endDate" th:field="*{endDate}" class="form-control" placeholder="티켓 이용 종료 날짜를 입력해주세요" onchange="checkEndDateInput()">-->
+            <input type="date" id="endDate" th:field="*{endDate}" class="form-control" placeholder="티켓 이용 종료 날짜를 입력해주세요" onchange="checkEndDateInput()">
             </div>
-            <!-- 종료 날짜 -->
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">티켓 이용 종료 날짜</span>
-                </div>
-                <input type="datetime-local" id="endDate" th:field="*{endDate}" class="form-control" placeholder="티켓 이용 종료 날짜를 입력해주세요" onchange="checkEndDateInput()">
-            </div>
+
             <p th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}" class="fieldError">잘못된 데이터입니다.</p>
             <!-- 이미지 저장 -->
             <div th:if="${#lists.isEmpty(ticketFormDto.ticketImgDtoList)}">

@@ -162,21 +162,21 @@ public class TicketRepositoryCustomImpl implements TicketRepositoryCustom {
 
     //    남은 기간 조회
     private BooleanExpression remainingPeriodAfter(String searchPeriodType) {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDate now = LocalDate.now();
 
         if (searchPeriodType == null || StringUtils.equals("all", searchPeriodType)) {
             return QTicket.ticket.endDate.after(now);
         } else if (StringUtils.equals("1d", searchPeriodType)) {
-            LocalDateTime futureDate = now.plusDays(1); // 1일 후
+            LocalDate futureDate = now.plusDays(1); // 1일 후
             return QTicket.ticket.endDate.between(now, futureDate);
         } else if (StringUtils.equals("1w", searchPeriodType)) {
-            LocalDateTime futureDate = now.plusWeeks(1); // 1주일 후
+            LocalDate futureDate = now.plusWeeks(1); // 1주일 후
             return QTicket.ticket.endDate.between(now, futureDate); // 1주일 후까지로 수정
         } else if (StringUtils.equals("1m", searchPeriodType)) {
-            LocalDateTime futureDate = now.plusMonths(1); // 한 달 후
+            LocalDate futureDate = now.plusMonths(1); // 한 달 후
             return QTicket.ticket.endDate.between(now, futureDate); // 한 달 후까지로 수정
         } else if (StringUtils.equals("6m", searchPeriodType)) {
-            LocalDateTime futureDate = now.plusMonths(6); // 6개월 후
+            LocalDate futureDate = now.plusMonths(6); // 6개월 후
             return QTicket.ticket.endDate.between(now, futureDate); // 6개월 후까지로 수정
         }
 
