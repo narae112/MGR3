@@ -3,9 +3,9 @@ package com.MGR.controller;
 import com.MGR.dto.QnAQuestionForm;
 import com.MGR.dto.QnaAnswerForm;
 import com.MGR.entity.Member;
-import com.MGR.entity.QnAQuestion;
+import com.MGR.entity.QnaQuestion;
 import com.MGR.service.MemberService;
-import com.MGR.service.QnAQuestionService;
+import com.MGR.service.QnaQuestionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,22 +22,22 @@ import java.security.Principal;
 @RequestMapping("/qnaQuestion")
 @RequiredArgsConstructor
 @Controller
-public class QnAQuestionController {
-    private final QnAQuestionService questionService;
+public class QnaQuestionController {
+    private final QnaQuestionService questionService;
     private final MemberService memberService;
 
     @GetMapping("/list")
     public String list(Model model, @RequestParam(value = "page", defaultValue = "0") int page,
                        @RequestParam(value = "kw", defaultValue = "") String kw) {
-        Page<QnAQuestion> paging = this.questionService.getList(page, kw);
+        Page<QnaQuestion> paging = this.questionService.getList(page, kw);
         model.addAttribute("paging", paging);
         model.addAttribute("kw", kw);
         return "board/qna/question_list";
     }
 
     @GetMapping(value = "/detail/{id}")
-    public String detail(Model model, @PathVariable("id") Integer id, QnaAnswerForm qnaAnswerForm) {
-        QnAQuestion question = this.questionService.getQnaBoard(id);
+    public String detail(Model model, @PathVariable("id") Long id, QnaAnswerForm qnaAnswerForm) {
+        QnaQuestion question = this.questionService.getQnaBoard(id);
         model.addAttribute("question", question);
         return "board/qna/question_detail";
     }
@@ -53,8 +53,8 @@ public class QnAQuestionController {
     }
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify/{id}")
-    public String questionModify(QnAQuestionForm questionForm, @PathVariable("id") Integer id, Principal principal) {
-        QnAQuestion question = this.questionService.getQnaBoard(id);
+    public String questionModify(QnAQuestionForm questionForm, @PathVariable("id") Long id, Principal principal) {
+        QnaQuestion question = this.questionService.getQnaBoard(id);
         if (!question.getAuthor().getName().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
@@ -65,11 +65,11 @@ public class QnAQuestionController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/modify/{id}")
     public String questionModify(@Valid QnAQuestionForm questionForm, BindingResult bindingResult, Principal principal,
-                                 @PathVariable("id") Integer id) {
+                                 @PathVariable("id") Long id) {
         if (bindingResult.hasErrors()) {
             return "board/qna/question_form";
         }
-        QnAQuestion question = this.questionService.getQnaBoard(id);
+        QnaQuestion question = this.questionService.getQnaBoard(id);
         if (!question.getAuthor().getName().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
@@ -79,8 +79,8 @@ public class QnAQuestionController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/delete/{id}")
-    public String questionDelete(Principal principal, @PathVariable("id") Integer id) {
-        QnAQuestion question = this.questionService.getQnaBoard(id);
+    public String questionDelete(Principal principal, @PathVariable("id") Long id) {
+        QnaQuestion question = this.questionService.getQnaBoard(id);
         if (!question.getAuthor().getName().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");
         }
@@ -90,8 +90,8 @@ public class QnAQuestionController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/vote/{id}")
-    public String questionVote(Principal principal, @PathVariable("id") Integer id) {
-        QnAQuestion question = this.questionService.getQnaBoard(id);
+    public String questionVote(Principal principal, @PathVariable("id") Long id) {
+        QnaQuestion question = this.questionService.getQnaBoard(id);
         Member siteUser = this.memberService.getUser(principal.getName());
         this.questionService.vote(question, siteUser);
         return String.format("redirect:/qnaQuestion/detail/%s", id);

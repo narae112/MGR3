@@ -28,7 +28,7 @@ public class Image extends BaseEntity{
     private Ticket ticket;
 
     @ManyToOne(fetch=FetchType.LAZY)
-    private QnAAnswer qnAAnswer;
+    private QnaAnswer qnAAnswer;
 
     @ManyToOne(fetch=FetchType.LAZY)
     private ReviewComment reviewComment;
