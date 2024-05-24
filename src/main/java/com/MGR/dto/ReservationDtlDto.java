@@ -2,6 +2,7 @@ package com.MGR.dto;
 
 import com.MGR.constant.LocationCategory;
 import com.MGR.constant.ReservationStatus;
+import com.MGR.entity.ReservationTicket;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,4 +30,5 @@ public class ReservationDtlDto {
         this.reservationDate = reservationDate;
         this.reservationStatus = reservationStatus;
     }
+
 }
