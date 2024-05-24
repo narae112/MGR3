@@ -43,14 +43,14 @@ public class SecurityConfig {
         //토큰 끄기
 
         http.formLogin((login) -> login
-                        .loginPage("/member/login")
+                        .loginPage("/login")
                         .usernameParameter("email")
                         .passwordParameter("password")
-                        .failureUrl("/member/login/error")
+                        .failureUrl("/login/error")
                         .defaultSuccessUrl("/")
-                        .loginProcessingUrl("/member/login"))
+                        .loginProcessingUrl("/login"))
                 .logout((logout) -> logout
-                        .logoutRequestMatcher(new AntPathRequestMatcher("/member/logout"))
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                         .logoutSuccessUrl("/")
                         .invalidateHttpSession(true)); // 세션 삭제
 

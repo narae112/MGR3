@@ -96,7 +96,9 @@
                         $('.nickname_ok').css("display", "none");
                         $('#nickname').val(prevNickname);
                     }
-
+                },
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader(header, token);
                 }
             });
         };
@@ -115,9 +117,14 @@
                 success: function(result) {
                     if (result === 0) {
                         $('.password_ok').css("display", "inline-block");
+                        $('.password_already').css("display", "none");
                     } else {
+                        $('.password_already').css("display", "inline-block");
                         $('.password_ok').css("display", "none");
                     }
+                },
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader(header, token);
                 }
             });
         }
@@ -134,7 +141,6 @@
         <label for="verifyPassword">비밀번호</label>
         <input class="form-control" type="password" id="verifyPassword"/>
         <button class="btn btn-primary" type="submit" id="member-edit" onClick="verifyPassword()">확인</button>
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
     </div>
 
     <form th:action="@{member/edit}" th:object="${memberInfo}" class="edit-form" role="form" method="POST">
@@ -151,16 +157,22 @@
         </div>
         <div>
             <label for="nickname">닉네임</label>
-            <input type="text" id="nickname" name="nickname" class="form-control"
-                   th:value="${memberInfo.nickname}" onkeyup="checkNickname()">
-            <span class="nickname_ok">사용 가능한 닉네임 입니다</span>
-        </div>
-        <button th:formaction="@{'/member/editNickname' + ${memberInfo.id}}"
-                class="btn btn-primary" type="submit" id="member-info-edit">닉네임 변경</button>
+            <div class="input-group">
+                <input type="text" id="nickname" name="nickname" class="form-control"
+                       th:value="${memberInfo.nickname}" onkeyup="checkNickname()">
 
+                <span class="input-group-btn">
+            <button th:formaction="@{'/member/editNickname/' + ${memberInfo.id}}"
+                    class="btn btn-primary" type="submit" id="member-info-edit">닉네임 변경</button>
+                </span>
+            </div>
+            <span class="nickname_ok">사용 가능한 닉네임 입니다</span>
+            <span class="validationError" th:if="${#fields.hasErrors('nickname')}"
+                  th:errors="*{nickname}"></span>
+        </div>
         <div class="mb-3">
             <label for="password">비밀번호</label>
-            <input class="form-control" type="password" id="password" th:field="*{password}"/>
+            <input class="form-control" type="password" id="password" th:field="*{password}" onblur="checkPassword()"/>
             <span class="validationError" th:if="${#fields.hasErrors('password')}"
                   th:errors="*{password}"></span>
         </div>
