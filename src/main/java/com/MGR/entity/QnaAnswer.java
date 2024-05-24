@@ -5,10 +5,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
-@Setter @Getter
-@Entity(name = "QNA_COMMENT")
-public class QnAAnswer {
+@Setter
+@Getter
+@Entity
+public class QnaAnswer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,8 +26,13 @@ public class QnAAnswer {
     private String content;
 
     @ManyToOne
-    @JoinColumn(name = "qna_board_id")
-    private QnAQuestion author;
+    private Member author;
+
+    @ManyToOne
+    private QnaQuestion qnaQuestion;
+
+    @ManyToMany
+    Set<Member> voter;
 
     @PrePersist
     protected void onCreate() {
@@ -36,6 +43,4 @@ public class QnAAnswer {
     protected void onUpdate() {
         modifiedDate = LocalDateTime.now();
     }
-
-
 }

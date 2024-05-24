@@ -5,13 +5,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-@Entity(name = "QNA_BOARD")
-@Setter @Getter
-public class QnAQuestion {
+@Entity
+@Setter
+@Getter
+public class QnaQuestion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +28,6 @@ public class QnAQuestion {
 
     @Column
     private int count = 0;
-    //조회수 초기값 0 설정
 
     @Column(columnDefinition = "DATETIME")
     private LocalDateTime createDate;
@@ -37,12 +36,11 @@ public class QnAQuestion {
     private LocalDateTime modifiedDate;
 
     @ManyToOne
-    @JoinColumn(name = "member_id")
     private Member author;
 
     @ManyToMany
-    Set<Member> voter;
+    private Set<Member> voter;
 
-    @OneToMany(mappedBy = "qnABoard", cascade = CascadeType.REMOVE)
-    private List<QnAAnswer> qnACommentList = new ArrayList<>();
+    @OneToMany(mappedBy = "qnaQuestion", cascade = CascadeType.ALL)
+    private List<QnaAnswer> answerList;
 }

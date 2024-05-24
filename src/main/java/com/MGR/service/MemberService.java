@@ -54,8 +54,8 @@ public class MemberService{
         return memberRepository.findById(id);
     }
 //qna question
-    public Member getUser(String username) {
-        Optional<Member> siteUser = this.memberRepository.findByName(username);
+    public Member getUser(String name) {
+        Optional<Member> siteUser = this.memberRepository.findByName(name);
         if (siteUser.isPresent()) {
             return siteUser.get();
         } else {

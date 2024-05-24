@@ -8,6 +8,8 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.List;
+
 @Entity
 @Setter @Getter @ToString
 public class Member {
@@ -36,6 +38,7 @@ public class Member {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
 
     public static Member createMember(MemberFormDto memberFormDto, PasswordEncoder passwordEncoder) {
 
