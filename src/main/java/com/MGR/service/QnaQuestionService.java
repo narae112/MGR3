@@ -53,10 +53,12 @@ public class QnaQuestionService {
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
         return this.qnaquestionRepository.findAllByKeyword(kw, pageable);
     }
-    public QnaQuestion getQnaBoard(Long id){
-        Optional<QnaQuestion> qnABoard = this.qnaquestionRepository.findById(id);
-        if(qnABoard.isPresent()){
-            return qnABoard.get();
+
+    public QnaQuestion getQnaQuestion(Long id){
+        Optional<QnaQuestion> qnaQuestion = this.qnaquestionRepository.findById(id);
+        if(qnaQuestion.isPresent()){
+            return qnaQuestion.get();
+
         }else{
             throw new DataNotFoundException("question not found");
         }
@@ -69,15 +71,28 @@ public class QnaQuestionService {
         q.setAuthor(user);
         this.qnaquestionRepository.save(q);
     }
-    public void modify(QnaQuestion question, String subject, String content){
+
+    public void update(QnaQuestion qnaQuestion, String subject, String content){
+        qnaQuestion.setSubject(subject);
+        qnaQuestion.setContent(content);
+        qnaQuestion.setModifiedDate(LocalDateTime.now());
+        this.qnaquestionRepository.save(qnaQuestion);
+    }
+
+    public void save(String subject, String content) {
+        QnaQuestion question = new QnaQuestion();
         question.setSubject(subject);
         question.setContent(content);
-        question.setModifiedDate(LocalDateTime.now());
+        question.setCreateDate(LocalDateTime.now());
         this.qnaquestionRepository.save(question);
     }
-    public void delete(QnaQuestion qnABoard){
-        this.qnaquestionRepository.delete(qnABoard);
+
+
+    public void delete(QnaQuestion Question){
+        this.qnaquestionRepository.delete(Question);
     }
+
+
     public void vote(QnaQuestion question, Member siteUser){
         question.getVoter().add(siteUser);
         this.qnaquestionRepository.save(question);

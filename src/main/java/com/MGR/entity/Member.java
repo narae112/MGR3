@@ -39,11 +39,6 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToMany(mappedBy = "author")
-    private List<QnaQuestion> questions;
-
-    @OneToMany(mappedBy = "author")
-    private List<QnaAnswer> answers;
 
     public static Member createMember(MemberFormDto memberFormDto, PasswordEncoder passwordEncoder) {
 
