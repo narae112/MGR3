@@ -48,6 +48,7 @@ public class ReservationController {
         return new ResponseEntity<Long>(reservationTicketId, HttpStatus.OK);
     }
 
+    // 예약 내역 보기
     @GetMapping("/reservation")
     public String reservationList(Principal principal, Model model) {
         List<ReservationDtlDto> reservationDtlList = reservationService.getReservationList(principal.getName());
