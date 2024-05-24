@@ -64,51 +64,18 @@ public class ReservationService {
     }
 
     // 예약 내역 불러오기
-//    @Transactional(readOnly = true)
-//    public List<ReservationDtlDto> getReservationList(String email){
-//
-//        List<ReservationTicketDto> reservationDtlDtoList = new ArrayList<>(); // 예약 내역을 담을 리스트
-//        Optional<Member> member = memberRepository.findByEmail(email); // 받아온 이메일로 데이터베이스에서 멤버 찾기
-//
-//        Reservation reservation = reservationRepository.findByMemberId(member.get().getId());
-//        // 예약 데이터베이스에 로그인 한 멤버가 있는지 찾기
-//        if(reservation == null){
-//            // 없으면 해당 멤버의 예약 내역이 없는 것
-//            return reservationDtlDtoList;
-//        }
-//        // 있으면 예약 내역 리스트를 가져옴
-//        reservationDtlDtoList = reservationTicketRepository.findReservationDtlDtoList(reservation.getId());
-//        return reservationDtlDtoList;
-//    }
-
     @Transactional(readOnly = true)
     public Page<ReservationDtlDto> getReservationList(String email, Pageable pageable) {
+        Optional<Member> member = memberRepository.findByEmail(email);
+        Reservation reservation = reservationRepository.findByMemberId(member.get().getId());
 
-        List<ReservationTicket> reservations = reservationTicketRepository.findReservations(email, pageable);
+        List<ReservationDtlDto> reservationDtlDtos = new ArrayList<>();
+        reservationDtlDtos = reservationTicketRepository.findReservations(reservation.getId(), pageable);
         // 주문 목록 조회
-        Long totalCount = reservationTicketRepository.countReservation(email);
+        Long totalCount = reservationTicketRepository.countReservation(reservation.getId());
         // 총 주문 갯수
-        List<ReservationDtlDto> reservationDtlDtoList = new ArrayList<>();
-        // 주문 상세 정보를 담을 객체목록 생성
 
-        for (ReservationTicket reservationTicket : reservations) { // 조회된 주문목록을 반복문처리
-            ReservationDtlDto reservationDtlDto = new ReservationDtlDto(reservationTicket);
-            List<ReservationTicket> reservationTickets = reservationTicket.getReservation().getReservationTickets();
-            OrderHistDto orderHistDto = new OrderHistDto(order); // 각 주문정보를 객체로 변환
-            List<OrderItem> orderItems = order.getOrderItems(); // 해당 주문의 주문항목 목록 소환
-            for (OrderItem orderItem : orderItems) { // 주문항목 목록을 반복문 처리
-                ItemImg itemImg = itemImgRepository.findByItemIdAndRepimgYn(orderItem.getItem().getId(), "Y");
-                // 해당 주문 항목의 상품아이디와 대표 이미지가 "Y" 를 이용하여 이미지 정보 조회
-                OrderItemDto orderItemDto = new OrderItemDto(orderItem, itemImg.getImgUrl());
-                // 주문항목정보와 상품 이미지 url  을 이용하여 orderItemDto 객체를 생성
-                orderHistDto.addOrderItemDto(orderItemDto);
-                // orderHistDto 객체에 OrderItemDto 객체를 추가
-            }
-
-            orderHistDtos.add(orderHistDto);
-        }
-
-        return new PageImpl<OrderHistDto>(orderHistDtos, pageable, totalCount);
+        return new PageImpl<ReservationDtlDto>(reservationDtlDtos, pageable, totalCount);
     }
 
     // 티켓 수량 update
