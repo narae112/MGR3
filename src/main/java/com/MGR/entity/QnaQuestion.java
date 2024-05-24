@@ -8,7 +8,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
-@Entity(name = "QnaQuestion") // 엔티티 이름을 명확히 합니다.
+
+@Entity
 @Setter
 @Getter
 public class QnaQuestion {
@@ -36,12 +37,12 @@ public class QnaQuestion {
     private LocalDateTime modifiedDate;
 
     @ManyToOne
-    @JoinColumn(name = "member_id")
     private Member author;
 
     @ManyToMany
     private Set<Member> voter;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL) // 필드 이름 수정
-    private List<QnaAnswer> answerList; // 필드 이름 수정
+    @OneToMany(mappedBy = "qnaQuestion", cascade = CascadeType.ALL)
+    private List<QnaAnswer> answerList;
+
 }
