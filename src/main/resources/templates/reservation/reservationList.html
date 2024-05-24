@@ -128,9 +128,9 @@
             <tbody>
             <!-- 예약 티켓 항목 -->
             <tr th:each="reservationTicket : ${reservationTickets}">
-                <td class="text-center align-middle">
-                    <input type="checkbox" name="reserveChkBox" th:value="${reservationTicket.reservationTicketId}"><!-- 체크박스 -->
-                </td>
+                <td class="text-center align-middle"><!-- 체크박스 -->
+                    <input type="checkbox" name="reserveChkBox" th:value="${reservationTicket.reservationTicketId}">
+                </td><!-- 티켓 정보 -->
                 <td class="d-flex">
                     <div class="align-self-center">
                         <span th:text="${reservationTicket.name}" class="fs24 font-weight-bold"></span><!-- 티켓 이름 -->

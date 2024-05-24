@@ -1,5 +1,6 @@
 package com.MGR.dto;
 
+import com.MGR.constant.LocationCategory;
 import com.MGR.constant.ReservationStatus;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +14,7 @@ public class ReservationDtlDto {
     private String name; // 티켓 이름
     private int price; // 금액
     private int ticketCount; // 수량
+    private LocationCategory locationCategory; // 지점
     private String visitDate; // 방문예정일
     private LocalDateTime reservationDate; // 예약일
     private ReservationStatus reservationStatus; // 예약 상태
