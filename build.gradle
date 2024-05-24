@@ -56,7 +56,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
 	//gson json
-//	implementation 'com.google.code.gson:gson:2.8.8'
+//   implementation 'com.google.code.gson:gson:2.8.8'
 }
 
 tasks.named('bootBuildImage') {

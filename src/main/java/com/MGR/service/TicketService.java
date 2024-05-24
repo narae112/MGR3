@@ -10,7 +10,6 @@ import com.MGR.repository.ImageRepository;
 import com.MGR.repository.TicketRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.proxy.EntityNotFoundDelegate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -66,6 +65,7 @@ public class TicketService {
         return ticketFormDto;
     }
 
+
     public Long updateTicket(TicketFormDto ticketFormDto, List<MultipartFile> ticketImgFileList) throws Exception {
         //티켓수정
         Ticket ticket = ticketRepository.findById(ticketFormDto.getId())
@@ -81,6 +81,18 @@ public class TicketService {
         return ticket.getId();
     }
 
+
+//삭제
+public void deleteTicket(Long ticketId) {
+    // 티켓에 연결된 이미지를 먼저 삭제
+    imageService.deleteImagesByTicketId(ticketId);
+
+    // 티켓 삭제
+    ticketRepository.deleteById(ticketId);
+}
+
+
+
     @Transactional(readOnly = true)
     public Page<Ticket> getAdminTicketPage(TicketSearchDto ticketSearchDto, Pageable pageable){
         return ticketRepository.getAdminTicketPage(ticketSearchDto, pageable);
@@ -90,5 +102,6 @@ public class TicketService {
     public Page<MainTicketDto> getMainTicketPage(TicketSearchDto ticketSearchDto, Pageable pageable){
         return ticketRepository.getMainTicketPage(ticketSearchDto, pageable);
     }
+
 
 }

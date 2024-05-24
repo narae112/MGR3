@@ -90,4 +90,7 @@ public class ImageService {
     }
 
 
+    public void deleteImagesByTicketId(Long ticketId) {
+        imageRepository.deleteByTicketId(ticketId);
+    }
 }

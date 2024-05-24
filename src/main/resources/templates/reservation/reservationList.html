@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        $(function(){
+            $("input[name=reserveChkBox]").change(function(){
+                getOrderTotalPrice();
+            });
+        });
+
+        function getOrderTotalPrice(){
+            var orderTotalPrice = 0;
+            $("input[name=reserveChkBox]:checked").each(function(){
+                var reservationTicketId = $(this).val(); // 현재 checked 된 value 값 : reservationTicket.reservationTicketId
+                var price = $("#price_" + reservationTicketId).attr("data-price");
+                var count = $("#count_" + reservationTicketId).val();
+                orderTotalPrice += price * count;
+            });
+            $("#orderTotalPrice").html(orderTotalPrice + '원');
+        }
+
+        function changeCount(obj){
+            var count = obj.value;
+            var reservationTicketId = obj.id.split('_')[1]; // ex) count_2 : 2 추출
+            var price = $("#price_" + reservationTicketId).data("price");
+            var totalPrice = count * price;
+            $("#totalPrice_" + reservationTicketId).html(totalPrice + '원');
+            getOrderTotalPrice();
+            updateReservationTicketCount(reservationTicketId, count);
+        }
+
+        function checkAll(){
+            if($("#checkAll").prop("checked")){
+                $("input[name=reserveChkBox]").prop("checked", true);
+            } else{
+                $("input[name=reserveChkBox]").prop("checked", false);
+            }
+            getOrderTotalPrice();
+        }
+
+        function updateReservationTicketCount(reservationTicketId, count) {
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+
+            var url = "/member/reservationTicket/" + reservationTicketId + "?count=" + count;
+
+            $.ajax({
+                url      : url,
+                type     : "PATCH",
+                beforeSend : function(xhr){
+                    /* 데이터를 전송하기 전에 헤더에 csrf 값을 설정 */
+                    xhr.setRequestHeader(header, token);
+                },
+                dataType : "json",
+                cache   : false,
+                success  : function(result, status){
+                    console.log("cartItem count update success")
+                },
+                error : function(jqXHR, status, error){
+
+                    if(jqXHR.status == '401'){
+                        alert('로그인 후 이용해 주세요');
+                        location.href='/member/login';
+                    } else{
+                        alert(jqXHR.responseText);
+                    }
+                }
+            });
+        }
+
+    </script>
+</th:block>
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+    <style>
+        .content-mg{
+            margin-left:25%;
+            margin-right:25%;
+            margin-top:2%;
+            margin-bottom:100px;
+        }
+        .repImgDiv{
+            margin-right:15px;
+            margin-left:15px;
+            height:auto;
+        }
+        .repImg{
+            height:100px;
+            width:100px;
+        }
+        .fs18{
+            font-size:18px
+        }
+        .fs24{
+            font-size:24px
+        }
+    </style>
+</th:block>
+
+<div layout:fragment="content" class="content-mg">
+
+    <h2 class="mb-4">
+        티켓 예약 내역
+    </h2>
+
+    <div>
+        <table class="table">
+            <colgroup>
+                <col width="15%"/>
+                <col width="70%"/>
+                <col width="15%"/>
+            </colgroup>
+            <thead>
+            <tr class="text-center">
+                <td>
+                    <input type="checkbox" id="checkAll" onclick="checkAll()"> 전체선택
+                </td>
+                <td>티켓 정보</td>
+                <td>티켓 금액</td>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- 예약 티켓 항목 -->
+            <tr th:each="reservationTicket : ${reservationTickets}">
+                <td class="text-center align-middle">
+                    <input type="checkbox" name="reserveChkBox" th:value="${reservationTicket.reservationTicketId}"><!-- 체크박스 -->
+                </td>
+                <td class="d-flex">
+                    <div class="align-self-center">
+                        <span th:text="${reservationTicket.ticketNm}" class="fs24 font-weight-bold"></span><!-- 티켓 이름 -->
+                        <div class="fs18 font-weight-light">
+                            <span class="input-group mt-2">
+                                <span th:id="'price_' + ${reservationTicket.reservationTicketId}"
+                                      th:data-price="${reservationTicketItem.price}"
+                                      th:text="${reservationTicketItem.price} + '원'" class="align-self-center mr-2"><!-- 예약 티켓 금액 -->
+                                </span>
+                                <input type="number" name="count" th:id="'count_' + ${reservationTicket.reservationTicketId}"
+                                       th:value="${reservationTicket.count}" min="1" onchange="changeCount(this)" class="form-control mr-2" ><!-- 티켓 수량 수정 -->
+
+                            </span>
+                        </div>
+                    </div>
+                </td>
+                <td class="text-center align-middle">
+                    <span th:id="'totalPrice_' + ${reservationTicket.reservationTicketId}"
+                          name="totalPrice" th:text="${reservationTicket.price * reservationTicket.count} + '원'"><!-- 티켓 수량 * 가격 -->
+                    </span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <h2 class="text-center">
+            총 결제 금액 : <span id="orderTotalPrice" class="text-danger">0원</span><!-- 체크된 예약 티켓 항목 전체 금액 -->
+        </h2>
+
+        <div class="text-center mt-3">
+            <button type="button" class="btn btn-primary btn-lg" >결제하기</button><!-- onclick="orders()" 추후 삽입 예정(function 도 나중에 추가) -->
+        </div>
+    </div>
+
+</div>
+</html>

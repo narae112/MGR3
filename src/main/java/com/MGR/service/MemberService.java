@@ -1,12 +1,16 @@
 package com.MGR.service;
 
+import com.MGR.constant.Role;
 import com.MGR.entity.Member;
+import com.MGR.exception.DataNotFoundException;
 import com.MGR.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +23,11 @@ import java.util.Optional;
 public class MemberService{
 
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public Optional<Member> findByEmail(String email) {
+        return memberRepository.findByEmail(email);
+    }
 
     //멤버 저장
     public void saveMember(Member member) {
@@ -36,12 +45,32 @@ public class MemberService{
     //이메일 중복 체크
     public int emailCheck(String email) {
         Optional<Member> member = memberRepository.findByEmail(email);
-        int result = member.isPresent()? 1 : 0;
+        int result = member.isPresent()? 1 : 0; //DB에 동일한 이메일이 없으면 1
 
         return result;
     }
 
     public Optional<Member> findById(Long id){
         return memberRepository.findById(id);
+    }
+//qna question
+    public Member getUser(String username) {
+        Optional<Member> siteUser = this.memberRepository.findByName(username);
+        if (siteUser.isPresent()) {
+            return siteUser.get();
+        } else {
+            throw new DataNotFoundException("siteuser not found");
+        }
+    }
+
+
+    public void updateNickname(Long id, String nickname) {
+        Member member = memberRepository.findById(id).get();
+        member.setNickname(nickname);
+    }
+
+    public void updatePassword(Long id, String password) {
+        Member member = memberRepository.findById(id).get();
+        member.setPassword(passwordEncoder.encode(password));
     }
 }

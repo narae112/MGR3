@@ -6,9 +6,10 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Setter @Getter
-@Entity(name = "QNA_COMMENT")
-public class QnAComment {
+@Setter
+@Getter
+@Entity
+public class QnaAnswer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,8 +25,10 @@ public class QnAComment {
     private String content;
 
     @ManyToOne
-    @JoinColumn(name = "qna_board_id")
-    private QnABoard qnABoard;
+    private Member author;
+
+    @ManyToOne
+    private QnaQuestion question;
 
     @PrePersist
     protected void onCreate() {
@@ -36,6 +39,4 @@ public class QnAComment {
     protected void onUpdate() {
         modifiedDate = LocalDateTime.now();
     }
-
-
 }

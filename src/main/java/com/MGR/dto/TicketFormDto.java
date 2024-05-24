@@ -1,5 +1,6 @@
 package com.MGR.dto;
 
+import com.MGR.constant.LocationCategory;
 import com.MGR.constant.TicketCategory;
 import com.MGR.entity.Ticket;
 import lombok.Getter;
@@ -27,9 +28,6 @@ public class TicketFormDto {
     @NotBlank(message = "티켓 세부사항은 필수 입력 값입니다.")
     private String memo;
 
-    @NotBlank(message = "지점은 필수 입력 값입니다.")
-    private String location;
-
     @NotNull(message = "시작 날짜는 필수 입력 값입니다.")
     private LocalDateTime startDate;
 
@@ -37,6 +35,8 @@ public class TicketFormDto {
     private LocalDateTime endDate;
 
     private TicketCategory ticketCategory;
+
+    private LocationCategory locationCategory;
 
     private List<ImageDto> ticketImgDtoList = new ArrayList<>();
 

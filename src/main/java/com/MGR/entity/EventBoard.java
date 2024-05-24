@@ -41,7 +41,7 @@ public class EventBoard {
     @Column(columnDefinition = "DATE")
     private String endDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "member_id")
     private Member member;
 
@@ -65,5 +65,10 @@ public class EventBoard {
         return board;
 
     }
+
+    public int viewCount() {
+        return this.count += 1;
+    }
+
 
 }

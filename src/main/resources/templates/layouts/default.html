@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <title>Title</title>
 
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
     <!-- CSS -->
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
     <!-- Core theme CSS (includes Bootstrap)-->

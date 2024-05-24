@@ -66,6 +66,7 @@
                 </td>
                 <td th:text="${ticket.ticketCategory == T(com.MGR.constant.TicketCategory).CHILD} ? '어린이' : '성인'"></td>
                 <td th:text="${ticket.regTime}"></td>
+                <td th:text="${ticket.createdBy}"></td>
             </tr>
             </tbody>
         </table>
@@ -103,11 +104,12 @@
             </select>
             <select th:field="*{ticketCategory}" class="form-control" style="width:auto;">
                 <option value="">회원 구분(전체)</option>
-                <option value="CHILD">성인</option>
-                <option value="ADULT">어린이</option>
+                <option value="CHILD">어린이</option>
+                <option value="ADULT">성인</option>
             </select>
             <select th:field="*{searchBy}" class="form-control" style="width:auto;">
                 <option value="name">티켓명</option>
+                <option value="createdBy">등록자</option>
             </select>
 
             <input th:field="*{searchQuery}" type="text" class="form-control" placeholder="검색어를 입력해주세요">

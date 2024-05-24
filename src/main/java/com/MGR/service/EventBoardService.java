@@ -13,8 +13,10 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,16 +31,41 @@ public class EventBoardService {
         eventBoardRepository.save(board);
     }
 
+    public void saveBoard(EventBoard board) {
+        eventBoardRepository.save(board);
+    }
+
     public List<EventBoard> findAll() {
         return  eventBoardRepository.findAll();
     }
 
-    public Page<EventBoard> getBordeList(int page) {
+    public Page<EventBoard> getBoardList(int page) {
 
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("createDate"));
         Pageable pageable = PageRequest.of(page, 5, Sort.by(sorts));
 
         return eventBoardRepository.findAll(pageable);
+    }
+
+    public Optional<EventBoard> findById(Long id) {
+        Optional<EventBoard> eventBoard = eventBoardRepository.findById(id);
+        return eventBoard;
+    }
+
+    public void delete(EventBoard eventBoard) {
+        eventBoardRepository.delete(eventBoard);
+    }
+
+
+    public EventBoard update(Long id, EventBoardFormDto boardFormDto) {
+        EventBoard eventBoard = eventBoardRepository.findById(id).orElseThrow();
+        eventBoard.setContent(boardFormDto.getContent());
+        eventBoard.setTitle(boardFormDto.getTitle());
+        eventBoard.setStartDate(boardFormDto.getStartDate());
+        eventBoard.setEndDate(boardFormDto.getEndDate());
+        eventBoard.setModifiedDate(LocalDateTime.now());
+//        eventBoard.setType(boardFormDto.getType());
+        return eventBoard;
     }
 }

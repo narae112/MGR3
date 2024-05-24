@@ -30,14 +30,17 @@ import java.util.List;
 public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
-    private final CustomOAuth2UserService customOAuth2UserService;
+//    private final CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
-        // csrf 토큰 나중에 다시 생성
+        http.csrf(csrf -> csrf
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
+        //토큰 켜기
+
         //http.csrf(AbstractHttpConfigurer::disable);
+        //토큰 끄기
 
         http.formLogin((login) -> login
                         .loginPage("/member/login")
@@ -53,7 +56,9 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/**").permitAll()
+//                        .requestMatchers("/board/**").permitAll()
                         .requestMatchers("/admin/**").permitAll()
+                        .requestMatchers("/member/**").permitAll()
 //                      .requestMatchers("/admin/**").hasRole("ADMIN")
 //                      .requestMatchers("/admin").hasRole("ADMIN")
                         .anyRequest().authenticated());
@@ -62,6 +67,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 //    @Bean
 //    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 //
@@ -86,6 +92,15 @@ public class SecurityConfig {
 //                                .userService(customOAuth2UserService)
 //                        )
 //                )
+
+    //======== 민재씨 코드============
+//    .oauth2Login(oauth2Login -> oauth2Login
+//            .loginPage("/login") // 로그인 페이지 지정
+//            .defaultSuccessUrl("/") // 기본 OAuth2 로그인 성공 후 이동할 페이지 설정
+//                        .userInfoEndpoint(userInfo -> userInfo
+//            .userService(principalOauth2UserService) // OAuth2 사용자 정보 엔드포인트 설정
+//            )
+
 //                .logout(logout -> logout
 //                        .logoutRequestMatcher(new AntPathRequestMatcher("/member/logout"))
 //                        .logoutSuccessUrl("/")
@@ -115,7 +130,7 @@ public class SecurityConfig {
                 admin.setName("관리자");
                 admin.setEmail("admin@mgr.com");
                 admin.setNickname("초기관리자");
-                admin.setPassword(passwordEncoder().encode("admin"));
+                admin.setPassword(passwordEncoder().encode("1"));
                 admin.setRole(Role.ADMIN);
 
                 memberRepository.save(admin);
@@ -123,23 +138,63 @@ public class SecurityConfig {
         };
     }
 
-//    @Bean
-//    public CommandLineRunner initDbUser(MemberRepository memberRepository){
-//
-//        return createAdmin -> {
-//            boolean isAdminPresent = memberRepository.findByName("사용자").isPresent();
-//
-//            if (!isAdminPresent) {
-//                Member user = new Member();
-//
-//                user.setName("사용자");
-//                user.setEmail("mrg2024@kakao.com");
-//                user.setNickname("초기사용자");
-//                user.setPassword(passwordEncoder().encode("USER"));
-//                user.setRole(Role.USER);
-//
-//                memberRepository.save(user);
-//            }
-//        };
-//    }
+    @Bean
+    public CommandLineRunner initDb2(MemberRepository memberRepository){
+
+        return createAdmin -> {
+            boolean isAdminPresent = memberRepository.findByName("관리자2").isPresent();
+
+            if (!isAdminPresent) {
+                Member admin = new Member();
+
+                admin.setName("관리자2");
+                admin.setEmail("admin2@mgr.com");
+                admin.setNickname("초기관리자2");
+                admin.setPassword(passwordEncoder().encode("1"));
+                admin.setRole(Role.ADMIN);
+
+                memberRepository.save(admin);
+            }
+        };
+    }
+
+    @Bean
+    public CommandLineRunner initDb3(MemberRepository memberRepository){
+
+        return createAdmin -> {
+            boolean isAdminPresent = memberRepository.findByName("사용자1").isPresent();
+
+            if (!isAdminPresent) {
+                Member admin = new Member();
+
+                admin.setName("사용자1");
+                admin.setEmail("user@mgr.com");
+                admin.setNickname("초기사용자1");
+                admin.setPassword(passwordEncoder().encode("1"));
+                admin.setRole(Role.USER);
+
+                memberRepository.save(admin);
+            }
+        };
+    }
+
+    @Bean
+    public CommandLineRunner initDb4(MemberRepository memberRepository){
+
+        return createAdmin -> {
+            boolean isAdminPresent = memberRepository.findByName("사용자2").isPresent();
+
+            if (!isAdminPresent) {
+                Member admin = new Member();
+
+                admin.setName("사용자2");
+                admin.setEmail("user2@mgr.com");
+                admin.setNickname("초기사용자2");
+                admin.setPassword(passwordEncoder().encode("2"));
+                admin.setRole(Role.USER);
+
+                memberRepository.save(admin);
+            }
+        };
+    }
 }
