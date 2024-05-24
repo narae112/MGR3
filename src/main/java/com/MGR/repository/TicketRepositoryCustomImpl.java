@@ -1,5 +1,6 @@
 package com.MGR.repository;
 
+import com.MGR.constant.LocationCategory;
 import com.MGR.constant.TicketCategory;
 import com.MGR.dto.MainTicketDto;
 import com.MGR.dto.QMainTicketDto;
@@ -7,7 +8,10 @@ import com.MGR.dto.TicketSearchDto;
 import com.MGR.entity.QImage;
 import com.MGR.entity.QTicket;
 import com.MGR.entity.Ticket;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -22,22 +26,29 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.thymeleaf.util.StringUtils;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 public class TicketRepositoryCustomImpl implements TicketRepositoryCustom {
 
     private JPAQueryFactory queryFactory;
-    public TicketRepositoryCustomImpl(EntityManager em){
+
+    public TicketRepositoryCustomImpl(EntityManager em) {
         this.queryFactory = new JPAQueryFactory(em);
     }
-    private BooleanExpression searchTicketCategoryEq(TicketCategory searchTicketCategory){
+
+    private BooleanExpression searchTicketCategoryEq(TicketCategory searchTicketCategory) {
         return searchTicketCategory == null ? null : QTicket.ticket.ticketCategory.eq(searchTicketCategory);
     }
 
+    private BooleanExpression searchLocationCategoryEq(LocationCategory searchLocationCategory) {
+        return searchLocationCategory == null ? null : QTicket.ticket.locationCategory.eq(searchLocationCategory);
+    }
 
     private BooleanExpression regDtsAfter(String searchDateType) {
 
@@ -58,12 +69,13 @@ public class TicketRepositoryCustomImpl implements TicketRepositoryCustom {
         return QTicket.ticket.regTime.after(dateTime);
     }
 
-    private BooleanExpression searchByLike(String searchBy, String searchQuery){
-        if(StringUtils.equals("name", searchBy)){
+    private BooleanExpression searchByLike(String searchBy, String searchQuery) {
+        if (StringUtils.equals("name", searchBy)) {
             return QTicket.ticket.name.like("%" + searchQuery + "%");
         }
         return null;
     }
+
     @Override
     public Page<Ticket> getAdminTicketPage(TicketSearchDto ticketSearchDto, Pageable pageable) {
         List<Ticket> content = queryFactory
@@ -85,13 +97,37 @@ public class TicketRepositoryCustomImpl implements TicketRepositoryCustom {
 
         return new PageImpl<>(content, pageable, total);
     }
-    private BooleanExpression ticketNameLike(String searchQuery){
+
+    private BooleanExpression ticketNameLike(String searchQuery) {
         return StringUtils.isEmpty(searchQuery) ? null : QTicket.ticket.name.like("%" + searchQuery + "%");
     }
+
     @Override
     public Page<MainTicketDto> getMainTicketPage(TicketSearchDto ticketSearchDto, Pageable pageable) {
         QTicket ticket = QTicket.ticket;
         QImage ticketImg = QImage.image;
+        BooleanBuilder builder = new BooleanBuilder();
+
+        // 검색 조건 추가
+        builder.and(ticketImg.repImgYn.eq(true))
+                .and(ticketNameLike(ticketSearchDto.getSearchQuery()));
+
+        BooleanExpression periodCondition = remainingPeriodAfter(ticketSearchDto.getSearchPeriodType());
+        if (periodCondition != null) {
+            builder.and(periodCondition);
+        }
+
+        // 지역 구분 조건 추가
+        BooleanExpression locationCategoryCondition = searchLocationCategoryEq(ticketSearchDto.getLocationCategory());
+        if (locationCategoryCondition != null) {
+            builder.and(locationCategoryCondition);
+        }
+
+        BooleanExpression categoryCondition = searchTicketCategoryEq(ticketSearchDto.getTicketCategory());
+        if (categoryCondition != null) {
+            builder.and(categoryCondition);
+        }
+
         List<MainTicketDto> content = queryFactory
                 .select(
                         new QMainTicketDto(
@@ -99,35 +135,56 @@ public class TicketRepositoryCustomImpl implements TicketRepositoryCustom {
                                 ticket.name,
                                 ticket.memo,
                                 ticketImg.imgUrl,
-                                ticket.price
+                                ticket.price,
+                                ticket.startDate,
+                                ticket.endDate
+
                         )
                 )
                 .from(ticketImg)
                 .join(ticketImg.ticket, ticket)
-                .where(ticketImg.repImgYn.eq(true))
-                .where(ticketNameLike(ticketSearchDto.getSearchQuery()))
+                .where(builder)
                 .orderBy(ticket.id.desc())
-                .offset(pageable.getOffset()) //가져올 데이터의 시작 오프셋
-                .limit(pageable.getPageSize()) //한페이지당 가져올 데이터의 갯수
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
-        //페이지 크기가 5이고 현재페이지가 2이면 pageable.getOffset() 5를 반환
-        // limit(pageable.getPageSize() 는 5를 반환하여 6번째부터 10번째가지 데이터를 가져옴
 
         long total = queryFactory
                 .select(Wildcard.count)
                 .from(ticketImg)
                 .join(ticketImg.ticket, ticket)
-                .where(ticketImg.repImgYn.eq(true))
-                .where(ticketNameLike(ticketSearchDto.getSearchQuery()))
-                .fetchOne()
-                ;
+                .where(builder)
+                .fetchOne();
 
-
-        return  new PageImpl<>(content, pageable, total);
+        return new PageImpl<>(content, pageable, total);
     }
+
+
+    //    남은 기간 조회
+    private BooleanExpression remainingPeriodAfter(String searchPeriodType) {
+        LocalDateTime now = LocalDateTime.now();
+
+        if (searchPeriodType == null || StringUtils.equals("all", searchPeriodType)) {
+            return QTicket.ticket.endDate.after(now);
+        } else if (StringUtils.equals("1d", searchPeriodType)) {
+            LocalDateTime futureDate = now.plusDays(1); // 1일 후
+            return QTicket.ticket.endDate.between(now, futureDate);
+        } else if (StringUtils.equals("1w", searchPeriodType)) {
+            LocalDateTime futureDate = now.plusWeeks(1); // 1주일 후
+            return QTicket.ticket.endDate.between(now, futureDate); // 1주일 후까지로 수정
+        } else if (StringUtils.equals("1m", searchPeriodType)) {
+            LocalDateTime futureDate = now.plusMonths(1); // 한 달 후
+            return QTicket.ticket.endDate.between(now, futureDate); // 한 달 후까지로 수정
+        } else if (StringUtils.equals("6m", searchPeriodType)) {
+            LocalDateTime futureDate = now.plusMonths(6); // 6개월 후
+            return QTicket.ticket.endDate.between(now, futureDate); // 6개월 후까지로 수정
+        }
+
+        return QTicket.ticket.endDate.after(now); // 기본 조건으로 현재 시간 이후
+    }
+
+
 }
-
-
 
 
 

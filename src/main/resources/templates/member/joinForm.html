@@ -3,10 +3,12 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
-
 <!-- css -->
+
+
 <th:block layout:fragment="css">
     <style>
+
     .email_ok{
         color: blue;
         display: none;
@@ -40,6 +42,8 @@
 <!-- js -->
 <th:block layout:fragment="script">
     <script th:inline="javascript">
+        var token = $("meta[name='_csrf']").attr('content');
+        var header = $("meta[name='_csrf_header']").attr('content');
 
         var prevEmail = "";
         function checkEmail(){
@@ -74,7 +78,10 @@
                 url:'/member/nicknameCheck',
                 type:'POST',
                 data:{nickname:nickname},
-                success:function(result){
+                beforeSend : function(xhr){
+                    xhr.setRequestHeader(header, token);
+                },
+                success:function(){
 
                     if(result === 0){
                         $('.nickname_ok').css("display","inline-block");
@@ -100,6 +107,9 @@
                     password: password,
                     password2: password2
                 },
+                beforeSend : function(xhr){
+                    xhr.setRequestHeader(header, token);
+                },
                 success: function(result) {
                     if (result === 0) {
                         $('.password_ok').css("display", "inline-block");
@@ -118,6 +128,9 @@
                 url:'/member/sendEmail',
                 type:'GET',
                 data:{email:email},
+                beforeSend : function(xhr){
+                    xhr.setRequestHeader(header, token);
+                },
                 success:function(result){
                     alert(result);
                 },
@@ -154,7 +167,6 @@
             <input class="form-control" type="password" id="password2" th:field="*{password2}" onblur="checkPassword()"/>
             <span class="password_ok">비밀번호가 일치합니다</span>
             <span class="password_already">비밀번호가 일치하지 않습니다</span>
-
         </div>
 
         <div class="mb-3">
@@ -163,6 +175,7 @@
             <span class="validationError" th:if="${#fields.hasErrors('name')}"
                   th:errors="*{name}"></span>
         </div>
+
         <div class="mb-3">
             <label for="nickname">닉네임</label>
             <input class="form-control" type="text" id="nickname" th:field="*{nickname}" onkeyup="checkNickname()"/>
@@ -171,17 +184,20 @@
             <span class="validationError" th:if="${#fields.hasErrors('nickname')}"
                   th:errors="*{nickname}"></span>
         </div>
+
         <div class="mb-3">
             <label for="birth">생일(선택)</label>
             <input class="form-control" type="date" id="birth" th:field="*{birth}"
                    th:max="2024-05-09"/>
         </div>
+
         <div class="mb-3">
             <label for="nickname">메일인증</label>
             <input class="form-control" type="text" id="code" th:field="*{code}"/>
             <button class="btn btn-primary" type="button" id="code-button" onclick="sendEmail()">인증 메일 발송</button>
             <input type="hidden" name="authCode" th:value="*{authCode}">
         </div>
+
         <button class="btn btn-primary" type="submit" id="member-create">가입</button>
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
     </form>

@@ -14,18 +14,20 @@ import org.springframework.boot.Banner;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
+
+import static com.MGR.entity.QTicket.ticket;
 
 @Controller
 @RequiredArgsConstructor
@@ -55,7 +57,7 @@ public class TicketController {
             model.addAttribute("errorMessage", "티켓 등록 중 에러가 발생하였습니다.");
             return "redirect:/admin/ticket/new"; // 폼을 다시 보여주기 위해 리다이렉트
         }
-        return "redirect:/ticket"; // 성공 시 메인 페이지로 리다이렉트
+        return "redirect:/tickets"; // 성공 시 메인 페이지로 리다이렉트
     }
 
     @GetMapping(value = "/admin/ticket/{ticketId}")
@@ -87,7 +89,7 @@ public class TicketController {
             return "ticket/ticketForm";
         }
 
-        return "redirect:/ticket"; // 성공 시 메인 페이지로 리다이렉트
+        return "redirect:/tickets"; // 성공 시 메인 페이지로 리다이렉트
     }
 
     @GetMapping(value = {"/admin/tickets", "/admin/tickets/{page}"})
@@ -108,10 +110,10 @@ public class TicketController {
 
         return "ticket/ticketDtl";
     }
-    @GetMapping(value="/ticket")
+    @GetMapping(value={"tickets", "/tickets/{page}"})
     public String ticketMain(TicketSearchDto ticketSearchDto,
-                       Optional<Integer> page, Model model){
-        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 6);
+                             @PathVariable Optional<Integer> page, Model model){
+        Pageable pageable = PageRequest.of(page.orElse(0), 6); // 페이지 번호를 받아오는 부분 수정
         Page<MainTicketDto> tickets = ticketService.getMainTicketPage(ticketSearchDto, pageable);
 
         model.addAttribute("tickets", tickets);
@@ -120,5 +122,11 @@ public class TicketController {
 
         return "ticket/ticketMain";
     }
+   @GetMapping("/admin/ticket/delete/{ticketId}")
+    public String deleteTicket(@PathVariable("ticketId") Long ticketId) {
+        // 티켓과 연결된 이미지를 모두 삭제한 후에 티켓을 삭제합니다.
+        ticketService.deleteTicket(ticketId);
 
+        return "redirect:/tickets";
+    }
 }

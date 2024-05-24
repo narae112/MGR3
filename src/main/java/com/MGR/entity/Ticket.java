@@ -1,5 +1,6 @@
 package com.MGR.entity;
 
+import com.MGR.constant.LocationCategory;
 import com.MGR.constant.TicketCategory;
 import com.MGR.dto.TicketFormDto;
 import com.MGR.exception.DuplicateTicketNameException;
@@ -29,11 +30,11 @@ public class Ticket extends BaseEntity {
     @Column(columnDefinition = "DATE")
     private LocalDateTime endDate;
 
-    @Column(nullable = false)
-    private String location;
-
     @Enumerated(EnumType.STRING)
     private TicketCategory ticketCategory;
+
+    @Enumerated(EnumType.STRING)
+    private LocationCategory locationCategory;
 
     @Column(nullable = false, length = 50, unique = true)
     private String name;
@@ -51,7 +52,7 @@ public class Ticket extends BaseEntity {
         this.ticketCategory = ticketFormDto.getTicketCategory();
         this.startDate = ticketFormDto.getStartDate();
         this.endDate = ticketFormDto.getEndDate();
-        this.location = ticketFormDto.getLocation();
+        this.locationCategory = ticketFormDto.getLocationCategory();
 
     }
 
