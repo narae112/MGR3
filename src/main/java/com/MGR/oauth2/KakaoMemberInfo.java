@@ -34,9 +34,4 @@ public class KakaoMemberInfo implements OAuth2MemberInfo{
     public String getEmail() {
         return kakaoAccountAttributes.get("email").toString();
     }
-
-    @Override
-    public String getPassword() {
-        return (String) attributes.get("email");
-    }
 }

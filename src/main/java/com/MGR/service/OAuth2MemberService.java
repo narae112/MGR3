@@ -1,6 +1,5 @@
 package com.MGR.service;
 
-import com.MGR.security.PrincipalDetails;
 import com.MGR.entity.Member;
 import com.MGR.oauth2.*;
 import com.MGR.repository.MemberRepository;
@@ -45,7 +44,6 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
         String oauth2Id = provider + "_" + providerId; //중복이 발생하지 않도록 provider와 providerId를 조합
         String username = memberInfo.getName();
         String email = memberInfo.getEmail();
-        String password = memberInfo.getPassword();
         String role = "ROLE_USER"; //일반 유저
         System.out.println(oAuth2User.getAttributes());
         Optional<Member> findMember = memberRepository.findByOauth2Id(oauth2Id);
@@ -55,7 +53,7 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
                     .oauth2Id(oauth2Id)
                     .name(username)
                     .email(email)
-                    .password(password)
+                    .password(encoder.encode("password"))
                     .role(role)
                     .provider(provider)
                     .providerId(providerId).build();

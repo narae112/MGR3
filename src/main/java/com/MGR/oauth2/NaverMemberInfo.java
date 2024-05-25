@@ -27,9 +27,4 @@ public class NaverMemberInfo implements OAuth2MemberInfo{
     public String getEmail() {
         return (String) attributes.get("email");
     }
-
-    @Override
-    public String getPassword() {
-        return (String) attributes.get("email");
-    }
 }
