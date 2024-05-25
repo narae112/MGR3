@@ -26,8 +26,6 @@ public class QReservation extends EntityPathBase<Reservation> {
 
     public final QMember member;
 
-    public final EnumPath<com.MGR.constant.ReservationStatus> reservationStatus = createEnum("reservationStatus", com.MGR.constant.ReservationStatus.class);
-
     public final ListPath<ReservationTicket, QReservationTicket> reservationTickets = this.<ReservationTicket, QReservationTicket>createList("reservationTickets", ReservationTicket.class, QReservationTicket.class, PathInits.DIRECT2);
 
     public final ListPath<Ticket, QTicket> ticketList = this.<Ticket, QTicket>createList("ticketList", Ticket.class, QTicket.class, PathInits.DIRECT2);

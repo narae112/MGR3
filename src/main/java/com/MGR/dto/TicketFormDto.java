@@ -10,6 +10,8 @@ import org.modelmapper.ModelMapper;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,10 +31,10 @@ public class TicketFormDto {
     private String memo;
 
     @NotNull(message = "시작 날짜는 필수 입력 값입니다.")
-    private LocalDateTime startDate;
+    private LocalDate startDate;
 
     @NotNull(message = "종료 날짜는 필수 입력 값입니다.")
-    private LocalDateTime endDate;
+    private LocalDate endDate;
 
     private TicketCategory ticketCategory;
 

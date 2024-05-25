@@ -17,5 +17,5 @@ public class ReservationTicketDto {
     private int ticketCount;
 
     @NotNull(message = "방문 예정일을 선택해주세요")
-    private LocalDate visitDate;
+    private String visitDate;
 }

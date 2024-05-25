@@ -5,6 +5,9 @@ import com.MGR.dto.ReservationTicketDto;
 import com.MGR.service.ReservationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -48,10 +52,15 @@ public class ReservationController {
         return new ResponseEntity<Long>(reservationTicketId, HttpStatus.OK);
     }
 
-    @GetMapping("/reservation")
-    public String reservationList(Principal principal, Model model) {
-        List<ReservationDtlDto> reservationDtlList = reservationService.getReservationList(principal.getName());
+    // 예약 내역 보기
+    @GetMapping(value = {"/reservations", "/reservations/{page}"})
+    public String reservationList(@PathVariable("page") Optional<Integer> page, Principal principal, Model model) {
+        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 4);
+        Page<ReservationDtlDto> reservationDtlList = reservationService.getReservationList(principal.getName(), pageable);
+
         model.addAttribute("reservationTickets", reservationDtlList);
+        model.addAttribute("page", pageable.getPageNumber());
+        model.addAttribute("maxPage", 5);
 
         return "reservation/reservationList";
     }

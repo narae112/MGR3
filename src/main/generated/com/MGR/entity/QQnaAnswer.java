@@ -11,16 +11,18 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QQnAComment is a Querydsl query type for QnAComment
+ * QQnaAnswer is a Querydsl query type for QnaAnswer
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
-public class QQnAComment extends EntityPathBase<QnAComment> {
+public class QQnaAnswer extends EntityPathBase<QnaAnswer> {
 
-    private static final long serialVersionUID = -262002717L;
+    private static final long serialVersionUID = -345625126L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
-    public static final QQnAComment qnAComment = new QQnAComment("qnAComment");
+    public static final QQnaAnswer qnaAnswer = new QQnaAnswer("qnaAnswer");
+
+    public final QMember author;
 
     public final StringPath content = createString("content");
 
@@ -30,27 +32,28 @@ public class QQnAComment extends EntityPathBase<QnAComment> {
 
     public final DateTimePath<java.time.LocalDateTime> modifiedDate = createDateTime("modifiedDate", java.time.LocalDateTime.class);
 
-    public final QQnABoard qnABoard;
+    public final QQnaQuestion qnaQuestion;
 
-    public QQnAComment(String variable) {
-        this(QnAComment.class, forVariable(variable), INITS);
+    public QQnaAnswer(String variable) {
+        this(QnaAnswer.class, forVariable(variable), INITS);
     }
 
-    public QQnAComment(Path<? extends QnAComment> path) {
+    public QQnaAnswer(Path<? extends QnaAnswer> path) {
         this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
-    public QQnAComment(PathMetadata metadata) {
+    public QQnaAnswer(PathMetadata metadata) {
         this(metadata, PathInits.getFor(metadata, INITS));
     }
 
-    public QQnAComment(PathMetadata metadata, PathInits inits) {
-        this(QnAComment.class, metadata, inits);
+    public QQnaAnswer(PathMetadata metadata, PathInits inits) {
+        this(QnaAnswer.class, metadata, inits);
     }
 
-    public QQnAComment(Class<? extends QnAComment> type, PathMetadata metadata, PathInits inits) {
+    public QQnaAnswer(Class<? extends QnaAnswer> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.qnABoard = inits.isInitialized("qnABoard") ? new QQnABoard(forProperty("qnABoard"), inits.get("qnABoard")) : null;
+        this.author = inits.isInitialized("author") ? new QMember(forProperty("author")) : null;
+        this.qnaQuestion = inits.isInitialized("qnaQuestion") ? new QQnaQuestion(forProperty("qnaQuestion"), inits.get("qnaQuestion")) : null;
     }
 
 }

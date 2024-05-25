@@ -57,6 +57,8 @@ dependencies {
 
 	//gson json
 //   implementation 'com.google.code.gson:gson:2.8.8'
+
+	implementation 'org.commonmark:commonmark:0.18.0'
 }
 
 tasks.named('bootBuildImage') {

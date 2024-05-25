@@ -25,10 +25,10 @@ public class Ticket extends BaseEntity {
     private Long id;
 
     @Column(columnDefinition = "DATE")
-    private LocalDateTime startDate;
+    private LocalDate startDate;
 
     @Column(columnDefinition = "DATE")
-    private LocalDateTime endDate;
+    private LocalDate endDate;
 
     @Enumerated(EnumType.STRING)
     private TicketCategory ticketCategory;

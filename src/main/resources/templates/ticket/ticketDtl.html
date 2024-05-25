@@ -29,6 +29,8 @@
         var paramData = {
             ticketId : $("#ticketId").val(),
             ticketCount : $("#ticketCount").val(),
+            visitDate : $("#visitDate").val(),
+            reservationDate : new Date()
             <!-- visitDate : 달력 구현해서 방문예정일 넣기 -->
         };
 
@@ -106,11 +108,13 @@
             <!-- my-4 y축(상하) 마진 4-->
             <div>
                 <p>방문예정일</p>
+                <input class="form-control" type="date" id="visitDate"
+                       th:min="2024-05-24"/>
                 <div id="datePicker" class="mb-4"></div> <!-- 달력 Flatpickr 써서 넣고 싶은데 잘 안됨;; 일단 보류 -->
             </div>
             <div class="text-end">
                 <div class="h4 text-danger text-start ms-3">
-                    <input type="hidden" th:value="${ticket.price}" id="ticket" name="ticket">
+                    <input type="hidden" th:value="${ticket.price}" id="price" name="price">
                     <span th:text="${ticket.price}"></span>원
                 </div>
                 <div class="input-group w-50">
