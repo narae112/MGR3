@@ -6,6 +6,9 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+import java.util.Set;
+
+
 @Setter
 @Getter
 @Entity
@@ -28,7 +31,7 @@ public class QnaAnswer {
     private Member author;
 
     @ManyToOne
-    private QnaQuestion question;
+    private QnaQuestion qnaQuestion;
 
     @PrePersist
     protected void onCreate() {

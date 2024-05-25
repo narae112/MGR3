@@ -24,7 +24,7 @@ public class QTicket extends EntityPathBase<Ticket> {
     //inherited
     public final StringPath createdBy = _super.createdBy;
 
-    public final DateTimePath<java.time.LocalDateTime> endDate = createDateTime("endDate", java.time.LocalDateTime.class);
+    public final DatePath<java.time.LocalDate> endDate = createDate("endDate", java.time.LocalDate.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
@@ -42,7 +42,7 @@ public class QTicket extends EntityPathBase<Ticket> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> regTime = _super.regTime;
 
-    public final DateTimePath<java.time.LocalDateTime> startDate = createDateTime("startDate", java.time.LocalDateTime.class);
+    public final DatePath<java.time.LocalDate> startDate = createDate("startDate", java.time.LocalDate.class);
 
     public final EnumPath<com.MGR.constant.TicketCategory> ticketCategory = createEnum("ticketCategory", com.MGR.constant.TicketCategory.class);
 

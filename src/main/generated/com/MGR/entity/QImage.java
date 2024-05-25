@@ -38,7 +38,7 @@ public class QImage extends EntityPathBase<Image> {
     //inherited
     public final StringPath modifiedBy = _super.modifiedBy;
 
-    public final QQnAComment qnAComment;
+    public final QQnaAnswer qnAAnswer;
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> regTime = _super.regTime;
@@ -70,7 +70,7 @@ public class QImage extends EntityPathBase<Image> {
 
     public QImage(Class<? extends Image> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.qnAComment = inits.isInitialized("qnAComment") ? new QQnAComment(forProperty("qnAComment"), inits.get("qnAComment")) : null;
+        this.qnAAnswer = inits.isInitialized("qnAAnswer") ? new QQnaAnswer(forProperty("qnAAnswer"), inits.get("qnAAnswer")) : null;
         this.reviewComment = inits.isInitialized("reviewComment") ? new QReviewComment(forProperty("reviewComment"), inits.get("reviewComment")) : null;
         this.ticket = inits.isInitialized("ticket") ? new QTicket(forProperty("ticket")) : null;
     }

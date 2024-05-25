@@ -1,9 +1,10 @@
-<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
-
-<!-- 사용자 스크립트 추가 -->
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+</head>
 <th:block layout:fragment="script">
     <script th:inline="javascript">
         $(function(){
@@ -42,7 +43,7 @@
             getOrderTotalPrice();
         }
 
-        function updateReservationTicketCount(reservationTicketId, count) {
+        function updateReservationTicketCount(reservationTicketId, ticketCount) {
             var token = $("meta[name='_csrf']").attr("content");
             var header = $("meta[name='_csrf_header']").attr("content");
 
@@ -74,6 +75,7 @@
 
     </script>
 </th:block>
+
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
     <style>
@@ -126,20 +128,20 @@
             <tbody>
             <!-- 예약 티켓 항목 -->
             <tr th:each="reservationTicket : ${reservationTickets}">
-                <td class="text-center align-middle">
-                    <input type="checkbox" name="reserveChkBox" th:value="${reservationTicket.reservationTicketId}"><!-- 체크박스 -->
-                </td>
+                <td class="text-center align-middle"><!-- 체크박스 -->
+                    <input type="checkbox" name="reserveChkBox" th:value="${reservationTicket.reservationTicketId}">
+                </td><!-- 티켓 정보 -->
                 <td class="d-flex">
                     <div class="align-self-center">
-                        <span th:text="${reservationTicket.ticketNm}" class="fs24 font-weight-bold"></span><!-- 티켓 이름 -->
+                        <span th:text="${reservationTicket.name}" class="fs24 font-weight-bold"></span><!-- 티켓 이름 -->
                         <div class="fs18 font-weight-light">
                             <span class="input-group mt-2">
                                 <span th:id="'price_' + ${reservationTicket.reservationTicketId}"
-                                      th:data-price="${reservationTicketItem.price}"
-                                      th:text="${reservationTicketItem.price} + '원'" class="align-self-center mr-2"><!-- 예약 티켓 금액 -->
+                                      th:data-price="${reservationTicket.price}"
+                                      th:text="${reservationTicket.price} + '원'" class="align-self-center mr-2"><!-- 예약 티켓 금액 -->
                                 </span>
                                 <input type="number" name="count" th:id="'count_' + ${reservationTicket.reservationTicketId}"
-                                       th:value="${reservationTicket.count}" min="1" onchange="changeCount(this)" class="form-control mr-2" ><!-- 티켓 수량 수정 -->
+                                       th:value="${reservationTicket.ticketCount}" min="1" onchange="changeCount(this)" class="form-control mr-2" ><!-- 티켓 수량 수정 -->
 
                             </span>
                         </div>
@@ -147,7 +149,7 @@
                 </td>
                 <td class="text-center align-middle">
                     <span th:id="'totalPrice_' + ${reservationTicket.reservationTicketId}"
-                          name="totalPrice" th:text="${reservationTicket.price * reservationTicket.count} + '원'"><!-- 티켓 수량 * 가격 -->
+                          name="totalPrice" th:text="${reservationTicket.price * reservationTicket.ticketCount} + '원'"><!-- 티켓 수량 * 가격 -->
                     </span>
                 </td>
             </tr>
