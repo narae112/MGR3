@@ -3,11 +3,13 @@ package com.MGR.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
+@Slf4j
 @Component
 public class JwtUtil {
     @Value("${jwt.secretKey}") //application.properties에 저장되어 있는 값을 가져온다.

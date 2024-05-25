@@ -4,10 +4,12 @@ import com.MGR.service.OAuth2MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
@@ -22,11 +24,13 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+                httpSecurity.csrf(csrf -> csrf
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
 
         httpSecurity
-                .csrf(AbstractHttpConfigurer::disable)
+//                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/member/**","/admin/**").authenticated() // ~로 시작하는 uri 는 로그인 필수
+                        .requestMatchers("/admin/**").authenticated() // ~로 시작하는 uri 는 로그인 필수
                         .requestMatchers("/admin/**").hasRole("ADMIN") //admin 으로 시작하는 uri 는 관리자 계정만 접근 가능
                         .anyRequest().permitAll())//나머지 uri 는 모든 접근 허용
 
@@ -60,14 +64,14 @@ public class SecurityConfig {
         return httpSecurity.build();
     }
 
-//    public class MyCustomDsl extends AbstractHttpConfigurer<MyCustomDsl, HttpSecurity> {
-//        @Override
-//        public void configure(HttpSecurity http) throws Exception {
-//            final AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
-//            http
-//                    .addFilter(new JwtAuthenticationFilter(authenticationManager, jwtUtil));
-//        }
-//    }
+    public class MyCustomDsl extends AbstractHttpConfigurer<MyCustomDsl, HttpSecurity> {
+        @Override
+        public void configure(HttpSecurity http) throws Exception {
+            final AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
+            http
+                    .addFilter(new JwtAuthenticationFilter(authenticationManager, jwtUtil));
+        }
+    }
 
 //    @Bean
 //    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

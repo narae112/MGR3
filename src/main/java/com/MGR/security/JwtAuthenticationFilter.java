@@ -8,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,6 +17,48 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import java.io.IOException;
 
+//@Slf4j
+//@RequiredArgsConstructor
+//public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+//    private final AuthenticationManager authenticationManager;
+//    private final JwtUtil jwtUtil;
+//
+//    @Override
+//    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        MemberFormDto memberDto = null;
+//        try {
+//            memberDto = objectMapper.readValue(request.getInputStream(), MemberFormDto.class);
+//        } catch (Exception e) {
+//            log.error("Error parsing authentication request", e);
+//            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+//
+//            return null;
+//        }
+//
+//        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(memberDto.getEmail(), memberDto.getPassword());
+//        return authenticationManager.authenticate(token);
+//    }
+//
+//    @Override
+//    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+//        PrincipalDetails principal = (PrincipalDetails) authResult.getPrincipal();
+//        Member member = principal.getMember();
+//        String jwt = jwtUtil.createJwt(member.getEmail(), member.getId());
+//        response.setHeader("Authorization", jwt);
+//        log.info("Authentication successful for user: {}", member.getEmail());
+//    }
+//
+//    @Override
+//    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+//        log.error("Authentication failed", failed);
+//        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//        response.getWriter().write("Authentication failed: " + failed.getMessage());
+//        response.getWriter().flush();
+//    }
+//}
+
+@Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
@@ -29,16 +72,20 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try {
             memberDto = objectMapper.readValue(request.getInputStream(), MemberFormDto.class); //request로 들어온 JSON 형식을 MemberDto로 가져옴
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
 
         //토큰 생성
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(memberDto.getEmail(), memberDto.getPassword());
-        System.out.println("token = " + token);
+        System.out.println("JWT token = " + token);
         //authenticationManager의 authenticate 메소드 실행.
         //authenticationManager는 처리할 수 있는 authenticationProvider를 찾아서 authenticationProvider의 authenticate 메소드 실행.
         Authentication authenticate = authenticationManager.authenticate(token);
         //Authentication 객체 반환. 세션에 저장됨.
+        log.info("정보 attemptAuthentication");
+        log.debug("디버그 attemptAuthentication");
+        log.error("에러 attemptAuthentication");
+
         return authenticate;
 
     }

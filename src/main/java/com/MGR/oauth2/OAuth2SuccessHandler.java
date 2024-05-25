@@ -26,8 +26,11 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         System.out.println(principal.getAttributes());
         System.out.println("oauth2 인증 성공");
         String jwt = jwtUtil.createJwt(principal.getMember().getOauth2Id(), principal.getMember().getId());
+        System.out.println("OAuth2 jwt 토큰= " + jwt);
         String redirectUri = UriComponentsBuilder.fromUriString("/oauth2/login")
                 .queryParam("accessToken", jwt).build().toUriString();
+        log.info("jwt = " + jwt);
+        log.info("redirectUri = " + redirectUri);
         getRedirectStrategy().sendRedirect(request, response, redirectUri);
     }
 }
