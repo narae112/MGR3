@@ -2,27 +2,28 @@ package com.MGR.oauth2;
 
 import java.util.Map;
 
-public class GoogleMemberInfo implements OAuth2MemberInfo{
+public class GithubMemberInfo implements OAuth2MemberInfo{
 
     private Map<String, Object> attributes;
 
-    public GoogleMemberInfo(Map<String, Object> attributes) {
+    public GithubMemberInfo(Map<String, Object> attributes) {
         this.attributes = attributes;
     }
 
     @Override
     public String getProviderId() {
-        return (String) attributes.get("sub");
+        return (String) attributes.get("id").toString();
     }
 
     @Override
     public String getProvider() {
-        return "google";
+        return "github";
     }
 
     @Override
     public String getName() {
-        return (String) attributes.get("name");
+
+        return (String) attributes.get("login");
     }
 
     @Override
