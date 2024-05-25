@@ -35,6 +35,8 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
             memberInfo = new GoogleMemberInfo(oAuth2User.getAttributes());
         } else if (registrationId.equals("naver")) {
             memberInfo = new NaverMemberInfo((Map)oAuth2User.getAttributes().get("response"));
+        } else if (registrationId.equals("github")) {
+            memberInfo = new GithubMemberInfo(oAuth2User.getAttributes());
         } else if (registrationId.equals("kakao")) {
             memberInfo = new KakaoMemberInfo(oAuth2User.getAttributes());
         } else {
@@ -50,6 +52,7 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
         Optional<Member> findMember = memberRepository.findByOauth2Id(oauth2Id);
         Member member=null;
         if (findMember.isEmpty()) { //찾지 못했다면
+            System.out.println("못찾았다");
             member = Member.builder()
                     .oauth2Id(oauth2Id)
                     .name(username)
@@ -58,9 +61,11 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
                     .role(role)
                     .provider(provider)
                     .providerId(providerId).build();
+            System.out.println(member.toString());
             memberRepository.save(member);
         }
         else{
+            System.out.println("찾았다");
             member=findMember.get();
         }
         return new PrincipalDetails(member, oAuth2User.getAttributes());
