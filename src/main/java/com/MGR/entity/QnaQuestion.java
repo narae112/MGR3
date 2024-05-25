@@ -39,9 +39,6 @@ public class QnaQuestion {
     @ManyToOne
     private Member author;
 
-    @ManyToMany
-    private Set<Member> voter;
-
     @OneToMany(mappedBy = "qnaQuestion", cascade = CascadeType.ALL)
     private List<QnaAnswer> answerList;
 

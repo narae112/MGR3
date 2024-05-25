@@ -17,14 +17,17 @@ public interface QnaQuestionRepository extends JpaRepository<QnaQuestion, Long> 
     Page<QnaQuestion> findAll(Pageable pageable);
     Page<QnaQuestion> findAll(Specification<QnaQuestion> spec, Pageable pageable);
 
-    @Query("SELECT DISTINCT q FROM QnaQuestion q " +
-            "LEFT JOIN q.author u1 " +
-            "LEFT JOIN q.answerList a " +
-            "LEFT JOIN a.author u2 " +
-            "WHERE q.subject LIKE %:kw% " +
-            "OR q.content LIKE %:kw% " +
-            "OR u1.name LIKE %:kw% " +
-            "OR a.content LIKE %:kw% " +
-            "OR u2.name LIKE %:kw%")
+    @Query("select distinct q "
+            + "from QnaQuestion q "
+            + "left join q.author u1 "
+            + "left join q.answerList a "
+            + "left join a.author u2 "
+            + "where "
+            + "   q.subject like %:kw% "
+            + "   or q.content like %:kw% "
+            + "   or u1.nickname like %:kw% "
+            + "   or a.content like %:kw% "
+            + "   or u2.nickname like %:kw% ")
     Page<QnaQuestion> findAllByKeyword(@Param("kw") String kw, Pageable pageable);
+
 }

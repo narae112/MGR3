@@ -33,10 +33,6 @@ public class QnaAnswer {
     @ManyToOne
     private QnaQuestion qnaQuestion;
 
-    @ManyToMany
-    Set<Member> voter;
-
-
     @PrePersist
     protected void onCreate() {
         createDate = LocalDateTime.now();
