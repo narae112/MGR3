@@ -32,10 +32,9 @@
                     <td class="text-start">
                         <a th:href="@{|/qna/question/detail/${question.id}|}" th:text="${question.subject}"></a>
                         <span class="text-danger small ms-2" th:if="${#lists.size(question.answerList) > 0}"
-                              th:text="${#lists.size(question.answerList)}">
-                            </span>
+                              th:text="'답변 완료'"></span>
                     </td>
-                    <td><span th:if="${question.author != null}" th:text="${question.author.name}"></span></td>
+                    <td><span th:if="${question.author != null}" th:text="${question.author.nickname}"></span></td>
                     <td th:text="${#temporals.format(question.createDate, 'yyyy-MM-dd HH:mm')}"></td>
                 </tr>
                 </tbody>
@@ -61,13 +60,14 @@
                 </ul>
             </div>
         <!-- 페이징처리 끝 -->
-            <form th:action="@{qna/question/list}" method="get" id="searchForm">
+        <form th:action="@{/qna/question/list}" method="get" id="searchForm">
                 <input type="hidden" id="kw" name="kw" th:value="${kw}">
                 <input type="hidden" id="page" name="page" th:value="${paging.number}">
             </form>
         </div>
         <!--스크립트-->
-        <script layout:fragment="script" type='text/javascript'>
+    <script layout:fragment="script" type='text/javascript'>
+        document.addEventListener("DOMContentLoaded", function() {
             const page_elements = document.getElementsByClassName("page-link");
             Array.from(page_elements).forEach(function (element) {
                 element.addEventListener('click', function () {
@@ -76,10 +76,15 @@
                 });
             });
             const btn_search = document.getElementById("btn_search");
-            btn_search.addEventListener('click', function () {
-                document.getElementById('kw').value = document.getElementById('search_kw').value;
-                document.getElementById('page').value = 0;  // 검색버튼을 클릭할 경우 0페이지부터 조회한다.
-                document.getElementById('searchForm').submit();
-            });
-        </script>
+
+            if (btn_search) {
+                btn_search.addEventListener('click', function() {
+                    document.getElementById('kw').value = document.getElementById('search_kw').value;
+                    document.getElementById('page').value = 0;  // 검색버튼을 클릭할 경우 0페이지부터 조회한다.
+                    document.getElementById('searchForm').submit();
+                });
+            }
+        });
+    </script>
+
 </html>

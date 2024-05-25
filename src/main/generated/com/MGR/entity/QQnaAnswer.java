@@ -32,7 +32,7 @@ public class QQnaAnswer extends EntityPathBase<QnaAnswer> {
 
     public final DateTimePath<java.time.LocalDateTime> modifiedDate = createDateTime("modifiedDate", java.time.LocalDateTime.class);
 
-    public final QQnaQuestion question;
+    public final QQnaQuestion qnaQuestion;
 
     public QQnaAnswer(String variable) {
         this(QnaAnswer.class, forVariable(variable), INITS);
@@ -53,7 +53,7 @@ public class QQnaAnswer extends EntityPathBase<QnaAnswer> {
     public QQnaAnswer(Class<? extends QnaAnswer> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.author = inits.isInitialized("author") ? new QMember(forProperty("author")) : null;
-        this.question = inits.isInitialized("question") ? new QQnaQuestion(forProperty("question"), inits.get("question")) : null;
+        this.qnaQuestion = inits.isInitialized("qnaQuestion") ? new QQnaQuestion(forProperty("qnaQuestion"), inits.get("qnaQuestion")) : null;
     }
 
 }
