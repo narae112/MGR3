@@ -3,6 +3,7 @@ package com.MGR.service;
 import com.MGR.entity.Member;
 import com.MGR.oauth2.*;
 import com.MGR.repository.MemberRepository;
+import com.MGR.security.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
