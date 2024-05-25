@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class MainController {
 
     @GetMapping("/")
-    public String root() {
+    public String root(Model model) {
         return "index";
     }
 
@@ -24,7 +24,7 @@ public class MainController {
         return "/member/loginForm";
     }
 
-    @GetMapping("/member/join")
+    @GetMapping("/join")
     public String memberJoin(Model model){
         model.addAttribute("memberFormDto", new MemberFormDto());
         return "/member/joinForm";
