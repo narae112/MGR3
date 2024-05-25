@@ -7,7 +7,6 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
-import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -19,8 +18,6 @@ public class QMember extends EntityPathBase<Member> {
     private static final long serialVersionUID = -947823998L;
 
     public static final QMember member = new QMember("member1");
-
-    public final ListPath<QnaAnswer, QQnaAnswer> answers = this.<QnaAnswer, QQnaAnswer>createList("answers", QnaAnswer.class, QQnaAnswer.class, PathInits.DIRECT2);
 
     public final StringPath birth = createString("birth");
 
@@ -34,11 +31,15 @@ public class QMember extends EntityPathBase<Member> {
 
     public final StringPath nickname = createString("nickname");
 
+    public final StringPath oauth2Id = createString("oauth2Id");
+
     public final StringPath password = createString("password");
 
-    public final ListPath<QnaQuestion, QQnaQuestion> questions = this.<QnaQuestion, QQnaQuestion>createList("questions", QnaQuestion.class, QQnaQuestion.class, PathInits.DIRECT2);
+    public final StringPath provider = createString("provider");
 
-    public final EnumPath<com.MGR.constant.Role> role = createEnum("role", com.MGR.constant.Role.class);
+    public final StringPath providerId = createString("providerId");
+
+    public final StringPath role = createString("role");
 
     public QMember(String variable) {
         super(Member.class, forVariable(variable));

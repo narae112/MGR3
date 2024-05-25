@@ -55,10 +55,16 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
-	//gson json
-//   implementation 'com.google.code.gson:gson:2.8.8'
-
 	implementation 'org.commonmark:commonmark:0.18.0'
+
+	//git jasypt
+	//implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
+
+	//jwt
+//	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+//	implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
+//	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
 }
 
 tasks.named('bootBuildImage') {
