@@ -5,6 +5,7 @@ import com.MGR.constant.Role;
 import com.MGR.repository.MemberRepository;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -89,23 +90,4 @@ public class Member {
         return member;
     }
 
-    @Bean
-    public CommandLineRunner initDb(MemberRepository memberRepository, PasswordEncoder passwordEncoder){
-
-        return createAdmin -> {
-            boolean isAdminPresent = memberRepository.findByName("관리자").isPresent();
-
-            if (!isAdminPresent) {
-                Member admin = new Member();
-
-                admin.setName("관리자");
-                admin.setEmail("admin@mgr.com");
-                admin.setNickname("초기관리자");
-                admin.setPassword(passwordEncoder.encode("1"));
-                admin.setRole("ROLE_ADMIN");
-
-                memberRepository.save(admin);
-            }
-        };
-    }
 }

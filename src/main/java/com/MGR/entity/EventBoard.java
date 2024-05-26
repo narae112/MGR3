@@ -35,10 +35,10 @@ public class EventBoard {
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime modifiedDate = null;
 
-    @Column(columnDefinition = "DATE")
+    @Column
     private String startDate;
 
-    @Column(columnDefinition = "DATE")
+    @Column
     private String endDate;
 
     @ManyToOne(fetch = FetchType.EAGER)
