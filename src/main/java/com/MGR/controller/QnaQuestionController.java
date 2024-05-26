@@ -61,7 +61,7 @@ public class QnaQuestionController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
     public String questionCreate(@Valid QnaQuestionForm qnaQuestionForm, BindingResult bindingResult,
-                                 @AuthenticationPrincipal CustomUserDetails member, HttpServletRequest request) {
+                                 @AuthenticationPrincipal PrincipalDetails member, HttpServletRequest request) {
         String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
 
         try {
@@ -90,7 +90,7 @@ public class QnaQuestionController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify/{id}")
     public String questionModify(QnaQuestionForm qnaQuestionForm, @PathVariable("id") Long id,
-                                 @AuthenticationPrincipal PrincipalDetails member) {
+                                 @AuthenticationPrincipal   PrincipalDetails member) {
         QnaQuestion question = this.questionService.getQnaQuestion(id); // 수정된 부분
         if (!question.getAuthor().getName().equals(member.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
@@ -103,7 +103,7 @@ public class QnaQuestionController {
     @PostMapping("/modify/{id}")
     public String questionModify(@Valid QnaQuestionForm qnaQuestionForm, BindingResult bindingResult,
 
-                                 @AuthenticationPrincipal CustomUserDetails member,
+                                 @AuthenticationPrincipal  PrincipalDetails member,
                                  @PathVariable("id") Long id, HttpServletRequest request) {
         String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
 
@@ -135,7 +135,7 @@ public class QnaQuestionController {
     }
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/delete/{id}")
-    public String questionDelete(@AuthenticationPrincipal CustomUserDetails member,
+    public String questionDelete(@AuthenticationPrincipal  PrincipalDetails member,
                                  @PathVariable("id") Long id) {
         QnaQuestion question = this.questionService.getQnaQuestion(id);
         if (!question.getAuthor().getName().equals(member.getName())) {
