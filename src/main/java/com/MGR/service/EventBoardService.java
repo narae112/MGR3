@@ -1,9 +1,13 @@
 package com.MGR.service;
 
 import com.MGR.dto.EventBoardFormDto;
+import com.MGR.dto.ImageDto;
 import com.MGR.entity.EventBoard;
+import com.MGR.entity.Image;
 import com.MGR.entity.Member;
+import com.MGR.entity.Ticket;
 import com.MGR.repository.EventBoardRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,10 +16,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -24,11 +30,25 @@ import java.util.Optional;
 public class EventBoardService {
 
     private final EventBoardRepository eventBoardRepository;
+    private final ImageService imageService;
 
-
-    public void saveBoard(EventBoardFormDto boardFormDto,Member member) {
+    public void saveBoard(EventBoardFormDto boardFormDto, Member member, List<MultipartFile> imgFileList) throws Exception {
         EventBoard board = EventBoard.createBoard(boardFormDto, member);
         eventBoardRepository.save(board);
+
+        //이미지 등록
+        for(int i =0; i< imgFileList.size(); i++){
+            Image boardImage = new Image();
+            boardImage.setEventBoard(board);
+
+            if(i == 0){
+                boardImage.setRepImgYn(true);
+            }else{
+                boardImage.setRepImgYn(false);
+            }
+            imageService.saveBoardImage(boardImage, imgFileList.get(i));
+        }
+
     }
 
     public void saveBoard(EventBoard board) {
@@ -58,14 +78,21 @@ public class EventBoardService {
     }
 
 
-    public EventBoard update(Long id, EventBoardFormDto boardFormDto) {
+    public EventBoard update(Long id, EventBoardFormDto boardFormDto, List<MultipartFile> imgFileList) throws Exception {
         EventBoard eventBoard = eventBoardRepository.findById(id).orElseThrow();
         eventBoard.setContent(boardFormDto.getContent());
         eventBoard.setTitle(boardFormDto.getTitle());
         eventBoard.setStartDate(boardFormDto.getStartDate());
         eventBoard.setEndDate(boardFormDto.getEndDate());
         eventBoard.setModifiedDate(LocalDateTime.now());
-//        eventBoard.setType(boardFormDto.getType());
+
+        Map<Long, ImageDto> boardMap = boardFormDto.getEventImgDtoList();
+        List<Long> keys = new ArrayList<>(boardMap.keySet());
+
+        for(int i=0; i<imgFileList.size(); i++){
+            imageService.updateBoardImage(keys.get(i),imgFileList.get(i));
+        }
+
         return eventBoard;
     }
 }

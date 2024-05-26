@@ -1,5 +1,7 @@
 package com.MGR.security;
 
+import com.MGR.entity.Member;
+import com.MGR.repository.MemberRepository;
 import com.MGR.service.OAuth2MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -79,6 +81,26 @@ public class SecurityConfig {
             http
                     .addFilter(new JwtAuthenticationFilter(authenticationManager, jwtUtil));
         }
+    }
+
+    @Bean
+    public CommandLineRunner initDb(MemberRepository memberRepository, PasswordEncoder passwordEncoder){
+
+        return createAdmin -> {
+            boolean isAdminPresent = memberRepository.findByName("관리자").isPresent();
+
+            if (!isAdminPresent) {
+                Member admin = new Member();
+
+                admin.setName("관리자");
+                admin.setEmail("admin@mgr.com");
+                admin.setNickname("초기관리자");
+                admin.setPassword(passwordEncoder.encode("1"));
+                admin.setRole("ROLE_ADMIN");
+
+                memberRepository.save(admin);
+            }
+        };
     }
 
 //    @Bean

@@ -2,9 +2,11 @@ package com.MGR.controller;
 
 import com.MGR.dto.EventBoardFormDto;
 import com.MGR.entity.EventBoard;
+import com.MGR.entity.Image;
 import com.MGR.entity.Member;
 import com.MGR.security.PrincipalDetails;
 import com.MGR.service.EventBoardService;
+import com.MGR.service.ImageService;
 import com.MGR.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +16,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -24,6 +28,7 @@ public class EventBoardController {
 
     private final MemberService memberService;
     private final EventBoardService eventBoardService;
+    private final ImageService imageService;
 
     @GetMapping({"/events", "/events/{page}"})
     public String eventBoardList(Model model, @RequestParam(value = "page", defaultValue = "0") int page) {
@@ -44,16 +49,19 @@ public class EventBoardController {
     @PostMapping("/eventBoard/create")
     public String eventBoardCreate(@Valid EventBoardFormDto BoardFormDto,
                                    Errors errors, Model model,
-                                   @AuthenticationPrincipal PrincipalDetails member){
+                                   @AuthenticationPrincipal PrincipalDetails member,
+                                   @RequestParam("eventImgFile") List<MultipartFile> imgFileList){
         if(errors.hasErrors()) {
             return "board/event/eventBoardForm";
         }
         try {
             Member findMember = memberService.findByEmail(member.getUsername()).orElseThrow();
-            eventBoardService.saveBoard(BoardFormDto,findMember);
+            eventBoardService.saveBoard(BoardFormDto,findMember, imgFileList);
         } catch (IllegalStateException e){
-            model.addAttribute("errors", e.getMessage());
+            model.addAttribute("errorMessage","게시판 등록 중 오류가 발생했습니다");
             return "board/event/eventBoardForm";
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
         return "redirect:/board/events";
     }
@@ -77,14 +85,18 @@ public class EventBoardController {
 
     @PostMapping("/eventBoard/update/{id}")
     public String UpdateEventBoard(@Valid EventBoardFormDto boardFormDto,
-                                   Errors errors, Model model,
-                                   @PathVariable("id") Long id){
+                                   Errors errors, Model model, @PathVariable("id") Long id,
+                                   @RequestParam("eventImgFile") List<MultipartFile> imgFileList){
         if(errors.hasErrors()) {
             return "/event/eventBoardForm";
         }
 
-        EventBoard update = eventBoardService.update(id, boardFormDto);
-        model.addAttribute("eventBoardFormDto",update);
+        try {
+            eventBoardService.update(id, boardFormDto, imgFileList);
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "티켓 수정 중 오류가 발생했습니다.");
+            return "board/eventForm";
+        }
 
         return "redirect:/board/event/" + id;
     }
@@ -98,6 +110,10 @@ public class EventBoardController {
         eventBoardService.saveBoard(eventBoard);
 
         model.addAttribute("eventBoard",eventBoard);
+
+        List<Image> findImage = imageService.findByEvent(eventBoard);
+        model.addAttribute("eventImage",findImage);
+        System.out.println("findImage = " + findImage.get(0).getImgUrl().toString());
 
         return "board/event/eventBoardDtl";
     }

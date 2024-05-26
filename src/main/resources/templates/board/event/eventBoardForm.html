@@ -88,7 +88,7 @@
 
 <div layout:fragment="content">
 
-    <form th:action="@{/board/eventBoard/create}" method="POST" th:object="${eventBoardFormDto}">
+    <form th:action="@{/board/eventBoard/create}" enctype="multipart/form-data" method="POST" th:object="${eventBoardFormDto}">
         <input type="hidden" id="eventBoardId" name="id" class="form-control"
                th:field="*{id}">
 
@@ -125,7 +125,25 @@
             <textarea name ="content" th:field="*{content}" class="form-control"></textarea>
             <p class="contentError" th:text="${errors}"></p>
         </div>
-
+<!--        이미지 등록 시작-->
+        <div th:if="${#lists.isEmpty(imgDtoList)}">
+            <div class="form-group">
+                <div class="custom-file img-div">
+                    <input type="file" class="custom-file-input" name="eventImgFile" required>
+                    <label class="custom-file-label">상품이미지 1</label>
+                </div>
+            </div>
+        </div>
+        <div th:if="${not #lists.isEmpty(imgDtoList)}">
+            <div class="form-group" th:each="eventBoardFormDto, status: ${eventBoardFormDto.imgDtoList}">
+                <div class="custom-file img-div">
+                    <input type="file" class="custom-file-input" name="eventImgFile" required>
+                    <input type="hidden" name="eventImgIds" th:value="${id}">
+                    <label class="custom-file-label" th:text="${not #strings.isEmpty(eventBoardFormDto.imgOriName)} ? ${eventImgDto.imgOriName} : '상품이미지' + ${status.index+1}"></label>
+                </div>
+            </div>
+        </div>
+<!--        이미지 등록 끝-->
         <button th:if="${#strings.isEmpty(eventBoardFormDto.id)}"
                 th:formaction="@{'/board/eventBoard/create'}"
                 class="btn btn-primary" type="submit" id="eventBoard-create">등록</button>
