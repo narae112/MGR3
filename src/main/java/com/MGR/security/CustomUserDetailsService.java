@@ -24,6 +24,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         Optional<Member> memberOptional = memberRepository.findByEmail(email);
         Member member = memberOptional.orElseThrow(() -> new UsernameNotFoundException(email));
 
-        return new CustomUserDetails(member);
+//        return new CustomUserDetails(member);
+        return new PrincipalDetails(member);
     }
 }
