@@ -24,6 +24,7 @@ public class ReservationDtlDto {
         this.name = reservationTicket.getTicket().getName();
         this.price = reservationTicket.getTicket().getPrice();
         this.ticketCount = reservationTicket.getTicketCount();
+        this.locationCategory = reservationTicket.getTicket().getLocationCategory();
         this.visitDate = reservationTicket.getVisitDate();
         this.reservationDate = reservationTicket.getReservationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         this.reservationStatus = reservationTicket.getReservationStatus();
