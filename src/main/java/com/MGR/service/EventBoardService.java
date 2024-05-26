@@ -77,6 +77,16 @@ public class EventBoardService {
         eventBoardRepository.delete(eventBoard);
     }
 
+//    public EventBoard update(Long id, EventBoardFormDto boardFormDto) {
+//        EventBoard eventBoard = eventBoardRepository.findById(id).orElseThrow();
+//        eventBoard.setContent(boardFormDto.getContent());
+//        eventBoard.setTitle(boardFormDto.getTitle());
+//        eventBoard.setStartDate(boardFormDto.getStartDate());
+//        eventBoard.setEndDate(boardFormDto.getEndDate());
+//        eventBoard.setModifiedDate(LocalDateTime.now());
+////        eventBoard.setType(boardFormDto.getType());
+//        return eventBoard;
+//    }
 
     public EventBoard update(Long id, EventBoardFormDto boardFormDto, List<MultipartFile> imgFileList) throws Exception {
         EventBoard eventBoard = eventBoardRepository.findById(id).orElseThrow();
@@ -85,6 +95,7 @@ public class EventBoardService {
         eventBoard.setStartDate(boardFormDto.getStartDate());
         eventBoard.setEndDate(boardFormDto.getEndDate());
         eventBoard.setModifiedDate(LocalDateTime.now());
+        eventBoardRepository.save(eventBoard);
 
         Map<Long, ImageDto> boardMap = boardFormDto.getEventImgDtoList();
         List<Long> keys = new ArrayList<>(boardMap.keySet());

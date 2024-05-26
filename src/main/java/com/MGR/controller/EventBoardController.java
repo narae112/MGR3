@@ -14,10 +14,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -80,22 +82,45 @@ public class EventBoardController {
 //        }
         model.addAttribute("eventBoardFormDto",eventBoard);
 
+        List<Image> findImage = imageService.findByEvent(eventBoard);
+        model.addAttribute("eventImage",findImage);
+
         return "board/event/eventBoardForm";
     }
 
+//    @PostMapping("/eventBoard/update/{id}")
+//    public String UpdateEventBoard(@Valid EventBoardFormDto boardFormDto,
+//                                   Errors errors, Model model,
+//                                   @PathVariable("id") Long id){
+//        if(errors.hasErrors()) {
+//            return "/event/eventBoardForm";
+//        }
+//
+//        EventBoard update = eventBoardService.update(id, boardFormDto);
+//        model.addAttribute("eventBoardFormDto",update);
+//
+//        return "redirect:/board/event/" + id;
+//    }
+
     @PostMapping("/eventBoard/update/{id}")
-    public String UpdateEventBoard(@Valid EventBoardFormDto boardFormDto,
-                                   Errors errors, Model model, @PathVariable("id") Long id,
-                                   @RequestParam("eventImgFile") List<MultipartFile> imgFileList){
-        if(errors.hasErrors()) {
-            return "/event/eventBoardForm";
+    public String UpdateEventBoard(@Valid EventBoardFormDto eventBoardFormDto,
+                                   BindingResult result, Model model, @PathVariable("id") Long id,
+                                   @RequestParam(value = "eventImgFile", required = false) List<MultipartFile> imgFileList){
+        if(result.hasErrors()) {
+            return "board/event/eventBoardForm";
         }
 
+//        if (eventBoardFormDto.getEventImgDtoList() == null) {
+//            eventBoardFormDto.setEventImgDtoList(new HashMap<>());
+//        }
+//        model.addAttribute("eventBoardFormDto", eventBoardFormDto);
+
+
         try {
-            eventBoardService.update(id, boardFormDto, imgFileList);
+            eventBoardService.update(id, eventBoardFormDto, imgFileList);
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "티켓 수정 중 오류가 발생했습니다.");
-            return "board/eventForm";
+            model.addAttribute("errorMessage", "수정 중 오류가 발생했습니다.");
+            return "board/event/eventBoardForm";
         }
 
         return "redirect:/board/event/" + id;
@@ -108,12 +133,10 @@ public class EventBoardController {
         int count = eventBoard.viewCount();
         eventBoard.setCount(count);
         eventBoardService.saveBoard(eventBoard);
-
         model.addAttribute("eventBoard",eventBoard);
 
         List<Image> findImage = imageService.findByEvent(eventBoard);
         model.addAttribute("eventImage",findImage);
-        System.out.println("findImage = " + findImage.get(0).getImgUrl().toString());
 
         return "board/event/eventBoardDtl";
     }

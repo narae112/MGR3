@@ -37,6 +37,8 @@ public class EventBoardFormDto {
 
     private static ModelMapper modelMapper = new ModelMapper();
 
+    private Long id;
+
     public EventBoard createEventBoard() {
         return modelMapper.map(this, EventBoard.class);
     }
