@@ -58,7 +58,14 @@ dependencies {
 	//gson json
 //   implementation 'com.google.code.gson:gson:2.8.8'
 
+	//img
 	implementation 'org.commonmark:commonmark:0.18.0'
+
+	//recaptcha
+	implementation 'net.tanesha.recaptcha4j:recaptcha4j:0.0.7'
+	implementation 'org.glassfish:javax.json:1.1' // javax.json 의존성만 사용합니다.
+	implementation platform('org.springframework.boot:spring-boot-dependencies:3.1.11')
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
 }
 
 tasks.named('bootBuildImage') {
