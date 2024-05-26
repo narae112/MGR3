@@ -27,7 +27,6 @@ import java.util.List;
 public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
-
     private final OAuth2MemberService oAuth2MemberService;
     private final JwtUtil jwtUtil;
 
@@ -81,95 +80,6 @@ public class SecurityConfig {
                     .addFilter(new JwtAuthenticationFilter(authenticationManager, jwtUtil));
         }
     }
-
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//
-//        http.csrf(csrf -> csrf
-//                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
-//        //토큰 켜기
-//
-//        //http.csrf(AbstractHttpConfigurer::disable);
-//        //토큰 끄기
-//
-//        http.formLogin((login) -> login
-//                        .loginPage("/login")
-//                        .usernameParameter("email")
-//                        .passwordParameter("password")
-//                        .failureUrl("/login/error")
-//                        .defaultSuccessUrl("/")
-//                        .loginProcessingUrl("/login"))
-//                .logout((logout) -> logout
-//                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-//                        .logoutSuccessUrl("/")
-//                        .invalidateHttpSession(true)); // 세션 삭제
-//
-//        http.authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers("/**").permitAll()
-////                        .requestMatchers("/board/**").permitAll()
-//                        .requestMatchers("/admin/**").permitAll()
-//                        .requestMatchers("/member/**").permitAll()
-////                      .requestMatchers("/admin/**").hasRole("ADMIN")
-////                      .requestMatchers("/admin").hasRole("ADMIN")
-//                        .anyRequest().authenticated());
-//
-//        http.userDetailsService(customUserDetailsService);
-//
-//        return http.build();
-//    }
-
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//
-////        http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
-//        // csrf 토큰 나중에 다시 생성
-//        http
-//                .authorizeRequests(authorize -> authorize
-//                        .requestMatchers("/admin").hasRole("ADMIN")
-//                        .anyRequest().permitAll()
-//                )
-//                .formLogin(login -> login
-//                        .loginPage("/member/login")
-//                        .usernameParameter("email")
-//                        .passwordParameter("password")
-//                        .failureUrl("/member/login/error")
-//                        .defaultSuccessUrl("/")
-//                        .loginProcessingUrl("/member/login")
-//                )
-//                .oauth2Login(oauth2Login -> oauth2Login
-//                        .loginPage("/member/login")
-//                        .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint
-//                                .userService(customOAuth2UserService)
-//                        )
-//                )
-
-    //======== 민재씨 코드============
-//    .oauth2Login(oauth2Login -> oauth2Login
-//            .loginPage("/login") // 로그인 페이지 지정
-//            .defaultSuccessUrl("/") // 기본 OAuth2 로그인 성공 후 이동할 페이지 설정
-//                        .userInfoEndpoint(userInfo -> userInfo
-//            .userService(principalOauth2UserService) // OAuth2 사용자 정보 엔드포인트 설정
-//            )
-
-//                .logout(logout -> logout
-//                        .logoutRequestMatcher(new AntPathRequestMatcher("/member/logout"))
-//                        .logoutSuccessUrl("/")
-//                        .invalidateHttpSession(true)
-//                )
-//                .userDetailsService(customUserDetailsService);
-//
-//        return http.build();
-//    }
-
-
-
-//    @Bean
-//    public PasswordEncoder passwordEncoder(){
-//        return new BCryptPasswordEncoder();
-//    }
-
-
-
 
 //    @Bean
 //    public CommandLineRunner initDb2(MemberRepository memberRepository){
