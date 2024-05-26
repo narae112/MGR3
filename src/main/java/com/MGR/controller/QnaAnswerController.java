@@ -5,6 +5,7 @@ import com.MGR.entity.Member;
 import com.MGR.entity.QnaAnswer;
 import com.MGR.entity.QnaQuestion;
 import com.MGR.security.CustomUserDetails;
+import com.MGR.security.PrincipalDetails;
 import com.MGR.service.MemberService;
 import com.MGR.service.QnaAnswerService;
 import com.MGR.service.QnaQuestionService;
@@ -36,7 +37,7 @@ public class QnaAnswerController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create/{id}")
     public String createAnswer(Model model, @PathVariable("id") Long id, @Valid QnaAnswerForm qnaAnswerForm,
-                               BindingResult bindingResult,@AuthenticationPrincipal CustomUserDetails member){
+                               BindingResult bindingResult,@AuthenticationPrincipal PrincipalDetails member){
         QnaQuestion question = this.qnaQuestionService.getQnaQuestion(id);
         Member siteUser = this.memberService.getUser(member.getName());
         if(bindingResult.hasErrors()){
@@ -46,10 +47,11 @@ public class QnaAnswerController {
         QnaAnswer answer = this.qnaAnswerService.create(question, qnaAnswerForm.getContent(), siteUser);
         return String.format("redirect:/qna/question/detail/%s#answer_%s", answer.getQnaQuestion().getId(), answer.getId());
     }
+
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify/{id}")
     public String answerModify( QnaAnswerForm qnaAnswerForm, @PathVariable("id") Long id,
-                                @AuthenticationPrincipal CustomUserDetails member) {
+                                @AuthenticationPrincipal PrincipalDetails member) {
         QnaAnswer answer = this.qnaAnswerService.getAnswer(id);
         if (!answer.getAuthor().getName().equals(member.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
@@ -61,7 +63,7 @@ public class QnaAnswerController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/modify/{id}")
     public String answerModify(@Valid QnaAnswerForm qnaAnswerForm, BindingResult bindingResult,
-                               @PathVariable("id") Long id, @AuthenticationPrincipal CustomUserDetails member) {
+                               @PathVariable("id") Long id, @AuthenticationPrincipal PrincipalDetails member) {
         if (bindingResult.hasErrors()) {
             return "board/qna/answer_form";
         }
@@ -72,9 +74,10 @@ public class QnaAnswerController {
         this.qnaAnswerService.modify(answer, qnaAnswerForm.getContent());
         return String.format("redirect:/qna/question/detail/%s#answer_%s", answer.getQnaQuestion().getId(), answer.getId());
     }
+
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/delete/{id}")
-    public String answerDelete(@AuthenticationPrincipal CustomUserDetails member, @PathVariable("id") Long id) {
+    public String answerDelete(@AuthenticationPrincipal PrincipalDetails member, @PathVariable("id") Long id) {
         QnaAnswer answer = this.qnaAnswerService.getAnswer(id);
         if (!answer.getAuthor().getName().equals(member.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");

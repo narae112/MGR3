@@ -51,7 +51,6 @@
 <th:block layout:fragment="script">
     <script th:inline="javascript">
 
-
         var token = $("meta[name='_csrf']").attr('content');
         var header = $("meta[name='_csrf_header']").attr('content');
 
@@ -64,6 +63,9 @@
                 data: {
                     verifyPassword: password
                 },
+                beforeSend : function(xhr){
+                    xhr.setRequestHeader(header, token);
+                },
                 success: function(result) {
                      if(result === 0){
                         alert("비밀번호 인증이 완료되었습니다");
@@ -74,9 +76,6 @@
                         $('.edit-form').css("display", "none");
                         $('.verifyPassword').css("display", "inline-block");
                     }
-                },
-                beforeSend: function(xhr) {
-                    xhr.setRequestHeader(header, token);
                 },
                 error: function(xhr, status, error) {
                     var errorMessage = xhr.status + ': ' + xhr.statusText;
@@ -94,6 +93,9 @@
                 url:'/member/nicknameCheck',
                 type:'POST',
                 data:{nickname:nickname},
+                beforeSend : function(xhr){
+                    xhr.setRequestHeader(header, token);
+                },
                 success:function(result){
                     if(result === 0){
                         $('.nickname_ok').css("display","inline-block");
@@ -110,9 +112,6 @@
                     }else{
                         $('.nickname_null').css("display","none");
                     }
-                },
-                beforeSend: function(xhr) {
-                    xhr.setRequestHeader(header, token);
                 }
             });
         };

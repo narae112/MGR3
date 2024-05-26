@@ -1,5 +1,6 @@
-package com.MGR.security;
+package com.MGR.service;
 
+import com.MGR.security.PrincipalDetails;
 import com.MGR.entity.Member;
 import com.MGR.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -7,24 +8,25 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+// 시큐리티 설정에서 loginProcessingUrl("/login");
+// login 요청이 오면 자동으로 UserDetails Service 타입으로 IOC 되어 있는 loadUserByUsername 함수 실행됨
 @Service
 @RequiredArgsConstructor
-@Transactional
-public class CustomUserDetailsService implements UserDetailsService {
-
+public class PrincipalDetailsService implements UserDetailsService {
     private final MemberRepository memberRepository;
+
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        Optional<Member> memberOptional = memberRepository.findByEmail(email);
-        Member member = memberOptional.orElseThrow(() -> new UsernameNotFoundException(email));
-
-//        return new CustomUserDetails(member);
-        return new PrincipalDetails(member);
+        Optional<Member> member = memberRepository.findByEmail(email);
+        if (member.isPresent()) {
+            System.out.println("member = " + member.get());
+            return new PrincipalDetails(member.get());
+        }
+        return null;
     }
 }

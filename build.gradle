@@ -63,9 +63,20 @@ dependencies {
 
 	//recaptcha
 	implementation 'net.tanesha.recaptcha4j:recaptcha4j:0.0.7'
-	implementation 'org.glassfish:javax.json:1.1' // javax.json 의존성만 사용합니다.
+	implementation 'org.glassfish:javax.json:1.1' 
 	implementation platform('org.springframework.boot:spring-boot-dependencies:3.1.11')
 	implementation 'com.fasterxml.jackson.core:jackson-databind'
+
+
+	//git jasypt
+	//implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
+
+	//jwt
+//	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+//	implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
+//	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
 }
 
 tasks.named('bootBuildImage') {

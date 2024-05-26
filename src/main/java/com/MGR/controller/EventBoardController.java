@@ -3,19 +3,17 @@ package com.MGR.controller;
 import com.MGR.dto.EventBoardFormDto;
 import com.MGR.entity.EventBoard;
 import com.MGR.entity.Member;
-import com.MGR.security.CustomUserDetails;
+import com.MGR.security.PrincipalDetails;
 import com.MGR.service.EventBoardService;
 import com.MGR.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -46,13 +44,12 @@ public class EventBoardController {
     @PostMapping("/eventBoard/create")
     public String eventBoardCreate(@Valid EventBoardFormDto BoardFormDto,
                                    Errors errors, Model model,
-                                   @AuthenticationPrincipal CustomUserDetails member){
+                                   @AuthenticationPrincipal PrincipalDetails member){
         if(errors.hasErrors()) {
             return "board/event/eventBoardForm";
         }
-
         try {
-            Member findMember = memberService.findById(member.getId()).orElseThrow();
+            Member findMember = memberService.findByEmail(member.getUsername()).orElseThrow();
             eventBoardService.saveBoard(BoardFormDto,findMember);
         } catch (IllegalStateException e){
             model.addAttribute("errors", e.getMessage());
@@ -64,7 +61,7 @@ public class EventBoardController {
 
     @GetMapping("/eventBoard/edit/{id}")
     public String editEventBoard(@PathVariable("id") Long id, Model model,
-                                 @AuthenticationPrincipal CustomUserDetails member){
+                                 @AuthenticationPrincipal PrincipalDetails member){
 
         EventBoard eventBoard = eventBoardService.findById(id).orElseThrow();
 //        String authorEmail = eventBoard.getMember().getEmail(); //작성자의 이메일 구하기
