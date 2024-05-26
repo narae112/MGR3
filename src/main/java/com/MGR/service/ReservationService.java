@@ -98,13 +98,13 @@ public class ReservationService {
     // 검증
     @Transactional(readOnly = true)
     public boolean validateReserveTicket(Long reservationTicketId, String email) {
-        Optional<Member> curmember = memberRepository.findByEmail(email); // 현재 로그인 된 회원
+        Optional<Member> curMember = memberRepository.findByEmail(email); // 현재 로그인 된 회원
         ReservationTicket reservationTicket = reservationTicketRepository.findById(reservationTicketId)
                 .orElseThrow(EntityNotFoundException::new);
 
         Member savedmember = reservationTicket.getReservation().getMember(); // 예약된 티켓의 회원 정보
 
-        if(!StringUtils.equals(curmember.get().getEmail(), savedmember.getEmail())) { // 현재 로그인 된 회원의 이메일과 예약 티켓 회원 정보의 이메일이 다르면
+        if(!StringUtils.equals(curMember.get().getEmail(), savedmember.getEmail())) { // 현재 로그인 된 회원의 이메일과 예약 티켓 회원 정보의 이메일이 다르면
             return false;
         }
         return true;

@@ -2,6 +2,7 @@ package com.MGR.controller;
 
 import com.MGR.dto.ReservationDtlDto;
 import com.MGR.dto.ReservationTicketDto;
+import com.MGR.security.PrincipalDetails;
 import com.MGR.service.ReservationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,7 +31,7 @@ public class ReservationController {
     // 예약하기
     @PostMapping("/reservation")
     public @ResponseBody ResponseEntity reservation(@RequestBody @Valid ReservationTicketDto reservationTicketDto,
-                                              BindingResult bindingResult, Principal principal) {
+                                              BindingResult bindingResult, @AuthenticationPrincipal PrincipalDetails member) {
         if(bindingResult.hasErrors()){
             StringBuilder sb = new StringBuilder();
             List<FieldError> fieldErrors = bindingResult.getFieldErrors();
@@ -41,7 +43,7 @@ public class ReservationController {
             return new ResponseEntity<String>(sb.toString(), HttpStatus.BAD_REQUEST);
         }
 
-        String email = principal.getName();
+        String email = member.getUsername();
         Long reservationTicketId;
 
         try {
@@ -54,9 +56,9 @@ public class ReservationController {
 
     // 예약 내역 보기
     @GetMapping(value = {"/reservations", "/reservations/{page}"})
-    public String reservationList(@PathVariable("page") Optional<Integer> page, Principal principal, Model model) {
+    public String reservationList(@PathVariable("page") Optional<Integer> page, @AuthenticationPrincipal PrincipalDetails member, Model model) {
         Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 4);
-        Page<ReservationDtlDto> reservationDtlList = reservationService.getReservationList(principal.getName(), pageable);
+        Page<ReservationDtlDto> reservationDtlList = reservationService.getReservationList(member.getUsername(), pageable);
 
         model.addAttribute("reservationTickets", reservationDtlList);
         model.addAttribute("page", pageable.getPageNumber());
@@ -67,10 +69,10 @@ public class ReservationController {
 
     // 티켓 수량 수정
     @PatchMapping("/reservationTicket/{reservationTicketId}")
-    public @ResponseBody ResponseEntity updateReserveTicket(@PathVariable("reservationTicketId") Long reservationTicketId, int ticketCount, Principal principal) {
+    public @ResponseBody ResponseEntity updateReserveTicket(@PathVariable("reservationTicketId") Long reservationTicketId, int ticketCount, @AuthenticationPrincipal PrincipalDetails member) {
         if(ticketCount <= 0) {
             return new ResponseEntity<String>("티켓 수량은 1개 미만이 될 수 없습니다", HttpStatus.BAD_REQUEST);
-        } else if(!reservationService.validateReserveTicket(reservationTicketId, principal.getName())) {
+        } else if(!reservationService.validateReserveTicket(reservationTicketId, member.getUsername())) {
             return new ResponseEntity<String>("수정 권한이 없습니다", HttpStatus.FORBIDDEN);
         }
         reservationService.updateReservationTicketCount(reservationTicketId, ticketCount);
@@ -81,8 +83,8 @@ public class ReservationController {
     // 예약 취소
     @PostMapping(value = "/reservationTicket/{reservationTicketId}/cancel")
     public @ResponseBody ResponseEntity cancelReserveTicket(@PathVariable("reservationTicketId") Long reservationTicketId,
-                                                       Principal principal){
-        if(!reservationService.validateReserveTicket(reservationTicketId, principal.getName())){
+                                                            @AuthenticationPrincipal PrincipalDetails member){
+        if(!reservationService.validateReserveTicket(reservationTicketId, member.getUsername())){
             return new ResponseEntity<String>("예약 취소 권한이 없습니다.", HttpStatus.FORBIDDEN);
         }
         reservationService.cancelReservation(reservationTicketId);
