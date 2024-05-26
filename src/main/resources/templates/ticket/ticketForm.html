@@ -3,68 +3,24 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
 
-<th:block layout:fragment="script">
-    <script th:inline="javascript">
-        $(document).ready(function(){
-            var errorMessage = /*[[${errorMessage}]]*/ '';
-            if(errorMessage != null){
-                alert(errorMessage);
-            }
-
-            bindDomEvent();
-        });
-
-<!--       이미지 파일 처리-->
-        function bindDomEvent() {
-            $(".custom-file-input").on("change", function() {
-                var fileName = $(this).val().split("\\").pop();
-                var fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
-
-                if (fileExt != "jpg" && fileExt != "jpeg" && fileExt != "gif" && fileExt != "png" && fileExt != "bmp") {
-                    alert("이미지 파일만 등록이 가능합니다.");
-                    return;
-                }
-
-                $(this).siblings(".custom-file-label").html(fileName);
-            });
-        }
-
-<!--       달력 초기화-->
-        function initializeDatePickers() {
-            $('.datepicker').datepicker({
-                format: 'yyyy-MM-ddTHH:mm',
-                autoclose: true,
-                todayHighlight: true
-            });
-        }
-
-<!--        종료 날짜 검증-->
-        function checkEndDateInput() {
-            var startDate = document.getElementById("startDate").value;
-            var endDate = document.getElementById("endDate").value;
-            var startDateObj = new Date(startDate);
-            var endDateObj = new Date(endDate);
-
-            if (endDateObj < startDateObj) {
-                alert("종료 날짜는 시작 날짜 이후여야 합니다.");
-                document.getElementById("endDate").value = "";
-                return false;
-            }
-            return true;
-        }
-
-<!--        시작 날짜 검증-->
-        function checkStartDate() {
-            var selectedDate = document.getElementById("startDate").value;
-            var currentDate = new Date().toISOString().split('T')[0];
-
-            if (selectedDate < currentDate) {
-                alert("과거 날짜는 선택할 수 없습니다.");
-                document.getElementById("startDate").value = "";
-            }
-        }
-    </script>
-</th:block>
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="errorMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div layout:fragment="content">
     <form role="form" method="post" enctype="multipart/form-data" th:object="${ticketFormDto}">
@@ -162,4 +118,61 @@
 
     </form>
 </div>
+<script th:inline="javascript">
+    $(document).ready(function(){
+        var errorMessage = /*[[${errorMessage}]]*/ '';
+        if(errorMessage != null && errorMessage !== ''){
+            $('#errorMessage').text(errorMessage);
+            $('#errorModal').modal('show');
+        }
+
+        bindDomEvent();
+    });
+
+    function bindDomEvent() {
+        $(".custom-file-input").on("change", function() {
+            var fileName = $(this).val().split("\\").pop();
+            var fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+
+            if (fileExt != "jpg" && fileExt != "jpeg" && fileExt != "gif" && fileExt != "png" && fileExt != "bmp") {
+                alert("이미지 파일만 등록이 가능합니다.");
+                return;
+            }
+
+            $(this).siblings(".custom-file-label").html(fileName);
+        });
+    }
+
+    function initializeDatePickers() {
+        $('.datepicker').datepicker({
+            format: 'yyyy-MM-ddTHH:mm',
+            autoclose: true,
+            todayHighlight: true
+        });
+    }
+
+    function checkEndDateInput() {
+        var startDate = document.getElementById("startDate").value;
+        var endDate = document.getElementById("endDate").value;
+        var startDateObj = new Date(startDate);
+        var endDateObj = new Date(endDate);
+
+        if (endDateObj < startDateObj) {
+            alert("종료 날짜는 시작 날짜 이후여야 합니다.");
+            document.getElementById("endDate").value = "";
+            return false;
+        }
+        return true;
+    }
+
+    function checkStartDate() {
+        var selectedDate = document.getElementById("startDate").value;
+        var currentDate = new Date().toISOString().split('T')[0];
+
+        if (selectedDate < currentDate) {
+            alert("과거 날짜는 선택할 수 없습니다.");
+            document.getElementById("startDate").value = "";
+        }
+    }
+</script>
 </html>
