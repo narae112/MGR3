@@ -10,6 +10,7 @@ import com.MGR.service.MemberService;
 import com.MGR.service.QnaQuestionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,8 +20,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
-
+@Slf4j
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/qna/question")
@@ -31,6 +31,7 @@ public class QnaQuestionController {
     @GetMapping("/list")
     public String list(Model model, @RequestParam(value = "page", defaultValue = "0") int page,
                        @RequestParam(value = "kw", defaultValue = "") String kw) {
+        log.info("page:{}, kw:{}", page, kw);
         Page<QnaQuestion> paging = this.questionService.getList(page, kw);
         model.addAttribute("paging", paging);
         model.addAttribute("kw", kw);
@@ -75,7 +76,7 @@ public class QnaQuestionController {
         qnaQuestionForm.setContent(question.getContent());
         return "board/qna/question_form";
     }
-
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/modify/{id}")
     public String questionModify(@Valid QnaQuestionForm qnaQuestionForm, BindingResult bindingResult,
                                  @AuthenticationPrincipal CustomUserDetails member,
@@ -87,7 +88,9 @@ public class QnaQuestionController {
         if (!question.getAuthor().getName().equals(member.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
-        this.questionService.update(question, qnaQuestionForm.getSubject(), qnaQuestionForm.getContent());
+
+        this.questionService.modify(question, qnaQuestionForm.getSubject(), qnaQuestionForm.getContent());
+
         return String.format("redirect:/qna/question/detail/%s", id);
     }
     @PreAuthorize("isAuthenticated()")
@@ -102,13 +105,4 @@ public class QnaQuestionController {
         return "redirect:/qna/question/list";
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/vote/{id}")
-    public String questionVote(@AuthenticationPrincipal CustomUserDetails member, @PathVariable("id") Long id) {
-        QnaQuestion question = this.questionService.getQnaQuestion(id);
-        Member siteUser = this.memberService.getUser(member.getName());
-        this.questionService.vote(question, siteUser);
-        return String.format("redirect:/qna/question/detail/%s", id);
-
-    }
 }
