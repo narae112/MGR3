@@ -6,6 +6,7 @@ import com.MGR.dto.QnaAnswerForm;
 import com.MGR.entity.Member;
 import com.MGR.entity.QnaQuestion;
 import com.MGR.security.CustomUserDetails;
+import com.MGR.security.PrincipalDetails;
 import com.MGR.service.MemberService;
 import com.MGR.service.QnaQuestionService;
 import jakarta.validation.Valid;
@@ -55,7 +56,7 @@ public class QnaQuestionController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
     public String questionCreate(@Valid QnaQuestionForm qnaQuestionForm, BindingResult bindingResult,
-                                 @AuthenticationPrincipal CustomUserDetails member) {
+                                 @AuthenticationPrincipal PrincipalDetails member) {
         if (bindingResult.hasErrors()) {
             return "board/qna/question_form";
         }
@@ -67,7 +68,7 @@ public class QnaQuestionController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify/{id}")
     public String questionModify(QnaQuestionForm qnaQuestionForm, @PathVariable("id") Long id,
-                                 @AuthenticationPrincipal CustomUserDetails member) {
+                                 @AuthenticationPrincipal PrincipalDetails member) {
         QnaQuestion question = this.questionService.getQnaQuestion(id); // 수정된 부분
         if (!question.getAuthor().getName().equals(member.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
@@ -79,7 +80,7 @@ public class QnaQuestionController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/modify/{id}")
     public String questionModify(@Valid QnaQuestionForm qnaQuestionForm, BindingResult bindingResult,
-                                 @AuthenticationPrincipal CustomUserDetails member,
+                                 @AuthenticationPrincipal PrincipalDetails member,
                                  @PathVariable("id") Long id) {
         if (bindingResult.hasErrors()) {
             return "board/qna/question_form";
