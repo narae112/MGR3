@@ -9,6 +9,7 @@ import com.MGR.security.CustomUserDetails;
 import com.MGR.security.PrincipalDetails;
 import com.MGR.service.MemberService;
 import com.MGR.service.QnaQuestionService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,10 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import com.MGR.config.VerifyRecaptcha;
+
+import java.io.IOException;
+
 @Slf4j
 @RequiredArgsConstructor
 @Controller
@@ -56,10 +61,27 @@ public class QnaQuestionController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
     public String questionCreate(@Valid QnaQuestionForm qnaQuestionForm, BindingResult bindingResult,
-                                 @AuthenticationPrincipal PrincipalDetails member) {
+                                 @AuthenticationPrincipal CustomUserDetails member, HttpServletRequest request) {
+        String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
+
+        try {
+            boolean recaptchaVerified = VerifyRecaptcha.verify(gRecaptchaResponse);
+            if (!recaptchaVerified) {
+                // 리캡챠 검증 실패 처리
+                bindingResult.reject("recaptcha.error", "체크표시를 해주세요");
+                return "board/qna/question_form";
+            }
+        } catch (IOException e) {
+            // IOException 처리
+            e.printStackTrace();
+            bindingResult.reject("recaptcha.error", "Error while verifying reCAPTCHA");
+            return "board/qna/question_form";
+        }
+
         if (bindingResult.hasErrors()) {
             return "board/qna/question_form";
         }
+
         Member siteUser = this.memberService.getUser(member.getName());
         this.questionService.create(qnaQuestionForm.getSubject(), qnaQuestionForm.getContent(), siteUser);
         return "redirect:/qna/question/list";
@@ -80,8 +102,25 @@ public class QnaQuestionController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/modify/{id}")
     public String questionModify(@Valid QnaQuestionForm qnaQuestionForm, BindingResult bindingResult,
-                                 @AuthenticationPrincipal PrincipalDetails member,
-                                 @PathVariable("id") Long id) {
+
+                                 @AuthenticationPrincipal CustomUserDetails member,
+                                 @PathVariable("id") Long id, HttpServletRequest request) {
+        String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
+
+        try {
+            boolean recaptchaVerified = VerifyRecaptcha.verify(gRecaptchaResponse);
+            if (!recaptchaVerified) {
+                // 리캡챠 검증 실패 처리
+                bindingResult.reject("recaptcha.error", "체크표시를 해주세요");
+                return "board/qna/question_form";
+            }
+        } catch (IOException e) {
+            // IOException 처리
+            e.printStackTrace();
+            bindingResult.reject("recaptcha.error", "Error while verifying reCAPTCHA");
+            return "board/qna/question_form";
+        }
+
         if (bindingResult.hasErrors()) {
             return "board/qna/question_form";
         }
