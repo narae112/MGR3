@@ -17,22 +17,23 @@ public class ReviewBoard {
     private Long id;
 
     @Column(length = 50)
-    private String title;
+    private String title; // 게시글 제목
 
     @Column(columnDefinition = "TEXT")
-    private String content;
+    private String content; // 내용
 
     @Column
-    private int count = 0;
+    private int viewCount = 0;
     //조회수 초기값 0 설정
 
     @Column(columnDefinition = "DATETIME")
-    private LocalDateTime createDate;
+    private LocalDateTime createDate; // 생성일
 
     @Column(columnDefinition = "DATETIME")
-    private LocalDateTime modifiedDate;
+    private LocalDateTime modifiedDate; // 수정일
 
-    private int likeCount;
+    @Column
+    private int likeCount; // 추천수
 
     @ManyToOne
     @JoinColumn(name = "member_id")

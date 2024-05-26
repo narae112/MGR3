@@ -20,7 +20,7 @@ public class ReservationTicket {
     @JoinColumn(name="reservation_id")
     private Reservation reservation;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="ticket_id")
     private Ticket ticket;
 

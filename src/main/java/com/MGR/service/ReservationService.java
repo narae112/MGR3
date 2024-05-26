@@ -38,23 +38,24 @@ public class ReservationService {
     public Long addReservation(ReservationTicketDto reservationTicketDto, String email) {
         Ticket ticket = ticketRepository.findById(reservationTicketDto.getTicketId())
                 .orElseThrow(EntityNotFoundException::new);
-
+        // 예약할 티켓을 데이터베이스에서 찾는다
         Optional<Member> member = memberRepository.findByEmail(email);
-
+        // 이메일을 이용, 로그인 한 멤버를 데이터베이스에서 찾는다
         Reservation reservation = reservationRepository.findByMemberId(member.get().getId());
-
+        // 데이터베이스에서 찾은 멤버의 아이디로 예약 내역을 가지고 있는지 찾는다
         if(reservation == null) {
             reservation = Reservation.createReservation(member.orElse(null));
             reservationRepository.save(reservation);
         } // 로그인 된 회원이 예약 내역을 가지고 있는지 확인하고 없으면 만듦
 
         ReservationTicket savedReservationTicket = reservationTicketRepository.findByReservationIdAndTicketId(reservation.getId(), ticket.getId());
-        // 예약할 티켓이 이미 예약되어있는 티켓이면서 방문예정일이 같으면
+        // 멤버가 가진 예약 내역과 예약할 티켓 아이디를 가지고 예약할 티켓이 데이터베이스에 있는지 찾는다
 
+        // 예약할 티켓이 이미 예약되어있는 티켓이면서 방문예정일이 같으면
         if(savedReservationTicket != null && savedReservationTicket.getVisitDate().equals(reservationTicketDto.getVisitDate())) {
             savedReservationTicket.addCount(reservationTicketDto.getTicketCount()); // 수량만 증가
             return savedReservationTicket.getId(); // 예약 티켓 아이디 반환
-        } else { // 예약 된 티켓이 아니면
+        } else {
             ReservationTicket reservationTicket = ReservationTicket.createReservationTicket(reservation, ticket,
                     reservationTicketDto.getTicketCount(), reservationTicketDto.getVisitDate());
             reservationTicketRepository.save(reservationTicket); // 새로 예약

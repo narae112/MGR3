@@ -31,7 +31,7 @@ public class Image extends BaseEntity{
     private QnaAnswer qnAAnswer;
 
     @ManyToOne(fetch=FetchType.LAZY)
-    private ReviewComment reviewComment;
+    private ReviewBoard reviewBoard;
 
     public void updateImg(String imgOriName, String imgName, String imgUrl){
         this.imgOriName = imgOriName;
