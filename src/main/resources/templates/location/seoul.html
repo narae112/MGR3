@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>오시는 길</title>
+    <style>
+        li {
+            list-style: none;
+            text-align: left;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        .title {
+            text-align: center;
+            font-weight: bold;
+            width: 100%;
+            height: 50px;
+        }
+        #map {
+            width: 100%;
+            max-width: 500px;
+            height: 400px;
+            margin: 10px auto;
+        }
+
+        .button {
+            padding-top: 10px;
+            width: 100%;
+            text-align: center;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .section {
+            flex-basis: calc(33.33% - 20px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        h3 {
+            font-weight: bold;
+            text-align: center;
+            margin-top: 0;
+            padding-top:10px
+        }
+        .line-circle {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 20px;
+            color: white;
+            font-size: 16px;
+            margin-right: 5px;
+        }
+        .line-2 {
+            background-color: #5ab354; /* 초록색 */
+        }
+        .line-8 {
+            background-color: #e04582; /* 핑크색 */
+        }
+        .bus-line {
+            border-radius: 15%;
+            width: 65px;
+            height: 20px;
+            text-align: center;
+            line-height: 20px;
+            color: white;
+            font-size: 16px;
+            margin-right: 5px;
+            font-weight: bold
+        }
+        .line-1 {
+            background-color: #6EAF1E; /* 지선: 초록색 */
+        }
+        .line-2-1 {
+            background-color: #D63945; /* 광역: 빨간색 */
+        }
+        .line-3 {
+            background-color: #366FC6; /* 간선: 파란색 */
+        }
+        .line-4 {
+            background-color: #9E7940; /* 공항: 갈색 */
+        }
+
+        .subway>ul>li{
+        padding-top:20px
+        }
+        .bus>ul>li{
+        padding-top:20px
+        }
+        .hidden {
+            display: none;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+    <h2 class="title">오시는 길</h2>
+    <div id="map"></div>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=91a33b69084e7e19defca68fb0f0f32a"></script>
+    <script>
+        var mapContainer = document.getElementById('map');
+        var mapOption = {
+            center: new kakao.maps.LatLng(37.511116200799286, 127.09809942237753),
+            level: 3
+        };
+        var map = new kakao.maps.Map(mapContainer, mapOption);
+        var marker = new kakao.maps.Marker({
+            position: map.getCenter()
+        });
+         var infowindow = new kakao.maps.InfoWindow({
+            content: '<div style="padding:5px;">MERRY GO RIDE</div>'
+        });
+        infowindow.open(map, marker);
+
+
+    </script>
+    <div class="button">
+        <a href="https://kko.to/92UskdgEOE" title="카카오지도 새창열기" target="_blank" class="btn btn-primary btn-lg mt-3">카카오지도 보러가기</a>
+    </div>
+    <div class="container">
+        <div class="section subway">
+            <h3>지하철<br> 이용시</h3>
+            <ul>
+                <li><span class="line-circle line-2">2</span> 잠실역 4번 출구</li>
+                <li><span class="line-circle line-8">8</span> 잠실역 4번 출구</li>
+            </ul>
+        </div>
+        <div class="section bus">
+            <h3>버스 <br> 이용시</h3>
+            <ul>
+                <li><span class="bus-line line-1">지선</span>
+                    <ul>
+                        <li>3217번, 3314번, 3313번</li>
+                        <li>3315번, 3317번, 3411번</li>
+                        <li>3414번, 4319번</li>
+                    </ul>
+                </li>
+                <li><span class="bus-line line-2-1">광역</span>
+                    <ul>
+                        <li>1007-1번, 1100번, 1700번</li>
+                        <li>2000번, 6900번, 7007번</li>
+                    </ul>
+                </li>
+                <li><span class="bus-line line-3">간선</span>
+                    <ul>
+                        <li>301번, 362번, 341번</li>
+                    </ul>
+                </li>
+                <li><span class="bus-line line-4">공항</span>
+                    <ul>
+                        <li>6000번, 6006번, 6705번</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class="section">
+            <h3>지방 정기 셔틀버스<br> 이용시</h3>
+            <button class="btn">셔틀버스 안내</button>
+            <table id="shuttleTable">
+                <thead>
+                <tr>
+                    <th>소재지</th>
+                    <th>여행사명</th>
+                    <th>연락처</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>광양</td>
+                    <td>멤버십투어</td>
+                    <td>061-761-4146</td>
+                </tr>
+                <tr>
+                    <td>광주</td>
+                    <td>아시아 여행사</td>
+                    <td>062-225-3456</td>
+                </tr>
+                <tr>
+                    <td>대전</td>
+                    <td>미르 여행사</td>
+                    <td>042-471-0970</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
