@@ -19,6 +19,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
 import java.util.Collection;
 import java.util.List;
@@ -35,11 +36,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
                 httpSecurity.csrf(csrf -> csrf
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
 
         httpSecurity
+
+                .authorizeHttpRequests(authorize -> authorize
+                    .requestMatchers("/ws/**").hasAnyRole("ADMIN", "USER"))
 //                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/websocket/**").permitAll()
+                        .requestMatchers("/js/**").permitAll()
+                        .requestMatchers("/css/**").permitAll()
                         .requestMatchers("/admin/**").authenticated() // ~로 시작하는 uri 는 로그인 필수
                         .requestMatchers("/admin/**").hasRole("ADMIN") //admin 으로 시작하는 uri 는 관리자 계정만 접근 가능
                         .anyRequest().permitAll())//나머지 uri 는 모든 접근 허용
@@ -103,63 +110,8 @@ public class SecurityConfig {
         };
     }
 
-//    @Bean
-//    public CommandLineRunner initDb2(MemberRepository memberRepository){
-//
-//        return createAdmin -> {
-//            boolean isAdminPresent = memberRepository.findByName("관리자2").isPresent();
-//
-//            if (!isAdminPresent) {
-//                Member admin = new Member();
-//
-//                admin.setName("관리자2");
-//                admin.setEmail("admin2@mgr.com");
-//                admin.setNickname("초기관리자2");
-//                admin.setPassword(passwordEncoder().encode("1"));
-//                admin.setRole(Role.ADMIN);
-//
-//                memberRepository.save(admin);
-//            }
-//        };
-//    }
-//
-//    @Bean
-//    public CommandLineRunner initDb3(MemberRepository memberRepository){
-//
-//        return createAdmin -> {
-//            boolean isAdminPresent = memberRepository.findByName("사용자1").isPresent();
-//
-//            if (!isAdminPresent) {
-//                Member admin = new Member();
-//
-//                admin.setName("사용자1");
-//                admin.setEmail("user@mgr.com");
-//                admin.setNickname("초기사용자1");
-//                admin.setPassword(passwordEncoder().encode("1"));
-//                admin.setRole(Role.USER);
-//
-//                memberRepository.save(admin);
-//            }
-//        };
-//    }
-//
-//    @Bean
-//    public CommandLineRunner initDb4(MemberRepository memberRepository){
-//
-//        return createAdmin -> {
-//            boolean isAdminPresent = memberRepository.findByName("사용자2").isPresent();
-//
-//            if (!isAdminPresent) {
-//                Member admin = new Member();
-//
-//                admin.setName("사용자2");
-//                admin.setEmail("user2@mgr.com");
-//                admin.setNickname("초기사용자2");
-//                admin.setPassword(passwordEncoder().encode("2"));
-//                admin.setRole(Role.USER);
-//
-//                memberRepository.save(admin);
-//            }
-//        };
-//    }
+    @Bean
+    public ServerEndpointExporter serverEndpointExporter() {
+        return new ServerEndpointExporter();
+    }
 }
