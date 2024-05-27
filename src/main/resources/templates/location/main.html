@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>오시는 길 - 메인</title>
+</head>
+<body>
+<div layout:fragment="content">
+<h2>오시는 길</h2>
+<a href="/location/busan" class="btn btn-primary btn-lg mt-3">부산</a>
+<a href="/location/seoul" class="btn btn-primary btn-lg mt-3">서울</a>
+</div>
+</body>
+</html>
