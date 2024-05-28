@@ -102,4 +102,9 @@ public class ImageService {
     public List<Image> findByEvent(EventBoard eventBoard) {
         return imageRepository.findByEventBoard(eventBoard);
     }
+
+    public void deleteImage(EventBoard eventBoard) {
+        Optional<Image> image = imageRepository.findById(eventBoard.getId());
+        imageRepository.delete(image.get());
+    }
 }
