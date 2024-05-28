@@ -35,15 +35,13 @@ public class EventBoardFormDto {
 
     private Map<Long, ImageDto> eventImgDtoList = new HashMap<>();
 
-    private static ModelMapper modelMapper = new ModelMapper();
+//    private static ModelMapper modelMapper = new ModelMapper();
 
-    private Long id;
-
-    public EventBoard createEventBoard() {
-        return modelMapper.map(this, EventBoard.class);
-    }
-
-    public static EventBoardFormDto of(Ticket ticket) {
-        return modelMapper.map(ticket, EventBoardFormDto.class);
-    }
+//    public EventBoard createEventBoard() {
+//        return modelMapper.map(this, EventBoard.class);
+//    }
+//
+//    public static EventBoardFormDto of(Ticket ticket) {
+//        return modelMapper.map(ticket, EventBoardFormDto.class);
+//    }
 }

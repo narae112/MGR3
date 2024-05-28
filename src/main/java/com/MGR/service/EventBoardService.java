@@ -74,6 +74,7 @@ public class EventBoardService {
     }
 
     public void delete(EventBoard eventBoard) {
+        imageService.deleteImage(eventBoard);
         eventBoardRepository.delete(eventBoard);
     }
 
