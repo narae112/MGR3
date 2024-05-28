@@ -1,6 +1,7 @@
 package com.MGR.controller;
 
 
+import com.MGR.config.ProfanityListLoader;
 import com.MGR.dto.QnaQuestionForm;
 import com.MGR.dto.QnaAnswerForm;
 import com.MGR.entity.Member;
@@ -25,6 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.MGR.config.VerifyRecaptcha;
 
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -60,7 +62,7 @@ public class QnaQuestionController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
-    public String questionCreate(@Valid QnaQuestionForm qnaQuestionForm, BindingResult bindingResult,
+    public String questionCreate(Model model, @Valid QnaQuestionForm qnaQuestionForm, BindingResult bindingResult,
                                  @AuthenticationPrincipal PrincipalDetails member, HttpServletRequest request) {
         String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
 
@@ -81,7 +83,13 @@ public class QnaQuestionController {
         if (bindingResult.hasErrors()) {
             return "board/qna/question_form";
         }
-
+        List<String> profanityList = ProfanityListLoader.loadProfanityList("unsafe.txt");
+        for (String profanity : profanityList) {
+            if (qnaQuestionForm.getContent().contains(profanity) || qnaQuestionForm.getSubject().contains(profanity)) {
+                model.addAttribute("error", "질문에 욕설이 포함되어 있습니다. 다시 작성해주세요.");
+                return "board/qna/question_form";
+            }
+        }
         Member siteUser = this.memberService.getUser(member.getName());
         this.questionService.create(qnaQuestionForm.getSubject(), qnaQuestionForm.getContent(), siteUser);
         return "redirect:/qna/question/list";
@@ -101,7 +109,7 @@ public class QnaQuestionController {
     }
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/modify/{id}")
-    public String questionModify(@Valid QnaQuestionForm qnaQuestionForm, BindingResult bindingResult,
+    public String questionModify(Model model, @Valid QnaQuestionForm qnaQuestionForm, BindingResult bindingResult,
 
                                  @AuthenticationPrincipal  PrincipalDetails member,
                                  @PathVariable("id") Long id, HttpServletRequest request) {
@@ -129,6 +137,13 @@ public class QnaQuestionController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
 
+        List<String> profanityList = ProfanityListLoader.loadProfanityList("unsafe.txt");
+        for (String profanity : profanityList) {
+            if (qnaQuestionForm.getContent().contains(profanity) || qnaQuestionForm.getSubject().contains(profanity)) {
+                model.addAttribute("error", "질문에 욕설이 포함되어 있습니다. 다시 작성해주세요.");
+                return "board/qna/question_form";
+            }
+        }
         this.questionService.modify(question, qnaQuestionForm.getSubject(), qnaQuestionForm.getContent());
 
         return String.format("redirect:/qna/question/detail/%s", id);

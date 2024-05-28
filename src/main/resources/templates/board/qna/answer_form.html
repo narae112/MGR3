@@ -2,11 +2,19 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
+<head>
+    <title>답변 수정</title>
+</head>
 <body>
 <div layout:fragment="content" class="container">
+    <div th:if="${error}" class="alert alert-danger" role="alert">
+        <span th:text="${error}"></span>
+    </div>
     <h5 class="my-3 border-bottom pb-2">답변 수정</h5>
+    <!-- 답변 수정 폼 -->
     <form th:object="${qnaAnswerForm}" method="post">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <!-- 폼 에러 메시지 표시 부분 -->
         <div th:replace="board/qna/form_errors :: formErrorsFragment"></div>
         <div class="mb-3">
             <label for="content" class="form-label">내용</label>
