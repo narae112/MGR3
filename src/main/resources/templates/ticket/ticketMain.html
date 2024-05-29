@@ -5,18 +5,26 @@
 <th:block layout:fragment="script">
     <!--스크립트-->
     <script th:inline="javascript">
-        function search() {
-    var searchPeriodType = $("#searchPeriodType").val();
-    var ticketCategory = $("#ticketCategory").val();
-    var locationCategory = $("#locationCategory").val(); // 수정된 부분
-    var searchBy = $("#searchBy").val();
-    var searchQuery = $("#searchQuery").val();
+        $(document).ready(function(){
+           var errorMessage = /*[[${errorMessage}]]*/ '';
+           if(errorMessage != null && errorMessage !== ''){
+               alert(errorMessage);
+           }
 
-    location.href = "/tickets?searchPeriodType=" + searchPeriodType
-        + "&ticketCategory=" + ticketCategory
-        + "&locationCategory=" + locationCategory // 수정된 부분
-        + "&searchBy=" + searchBy
-        + "&searchQuery=" + searchQuery;
+           bindDomEvent();
+       });
+       function search() {
+   var searchPeriodType = $("#searchPeriodType").val();
+   var ticketCategory = $("#ticketCategory").val();
+   var locationCategory = $("#locationCategory").val(); // 수정된 부분
+   var searchBy = $("#searchBy").val();
+   var searchQuery = $("#searchQuery").val();
+
+   location.href = "/tickets?searchPeriodType=" + searchPeriodType
+       + "&ticketCategory=" + ticketCategory
+       + "&locationCategory=" + locationCategory // 수정된 부분
+       + "&searchBy=" + searchBy
+       + "&searchQuery=" + searchQuery;
 }
     </script>
 </th:block>

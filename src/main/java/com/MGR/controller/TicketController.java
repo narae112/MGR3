@@ -5,12 +5,14 @@ import com.MGR.dto.MainTicketDto;
 import com.MGR.dto.TicketFormDto;
 import com.MGR.dto.TicketSearchDto;
 import com.MGR.entity.Ticket;
+import com.MGR.exception.DuplicateTicketNameException;
 import com.MGR.service.FileService;
 import com.MGR.service.TicketService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.Banner;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,13 +23,13 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
-import static com.MGR.entity.QTicket.ticket;
 
 @Controller
 @RequiredArgsConstructor
@@ -47,12 +49,12 @@ public class TicketController {
         if (bindingResult.hasErrors()) {
             return "ticket/ticketForm";
         }
-        if (ticketImgFileList.get(0).isEmpty() && ticketFormDto.getId() == null) {
-            model.addAttribute("errorMessage", "티켓 이미지는 필수 입력 값입니다.");
-            return "ticket/ticketForm";
-        }
+
         try {
             ticketService.saveTicket(ticketFormDto, ticketImgFileList);
+        } catch (DuplicateTicketNameException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "ticket/ticketForm";
         } catch (Exception e) {
             model.addAttribute("errorMessage", "티켓 등록 중 에러가 발생하였습니다.");
             return "redirect:/admin/ticket/new"; // 폼을 다시 보여주기 위해 리다이렉트
@@ -61,12 +63,12 @@ public class TicketController {
     }
 
     @GetMapping(value = "/admin/ticket/{ticketId}")
-    public String ticketDtl(@PathVariable("ticketId") Long ticketId, Model model) {
+    public String ticketDtl(@PathVariable("ticketId") Long ticketId, Model model, RedirectAttributes redirectAttributes) {
         try {
             TicketFormDto ticketFormDto = ticketService.getTicketDtl(ticketId);
             model.addAttribute("ticketFormDto", ticketFormDto);
         } catch (EntityNotFoundException e) {
-            model.addAttribute("errorMessage", "존재하지 않는 티켓입니다.");
+            redirectAttributes.addFlashAttribute("errorMessage", "존재하지 않는 티켓입니다.");
             model.addAttribute("ticketFormDto", new TicketFormDto());
             return "ticket/ticketForm";
         }
@@ -79,6 +81,10 @@ public class TicketController {
     ) {
         if(ticketImgFileList.get(0).isEmpty() && ticketFormDto.getId() == null) {
             model.addAttribute("errorMessage", "상품 이미지는 필수 입력 값 입니다.");
+            return "ticket/ticketForm";
+        }
+        if (ticketFormDto.getStartDate() == null || ticketFormDto.getEndDate() == null) {
+            model.addAttribute("errorMessage", "날짜는 필수 입력값입니다.");
             return "ticket/ticketForm";
         }
 
@@ -122,11 +128,22 @@ public class TicketController {
 
         return "ticket/ticketMain";
     }
-   @GetMapping("/admin/ticket/delete/{ticketId}")
-    public String deleteTicket(@PathVariable("ticketId") Long ticketId) {
-        // 티켓과 연결된 이미지를 모두 삭제한 후에 티켓을 삭제합니다.
-        ticketService.deleteTicket(ticketId);
+    @GetMapping("/admin/ticket/delete/{ticketId}")
+    public String deleteTicket(@PathVariable("ticketId") Long ticketId, RedirectAttributes redirectAttributes) {
+        try {
+            // 티켓 삭제
+            ticketService.deleteTicket(ticketId);
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "예약된 티켓은 삭제할 수 없습니다.");
+            return "redirect:/admin/tickets";
+        }
 
-        return "redirect:/tickets";
+        return "redirect:/admin/tickets";
     }
+
+
+
+
+
+
 }

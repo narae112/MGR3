@@ -1,6 +1,8 @@
 package com.MGR.service;
 
+import com.MGR.entity.EventBoard;
 import com.MGR.entity.Image;
+import com.MGR.entity.Member;
 import com.MGR.repository.ImageRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -10,6 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.StringUtils;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -92,5 +97,14 @@ public class ImageService {
 
     public void deleteImagesByTicketId(Long ticketId) {
         imageRepository.deleteByTicketId(ticketId);
+    }
+
+    public List<Image> findByEvent(EventBoard eventBoard) {
+        return imageRepository.findByEventBoard(eventBoard);
+    }
+
+    public void deleteImage(EventBoard eventBoard) {
+        Optional<Image> image = imageRepository.findById(eventBoard.getId());
+        imageRepository.delete(image.get());
     }
 }
