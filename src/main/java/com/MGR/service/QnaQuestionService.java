@@ -1,13 +1,14 @@
 package com.MGR.service;
 
 import com.MGR.dto.EventBoardFormDto;
+import com.MGR.dto.ImageDto;
 import com.MGR.dto.QnaQuestionForm;
-import com.MGR.entity.EventBoard;
-import com.MGR.entity.Member;
-import com.MGR.entity.QnaQuestion;
-import com.MGR.entity.QnaAnswer;
+import com.MGR.dto.TicketFormDto;
+import com.MGR.entity.*;
 import com.MGR.exception.DataNotFoundException;
+import com.MGR.repository.ImageRepository;
 import com.MGR.repository.QnaQuestionRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cglib.core.Local;
@@ -21,6 +22,7 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -32,6 +34,9 @@ import java.util.Optional;
 public class QnaQuestionService {
 
     private final QnaQuestionRepository qnaquestionRepository;
+    private final ImageRepository imageRepository;
+    private final ImageService imageService;
+
 
     @SuppressWarnings("unused")
     private Specification<QnaQuestion> search(String kw){
@@ -62,36 +67,90 @@ public class QnaQuestionService {
     }
 
     public QnaQuestion getQnaQuestion(Long id){
-        Optional<QnaQuestion> qnaQuestion = this.qnaquestionRepository.findById(id);
-        if(qnaQuestion.isPresent()){
-            return qnaQuestion.get();
+        Optional<QnaQuestion> question = this.qnaquestionRepository.findById(id);
+        if(question.isPresent()){
+            return question.get();
 
         }else{
             throw new DataNotFoundException("question not found");
         }
     }
-    public void create(String subject, String content, Member user){
+    public Long createQuestion(String subject, String content, Member user, List<MultipartFile> reviewImgFileList) throws Exception {
         QnaQuestion q = new QnaQuestion();
         q.setSubject(subject);
         q.setContent(content);
         q.setCreateDate(LocalDateTime.now());
         q.setAuthor(user);
         this.qnaquestionRepository.save(q);
+
+        for (int i = 0; i < reviewImgFileList.size(); i++) {
+            Image reviewImage = new Image();
+            reviewImage.setQnaQuestion(q);
+
+            if (i == 0) {
+                reviewImage.setRepImgYn(true);
+            } else {
+                reviewImage.setRepImgYn(false);
+            }
+            imageService.saveReviewImage(reviewImage, reviewImgFileList.get(i));
+        }
+        return q.getId();
     }
 
 
-    public void delete(QnaQuestion Question){
-        this.qnaquestionRepository.delete(Question);
+    public void delete(QnaQuestion qnaQuestion) throws Exception {
+        try {
+            imageService.deleteImagesByQnaQuestionId(qnaQuestion.getId());
+            this.qnaquestionRepository.delete(qnaQuestion);
+        } catch (Exception e) {
+            throw new Exception("질문 삭제 중 오류가 발생하였습니다.", e);
+        }
     }
 
     @Transactional
-    public void modify(QnaQuestion question, String subject, String content) {
+    public void modify(QnaQuestion question, String subject, String content, List<MultipartFile> reviewImgFileList) throws Exception{
         // 기존 질문의 내용을 수정
         question.setSubject(subject);
         question.setContent(content);
         question.setModifiedDate(LocalDateTime.now());
+        // 기존 이미지를 삭제하고 새로운 이미지를 추가
+
+        if (reviewImgFileList != null && !reviewImgFileList.isEmpty()) {
+            // 기존 이미지를 삭제
+            imageService.deleteImagesByQnaQuestionId(question.getId());
+
+            // 새로운 이미지를 저장
+            for (MultipartFile reviewImg : reviewImgFileList) {
+                if (reviewImg != null && !reviewImg.isEmpty()) {
+                    Image image = new Image();
+                    imageService.saveReviewImage(image, reviewImg);
+                    image.setQnaQuestion(question);
+                    imageRepository.save(image);
+                }
+            }
+        }
 
         // 수정된 내용을 저장
         qnaquestionRepository.save(question);
+    }
+    @Transactional(readOnly = true)
+    public QnaQuestionForm getQuestionDtl(Long qnaQuestionId){
+        List<Image> reviewImgList = imageRepository.findByQnaQuestionIdOrderByIdAsc(qnaQuestionId);
+        List<ImageDto> reviewImgDtoList = new ArrayList<>();
+        for(Image reviewImage : reviewImgList){
+            ImageDto reviewImgDto = ImageDto.of(reviewImage);
+            reviewImgDtoList.add(reviewImgDto);
+        }
+        QnaQuestion qnaQuestion = qnaquestionRepository.findById(qnaQuestionId).
+                orElseThrow(EntityNotFoundException::new);
+
+        QnaQuestionForm qnaQuestionForm = QnaQuestionForm.of(qnaQuestion);
+        qnaQuestionForm.setReviewImgDtoList(reviewImgDtoList);
+        return qnaQuestionForm;
+    }
+
+    public void vote(QnaQuestion question, Member siteUser) {
+        question.getVoter().add(siteUser);
+        this.qnaquestionRepository.save(question);
     }
 }
