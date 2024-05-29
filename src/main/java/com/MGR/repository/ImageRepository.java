@@ -11,11 +11,16 @@ import java.util.Optional;
 public interface ImageRepository extends JpaRepository<Image, Long> {
     List<Image> findByTicketIdOrderByIdAsc(Long ticketId);
     //상품이미지 아이디의 오름차순으로 가져오는 쿼리 메소드
-    
+    List<Image> findByQnaQuestionIdOrderByIdAsc(Long qnaQuestionId);
+
     void deleteByTicketId(Long ticketId);
+
+    void deleteByQnaQuestionId(Long qnaQuestionId);
+
+    List<Image> findByQnaQuestionId(Long qnaQuestionId);
 
     Image findByIdAndRepImgYn(Long ticketId, Boolean repImgYn);
     //주문상품의 대표이미지를 보여주기 위한 쿼리
 
-    List<Image> findByEventBoard(EventBoard eventBoard);
+    Image findByEventBoard(EventBoard eventBoard);
 }

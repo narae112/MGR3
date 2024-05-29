@@ -82,7 +82,7 @@ public class EventBoardController {
 //        }
         model.addAttribute("eventBoardFormDto",eventBoard);
 
-        List<Image> findImage = imageService.findByEvent(eventBoard);
+        Image findImage = imageService.findByEvent(eventBoard);
         model.addAttribute("eventImage",findImage);
 
         return "board/event/eventBoardForm";
@@ -103,7 +103,7 @@ public class EventBoardController {
 //    }
 
     @PostMapping("/eventBoard/update/{id}")
-    public String UpdateEventBoard(@Valid EventBoardFormDto eventBoardFormDto,
+    public String UpdateEventBoard(@Valid EventBoard eventBoard,
                                    BindingResult result, Model model, @PathVariable("id") Long id,
                                    @RequestParam(value = "eventImgFile", required = false) List<MultipartFile> imgFileList){
         if(result.hasErrors()) {
@@ -117,7 +117,7 @@ public class EventBoardController {
 
 
         try {
-            eventBoardService.update(id, eventBoardFormDto, imgFileList);
+            eventBoardService.update(id, eventBoard, imgFileList);
         } catch (Exception e) {
             model.addAttribute("errorMessage", "수정 중 오류가 발생했습니다.");
             return "board/event/eventBoardForm";
@@ -135,7 +135,7 @@ public class EventBoardController {
         eventBoardService.saveBoard(eventBoard);
         model.addAttribute("eventBoard",eventBoard);
 
-        List<Image> findImage = imageService.findByEvent(eventBoard);
+        Image findImage = imageService.findByEvent(eventBoard);
         model.addAttribute("eventImage",findImage);
 
         return "board/event/eventBoardDtl";

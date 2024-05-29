@@ -11,18 +11,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
-import java.util.Collection;
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -45,6 +39,7 @@ public class SecurityConfig {
 //                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/websocket/**").permitAll()
+                        .requestMatchers("/gemini/**").permitAll()
                         .requestMatchers("/js/**").permitAll()
                         .requestMatchers("/css/**").permitAll()
                         .requestMatchers("/admin/**").authenticated() // ~로 시작하는 uri 는 로그인 필수
@@ -67,7 +62,7 @@ public class SecurityConfig {
 
                 .oauth2Login((oauth2login) -> oauth2login//oauth2 관련 설정
                         .loginPage("/loginForm") //로그인이 필요한데 로그인을 하지 않았다면 이동할 uri 설정
-                        .defaultSuccessUrl("/") //OAuth 로그인이 성공하면 이동할 uri 설정
+                        .defaultSuccessUrl("/ ") //OAuth 로그인이 성공하면 이동할 uri 설정
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(oAuth2MemberService))
                 );//로그인 완료 후 회원 정보 받기
@@ -104,6 +99,26 @@ public class SecurityConfig {
                 admin.setNickname("초기관리자");
                 admin.setPassword(passwordEncoder.encode("1"));
                 admin.setRole("ROLE_ADMIN");
+
+                memberRepository.save(admin);
+            }
+        };
+    }
+
+    @Bean
+    public CommandLineRunner initDbUser(MemberRepository memberRepository, PasswordEncoder passwordEncoder){
+
+        return createAdmin -> {
+            boolean isAdminPresent = memberRepository.findByName("관리자").isPresent();
+
+            if (!isAdminPresent) {
+                Member admin = new Member();
+
+                admin.setName("");
+                admin.setEmail("user@mgr.com");
+                admin.setNickname("초기사용자");
+                admin.setPassword(passwordEncoder.encode("1"));
+                admin.setRole("ROLE_USER");
 
                 memberRepository.save(admin);
             }
