@@ -18,7 +18,7 @@ public class ReservationTicket {
 
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="reservation_id")
-    private Reservation reservation;
+    private Reservation reservation; // member 한 명 당 하나의 reservation
 
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="ticket_id")

@@ -1,5 +1,6 @@
 package com.MGR.entity;
 
+import com.MGR.dto.CouponFormDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,24 +23,28 @@ public class Coupon {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
-    private String couponCode; // 쿠폰 코드
-    private double discountRate;
-    private int maxUses;
-    private LocalDate expirationDate; // 사용 기한
+    private String name; // 이름
+    private int discountRate; // 할인률
+    private LocalDate startDate; // 사용 시작일
+    private LocalDate endDate; // 사용 기한
+    private String couponContent; // 쿠폰 내용
 
-    public static Coupon createCoupon(String name, double discountRate, int maxUses, LocalDate expirationDate) {
+    public static Coupon createCoupon(String name, int discountRate, LocalDate startDate, LocalDate endDate, String couponContent) {
         Coupon coupon = new Coupon();
         coupon.setName(name);
-        coupon.setCouponCode(generateCouponCode());
         coupon.setDiscountRate(discountRate);
-        coupon.setMaxUses(maxUses);
-        coupon.setExpirationDate(expirationDate);
+        coupon.setStartDate(startDate);
+        coupon.setEndDate(endDate);
+        coupon.setCouponContent(couponContent);
         return coupon;
     }
 
-    private static String generateCouponCode() {
-        // UUID를 사용하여 무작위 쿠폰 코드 생성
-        return UUID.randomUUID().toString().replaceAll("-", "").substring(0, 10).toUpperCase();
+    public void updateCoupon(CouponFormDto couponFormDto) {
+        this.name = couponFormDto.getName();
+        this.discountRate = couponFormDto.getDiscountRate();
+        this.startDate = couponFormDto.getStartDate();
+        this.endDate = couponFormDto.getEndDate();
+        this.couponContent = couponFormDto.getCouponContent();
     }
+
 }

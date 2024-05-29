@@ -32,6 +32,9 @@ public class ImageService {
     @Value("${boardImgLocation}")
     private String boardImgLocation;
 
+    @Value("${couponImgLocation}")
+    private String coupImgLocation;
+
     public void saveTicketImage(Image ticketImage, MultipartFile ticketImgFile) throws Exception {
         saveImage(ticketImage, ticketImgFile, ticketImgLocation);
     }
@@ -42,6 +45,9 @@ public class ImageService {
 
     public void saveBoardImage(Image boardImage, MultipartFile boardImgFile) throws Exception {
         saveImage(boardImage, boardImgFile, boardImgLocation);
+    }
+    public void saveCouponImage(Image couponImage, MultipartFile couponImgFile) throws Exception {
+        saveImage(couponImage, couponImgFile, coupImgLocation);
     }
 
     private void saveImage(Image image, MultipartFile imgFile, String imgLocation) throws Exception {
@@ -78,6 +84,10 @@ public class ImageService {
         updateImage(boardImgId, boardImgFile, boardImgLocation);
     }
 
+    public void updateCouponImage(Long couponImgId, MultipartFile couponFile) throws Exception {
+        updateImage(couponImgId, couponFile, coupImgLocation);
+    }
+
     public void updateImage(Long id, MultipartFile imgFile, String imgLocation) throws Exception {
         if(!imgFile.isEmpty()){ // 업로드한 파일이 있는경우(새로운 이미지를 업로드한경우)
             Image savedImg = imageRepository.findById(id).
@@ -97,6 +107,10 @@ public class ImageService {
 
     public void deleteImagesByTicketId(Long ticketId) {
         imageRepository.deleteByTicketId(ticketId);
+    }
+
+    public void deleteImagesByCouponId(Long couponId) {
+        imageRepository.deleteById(couponId);
     }
 
     public List<Image> findByEvent(EventBoard eventBoard) {
