@@ -22,6 +22,7 @@ public class CouponFormDto {
     @NotNull(message = "할인률을 입력하세요")
     private Integer discountRate; // 할인률
 
+
     @NotNull(message = "사용 시작일을 선택하세요")
     private LocalDate startDate; // 사용 시작일
 
