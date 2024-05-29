@@ -99,7 +99,7 @@ public class ImageService {
         imageRepository.deleteByTicketId(ticketId);
     }
 
-    public List<Image> findByEvent(EventBoard eventBoard) {
+    public Image findByEvent(EventBoard eventBoard) {
         return imageRepository.findByEventBoard(eventBoard);
     }
 

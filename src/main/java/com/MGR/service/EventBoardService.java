@@ -9,6 +9,7 @@ import com.MGR.entity.Ticket;
 import com.MGR.repository.EventBoardRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -89,7 +91,7 @@ public class EventBoardService {
 //        return eventBoard;
 //    }
 
-    public EventBoard update(Long id, EventBoardFormDto boardFormDto, List<MultipartFile> imgFileList) throws Exception {
+    public EventBoard update(Long id, EventBoard boardFormDto, List<MultipartFile> imgFileList) throws Exception {
         EventBoard eventBoard = eventBoardRepository.findById(id).orElseThrow();
         eventBoard.setContent(boardFormDto.getContent());
         eventBoard.setTitle(boardFormDto.getTitle());
@@ -98,12 +100,11 @@ public class EventBoardService {
         eventBoard.setModifiedDate(LocalDateTime.now());
         eventBoardRepository.save(eventBoard);
 
-        Map<Long, ImageDto> boardMap = boardFormDto.getEventImgDtoList();
-        List<Long> keys = new ArrayList<>(boardMap.keySet());
+        Image findImage = imageService.findByEvent(eventBoard);
 
-        for(int i=0; i<imgFileList.size(); i++){
-            imageService.updateBoardImage(keys.get(i),imgFileList.get(i));
-        }
+        MultipartFile imgFile = imgFileList.get(0);
+
+        imageService.saveBoardImage(findImage,imgFile);
 
         return eventBoard;
     }

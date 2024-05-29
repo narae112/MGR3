@@ -83,7 +83,7 @@
         <!--    이미지 시작-->
         <div class="repImgDiv">
             <img th:if="${not #lists.isEmpty(eventImage)}"
-                 th:src="${eventImage[0].imgUrl}" class="rounded repImg">
+                 th:src="${eventImage.imgUrl}" class="rounded repImg">
         </div>
         <!--    이미지 끝-->
         <textarea class="form-control" rows="5"
