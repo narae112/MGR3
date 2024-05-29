@@ -19,7 +19,12 @@ public class QCoupon extends EntityPathBase<Coupon> {
 
     public static final QCoupon coupon = new QCoupon("coupon");
 
+    public final QBaseEntity _super = new QBaseEntity(this);
+
     public final StringPath couponContent = createString("couponContent");
+
+    //inherited
+    public final StringPath createdBy = _super.createdBy;
 
     public final NumberPath<Integer> discountRate = createNumber("discountRate", Integer.class);
 
@@ -27,9 +32,18 @@ public class QCoupon extends EntityPathBase<Coupon> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    //inherited
+    public final StringPath modifiedBy = _super.modifiedBy;
+
     public final StringPath name = createString("name");
 
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> regTime = _super.regTime;
+
     public final DatePath<java.time.LocalDate> startDate = createDate("startDate", java.time.LocalDate.class);
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> updateTime = _super.updateTime;
 
     public QCoupon(String variable) {
         super(Coupon.class, forVariable(variable));

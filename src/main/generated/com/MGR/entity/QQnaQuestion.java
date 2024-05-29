@@ -40,6 +40,8 @@ public class QQnaQuestion extends EntityPathBase<QnaQuestion> {
 
     public final StringPath title = createString("title");
 
+    public final SetPath<Member, QMember> voter = this.<Member, QMember>createSet("voter", Member.class, QMember.class, PathInits.DIRECT2);
+
     public QQnaQuestion(String variable) {
         this(QnaQuestion.class, forVariable(variable), INITS);
     }

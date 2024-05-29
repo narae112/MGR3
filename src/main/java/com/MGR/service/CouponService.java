@@ -1,6 +1,7 @@
 package com.MGR.service;
 
 import com.MGR.dto.CouponFormDto;
+import com.MGR.dto.CouponMainDto;
 import com.MGR.dto.CouponSearchDto;
 import com.MGR.entity.Coupon;
 import com.MGR.entity.Image;
@@ -105,8 +106,8 @@ public class CouponService {
     }
 
     @Transactional(readOnly = true)
-    public Page<MainCouponDto> getMainCouponPage(CouponSearchDto couponSearchDto, Pageable pageable){
-        return couponRepository.getMainCouponPage(couponSearchDto, pageable);
+    public Page<CouponMainDto> getCouponMainPage(CouponSearchDto couponSearchDto, Pageable pageable){
+        return couponRepository.getCouponMainPage(couponSearchDto, pageable);
     }
 
 }

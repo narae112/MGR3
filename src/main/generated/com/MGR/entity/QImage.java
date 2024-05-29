@@ -42,14 +42,12 @@ public class QImage extends EntityPathBase<Image> {
     //inherited
     public final StringPath modifiedBy = _super.modifiedBy;
 
-    public final QQnaAnswer qnAAnswer;
+    public final QQnaQuestion qnaQuestion;
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> regTime = _super.regTime;
 
     public final BooleanPath repImgYn = createBoolean("repImgYn");
-
-    public final QReviewBoard reviewBoard;
 
     public final QTicket ticket;
 
@@ -76,8 +74,7 @@ public class QImage extends EntityPathBase<Image> {
         super(type, metadata, inits);
         this.coupon = inits.isInitialized("coupon") ? new QCoupon(forProperty("coupon")) : null;
         this.eventBoard = inits.isInitialized("eventBoard") ? new QEventBoard(forProperty("eventBoard"), inits.get("eventBoard")) : null;
-        this.qnAAnswer = inits.isInitialized("qnAAnswer") ? new QQnaAnswer(forProperty("qnAAnswer"), inits.get("qnAAnswer")) : null;
-        this.reviewBoard = inits.isInitialized("reviewBoard") ? new QReviewBoard(forProperty("reviewBoard"), inits.get("reviewBoard")) : null;
+        this.qnaQuestion = inits.isInitialized("qnaQuestion") ? new QQnaQuestion(forProperty("qnaQuestion"), inits.get("qnaQuestion")) : null;
         this.ticket = inits.isInitialized("ticket") ? new QTicket(forProperty("ticket")) : null;
     }
 
