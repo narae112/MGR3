@@ -34,7 +34,7 @@
                     data: { id: eventBoardId },
                     success: function(result) {
                         alert(result);
-                        if (response === "게시글이 삭제되었습니다") {
+                        if (result === "게시글이 삭제되었습니다") {
                             window.location.href = "/board/events";
                         }
                     },
