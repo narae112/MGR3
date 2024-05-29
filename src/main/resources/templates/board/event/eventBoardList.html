@@ -40,7 +40,16 @@
                 <tr th:each="boardList, loop : ${paging}">
                     <td th:text="${#temporals.format(boardList.createDate, 'MM-dd')}">등록일</td>
                     <td th:if="${boardList.member != null}" th:text="${boardList.member.nickname}">작성자</td>
-                    <td><a th:text="${boardList.title}" th:href="@{|/board/event/${boardList.id}|}">제목</a></td>
+<!--                    <td><a th:text="${boardList.title}" th:href="@{|/board/event/${boardList.id}|}">제목</a></td>-->
+<!--                    <td><a th:text="${boardList.title}" th:href="@{|/board/event/${boardList.id}|}">제목</a>-->
+<!--                        <button class="btn btn-danger" type="button">종료</button></td>-->
+<!--                현재 진행중인 이벤트(boardList.isEventCurrent)만 링크로 들어갈 수 있게 설정-->
+                    <td th:if="${boardList.isEventCurrent}">
+                        <a th:text="${boardList.title}" th:href="@{|/board/event/${boardList.id}|}">제목</a>
+                    </td>
+                    <td th:unless="${boardList.isEventCurrent}">
+                        <a th:text="${boardList.title}">제목</a><span> (종료)</span>
+                    </td>
                     <td th:text="${boardList.startDate}">시작일</td>
                     <td th:text="${boardList.endDate}">종료일</td>
                     <td th:text="${boardList.count}">조회수</td>

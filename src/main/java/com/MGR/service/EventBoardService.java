@@ -14,11 +14,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +35,21 @@ public class EventBoardService {
 
     private final EventBoardRepository eventBoardRepository;
     private final ImageService imageService;
+
+    @Transactional
+    @Scheduled(cron = "0 0 0 * * ?")  // 이벤트가 진행중인 게시글의 진행여부를 매일 자정에 업데이트
+    public void updateEventStatuses() {
+        LocalDate now = LocalDate.now();
+        List<EventBoard> eventBoards = eventBoardRepository.findAll();
+        //자정이 되면 이벤트 게시판을 모두 불러냄
+
+        for (EventBoard eventBoard : eventBoards) {
+            //이벤트 진행 여부를 다시 설정함
+            boolean isCurrent = (now.isEqual(LocalDate.parse(eventBoard.getStartDate())) || now.isAfter(LocalDate.parse(eventBoard.getStartDate())))
+                    && (now.isEqual(LocalDate.parse(eventBoard.getEndDate())) || now.isBefore(LocalDate.parse(eventBoard.getEndDate())));
+            eventBoard.setIsEventCurrent(isCurrent);
+        }
+    }
 
     public void saveBoard(EventBoardFormDto boardFormDto, Member member, List<MultipartFile> imgFileList) throws Exception {
         EventBoard board = EventBoard.createBoard(boardFormDto, member);
