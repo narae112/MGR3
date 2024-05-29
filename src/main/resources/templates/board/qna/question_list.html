@@ -5,10 +5,10 @@
       layout:decorate="~{layouts/default}">
 
     <div layout:fragment="content" class="container my-3">
-        <h2>Q&A 게시판</h2>
+        <h2>리뷰 게시판</h2>
             <div class="row my-3">
                 <div class="col-6">
-                    <a th:href="@{/qna/question/create}" class="btn btn-primary" sec:authorize="isAuthenticated()">질문 등록하기</a>
+                    <a th:href="@{/qna/question/create}" class="btn btn-primary">리뷰 등록하기</a>
                 </div>
                 <div class="col-6">
                     <div class="input-group">
@@ -23,6 +23,7 @@
                     <th>번호</th>
                     <th style="width:50%">제목</th>
                     <th>작성자</th>
+                    <th>조회수</th>
                     <th>등록일</th>
                 </tr>
                 </thead>
@@ -31,10 +32,9 @@
                     <td th:text="${paging.getTotalElements - (paging.number * paging.size) - loop.index}"></td>
                     <td class="text-start">
                         <a th:href="@{|/qna/question/detail/${question.id}|}" th:text="${question.subject}"></a>
-                        <span class="text-danger small ms-2" th:if="${#lists.size(question.answerList) > 0}"
-                              th:text="'답변 완료'"></span>
                     </td>
                     <td><span th:if="${question.author != null}" th:text="${question.author.nickname}"></span></td>
+                    <td th:text="${question.count}"></td>
                     <td th:text="${#temporals.format(question.createDate, 'yyyy-MM-dd HH:mm')}"></td>
                 </tr>
                 </tbody>
