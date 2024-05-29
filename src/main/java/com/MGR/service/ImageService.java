@@ -79,12 +79,12 @@ public class ImageService {
     }
 
     public void updateImage(Long id, MultipartFile imgFile, String imgLocation) throws Exception {
-        if(!imgFile.isEmpty()){ // 업로드한 파일이 있는경우(새로운 이미지를 업로드한경우)
+        if (!imgFile.isEmpty()) { // 업로드한 파일이 있는경우(새로운 이미지를 업로드한경우)
             Image savedImg = imageRepository.findById(id).
                     orElseThrow(EntityNotFoundException::new);
             //기존 이미지 파일삭제
-            if(!StringUtils.isEmpty(savedImg.getImgName())){
-                fileService.deleteFile(imgLocation+"/"+savedImg.getImgName());
+            if (!StringUtils.isEmpty(savedImg.getImgName())) {
+                fileService.deleteFile(imgLocation + "/" + savedImg.getImgName());
             }
             String imgOriName = imgFile.getOriginalFilename();
             String imgName = fileService.uploadFile(imgLocation, imgOriName, imgFile.getBytes());
@@ -97,6 +97,20 @@ public class ImageService {
 
     public void deleteImagesByTicketId(Long ticketId) {
         imageRepository.deleteByTicketId(ticketId);
+    }
+
+    public void deleteImagesByQnaQuestionId(Long qnaQuestionId) throws Exception {
+        List<Image> images = imageRepository.findByQnaQuestionId(qnaQuestionId);
+        for (Image image : images) {
+            try {
+                fileService.deleteFile(image.getImgName()); // 파일 시스템에서 이미지 파일 삭제
+                imageRepository.delete(image); // 데이터베이스에서 이미지 레코드 삭제
+            } catch (Exception e) {
+                // 개별 이미지 삭제 실패 시 로그 기록 또는 별도 처리
+                System.err.println("이미지 삭제 실패: " + e.getMessage());
+                throw new Exception("이미지 삭제 중 오류가 발생하였습니다.", e);
+            }
+        }
     }
 
     public List<Image> findByEvent(EventBoard eventBoard) {
