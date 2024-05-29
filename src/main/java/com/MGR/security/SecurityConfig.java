@@ -67,7 +67,7 @@ public class SecurityConfig {
 
                 .oauth2Login((oauth2login) -> oauth2login//oauth2 관련 설정
                         .loginPage("/loginForm") //로그인이 필요한데 로그인을 하지 않았다면 이동할 uri 설정
-                        .defaultSuccessUrl("/") //OAuth 로그인이 성공하면 이동할 uri 설정
+                        .defaultSuccessUrl("/socialLogin ") //OAuth 로그인이 성공하면 이동할 uri 설정
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(oAuth2MemberService))
                 );//로그인 완료 후 회원 정보 받기
