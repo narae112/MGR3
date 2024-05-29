@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -45,6 +46,20 @@ public class EventBoard {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @Column
+    private Boolean isEventCurrent; //현재 날짜를 기준으로 이벤트가 진행중인지 표시하는 변수
+
+    public void isEventActive(String startDate, String endDate) {
+        LocalDate now = LocalDate.now(); //현재 날짜를 구해서
+
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.isEventCurrent = now.isEqual(LocalDate.parse(startDate)) || now.isAfter(LocalDate.parse(startDate))
+                &&  now.isEqual(LocalDate.parse(endDate)) || now.isBefore(LocalDate.parse(endDate));
+        //String 으로 되어있는 시작 날짜와 끝 날짜를 LocalDate 타입으로 변경 후 날짜를 비교함
+        //-> 시작~끝 기간 안에 현재 날짜가 없으면 false
+    }
+
     public String dateFormat(){
         LocalDateTime dateTime = LocalDateTime.now();
         SimpleDateFormat createDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -61,6 +76,12 @@ public class EventBoard {
         board.setEndDate(boardFormDto.getEndDate());
         board.setCreateDate(LocalDateTime.now());
         board.setMember(member);
+
+        board.isEventActive(boardFormDto.getStartDate(),boardFormDto.getEndDate());
+        //이벤트가 진행중인지 확인 후 변수에 넣음
+        System.out.println(boardFormDto.getStartDate());
+        System.out.println(boardFormDto.getEndDate());
+        System.out.println(board.isEventCurrent.toString());
 
         return board;
 
