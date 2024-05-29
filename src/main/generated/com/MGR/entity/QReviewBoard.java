@@ -24,8 +24,6 @@ public class QReviewBoard extends EntityPathBase<ReviewBoard> {
 
     public final StringPath content = createString("content");
 
-    public final NumberPath<Integer> count = createNumber("count", Integer.class);
-
     public final DateTimePath<java.time.LocalDateTime> createDate = createDateTime("createDate", java.time.LocalDateTime.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
@@ -39,6 +37,8 @@ public class QReviewBoard extends EntityPathBase<ReviewBoard> {
     public final ListPath<ReviewComment, QReviewComment> reviewCommentList = this.<ReviewComment, QReviewComment>createList("reviewCommentList", ReviewComment.class, QReviewComment.class, PathInits.DIRECT2);
 
     public final StringPath title = createString("title");
+
+    public final NumberPath<Integer> viewCount = createNumber("viewCount", Integer.class);
 
     public QReviewBoard(String variable) {
         this(ReviewBoard.class, forVariable(variable), INITS);
