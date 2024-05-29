@@ -153,4 +153,9 @@ public class QnaQuestionService {
         question.getVoter().add(siteUser);
         this.qnaquestionRepository.save(question);
     }
+
+    public void saveQuestion(QnaQuestion question) {
+        qnaquestionRepository.save(question);
+    }
+
 }
