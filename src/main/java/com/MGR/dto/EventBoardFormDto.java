@@ -33,15 +33,7 @@ public class EventBoardFormDto {
 
     private String endDate;
 
-    private Map<Long, ImageDto> eventImgDtoList = new HashMap<>();
+    private ImageDto eventImgDtoList;
 
-//    private static ModelMapper modelMapper = new ModelMapper();
 
-//    public EventBoard createEventBoard() {
-//        return modelMapper.map(this, EventBoard.class);
-//    }
-//
-//    public static EventBoardFormDto of(Ticket ticket) {
-//        return modelMapper.map(ticket, EventBoardFormDto.class);
-//    }
 }
