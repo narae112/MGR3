@@ -49,9 +49,10 @@ public class Member {
     private String providerId; //공급 아이디
 
     @Builder
-    public Member(String oauth2Id, String name, String password, String email, String role, String provider, String providerId) {
+    public Member(String oauth2Id, String name, String nickname, String password, String email, String role, String provider, String providerId) {
         this.oauth2Id=oauth2Id;
         this.name = name;
+        this.nickname = nickname;
         this.password = password;
         this.email = email;
         this.role = role;
