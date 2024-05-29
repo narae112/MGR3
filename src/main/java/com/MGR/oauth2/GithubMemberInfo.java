@@ -22,7 +22,11 @@ public class GithubMemberInfo implements OAuth2MemberInfo{
 
     @Override
     public String getName() {
+        return (String) attributes.get("login");
+    }
 
+    @Override
+    public String getNickname() {
         return (String) attributes.get("login");
     }
 

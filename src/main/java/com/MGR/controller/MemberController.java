@@ -50,6 +50,7 @@ public class MemberController {
     public String memberEdit(Model model, @AuthenticationPrincipal PrincipalDetails member){
 
         Member memberInfo = memberService.findByEmail(member.getUsername()).orElseThrow();
+        System.out.println("memberInfo: " + memberInfo); // 로깅 추가
         model.addAttribute("memberInfo", memberInfo);
 
         return "/member/editForm";
@@ -63,15 +64,15 @@ public class MemberController {
 
         if(!StringUtils.hasText(memberInfo.getNickname())) {
             model.addAttribute("stringError", "닉네임을 입력하세요");
-            return "/member/edit";
+            return "member/edit";
         }
 
         try {
             Optional<Member> findMember = memberService.findByEmail(member.getUsername());
             memberService.updateNickname(id,memberInfo.getNickname());
         } catch (IllegalStateException e){
-            model.addAttribute("errors", e.getMessage());
-            return "/member/edit";
+            model.addAttribute("errorMessage", e.getMessage());
+            return "member/edit";
         }
 
         return "redirect:/";
@@ -80,10 +81,26 @@ public class MemberController {
     @PostMapping("/editPassword/{id}")
     public String memberInfoEditPassword(@PathVariable("id") Long id,
                                  @AuthenticationPrincipal PrincipalDetails member,
-                                 MemberFormDto memberInfo){
+                                 @Valid MemberFormDto memberInfo,
+                                 BindingResult result, Model model){
 
-        Optional<Member> findMember = memberService.findByEmail(member.getUsername());
-        memberService.updatePassword(id,memberInfo.getPassword());
+//        if(!StringUtils.hasText(memberInfo.getPassword())) {
+//            model.addAttribute("errorMessage", "비밀번호를 입력하세요");
+//            return "/member/edit";
+//        }
+
+        if(result.hasErrors()){
+
+            return "redirect:/member/edit";
+        }
+
+        try {
+            Optional<Member> findMember = memberService.findByEmail(member.getUsername());
+            memberService.updatePassword(id, memberInfo.getPassword());
+        }catch (IllegalStateException e){
+            model.addAttribute("errorMessage", e.getMessage());
+            return "redirect:/member/edit";
+        }
 
         return "redirect:/";
     }

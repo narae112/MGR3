@@ -18,6 +18,12 @@ public class MainController {
         return "/member/loginForm";
     }
 
+    @GetMapping("/socialLogin") //소셜 로그인 시 비밀번호 변경하는 폼으로 이동
+    public String socialLogin(Model model) {
+
+        return "index";
+    }
+
     @GetMapping("/login/error")
     public String memberLoginError(Model model){
         model.addAttribute("loginError", "이메일 주소나 비밀번호가 일치하지 않습니다");
