@@ -27,6 +27,8 @@ public class QImage extends EntityPathBase<Image> {
     //inherited
     public final StringPath createdBy = _super.createdBy;
 
+    public final QEventBoard eventBoard;
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final StringPath imgName = createString("imgName");
@@ -70,6 +72,7 @@ public class QImage extends EntityPathBase<Image> {
 
     public QImage(Class<? extends Image> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.eventBoard = inits.isInitialized("eventBoard") ? new QEventBoard(forProperty("eventBoard"), inits.get("eventBoard")) : null;
         this.qnAAnswer = inits.isInitialized("qnAAnswer") ? new QQnaAnswer(forProperty("qnAAnswer"), inits.get("qnAAnswer")) : null;
         this.reviewComment = inits.isInitialized("reviewComment") ? new QReviewComment(forProperty("reviewComment"), inits.get("reviewComment")) : null;
         this.ticket = inits.isInitialized("ticket") ? new QTicket(forProperty("ticket")) : null;

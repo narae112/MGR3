@@ -4,6 +4,7 @@ import com.MGR.dto.EventBoardFormDto;
 import com.MGR.dto.MemberFormDto;
 import com.MGR.entity.Member;
 import com.MGR.security.CustomUserDetails;
+import com.MGR.security.PrincipalDetails;
 import com.MGR.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +47,7 @@ public class MemberController {
     }
 
     @GetMapping("/edit")
-    public String memberEdit(Model model, @AuthenticationPrincipal CustomUserDetails member){
+    public String memberEdit(Model model, @AuthenticationPrincipal PrincipalDetails member){
 
         Member memberInfo = memberService.findByEmail(member.getUsername()).orElseThrow();
         model.addAttribute("memberInfo", memberInfo);
@@ -56,7 +57,7 @@ public class MemberController {
 
     @PostMapping("/editNickname/{id}")
     public String memberInfoEditNickname(@PathVariable("id") Long id,
-                                         @AuthenticationPrincipal CustomUserDetails member,
+                                         @AuthenticationPrincipal PrincipalDetails member,
                                          @Valid MemberFormDto memberInfo,
                                          BindingResult result, Model model){
 
@@ -73,18 +74,18 @@ public class MemberController {
             return "/member/edit";
         }
 
-        return "redirect:/member/edit";
+        return "redirect:/";
     }
 
     @PostMapping("/editPassword/{id}")
     public String memberInfoEditPassword(@PathVariable("id") Long id,
-                                 @AuthenticationPrincipal CustomUserDetails member,
+                                 @AuthenticationPrincipal PrincipalDetails member,
                                  MemberFormDto memberInfo){
 
         Optional<Member> findMember = memberService.findByEmail(member.getUsername());
         memberService.updatePassword(id,memberInfo.getPassword());
 
-        return "redirect:/member/edit";
+        return "redirect:/";
     }
 
     @PostMapping("/emailCheck")
@@ -112,7 +113,7 @@ public class MemberController {
     @GetMapping("/verifyPassword")
     @ResponseBody
     public int verifyPassword(@RequestParam("verifyPassword") String password,
-                              @AuthenticationPrincipal CustomUserDetails member){
+                              @AuthenticationPrincipal PrincipalDetails member){
         return passwordEncoder.matches(password,member.getPassword())? 0 : 1;
         //회원정보 변경 전 비밀번호 인증
     }
