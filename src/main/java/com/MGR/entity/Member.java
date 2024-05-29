@@ -2,16 +2,19 @@ package com.MGR.entity;
 
 import com.MGR.dto.MemberFormDto;
 import com.MGR.constant.Role;
+import com.MGR.repository.MemberRepository;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 
 @Entity
 @Setter @Getter @ToString
+@NoArgsConstructor
 public class Member {
 
     @Id
@@ -36,9 +39,27 @@ public class Member {
     @Column
     private Boolean isSuspended;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    @Column
+    private String role;
 
+    @Column
+    private String oauth2Id;
+
+    private String provider; //공급자
+    private String providerId; //공급 아이디
+
+    @Builder
+    public Member(String oauth2Id, String name, String nickname, String password, String email, String role, String provider, String providerId) {
+        this.oauth2Id=oauth2Id;
+        this.name = name;
+        this.nickname = nickname;
+        this.password = password;
+        this.email = email;
+        this.role = role;
+        this.provider = provider;
+        this.providerId = providerId;
+        this.isSuspended = false;
+    }
 
     public static Member createMember(MemberFormDto memberFormDto, PasswordEncoder passwordEncoder) {
 
@@ -50,7 +71,7 @@ public class Member {
         member.setName(memberFormDto.getName());
         member.setNickname(memberFormDto.getNickname());
         member.setBirth(memberFormDto.getBirth());
-        member.setRole(Role.USER);
+        member.setRole("ROLE_USER");
         member.setIsSuspended(false);
 
         return member;
@@ -64,9 +85,10 @@ public class Member {
         member.setEmail(email);
         member.setPassword(passwordEncoder.encode(password));
         member.setNickname(name);
-        member.setRole(Role.USER);
+        member.setRole("ROLE_USER");
         member.setIsSuspended(false);
 
         return member;
     }
+
 }

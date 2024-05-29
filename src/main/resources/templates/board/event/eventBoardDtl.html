@@ -34,6 +34,9 @@
                     data: { id: eventBoardId },
                     success: function(result) {
                         alert(result);
+                        if (result === "게시글이 삭제되었습니다") {
+                            window.location.href = "/board/events";
+                        }
                     },
                     // Ajax 요청이 서버로 전송되기 전에 호출되는 함수
                     beforeSend: function(xhr) {
@@ -77,9 +80,16 @@
     </div>
     <div>
         <label for="content">내용</label>
+        <!--    이미지 시작-->
+        <div class="repImgDiv">
+            <img th:if="${not #lists.isEmpty(eventImage)}"
+                 th:src="${eventImage[0].imgUrl}" class="rounded repImg">
+        </div>
+        <!--    이미지 끝-->
         <textarea class="form-control" rows="5"
                   id="content" name="content"
                   th:value="${eventBoard.content}" th:text="${eventBoard.content}" readonly></textarea>
+
     </div>
 <!--    <hr class="my-4">-->
     <div class="my-3">

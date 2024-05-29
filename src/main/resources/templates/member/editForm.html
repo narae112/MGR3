@@ -28,12 +28,18 @@
         }
         .nickname_null{
             color: red;
-            display: none;
-        }
-        .nickname-btn{
             display: inline-block;
         }
+        .nickname-btn{
+            display: none;
+        }
         .empty-nickname-btn{
+            display: none;
+        }
+        .empty-password-btn{
+        display: inline-block;
+        }
+        #member-info-password{
             display: none;
         }
         .password_already{
@@ -43,6 +49,9 @@
         .validationError{
             color: red;
         }
+        .fieldError {
+            color: #bd2130;
+        }
 
     </style>
 </th:block>
@@ -51,6 +60,12 @@
 <th:block layout:fragment="script">
     <script th:inline="javascript">
 
+        $(document).ready(function(){
+            var errorMessage = [[${errorMessage}]];
+            if(errorMessage != null){
+                alert(errorMessage);
+            }
+        });
 
         var token = $("meta[name='_csrf']").attr('content');
         var header = $("meta[name='_csrf_header']").attr('content');
@@ -64,6 +79,9 @@
                 data: {
                     verifyPassword: password
                 },
+                beforeSend : function(xhr){
+                    xhr.setRequestHeader(header, token);
+                },
                 success: function(result) {
                      if(result === 0){
                         alert("비밀번호 인증이 완료되었습니다");
@@ -74,9 +92,6 @@
                         $('.edit-form').css("display", "none");
                         $('.verifyPassword').css("display", "inline-block");
                     }
-                },
-                beforeSend: function(xhr) {
-                    xhr.setRequestHeader(header, token);
                 },
                 error: function(xhr, status, error) {
                     var errorMessage = xhr.status + ': ' + xhr.statusText;
@@ -94,6 +109,9 @@
                 url:'/member/nicknameCheck',
                 type:'POST',
                 data:{nickname:nickname},
+                beforeSend : function(xhr){
+                    xhr.setRequestHeader(header, token);
+                },
                 success:function(result){
                     if(result === 0){
                         $('.nickname_ok').css("display","inline-block");
@@ -110,9 +128,6 @@
                     }else{
                         $('.nickname_null').css("display","none");
                     }
-                },
-                beforeSend: function(xhr) {
-                    xhr.setRequestHeader(header, token);
                 }
             });
         };
@@ -132,8 +147,12 @@
                     if (result === 0) {
                         $('.password_ok').css("display", "inline-block");
                         $('.password_already').css("display", "none");
+                        $('#member-info-password').css("display", "inline-block");
+                        $('.empty-password-btn').css("display", "none");
                     } else {
                         $('.password_already').css("display", "inline-block");
+                        $('.empty-password-btn').css("display", "inline-block");
+                        $('#member-info-password').css("display", "none");
                     }
                 },
                 beforeSend: function(xhr) {
@@ -199,19 +218,20 @@
         </div>
         <div class="mb-3">
             <label for="password">비밀번호</label>
-            <input class="form-control" type="password" id="password" th:field="*{password}" onblur="checkPassword()"/>
+            <input class="form-control" name="password" type="password" id="password" th:field="*{password}" onblur="checkPassword()"/>
+            <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="fieldError">Incorrect data</p>
             <span class="validationError" th:if="${#fields.hasErrors('password')}"
                   th:errors="*{password}"></span>
         </div>
         <div class="mb-3">
             <label for="password2">비밀번호 확인</label>
-            <input class="form-control" type="password" id="password2" onblur="checkPassword()"/>
+            <input class="form-control" name="password2" type="password" id="password2"  onblur="checkPassword()"/>
+
             <div class="password_already">비밀번호가 일치하지 않습니다</div>
-            <span class="validationError" th:if="${#fields.hasErrors('nickname')}"
-                  th:errors="*{nickname}"></span>
         </div>
         <button th:formaction="@{'/member/editPassword/' + ${memberInfo.id}}"
                 class="btn btn-primary" type="submit" id="member-info-password">비밀번호 변경</button>
+        <button class="btn btn-secondary empty-password-btn" type="button">비밀번호 변경</button>
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
     </form>
 

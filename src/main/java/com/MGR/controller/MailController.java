@@ -17,7 +17,7 @@ public class MailController {
 
     private final MailService mailService;
 
-    @GetMapping("member/sendEmail")
+    @GetMapping("/member/sendEmail")
     public ResponseEntity<String> sendEmail(@RequestParam("email") String email,
                                             Model model) throws MessagingException {
         //인증 메일 보내기

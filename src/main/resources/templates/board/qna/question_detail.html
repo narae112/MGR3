@@ -5,6 +5,9 @@
       layout:decorate="~{layouts/default}">
 <body>
 <div layout:fragment="content" class="container my-3">
+    <div th:if="${error}" class="alert alert-danger" role="alert">
+        <span th:text="${error}"></span>
+    </div>
     <h2 class="border-bottom py-2" th:text="${question.subject}"></h2>
     <div class="card my-3">
         <div class="card-body">

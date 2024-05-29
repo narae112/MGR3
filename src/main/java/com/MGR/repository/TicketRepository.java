@@ -1,12 +1,16 @@
 package com.MGR.repository;
 
+import com.MGR.constant.LocationCategory;
+import com.MGR.constant.TicketCategory;
 import com.MGR.entity.Ticket;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface TicketRepository extends JpaRepository<Ticket, Long> ,
         QuerydslPredicateExecutor<Ticket>, TicketRepositoryCustom{
@@ -24,5 +28,12 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> ,
     @Query(value="select * from ticket i where i.memo like " +
         "%:memo% order by i.price desc", nativeQuery = true)
     List<Ticket> findByMemoByNative(@Param("memo") String memo);
+    Optional<Ticket> findByNameAndPriceAndMemoAndTicketCategoryAndStartDateAndEndDateAndLocationCategory(
+            String name, int price, String memo, TicketCategory ticketCategory,
+            LocalDate startDate, LocalDate endDate, LocationCategory locationCategory
+    );
 
+    Optional<Ticket> findByPriceAndLocationCategoryAndMemoAndTicketCategory(
+            int price, LocationCategory locationCategory, String memo, TicketCategory ticketCategory
+    );
 }
