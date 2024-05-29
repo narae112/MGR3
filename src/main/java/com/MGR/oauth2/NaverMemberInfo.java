@@ -10,12 +10,17 @@ public class NaverMemberInfo implements OAuth2MemberInfo{
     private Map<String, Object> attributes;
     @Override
     public String getProviderId() {
-        return (String) attributes.get("sub");
+        return (String) attributes.get("id");
     }
 
     @Override
     public String getProvider() {
         return "naver";
+    }
+
+    @Override
+    public String getNickname() {
+        return (String) attributes.get("nickname");
     }
 
     @Override

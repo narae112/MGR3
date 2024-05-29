@@ -22,5 +22,5 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
     Image findByIdAndRepImgYn(Long ticketId, Boolean repImgYn);
     //주문상품의 대표이미지를 보여주기 위한 쿼리
 
-    List<Image> findByEventBoard(EventBoard eventBoard);
+    Image findByEventBoard(EventBoard eventBoard);
 }

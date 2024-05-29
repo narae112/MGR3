@@ -47,15 +47,16 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
         String oauth2Id = provider + "_" + providerId; //중복이 발생하지 않도록 provider와 providerId를 조합
         String username = memberInfo.getName();
         String email = memberInfo.getEmail();
+        String nickname = memberInfo.getNickname();
         String role = "ROLE_USER"; //일반 유저
         System.out.println(oAuth2User.getAttributes());
-        Optional<Member> findMember = memberRepository.findByOauth2Id(oauth2Id);
+        Optional<Member> findMember = memberRepository.findByEmail(email);
         Member member=null;
-        if (findMember.isEmpty()) { //찾지 못했다면
-            System.out.println("못찾았다");
+        if (findMember.isEmpty()) { //중복 이메일을 찾지 못했다면
             member = Member.builder()
                     .oauth2Id(oauth2Id)
                     .name(username)
+                    .nickname(nickname)
                     .email(email)
                     .password(encoder.encode("password"))
                     .role(role)

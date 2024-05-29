@@ -99,6 +99,7 @@ public class ImageService {
         imageRepository.deleteByTicketId(ticketId);
     }
 
+
     public void deleteImagesByQnaQuestionId(Long qnaQuestionId) throws Exception {
         List<Image> images = imageRepository.findByQnaQuestionId(qnaQuestionId);
         for (Image image : images) {
@@ -114,6 +115,8 @@ public class ImageService {
     }
 
     public List<Image> findByEvent(EventBoard eventBoard) {
+    public Image findByEvent(EventBoard eventBoard) {
+
         return imageRepository.findByEventBoard(eventBoard);
     }
 
