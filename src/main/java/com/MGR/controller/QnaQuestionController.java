@@ -4,11 +4,8 @@ package com.MGR.controller;
 import com.MGR.config.ProfanityListLoader;
 import com.MGR.dto.QnaQuestionForm;
 import com.MGR.dto.QnaAnswerForm;
-import com.MGR.dto.TicketFormDto;
-import com.MGR.entity.Image;
 import com.MGR.entity.Member;
 import com.MGR.entity.QnaQuestion;
-import com.MGR.security.CustomUserDetails;
 import com.MGR.security.PrincipalDetails;
 import com.MGR.service.FileService;
 import com.MGR.service.MemberService;
@@ -28,9 +25,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import com.MGR.config.VerifyRecaptcha;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -54,6 +51,9 @@ public class QnaQuestionController {
     @GetMapping(value = "/detail/{id}")
     public String detail(Model model, @PathVariable("id") Long id, QnaAnswerForm qnaAnswerForm) {
         QnaQuestion question = this.questionService.getQnaQuestion(id);
+        int count = question.viewCount();
+        question.setCount(count);
+        questionService.saveQuestion(question);
         model.addAttribute("question", question);
         QnaQuestionForm qnaQuestionForm = questionService.getQuestionDtl(id);
         model.addAttribute("qnaQuestionForm",qnaQuestionForm);
@@ -71,9 +71,12 @@ public class QnaQuestionController {
     @PostMapping("/create")
     public String questionCreate(Model model, @Valid QnaQuestionForm qnaQuestionForm, BindingResult bindingResult,
                                  @AuthenticationPrincipal PrincipalDetails member, HttpServletRequest request,
-                                 @RequestParam("reviewImgFile") List<MultipartFile> reviewImgFileList) {
+                                 @RequestParam("reviewImgFile") List<MultipartFile> reviewImgFileList, RedirectAttributes redirectAttributes) {
         String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
-
+        if (member == null) {
+            redirectAttributes.addFlashAttribute("error", "로그인이 필요한 서비스입니다.");
+            return "member/loginForm";
+        }
         try {
             boolean recaptchaVerified = VerifyRecaptcha.verify(gRecaptchaResponse);
             if (!recaptchaVerified) {
@@ -204,11 +207,24 @@ public class QnaQuestionController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/vote/{id}")
     public String questionVote(@AuthenticationPrincipal PrincipalDetails member,
-                               @PathVariable("id") Long id) {
-        QnaQuestion question = this.questionService.getQnaQuestion(id);
-        Member siteUser = this.memberService.getUser(member.getName());
-        this.questionService.vote(question, siteUser);
-        return String.format("redirect:/qna/question/detail/%s",question.getId());
+                               @PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+        if (member == null) {
+            redirectAttributes.addFlashAttribute("error", "로그인이 필요한 서비스입니다.");
+            return "member/loginForm";
+        }
+
+        try {
+            QnaQuestion question = this.questionService.getQnaQuestion(id);
+            Member siteUser = this.memberService.getUser(member.getName());
+            this.questionService.vote(question, siteUser);
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "오류가 발생했습니다. 다시 시도해주세요.");
+            return String.format("redirect:/qna/question/detail/%s", id);
+        }
+
+        return String.format("redirect:/qna/question/detail/%s", id);
     }
+
+
 
 }
