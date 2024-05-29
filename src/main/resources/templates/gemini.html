@@ -3,10 +3,10 @@
        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
 <div layout:fragment="content">
-    <h1>MGR 시작합시다</h1>
-    <button class="btn btn-primary" type="button" onClick="location.href='member/admin/test'">로그인인증테스트</button>
-<!--    <button class="btn btn-primary" type="button" onClick="location.href='chatRoom'">1:1</button>-->
-        <!-- Button to open the modal -->
+
+
+    <body>
+    <!-- Button to open the modal -->
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#chatModal">
         챗봇
     </button>
@@ -26,9 +26,9 @@
                         <!-- Chat messages will be appended here -->
                     </div>
                     <div class="input-group mt-3">
-                        <input type="text" id="userInput" class="form-control" placeholder="메세지를 입력하세요">
+                        <input type="text" id="userInput" class="form-control" placeholder="Type your message...">
                         <div class="input-group-append">
-                            <button class="btn btn-primary" type="button" id="sendButton">전송</button>
+                            <button class="btn btn-primary" type="button" id="sendButton">Send</button>
                         </div>
                     </div>
                 </div>
@@ -69,7 +69,10 @@
             });
         });
     </script>
+    </body>
+</html>
+
+
+
 </div>
-
-
 </html>
