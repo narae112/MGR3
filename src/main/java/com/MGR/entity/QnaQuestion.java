@@ -45,4 +45,8 @@ public class QnaQuestion {
     @OneToMany(mappedBy = "qnaQuestion", cascade = CascadeType.ALL)
     private List<QnaAnswer> answerList;
 
+    public int viewCount() {
+        return this.count += 1;
+    }
+
 }

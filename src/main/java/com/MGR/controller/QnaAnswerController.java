@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
@@ -39,9 +40,19 @@ public class QnaAnswerController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create/{id}")
     public String createAnswer(Model model, @PathVariable("id") Long id, @Valid QnaAnswerForm qnaAnswerForm,
-                               BindingResult bindingResult,@AuthenticationPrincipal PrincipalDetails member){
+                               BindingResult bindingResult, @AuthenticationPrincipal PrincipalDetails member,
+                               RedirectAttributes redirectAttributes) {
         QnaQuestion question = this.qnaQuestionService.getQnaQuestion(id);
+
+        // 멤버가 null인지 확인
+        if (member == null) {
+            redirectAttributes.addFlashAttribute("error", "로그인이 필요한 서비스입니다.");
+            return "member/loginForm";
+        }
+
         Member siteUser = this.memberService.getUser(member.getName());
+
+        // 욕설 필터링
         List<String> profanityList = ProfanityListLoader.loadProfanityList("unsafe.txt");
         for (String profanity : profanityList) {
             if (qnaAnswerForm.getContent().contains(profanity)) {
@@ -51,10 +62,14 @@ public class QnaAnswerController {
                 return "board/qna/question_detail";
             }
         }
-        if(bindingResult.hasErrors()){
+
+        // 폼 유효성 검사
+        if (bindingResult.hasErrors()) {
             model.addAttribute("question", question);
             return "board/qna/question_detail";
         }
+
+        // 답변 생성 시도
         QnaAnswer answer = this.qnaAnswerService.create(question, qnaAnswerForm.getContent(), siteUser);
         return String.format("redirect:/qna/question/detail/%s#answer_%s", answer.getQnaQuestion().getId(), answer.getId());
     }
