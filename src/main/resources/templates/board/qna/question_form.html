@@ -1,7 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/default}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/default}">
 <head>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -12,7 +10,7 @@
         <span th:text="${error}"></span>
     </div>
     <h5 class="my-3 border-bottom pb-2">질문등록</h5>
-    <form id="add_member_form" th:object="${qnaQuestionForm}" method="post">
+    <form id="add_member_form" th:object="${qnaQuestionForm}" method="post" enctype="multipart/form-data">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <div th:replace="board/qna/form_errors :: formErrorsFragment"></div>
         <div class="mb-3">
@@ -23,6 +21,14 @@
             <label for="content" class="form-label">내용</label>
             <textarea th:field="*{content}" class="form-control" rows="10" id="content"></textarea>
         </div>
+        <div id="imageUploadContainer" class="mb-3">
+            <label class="form-label">상품 이미지 업로드</label>
+            <input type="file" class="form-control reviewImgFile" name="reviewImgFile" multiple>
+            <input type="file" class="form-control reviewImgFile" name="reviewImgFile" multiple>
+            <input type="file" class="form-control reviewImgFile" name="reviewImgFile" multiple>
+            <input type="file" class="form-control reviewImgFile" name="reviewImgFile" multiple>
+            <input type="file" class="form-control reviewImgFile" name="reviewImgFile" multiple>
+        </div>
         <!-- reCAPTCHA -->
         <div class="g-recaptcha" data-sitekey="6LcYWugpAAAAAGnVttnBXYbjBl8bF6l5iBRjtLlt"></div>
         <!-- reCAPTCHA response hidden input -->
@@ -31,7 +37,8 @@
     </form>
 </div>
 <script>
-    $(function() {
+    $(document).ready(function() {
+        // 폼 제출 시 실행될 함수
         $('#add_member_form').submit(function(e) {
             e.preventDefault(); // 기본 제출 방지
 
@@ -58,6 +65,18 @@
                     }
                 }
             });
+        });
+
+        // 파일 선택 이벤트 핸들러
+        $(document).on('change', '.reviewImgFile', function() {
+            var fileList = $(this)[0].files; // 선택된 파일 목록 가져오기
+            var container = $('#imageUploadContainer'); // 부모 컨테이너 선택
+
+            // 선택된 각 파일에 대해 반복하여 새로운 입력 필드 추가
+            for (var i = 0; i < fileList.length; i++) {
+                var newInput = '<div class="mb-3"><label class="form-label"></label><input type="file" class="form-control reviewImgFile" name="reviewImgFile" multiple></div>';
+                container.append(newInput);
+            }
         });
     });
 </script>

@@ -27,7 +27,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.security.Principal;
 import java.util.List;
 
-@RequestMapping("admin/qna/answer")
+@RequestMapping("qna/answer")
 @RequiredArgsConstructor
 @Controller
 public class QnaAnswerController {
