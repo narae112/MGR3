@@ -13,6 +13,8 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
     //상품이미지 아이디의 오름차순으로 가져오는 쿼리 메소드
     List<Image> findByQnaQuestionIdOrderByIdAsc(Long qnaQuestionId);
 
+    List<Image> findByCouponIdOrderByIdAsc(Long couponId);
+
     void deleteByTicketId(Long ticketId);
 
     void deleteByQnaQuestionId(Long qnaQuestionId);
