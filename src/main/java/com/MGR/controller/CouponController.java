@@ -57,6 +57,7 @@ public class CouponController {
         }
         return "redirect:/admin/coupons";// 성공 시 쿠폰 관리 페이지로 리다이렉트
     }
+
     //쿠폰 수정
     @GetMapping(value = "/admin/coupon/{couponId}")
     public String couponDtl(@PathVariable("couponId") Long couponId, Model model, RedirectAttributes redirectAttributes) {

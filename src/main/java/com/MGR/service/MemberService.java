@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -71,5 +72,13 @@ public class MemberService{
 
     public List<Member> findByAllMembers() {
         return memberRepository.findAll();
+    }
+
+    public List<Member> findByAllUser() {
+        //member 의 role 이 User 인 것만 찾기
+        return memberRepository.findAll()
+                .stream()
+                .filter(member -> "ROLE_USER".equals(member.getRole()))
+                .collect(Collectors.toList());
     }
 }

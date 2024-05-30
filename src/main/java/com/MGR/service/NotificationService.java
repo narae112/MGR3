@@ -1,10 +1,13 @@
 package com.MGR.service;
 
 import com.MGR.controller.NotificationController;
+import com.MGR.entity.EventBoard;
 import com.MGR.entity.Member;
 import com.MGR.entity.Notification;
+import com.MGR.repository.EventBoardRepository;
 import com.MGR.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -13,6 +16,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -21,7 +25,6 @@ public class NotificationService {
 
     private final MemberService memberService;
     private final NotificationRepository notificationRepository;
-    private final Map<Long, SseEmitter> sseEmitters = new ConcurrentHashMap<>();
 
     // 메시지 알림
     public SseEmitter subscribe(Long memberId) {
@@ -39,7 +42,7 @@ public class NotificationService {
         }
 
         // 3. 저장
-        sseEmitters.put(memberId, sseEmitter);
+        NotificationController.sseEmitters.put(memberId, sseEmitter);
 
         // 4. 연결 종료 처리
         sseEmitter.onCompletion(() -> NotificationController.sseEmitters.remove(memberId));    // sseEmitter 연결이 완료될 경우
@@ -50,36 +53,41 @@ public class NotificationService {
     }
 
 
-    // 이벤트 등록 알림 - 전부
+    // 이벤트 등록 알림 - 기간이 유효한 것 전부
     @Transactional
-    public void notifyBoard(String boardTitle) {
-        // 5. 모든 멤버 id 조회
-        List<Member> memberList = memberService.findByAllMembers();
+    public void notifyBoard(EventBoard board) {
+        // role = ROLE_USER 만 조회
+        List<Member> memberList = memberService.findByAllUser();
 
         for (Member member : memberList) {
-            // 6. 모든 멤버에게 보낼 메시지 객체 가져오기
-            SseEmitter sseEmitterReceiver = sseEmitters.get(member.getId());
-            System.out.println("sseEmitters 값 확인= " + sseEmitters);
+
+            // SseEmitter 객체 가져오기
+            SseEmitter sseEmitterReceiver = NotificationController.sseEmitters.get(member.getId());
+            System.out.println("sseEmitterReceiver = " + sseEmitterReceiver);
             if (sseEmitterReceiver != null) {
-                System.out.println("어디서 안되는겨");
                 try {
                     sseEmitterReceiver.send(SseEmitter.event()
                             .name("message")
-                            .data(boardTitle));
-                    System.out.println("새로운 이벤트 등록 멘트");
+                            .data(board.getTitle()));
                 } catch (Exception e) {
                     NotificationController.sseEmitters.remove(member.getId());
-                    System.out.println("어디서 안되는겨2" + e.getMessage());
                 }
+
+                // 알림 객체 생성 및 저장
+                Notification notification =
+                        new Notification(member.getId(), board.getTitle(), "이벤트 알림", board.getId());
+                notificationRepository.save(notification);
             }
-            Notification notification = new Notification(member.getId(), boardTitle,"이벤트 알림");
-            notificationRepository.save(notification);
-            System.out.println("알림에러2" + notification);
         }
     }
 
+
     public List<Notification> findByMemberId(Long userId) {
         return notificationRepository.findByMemberId(userId);
+    }
+
+    public void deleteNotification(Long id) {
+        notificationRepository.deleteById(id);
     }
 }
 

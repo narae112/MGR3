@@ -58,8 +58,6 @@ public class CouponService {
             imageService.saveCouponImage(couponImage, couponImgFileList.get(i));
         }
 
-
-
         return coupon.getId();
     }
 

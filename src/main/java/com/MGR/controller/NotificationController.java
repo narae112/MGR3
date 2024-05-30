@@ -4,10 +4,10 @@ import com.MGR.entity.Notification;
 import com.MGR.security.PrincipalDetails;
 import com.MGR.service.NotificationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.Map;
@@ -32,5 +32,11 @@ public class NotificationController {
     public List<Notification> getNotification(@AuthenticationPrincipal PrincipalDetails member){
         Long userId = member.getId();
         return notificationService.findByMemberId(userId);
+    }
+
+    @DeleteMapping("/api/notifications/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteNotification(@PathVariable Long id) {
+        notificationService.deleteNotification(id);
     }
 }
