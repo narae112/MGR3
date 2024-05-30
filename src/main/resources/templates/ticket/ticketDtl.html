@@ -31,7 +31,6 @@
             ticketCount : $("#ticketCount").val(),
             visitDate : $("#visitDate").val(),
             reservationDate : new Date()
-            <!-- visitDate : 달력 구현해서 방문예정일 넣기 -->
         };
 
         var param = JSON.stringify(paramData);
@@ -48,7 +47,7 @@
             dataType : "json",
             cache   : false,
             success  : function(result, status){
-                alert("티켓이 예약되었습니다 \n 결제 후 사용이 가능합니다");
+                alert("티켓이 예약되었습니다 \n결제 후 사용이 가능합니다");
                 location.href='/';
             },
             error : function(jqXHR, status, error){
@@ -119,10 +118,10 @@
 
 <div layout:fragment="content" style="width:100%; padding: 0 5%;">
 
-    <input type="hidden" id="ticketId" th:value="${ticket.id}">
+    <input type="hidden" id="ticketId" th:value="${ticket.id}"> <!-- ticketId 히든으로 넣어놓기 -->
     <input type="hidden" id="startDate" th:value="${ticket.startDate}">
     <input type="hidden" id="endDate" th:value="${ticket.endDate}">
-    <!-- ticketId 히든으로 넣어놓기 -->
+
 
     <div class="d-flex mt-4">
         <div class="repImgDiv"> <!-- 티켓이미지 -->

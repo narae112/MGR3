@@ -55,9 +55,6 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
-	//gson json
-//   implementation 'com.google.code.gson:gson:2.8.8'
-
 	//img
 	implementation 'org.commonmark:commonmark:0.18.0'
 
@@ -78,7 +75,13 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
 	//websocket
-	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+//	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+	// Infinispan dependencies
+//	implementation 'org.infinispan:infinispan-core:13.0.8.Final'
+//	implementation 'org.infinispan:infinispan-commons:13.0.8.Final'
+//	implementation 'org.infinispan:infinispan-marshaller-protostuff:13.0.8.Final'
+//	implementation 'org.jboss.marshalling:jboss-marshalling-osgi:2.0.12.Final'
 
 }
 

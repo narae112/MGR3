@@ -32,6 +32,8 @@ public class QEventBoard extends EntityPathBase<EventBoard> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final BooleanPath isEventCurrent = createBoolean("isEventCurrent");
+
     public final QMember member;
 
     public final DateTimePath<java.time.LocalDateTime> modifiedDate = createDateTime("modifiedDate", java.time.LocalDateTime.class);
