@@ -68,7 +68,8 @@ public class EventBoardService {
             }
             imageService.saveBoardImage(boardImage, imgFileList.get(i));
         }
-        notificationService.notifyBoard(board.getTitle());
+
+        notificationService.notifyBoard(board);
     }
 
     public void saveBoard(EventBoard board) {
@@ -114,5 +115,16 @@ public class EventBoardService {
         imageService.saveBoardImage(findImage,imgFile);
 
         return eventBoard;
+    }
+
+    public List<EventBoard> findAllCurrentEvents() {
+        List<EventBoard> eventBoardList = eventBoardRepository.findAll();
+        List<EventBoard> currentEventList = new ArrayList<>();
+        for (EventBoard eventBoard : eventBoardList) {
+            if (eventBoard.getIsEventCurrent()) {
+                currentEventList.add(eventBoard);
+            }
+        }
+        return currentEventList;
     }
 }

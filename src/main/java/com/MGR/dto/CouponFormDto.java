@@ -19,9 +19,8 @@ public class CouponFormDto {
     @NotBlank(message = "쿠폰 이름을 입력하세요")
     private String name; // 쿠폰 이름
 
-    @NotNull(message = "할인률을 입력하세요")
-    private Integer discountRate; // 할인률
-
+    @NotNull(message = "할인율을 입력하세요")
+    private Integer discountRate; // 할인율
 
     @NotNull(message = "사용 시작일을 선택하세요")
     private LocalDate startDate; // 사용 시작일
