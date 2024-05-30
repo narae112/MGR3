@@ -1,6 +1,7 @@
 package com.MGR.controller;
 
 import com.MGR.dto.CouponFormDto;
+import com.MGR.dto.CouponMainDto;
 import com.MGR.dto.CouponSearchDto;
 import com.MGR.entity.Coupon;
 import com.MGR.exception.DuplicateCouponNameException;
@@ -83,7 +84,7 @@ public class CouponController {
     public String couponMain(CouponSearchDto couponSearchDto,
                              @PathVariable Optional<Integer> page, Model model){
         Pageable pageable = PageRequest.of(page.orElse(0), 6); // 페이지 번호
-        Page<MainCouponDto> coupons = couponService.getMainCouponPage(couponSearchDto, pageable);
+        Page<CouponMainDto> coupons = couponService.getCouponMainPage(couponSearchDto, pageable);
 
         model.addAttribute("coupons", coupons);
         model.addAttribute("couponSearchDto", couponSearchDto);

@@ -21,6 +21,13 @@
         </div>
     </div>
 </div>
+<th:block layout:fragment="css">
+    <style>
+        .fieldError {
+            color: #bd2130;
+        }
+    </style>
+</th:block>
 
 <div layout:fragment="content">
     <form role="form" method="post" enctype="multipart/form-data" th:object="${couponFormDto}">
@@ -35,7 +42,7 @@
                 </div>
                 <input type="text" th:field="*{name}" class="form-control" placeholder="쿠폰 이름을 입력해주세요">
             </div>
-            <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="fieldError">쿠폰 이름을 다시 입력하세요</p>
+            <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="fieldError"></p>
             <!-- 할인율 등록 -->
             <div class="input-group">
                 <div class="input-group-prepend">
@@ -43,15 +50,15 @@
                 </div>
                 <input type="number" th:field="*{discountRate}" class="form-control" placeholder="쿠폰 할인율의 숫자만 입력해주세요(% 제외)" min="0">
             </div>
-            <p th:if="${#fields.hasErrors('discountRate')}" th:errors="*{discountRate}" class="fieldError">할인율을 다시 입력해주세요</p>
+            <p th:if="${#fields.hasErrors('discountRate')}" th:errors="*{discountRate}" class="fieldError"></p>
             <!-- 세부사항 등록 -->
             <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text">세부사항</span>
                 </div>
-                <input type="text" th:field="*{couponContent}" class="form-control" placeholder="쿠폰의 세부사항을 입력해주세요">
+                <input type="text" th:field="*{couponContent}" class="form-control" placeholder="쿠폰의 상세 내용을 입력해주세요">
             </div>
-            <p th:if="${#fields.hasErrors('couponContent')}" th:errors="*{couponContent}" class="fieldError">쿠폰 세부사항을 다시 입력하세요</p>
+            <p th:if="${#fields.hasErrors('couponContent')}" th:errors="*{couponContent}" class="fieldError"></p>
             <!-- 시작 날짜 -->
             <div class="input-group">
                 <div class="input-group-prepend">
@@ -61,7 +68,7 @@
                 <input type="date" th:field="*{startDate}" class="form-control" placeholder="티켓 이용 시작 날짜를 입력해주세요" onchange="checkStartDate()">
                     <!-- 종료 날짜 -->
                     <span class="input-group-text"> ~ 쿠폰 이용 종료 날짜</span>
-                <input type="date" th:field="*{endDate}" class="form-control" placeholder="티켓 이용 종료 날짜를 입력해주세요" onchange="checkEndDate()">
+                <input type="date" th:field="*{endDate}" class="form-control" placeholder="티켓 이용 마감 날짜를 입력해주세요" onchange="checkEndDate()">
             </div>
             <!-- 이미지 저장 -->
             <div th:if="${#lists.isEmpty(couponFormDto.couponImgDtoList)}">

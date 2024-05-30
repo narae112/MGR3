@@ -17,7 +17,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Getter @Setter
 @Entity
-public class Coupon {
+public class Coupon extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
