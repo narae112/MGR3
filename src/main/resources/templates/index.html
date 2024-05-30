@@ -6,9 +6,7 @@
     <h1>MGR 시작합시다</h1>
     <button class="btn btn-primary" type="button" onClick="location.href='member/admin/test'">로그인인증테스트</button>
 <!--    <button class="btn btn-primary" type="button" onClick="location.href='api'">알림</button>-->
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#chatModal" id="notificationButton">
-        알림
-    </button>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#chatModal" id="notificationButton">알림</button>
 
     <div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -20,8 +18,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div id="notify" style="height: 300px; overflow-y: scroll; padding: 10px;">
-                    </div>
+                    <div id="notify" style="height: 300px; overflow-y: scroll; padding: 10px;"></div>
                 </div>
             </div>
         </div>
@@ -98,7 +95,6 @@
 <!--                }-->
 <!--            });-->
         $(document).ready(function(){
-            // SSE 설정
             let eventSource;
             $('#notificationButton').click(function(){
                 if (!eventSource) {
@@ -106,7 +102,7 @@
                     eventSource.addEventListener('connect', function(event) {
                         displayMessage(event.data);
                     });
-                    eventSource.addEventListener('addMessage', function(event) {
+                    eventSource.addEventListener('message', function(event) {
                         displayMessage(event.data);
                     });
                     eventSource.onerror = function(event) {

@@ -64,7 +64,7 @@ public class NotificationService {
                 System.out.println("어디서 안되는겨");
                 try {
                     sseEmitterReceiver.send(SseEmitter.event()
-                            .name("<새로운 이벤트가 등록되었습니다>\n")
+                            .name("message")
                             .data(boardTitle));
                     System.out.println("새로운 이벤트 등록 멘트");
                 } catch (Exception e) {
