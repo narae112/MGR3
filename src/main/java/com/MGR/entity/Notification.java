@@ -25,6 +25,8 @@ public class Notification {
 
     private String type;
 
+    private Long memberCouponId;
+
     public Notification(Long memberId, String message, String type) {
         this.memberId = memberId;
         this.message = message;
