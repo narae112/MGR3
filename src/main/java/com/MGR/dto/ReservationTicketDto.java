@@ -18,4 +18,6 @@ public class ReservationTicketDto {
 
     @NotNull(message = "방문 예정일을 선택해주세요")
     private String visitDate;
+
+
 }
