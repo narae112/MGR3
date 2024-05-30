@@ -30,6 +30,7 @@ public class CouponService {
     final ImageService imageService;
     final ImageRepository imageRepository;
     final MemberRepository memberRepository;
+    private final NotificationService notificationService;
 
     // 쿠폰 생성
     public Long createCoupon(CouponFormDto couponFormDto, List<MultipartFile> couponImgFileList) throws Exception {
@@ -57,6 +58,8 @@ public class CouponService {
             }
             imageService.saveCouponImage(couponImage, couponImgFileList.get(i));
         }
+
+        notificationService.notifyCoupon(coupon);
 
         return coupon.getId();
     }

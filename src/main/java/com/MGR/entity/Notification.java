@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @Entity
 @Getter @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Notification {
 
     @Id
@@ -28,27 +27,32 @@ public class Notification {
 
     private String type;
 
-    private Long memberCouponId;
+    private Long couponId;
 
     private Long boardId;
+
+    private Long paymentId;
 
     @CreatedDate
     private LocalDateTime createdTime;
 
-    public Notification(Long memberId, String message, String type, Long boardId) {
+    public Notification(Long memberId, String message, String type, Long id) {
+        switch (type) {
+            case "이벤트":
+                this.boardId = id;
+                break;
+            case "쿠폰":
+                this.couponId = id;
+                break;
+            case "결제":
+                this.paymentId = id;
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid notification type: " + type);
+        }
         this.memberId = memberId;
         this.message = message;
         this.type = type;
-        this.boardId = boardId;
-        this.createdTime = LocalDateTime.now();
-    }
-
-    public Notification(Long memberId, String message, String type, Long memberCouponId, Long boardId) {
-        this.memberId = memberId;
-        this.message = message;
-        this.type = type;
-        this.memberCouponId = memberCouponId;
-        this.boardId = boardId;
         this.createdTime = LocalDateTime.now();
     }
 
