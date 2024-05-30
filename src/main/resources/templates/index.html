@@ -5,7 +5,33 @@
 <div layout:fragment="content">
     <h1>MGR 시작합시다</h1>
     <button class="btn btn-primary" type="button" onClick="location.href='member/admin/test'">로그인인증테스트</button>
-    <button class="btn btn-primary" type="button" onClick="#">알림</button>
+<!--    <button class="btn btn-primary" type="button" onClick="location.href='api'">알림</button>-->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#chatModal" id="notificationButton">
+        알림
+    </button>
+
+    <div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="chatModalLabel">알림</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="chatWindow" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
+                    </div>
+                    <div class="input-group mt-3">
+                        <input type="text" id="userInput" class="form-control" placeholder="메세지를 입력하세요">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="button" id="sendButton">전송</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 <!--    <button class="btn btn-primary" type="button" onClick="location.href='chatRoom'">1:1</button>-->
 
@@ -42,26 +68,57 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
     <script th:inline="javascript">
-        $(document).ready(function(){
+<!--        $(document).ready(function(){-->
+<!--            $('#sendButton').click(function(){-->
+<!--                var userMessage = $('#userInput').val();-->
+<!--                if(userMessage.trim() !== "") {-->
+<!--                    $('#chatWindow').append('<div class="text-right"><strong>You:</strong> ' + userMessage + '</div>');-->
+<!--                    $('#userInput').val('');-->
+
+<!--                    $.ajax({-->
+<!--                        url: '/gemini/chat',-->
+<!--                        type: 'GET',-->
+<!--                        data: { message: userMessage },-->
+<!--                        success: function(response) {-->
+<!--                            $('#chatWindow').append('<div class="text-left"><strong>Gemini:</strong> ' + response + '</div>');-->
+<!--                            $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);-->
+<!--                        },-->
+<!--                        error: function(xhr, status, error) {-->
+<!--                            $('#chatWindow').append('<div class="text-left text-danger"><strong>Error:</strong> ' + xhr.responseText + '</div>');-->
+<!--                            $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);-->
+<!--                        }-->
+<!--                    });-->
+<!--                }-->
+<!--            });-->
+<!--                        $('#userInput').keypress(function(event){-->
+<!--                if(event.which === 13){-->
+<!--                    $('#sendButton').click();-->
+<!--                }-->
+<!--            });-->
+<!--        });-->
+       $(document).ready(function(){
+            // SSE 설정
+            let eventSource;
+            $('#notificationButton').click(function(){
+                if (!eventSource) {
+                    eventSource = new EventSource('/api');
+                    eventSource.addEventListener('connect', function(event) {
+                        displayMessage('Connected: ' + event.data);
+                    });
+                    eventSource.addEventListener('addMessage', function(event) {
+                        displayMessage('Message: ' + event.data);
+                    });
+                    eventSource.onerror = function(event) {
+                        displayMessage('EventSource failed: ' + event);
+                    };
+                }
+            });
+
             $('#sendButton').click(function(){
                 var userMessage = $('#userInput').val();
                 if(userMessage.trim() !== "") {
                     $('#chatWindow').append('<div class="text-right"><strong>You:</strong> ' + userMessage + '</div>');
                     $('#userInput').val('');
-
-                    $.ajax({
-                        url: '/gemini/chat',
-                        type: 'GET',
-                        data: { message: userMessage },
-                        success: function(response) {
-                            $('#chatWindow').append('<div class="text-left"><strong>Gemini:</strong> ' + response + '</div>');
-                            $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
-                        },
-                        error: function(xhr, status, error) {
-                            $('#chatWindow').append('<div class="text-left text-danger"><strong>Error:</strong> ' + xhr.responseText + '</div>');
-                            $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
-                        }
-                    });
                 }
             });
 
@@ -70,7 +127,16 @@
                     $('#sendButton').click();
                 }
             });
+
+            function displayMessage(message) {
+                const messagesDiv = document.getElementById('chatWindow');
+                const messageElement = document.createElement('div');
+                messageElement.textContent = message;
+                messagesDiv.appendChild(messageElement);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
         });
+
     </script>
 </div>
 

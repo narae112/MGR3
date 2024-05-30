@@ -35,6 +35,7 @@ public class EventBoardService {
 
     private final EventBoardRepository eventBoardRepository;
     private final ImageService imageService;
+    private final NotificationService notificationService;
 
     @Transactional
     @Scheduled(cron = "0 0 0 * * ?")  // 이벤트가 진행중인 게시글의 진행여부를 매일 자정에 업데이트
@@ -67,7 +68,7 @@ public class EventBoardService {
             }
             imageService.saveBoardImage(boardImage, imgFileList.get(i));
         }
-
+        notificationService.notifyBoard(board.getTitle());
     }
 
     public void saveBoard(EventBoard board) {
@@ -96,17 +97,6 @@ public class EventBoardService {
         imageService.deleteImage(eventBoard);
         eventBoardRepository.delete(eventBoard);
     }
-
-//    public EventBoard update(Long id, EventBoardFormDto boardFormDto) {
-//        EventBoard eventBoard = eventBoardRepository.findById(id).orElseThrow();
-//        eventBoard.setContent(boardFormDto.getContent());
-//        eventBoard.setTitle(boardFormDto.getTitle());
-//        eventBoard.setStartDate(boardFormDto.getStartDate());
-//        eventBoard.setEndDate(boardFormDto.getEndDate());
-//        eventBoard.setModifiedDate(LocalDateTime.now());
-////        eventBoard.setType(boardFormDto.getType());
-//        return eventBoard;
-//    }
 
     public EventBoard update(Long id, EventBoard boardFormDto, List<MultipartFile> imgFileList) throws Exception {
         EventBoard eventBoard = eventBoardRepository.findById(id).orElseThrow();

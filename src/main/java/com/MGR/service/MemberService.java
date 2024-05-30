@@ -1,21 +1,16 @@
 package com.MGR.service;
 
-import com.MGR.constant.Role;
+
 import com.MGR.entity.Member;
 import com.MGR.exception.DataNotFoundException;
 import com.MGR.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.parameters.P;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -72,5 +67,9 @@ public class MemberService{
     public void updatePassword(Long id, String password) {
         Member member = memberRepository.findById(id).get();
         member.setPassword(passwordEncoder.encode(password));
+    }
+
+    public List<Member> findByAllMembers() {
+        return memberRepository.findAll();
     }
 }
