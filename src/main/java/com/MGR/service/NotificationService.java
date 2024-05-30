@@ -81,25 +81,25 @@ public class NotificationService {
 
     // 쿠폰 등록 알림
     @Transactional
-    public void notifyCoupon(Coupon coupon, MemberCoupon memberCoupon) {
-        List<Member> memberList = memberService.findByAllUser();
+    public void notifyCoupon(Coupon coupon, MemberCoupon memberCoupon, Member member) {
+        //알림메세지 생성
         String data = "쿠폰이 발행되었습니다\n" +
                 "쿠폰 : " + coupon.getName() + "\n" +
                 "쿠폰 코드 : " + memberCoupon.getCouponCode();
-        for (Member member : memberList) {
-            SseEmitter sseEmitterReceiver = NotificationController.sseEmitters.get(member.getId());
-            if (sseEmitterReceiver != null) {
+
+            SseEmitter sseEmitter = NotificationController.sseEmitters.get(member.getId());
+            if (sseEmitter != null) {
                 try {
-                    sseEmitterReceiver.send(SseEmitter.event()
+                    sseEmitter.send(SseEmitter.event() //sseEmitter 객체에 메세지 담아서 보내기
                             .name("message")
                             .data(data));
                 } catch (Exception e) {
                     NotificationController.sseEmitters.remove(member.getId());
                 }
                 Notification notification = new Notification(member.getId(), data, "쿠폰", coupon.getId());
-                notificationRepository.save(notification);
+                notificationRepository.save(notification); // 보낸 메세지 저장
             }
-        }
+
     }
 
     public List<Notification> findByMemberId(Long userId) {
