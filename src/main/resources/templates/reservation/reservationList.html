@@ -169,6 +169,9 @@
             <tbody>
             <!-- 예약 티켓 항목 -->
             <tr th:each="reservationTicket : ${reservationTickets}">
+<!--            <tr>-->
+<!--                <td th:text="'예약날짜' + ${reservationTicket.reservationDate}"></td>-->
+<!--            </tr>-->
                 <td class="text-center align-middle"><!-- 체크박스 -->
                     <th:block th:if="${reservationTicket.reservationStatus == T(com.MGR.constant.ReservationStatus).RESERVE}">
                         <input type="checkbox" name="reserveChkBox" th:value="${reservationTicket.reservationTicketId}">
@@ -177,7 +180,8 @@
                 <td class="d-flex">
                     <div class="align-self-center">
                         <span th:text="'[' + ${reservationTicket.locationCategory.displayName} + '점] '
-                        + ${reservationTicket.name} + '_' + ${reservationTicket.ticketCategory.displayName}" class="fs24 font-weight-bold"></span><!-- 티켓 이름 -->
+                        + ${reservationTicket.name} + '_' + ${reservationTicket.ticketCategory.displayName}" class="fs24 font-weight-bold"></span>
+                        <!-- [지점]티켓 이름_티켓종류(성인/아동) -->
                         <div class="d-flex fs18 font-weight-light">
                                 <span th:id="'price_' + ${reservationTicket.reservationTicketId}"
                                       th:data-price="${reservationTicket.price}"

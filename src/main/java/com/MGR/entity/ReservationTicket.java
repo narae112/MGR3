@@ -29,8 +29,7 @@ public class ReservationTicket {
 
     @Column
     private String visitDate; // 방문예정일
-    private int ticketCount; // 인원수
-
+    private int ticketCount; // 인원수 = 티켓수
 
     @Enumerated(EnumType.STRING)
     private ReservationStatus reservationStatus; // 예약 상태(예약 / 취소 / 결제완료)

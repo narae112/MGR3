@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface ReservationTicketRepository extends JpaRepository<ReservationTicket, Long> {
     // 예약 내역에 들어가는 티켓을 저장하거나 조회
-    ReservationTicket findByReservationIdAndTicketId(Long reservationId, Long ticketId);
+    List<ReservationTicket> findByReservationIdAndTicketId(Long reservationId, Long ticketId);
 
     @Query("select rt from ReservationTicket rt " +
             "where rt.reservation.id = :reservationId " +
