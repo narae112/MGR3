@@ -1,7 +1,7 @@
 package com.MGR.dto;
 
+import com.MGR.constant.CouponType;
 import com.MGR.entity.Coupon;
-import com.MGR.entity.Ticket;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -32,7 +32,19 @@ public class CouponFormDto {
     @NotBlank(message = "쿠폰 설명을 입력하세요")
     private String couponContent; // 쿠폰 내용
 
+    private CouponType couponType;
+
     private List<ImageDto> couponImgDtoList = new ArrayList<>();
 
     private List<Long> couponImgIds = new ArrayList<>();
+
+    private static ModelMapper modelMapper = new ModelMapper();
+
+    public Coupon createCoupon() {
+        return modelMapper.map(this, Coupon.class);
+    }
+
+    public static CouponFormDto of(Coupon coupon) {
+        return modelMapper.map(coupon, CouponFormDto.class);
+    }
 }

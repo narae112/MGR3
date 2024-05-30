@@ -1,10 +1,9 @@
 package com.MGR.entity;
 
+import com.MGR.constant.CouponType;
+import com.MGR.constant.LocationCategory;
 import com.MGR.dto.CouponFormDto;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +27,13 @@ public class Coupon extends BaseEntity {
     private LocalDate startDate; // 사용 시작일
     private LocalDate endDate; // 사용 기한
     private String couponContent; // 쿠폰 내용
+
+    @Enumerated(EnumType.STRING)
+    private CouponType couponType;
+
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     public static Coupon createCoupon(String name, int discountRate, LocalDate startDate, LocalDate endDate, String couponContent) {
         Coupon coupon = new Coupon();

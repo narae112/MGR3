@@ -6,6 +6,7 @@ import com.MGR.dto.CouponSearchDto;
 import com.MGR.entity.Coupon;
 import com.MGR.exception.DuplicateCouponNameException;
 import com.MGR.service.CouponService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -41,7 +42,9 @@ public class CouponController {
     public String newCoupon(@Valid CouponFormDto couponFormDto, BindingResult bindingResult,
                             Model model, @RequestParam("couponImgFile") List<MultipartFile> couponImgFileList) {
 
-        if (bindingResult.hasErrors()) { return "coupon/couponForm"; }
+        if (bindingResult.hasErrors()) {
+            return "coupon/couponForm";
+        }
 
         try {
             couponService.createCoupon(couponFormDto, couponImgFileList);
@@ -52,7 +55,20 @@ public class CouponController {
             model.addAttribute("errorMessage", "쿠폰 등록 중 에러가 발생하였습니다");
             return "redirect:/admin/coupon/new"; // 에러 발생 시 폼으로 리다이렉트
         }
-        return "redirect:/coupons"; // 성공 시 쿠폰 관리 페이지로 리다이렉트
+        return "redirect:/admin/coupons";// 성공 시 쿠폰 관리 페이지로 리다이렉트
+    }
+    //쿠폰 수정
+    @GetMapping(value = "/admin/coupon/{couponId}")
+    public String couponDtl(@PathVariable("couponId") Long couponId, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            CouponFormDto couponFormDto = couponService.getCouponDtl(couponId);
+            model.addAttribute("couponFormDto", couponFormDto);
+        } catch (EntityNotFoundException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "존재하지 않는 티켓입니다.");
+            model.addAttribute("couponFormDto", new CouponFormDto());
+            return "coupon/couponForm";
+        }
+        return "coupon/couponForm";
     }
 
     // 쿠폰 수정
@@ -76,7 +92,7 @@ public class CouponController {
             return "coupon/couponForm";
         }
 
-        return "redirect:/coupons"; // 성공 시 쿠폰 관리 페이지로 리다이렉트
+        return "redirect:/admin/coupons"; // 성공 시 쿠폰 관리 페이지로 리다이렉트
     }
 
     // 쿠폰 받기 페이지(예정)
@@ -90,7 +106,7 @@ public class CouponController {
         model.addAttribute("couponSearchDto", couponSearchDto);
         model.addAttribute("maxPage", 5);
 
-        return "coupon/couponMain";
+        return "coupon/admin/couponMain";
     }
 
     // 쿠폰 관리 페이지

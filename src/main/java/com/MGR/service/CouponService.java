@@ -1,12 +1,14 @@
 package com.MGR.service;
 
-import com.MGR.dto.CouponFormDto;
-import com.MGR.dto.CouponMainDto;
-import com.MGR.dto.CouponSearchDto;
+import com.MGR.constant.CouponType;
+import com.MGR.dto.*;
 import com.MGR.entity.Coupon;
 import com.MGR.entity.Image;
+import com.MGR.entity.Member;
 import com.MGR.exception.DuplicateTicketNameException;
 import com.MGR.repository.CouponRepository;
+import com.MGR.repository.ImageRepository;
+import com.MGR.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +28,8 @@ public class CouponService {
 
     final CouponRepository couponRepository;
     final ImageService imageService;
+    final ImageRepository imageRepository;
+    final MemberRepository memberRepository;
 
     // 쿠폰 생성
     public Long createCoupon(CouponFormDto couponFormDto, List<MultipartFile> couponImgFileList) throws Exception {
@@ -108,6 +114,21 @@ public class CouponService {
     @Transactional(readOnly = true)
     public Page<CouponMainDto> getCouponMainPage(CouponSearchDto couponSearchDto, Pageable pageable){
         return couponRepository.getCouponMainPage(couponSearchDto, pageable);
+    }
+    @Transactional(readOnly = true)
+    public CouponFormDto getCouponDtl(Long couponId){
+        List<Image> couponImgList = imageRepository.findByCouponIdOrderByIdAsc(couponId);
+        List<ImageDto> couponImgDtoList = new ArrayList<>();
+        for(Image couponImage : couponImgList){
+            ImageDto couponImgDto = ImageDto.of(couponImage);
+            couponImgDtoList.add(couponImgDto);
+        }
+        Coupon coupon = couponRepository.findById(couponId).
+                orElseThrow(EntityNotFoundException::new);
+
+        CouponFormDto couponFormDto = CouponFormDto.of(coupon);
+        couponFormDto.setCouponImgDtoList(couponImgDtoList);
+        return couponFormDto;
     }
 
 }
