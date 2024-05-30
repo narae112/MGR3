@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Event Notifications</h1>
+    <div id="messages"></div>
+<script>
+    const eventSource = new EventSource('http://localhost:8080/api');
+
+    eventSource.addEventListener('connect', function(event) {
+        displayMessage('Connected: ' + event.data);
+    });
+
+    eventSource.addEventListener('addMessage', function(event) {
+        displayMessage('Message: ' + event.data);
+    });
+
+    eventSource.onerror = function(event) {
+        displayMessage('EventSource failed: ' + event);
+    };
+
+    function displayMessage(message) {
+        const messagesDiv = document.getElementById('messages');
+        const messageElement = document.createElement('div');
+        messageElement.textContent = message;
+        messagesDiv.appendChild(messageElement);
+    }
+</script>
+</body>
+</html>
