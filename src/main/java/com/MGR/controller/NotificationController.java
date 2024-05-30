@@ -9,7 +9,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.Map;
@@ -23,11 +25,25 @@ public class NotificationController {
     // 1. 모든 Emitters를 저장하는 ConcurrentHashMap
 
     // 메시지 알림
+//    @GetMapping(value = "/api", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+//    public SseEmitter subscribe(@AuthenticationPrincipal PrincipalDetails member) {
+//
+//        Long userId = member.getId();
+//
+//        return notificationService.subscribe(userId);
+//    }
+
+//    @GetMapping("/api")
+//    public ResponseEntity<?> subscribe(@AuthenticationPrincipal PrincipalDetails member) {
+//
+//            Long userId = member.getId();
+//            SseEmitter subscribe = notificationService.subscribe(userId);
+//            return ResponseEntity.ok().body(subscribe);
+//    }
+
     @GetMapping(value = "/api", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribe(@AuthenticationPrincipal PrincipalDetails member) {
-
         Long userId = member.getId();
-
         return notificationService.subscribe(userId);
     }
 }
