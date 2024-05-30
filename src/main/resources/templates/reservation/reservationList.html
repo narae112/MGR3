@@ -151,7 +151,8 @@
             <colgroup>
                 <col width="10%"/>
                 <col width="45%"/>
-                <col width="30%"/>
+                <col width="15%"/>
+                <col width="15%"/>
                 <col width="15%"/>
             </colgroup>
             <thead>
@@ -160,6 +161,7 @@
                     <input type="checkbox" id="checkAll" onclick="checkAll()"> 전체
                 </td>
                 <td>티켓 정보</td>
+                <td>방문 예정일</td>
                 <td>예약 상태</td>
                 <td>티켓 금액</td>
             </tr>
@@ -168,13 +170,14 @@
             <!-- 예약 티켓 항목 -->
             <tr th:each="reservationTicket : ${reservationTickets}">
                 <td class="text-center align-middle"><!-- 체크박스 -->
-                    <th:block th:if="${reservationTicket.reservationStatus == T(com.MGR.constant.ReservationStatus.RESERVE}">
+                    <th:block th:if="${reservationTicket.reservationStatus == T(com.MGR.constant.ReservationStatus).RESERVE}">
                         <input type="checkbox" name="reserveChkBox" th:value="${reservationTicket.reservationTicketId}">
                     </th:block>
                 </td><!-- 티켓 정보 -->
                 <td class="d-flex">
                     <div class="align-self-center">
-                        <span th:text="'[' + ${reservationTicket.locationCategory.displayName} + '점] ' + ${reservationTicket.name}" class="fs24 font-weight-bold"></span><!-- 티켓 이름 -->
+                        <span th:text="'[' + ${reservationTicket.locationCategory.displayName} + '점] '
+                        + ${reservationTicket.name} + '_' + ${reservationTicket.ticketCategory.displayName}" class="fs24 font-weight-bold"></span><!-- 티켓 이름 -->
                         <div class="d-flex fs18 font-weight-light">
                                 <span th:id="'price_' + ${reservationTicket.reservationTicketId}"
                                       th:data-price="${reservationTicket.price}"
@@ -187,16 +190,19 @@
                         </div>
                     </div>
                 </td>
-                <td class="text-center align-middle">
-                    <th:block th:if="${reservationTicket.reservationStatus == T(com.MGR.constant.ReservationStatus.RESERVE}">
+                <td class="text-center align-middle"><!-- 방문 예정일 -->
+                    <span th:text="${reservationTicket.visitDate}"></span>
+                </td>
+                <td class="text-center align-middle"><!-- 예약 상태 -->
+                    <th:block th:if="${reservationTicket.reservationStatus == T(com.MGR.constant.ReservationStatus).RESERVE}">
                         <span>예  약</span>
                         <button type="button" class="btn btn-outline-secondary" th:value="${reservationTicket.reservationTicketId}"
                                 onclick="cancelReservation(this.value)">예약 취소</button>
                     </th:block>
-                    <th:block th:if="${reservationTicket.reservationStatus == T(com.MGR.constant.ReservationStatus.CANCEL}">
+                    <th:block th:if="${reservationTicket.reservationStatus == T(com.MGR.constant.ReservationStatus).CANCEL}">
                         <span>취소 완료</span>
                     </th:block>
-                    <th:block th:if="${reservationTicket.reservationStatus == T(com.MGR.constant.ReservationStatus.PAYED}">
+                    <th:block th:if="${reservationTicket.reservationStatus == T(com.MGR.constant.ReservationStatus).PAYED}">
                         <span>결제 완료</span>
                         <button type="button" class="btn btn-outline-secondary" th:value="${reservationTicket.reservationTicketId}"
                                 onclick="cancelOrder(this.value)">결제 취소</button>
@@ -204,7 +210,7 @@
                 </td>
                 <td class="text-center align-middle">
                     <span th:id="'totalPrice_' + ${reservationTicket.reservationTicketId}"
-                          name="totalPrice" th:text="${reservationTicket.price * reservationTicket.ticketCount} + '원'"><!-- 티켓 수량 * 가격 -->
+                          name="totalPrice" th:text="${reservationTicket.price * reservationTicket.ticketCount} + '원'"><!-- 티켓 한 항목 당 수량 * 가격 -->
                     </span>
                 </td>
             </tr>

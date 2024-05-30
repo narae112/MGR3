@@ -2,6 +2,7 @@ package com.MGR.dto;
 
 import com.MGR.constant.LocationCategory;
 import com.MGR.constant.ReservationStatus;
+import com.MGR.constant.TicketCategory;
 import com.MGR.entity.ReservationTicket;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +19,7 @@ public class ReservationDtlDto {
     private String visitDate; // 방문예정일
     private String reservationDate; // 예약일
     private ReservationStatus reservationStatus; // 예약 상태
+    private TicketCategory ticketCategory; // 성인/아동
 
     public ReservationDtlDto(ReservationTicket reservationTicket) {
         this.reservationTicketId = reservationTicket.getId();
@@ -28,6 +30,7 @@ public class ReservationDtlDto {
         this.visitDate = reservationTicket.getVisitDate();
         this.reservationDate = reservationTicket.getReservationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         this.reservationStatus = reservationTicket.getReservationStatus();
+        this.ticketCategory = reservationTicket.getTicket().getTicketCategory();
     }
 
 }
