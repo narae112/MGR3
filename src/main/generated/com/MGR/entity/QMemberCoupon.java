@@ -50,7 +50,7 @@ public class QMemberCoupon extends EntityPathBase<MemberCoupon> {
 
     public QMemberCoupon(Class<? extends MemberCoupon> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.coupon = inits.isInitialized("coupon") ? new QCoupon(forProperty("coupon")) : null;
+        this.coupon = inits.isInitialized("coupon") ? new QCoupon(forProperty("coupon"), inits.get("coupon")) : null;
         this.member = inits.isInitialized("member") ? new QMember(forProperty("member")) : null;
     }
 

@@ -1,5 +1,6 @@
 package com.MGR.entity;
 
+import com.MGR.dto.AttractionDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,9 +16,20 @@ public class Attraction {
     @Column(length = 20)
     private String name;
 
-    @Column(length = 10)
-    private String condition;
+    private Boolean condition;
+
+    private int closureDay;
 
     @Column(columnDefinition = "TEXT")
     private String information;
+
+    public static Attraction create(AttractionDto attractionDto) {
+        Attraction attraction = new Attraction();
+        attraction.setCondition(true);
+        attraction.setName(attractionDto.getName());
+        attraction.setInformation(attractionDto.getInformation());
+        attraction.setClosureDay(attractionDto.getClosureDay());
+
+        return attraction;
+    }
 }
