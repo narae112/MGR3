@@ -37,7 +37,7 @@ public class CouponService {
     private final MemberService memberService;
     private final MemberCouponRepository memberCouponRepository;
     // 쿠폰 생성
-    public Long createCoupon(CouponFormDto couponFormDto,
+     public Long createCoupon(CouponFormDto couponFormDto,
                              List<MultipartFile> couponImgFileList) throws Exception {
         // 중복 데이터 검사
         boolean isDuplicate = isDuplicateCoupon(couponFormDto);
@@ -65,16 +65,23 @@ public class CouponService {
         }
 
         // 사용자에게 쿠폰 할당 및 알림
-        List<Member> memberList = memberService.findByAllUser();
+        List<Member> memberList;
+        if (coupon.getCouponType() == CouponType.BIRTH) {
+            memberList = memberService.findMembersWithBirthdayToday();
+        } else {
+            memberList = memberService.findByAllUser();
+        }
+
         for (Member member : memberList) {
             MemberCoupon memberCoupon = MemberCoupon.memberGetCoupon(member, coupon);
-            memberCouponRepository.save(memberCoupon); // MemberCoupon 객체 저장
+            memberCouponRepository.save(memberCoupon);
             notificationService.notifyCoupon(coupon, memberCoupon, member);
         }
 
         return coupon.getId();
 
     }
+
 
     // 쿠폰 수정
     public Long updateCoupon(CouponFormDto couponFormDto, List<MultipartFile> couponImgFileList) throws Exception {
