@@ -84,9 +84,8 @@ public class MemberService{
                 .collect(Collectors.toList());
     }
      public List<Member> findMembersWithBirthdayToday() {
-        LocalDate today = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String todayStr = today.format(formatter);
+         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd");
+         String todayStr = LocalDate.now().format(formatter);
         return memberRepository.findByBirth(todayStr);
     }
 }
