@@ -30,6 +30,10 @@ public class Notification {
 
     private Long paymentId;
 
+    private Long reviewId;
+
+    private Long reviewCommentId;
+
     @CreatedDate
     private LocalDateTime createdDate;
 
@@ -44,8 +48,14 @@ public class Notification {
             case "결제":
                 this.paymentId = id;
                 break;
+            case "리뷰":
+                this.reviewId = id;
+                break;
+            case "리뷰댓글":
+                this.reviewCommentId = id;
+                break;
             default:
-                throw new IllegalArgumentException("Invalid notification type: " + type);
+                throw new IllegalArgumentException("공지 타입 입력 오류= " + type);
         }
         this.memberId = memberId;
         this.message = message;
