@@ -1,6 +1,8 @@
 package com.MGR.controller;
 
 import com.MGR.dto.MemberFormDto;
+import com.MGR.security.PrincipalDetails;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +12,7 @@ public class MainController {
 
     @GetMapping("/")
     public String root(Model model) {
+
         return "index";
     }
 
