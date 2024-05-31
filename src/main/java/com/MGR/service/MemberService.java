@@ -81,4 +81,10 @@ public class MemberService{
                 .filter(member -> "ROLE_USER".equals(member.getRole()))
                 .collect(Collectors.toList());
     }
+     public List<Member> findMembersWithBirthdayToday() {
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String todayStr = today.format(formatter);
+        return memberRepository.findByBirth(todayStr);
+    }
 }
