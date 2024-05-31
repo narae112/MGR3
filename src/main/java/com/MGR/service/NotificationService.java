@@ -2,19 +2,13 @@ package com.MGR.service;
 
 import com.MGR.controller.NotificationController;
 import com.MGR.entity.*;
-import com.MGR.repository.EventBoardRepository;
 import com.MGR.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -83,9 +77,9 @@ public class NotificationService {
     @Transactional
     public void notifyCoupon(Coupon coupon, MemberCoupon memberCoupon, Member member) {
         //알림메세지 생성
-        String data = "쿠폰이 발행되었습니다\n" +
-                "쿠폰 : " + coupon.getName() + "\n" +
-                "쿠폰 코드 : " + memberCoupon.getCouponCode();
+        String data = "쿠폰이 발행되었습니다! " +
+                coupon.getName() + " 쿠폰 코드 : "
+                + memberCoupon.getCouponCode();
 
             SseEmitter sseEmitter = NotificationController.sseEmitters.get(member.getId());
             if (sseEmitter != null) {

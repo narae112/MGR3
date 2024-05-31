@@ -68,7 +68,7 @@ public class CouponService {
         for (Member member : memberList) {
             MemberCoupon memberCoupon = MemberCoupon.memberGetCoupon(member, coupon);
             memberCouponRepository.save(memberCoupon); // MemberCoupon 객체 저장
-            notificationService.notifyCoupon(coupon, memberCoupon);
+            notificationService.notifyCoupon(coupon, memberCoupon, member);
         }
 
         return coupon.getId();
