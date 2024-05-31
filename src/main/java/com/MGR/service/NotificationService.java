@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 @Service
@@ -17,6 +19,8 @@ public class NotificationService {
 
     private final MemberService memberService;
     private final NotificationRepository notificationRepository;
+    public final Map<Long, SseEmitter> sseEmitters = new ConcurrentHashMap<>();
+    // 1. 모든 Emitters를 저장하는 ConcurrentHashMap
 
     // 메시지 알림
     public SseEmitter subscribe(Long memberId) {
@@ -34,12 +38,12 @@ public class NotificationService {
 //        }
 
         // 3. 저장
-        NotificationController.sseEmitters.put(memberId, sseEmitter);
+        sseEmitters.put(memberId, sseEmitter);
 
         // 4. 연결 종료 처리
-        sseEmitter.onCompletion(() -> NotificationController.sseEmitters.remove(memberId));    // sseEmitter 연결이 완료될 경우
-        sseEmitter.onTimeout(() -> NotificationController.sseEmitters.remove(memberId));        // sseEmitter 연결에 타임아웃이 발생할 경우
-        sseEmitter.onError((e) -> NotificationController.sseEmitters.remove(memberId));        // sseEmitter 연결에 오류가 발생할 경우
+        sseEmitter.onCompletion(() -> sseEmitters.remove(memberId));    // sseEmitter 연결이 완료될 경우
+        sseEmitter.onTimeout(() -> sseEmitters.remove(memberId));        // sseEmitter 연결에 타임아웃이 발생할 경우
+        sseEmitter.onError((e) -> sseEmitters.remove(memberId));        // sseEmitter 연결에 오류가 발생할 경우
 
         return sseEmitter;
     }
@@ -53,8 +57,10 @@ public class NotificationService {
 
         for (Member member : memberList) {
 
+            subscribe(member.getId()); //객체 생성해서 멤버 아이디 넣어줌
+
             // SseEmitter 객체 가져오기
-            SseEmitter sseEmitterReceiver = NotificationController.sseEmitters.get(member.getId());
+            SseEmitter sseEmitterReceiver = sseEmitters.get(member.getId());
             System.out.println("sseEmitterReceiver = " + sseEmitterReceiver);
             if (sseEmitterReceiver != null) {
                 try {
@@ -62,7 +68,7 @@ public class NotificationService {
                             .name("message")
                             .data(board.getTitle()));
                 } catch (Exception e) {
-                    NotificationController.sseEmitters.remove(member.getId());
+                    sseEmitters.remove(member.getId());
                 }
 
                 // 알림 객체 생성 및 저장
@@ -76,19 +82,20 @@ public class NotificationService {
     // 쿠폰 등록 알림
     @Transactional
     public void notifyCoupon(Coupon coupon, MemberCoupon memberCoupon, Member member) {
+        subscribe(member.getId());
         //알림메세지 생성
         String data = "쿠폰이 발행되었습니다! " +
                 coupon.getName() + " 쿠폰 코드 : "
                 + memberCoupon.getCouponCode();
 
-            SseEmitter sseEmitter = NotificationController.sseEmitters.get(member.getId());
+            SseEmitter sseEmitter = sseEmitters.get(member.getId());
             if (sseEmitter != null) {
                 try {
                     sseEmitter.send(SseEmitter.event() //sseEmitter 객체에 메세지 담아서 보내기
                             .name("message")
                             .data(data));
                 } catch (Exception e) {
-                    NotificationController.sseEmitters.remove(member.getId());
+                    sseEmitters.remove(member.getId());
                 }
                 Notification notification = new Notification(member.getId(), data, "쿠폰", coupon.getId());
                 notificationRepository.save(notification); // 보낸 메세지 저장

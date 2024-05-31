@@ -18,8 +18,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class NotificationController {
     private final NotificationService notificationService;
-    public static Map<Long, SseEmitter> sseEmitters = new ConcurrentHashMap<>();
-    // 1. 모든 Emitters를 저장하는 ConcurrentHashMap
 
     // 메시지 알림
     @GetMapping(value = "/api", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
