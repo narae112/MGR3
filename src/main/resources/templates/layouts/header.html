@@ -32,13 +32,7 @@
                     <li class="nav-item"><a class="nav-link" sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/admin/tickets}">티켓 관리</a></li>
                     <li class="nav-item"><a class="nav-link" sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/admin/coupon/new}">쿠폰 등록</a></li>
                     <li class="nav-item"><a class="nav-link" sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/admin/coupons}">쿠폰 관리</a></li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">family site</a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="https://www.everland.com/gateway">부산지점 바로가기</a></li>
-                            <li><a class="dropdown-item" href="https://www.lotteworld.com/gate.html">제주지점 바로가기</a></li>
-                        </ul>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/attraction/attractionList}">놀이기구</a></li>
                 </ul>
             </div>
         </div>

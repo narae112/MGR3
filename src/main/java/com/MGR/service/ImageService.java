@@ -1,5 +1,6 @@
 package com.MGR.service;
 
+import com.MGR.entity.Attraction;
 import com.MGR.entity.EventBoard;
 import com.MGR.entity.Image;
 import com.MGR.entity.Member;
@@ -135,12 +136,20 @@ public class ImageService {
     }
 
     public void deleteImage(EventBoard eventBoard) {
-        Optional<Image> image = imageRepository.findById(eventBoard.getId());
-        imageRepository.delete(image.get());
+        Image image = imageRepository.findByEventBoard(eventBoard);
+        imageRepository.delete(image);
+    }
+
+    public void deleteImage(Attraction attraction) {
+        Image image = imageRepository.findByAttraction(attraction);
+        imageRepository.delete(image);
     }
 
     public Image findByEvent(EventBoard eventBoard) {
         return imageRepository.findByEventBoard(eventBoard);
     }
 
+    public Image findByAttraction(Attraction attraction) {
+        return imageRepository.findByAttraction(attraction);
+    }
 }

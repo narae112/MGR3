@@ -1,5 +1,6 @@
 package com.MGR.repository;
 
+import com.MGR.entity.Attraction;
 import com.MGR.entity.EventBoard;
 import com.MGR.entity.Image;
 import com.MGR.entity.Member;
@@ -25,4 +26,6 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
     //주문상품의 대표이미지를 보여주기 위한 쿼리
 
     Image findByEventBoard(EventBoard eventBoard);
+
+    Image findByAttraction(Attraction attraction);
 }

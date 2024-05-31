@@ -72,7 +72,6 @@ public class EventBoardController {
                                  @AuthenticationPrincipal PrincipalDetails member){
 
         EventBoard eventBoard = eventBoardService.findById(id).orElseThrow();
-
         model.addAttribute("eventBoardFormDto",eventBoard);
 
         Image findImage = imageService.findByEvent(eventBoard);
@@ -124,7 +123,7 @@ public class EventBoardController {
             eventBoardService.delete(eventBoard);
             return "게시글이 삭제되었습니다";
         }
-        return "작성자가 아니면 삭제가 불가능합니다.";
+        return "삭제 오류";
     }
 
 }

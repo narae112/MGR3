@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Setter @Getter
 public class Attraction {
@@ -22,6 +24,7 @@ public class Attraction {
 
     @Column(columnDefinition = "TEXT")
     private String information;
+
 
     public static Attraction create(AttractionDto attractionDto) {
         Attraction attraction = new Attraction();
