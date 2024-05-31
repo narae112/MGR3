@@ -111,11 +111,13 @@
 
             $('#sendButton').click(function() {
                 sendMessage();
+                $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
             });
 
             $('#userInput').keypress(function(event) {
                 if (event.which === 13) {
                     sendMessage();
+                    $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
                 }
             });
 
