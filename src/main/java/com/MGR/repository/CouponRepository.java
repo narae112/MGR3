@@ -14,8 +14,8 @@ import java.util.Optional;
 public interface CouponRepository extends JpaRepository<Coupon, Long>,
         QuerydslPredicateExecutor<Coupon>, CouponRepositoryCustom {
 
-    Optional<Coupon> findByNameAndDiscountRateAndStartDateAndEndDate(
-        String name, int discountRate, LocalDate startDate, LocalDate endDate
+    Optional<Coupon> findByNameAndAndStartDateAndEndDate(
+        String name, LocalDate startDate, LocalDate endDate
     );
 
 

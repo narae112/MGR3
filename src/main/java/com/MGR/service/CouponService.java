@@ -46,10 +46,9 @@ public class CouponService {
         }
 
         // 쿠폰 저장
-       Coupon coupon = Coupon.createCoupon(
-                 couponFormDto.getName(), couponFormDto.getDiscountRate(),
-                 couponFormDto.getStartDate(), couponFormDto.getEndDate(), couponFormDto.getCouponContent(),
-                 couponFormDto.getCouponType()); // 쿠폰 타입 추가
+         Coupon coupon = Coupon.createCoupon(
+                 couponFormDto.getName(), couponFormDto.getDiscountType(), couponFormDto.getStartDate(), couponFormDto.getEndDate(),
+                 couponFormDto.getCouponContent(), couponFormDto.getCouponType(), couponFormDto.getDiscountRate(), couponFormDto.getDiscountAmount());// 쿠폰 타입 추가
          couponRepository.save(coupon);
 
         // 이미지 저장
@@ -112,8 +111,8 @@ public class CouponService {
 
     // 중복 데이터 검사
     private boolean isDuplicateCoupon(CouponFormDto couponFormDto) {
-        Optional<Coupon> couponOptional = couponRepository.findByNameAndDiscountRateAndStartDateAndEndDate(
-                couponFormDto.getName(), couponFormDto.getDiscountRate(), couponFormDto.getStartDate(), couponFormDto.getEndDate()
+        Optional<Coupon> couponOptional = couponRepository.findByNameAndAndStartDateAndEndDate(
+                couponFormDto.getName(), couponFormDto.getStartDate(), couponFormDto.getEndDate()
         );
         return couponOptional.isPresent();
     }

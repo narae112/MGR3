@@ -44,13 +44,35 @@
             </div>
             <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="fieldError"></p>
             <!-- 할인율 등록 -->
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">할인율</span>
-                </div>
-                <input type="number" th:field="*{discountRate}" class="form-control" placeholder="쿠폰 할인율의 숫자만 입력해주세요(% 제외)" min="0">
+            <!-- 할인율/할인액 선택 -->
+            <div class="form-group">
+                <label for="discountType">할인 유형 선택:</label>
+                <select id="discountType" th:field="*{discountType}" class="form-control" onchange="toggleDiscountFields()">
+                    <option value="PERCENT">할인율 (%)</option>
+                    <option value="AMOUNT">할인액 (원)</option>
+                </select>
             </div>
-            <p th:if="${#fields.hasErrors('discountRate')}" th:errors="*{discountRate}" class="fieldError"></p>
+
+            <!-- 할인율 입력 -->
+            <div class="form-group" id="percentDiscountInput">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">할인율 (%)</span>
+                    </div>
+                    <input type="number" th:field="*{discountRate}" class="form-control" placeholder="할인율을 입력하세요 (%)" min="0">
+                </div>
+            </div>
+
+            <!-- 할인액 입력 -->
+            <div class="form-group" id="amountDiscountInput" style="display: none;">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">할인액 (원)</span>
+                    </div>
+                    <input type="number" th:field="*{discountAmount}" class="form-control" placeholder="할인액을 입력하세요 (원)" min="0">
+                </div>
+            </div>
+
             <!-- 대상 -->
             <div class="input-group">
                 <div class="input-group-prepend">
@@ -191,7 +213,19 @@
         var startDate = $(this).val();
         $('#endDate').attr("min", startDate);
     });
+ function toggleDiscountFields() {
+        var discountType = document.getElementById("discountType").value;
+        var percentDiscountInput = document.getElementById("percentDiscountInput");
+        var amountDiscountInput = document.getElementById("amountDiscountInput");
 
+        if (discountType === "PERCENT") {
+            percentDiscountInput.style.display = "block";
+            amountDiscountInput.style.display = "none";
+        } else {
+            percentDiscountInput.style.display = "none";
+            amountDiscountInput.style.display = "block";
+        }
+    }
 
 </script>
 </html>

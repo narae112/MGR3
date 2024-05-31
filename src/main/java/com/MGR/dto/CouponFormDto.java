@@ -1,6 +1,7 @@
 package com.MGR.dto;
 
 import com.MGR.constant.CouponType;
+import com.MGR.constant.DiscountType;
 import com.MGR.entity.Coupon;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -19,9 +20,6 @@ public class CouponFormDto {
     @NotBlank(message = "쿠폰 이름을 입력하세요")
     private String name; // 쿠폰 이름
 
-    @NotNull(message = "할인율을 입력하세요")
-    private Integer discountRate; // 할인율
-
     @NotNull(message = "사용 시작일을 선택하세요")
     private LocalDate startDate; // 사용 시작일
 
@@ -32,6 +30,12 @@ public class CouponFormDto {
     private String couponContent; // 쿠폰 내용
 
     private CouponType couponType;
+
+    private DiscountType discountType;
+
+    private Integer discountRate; // 할인율
+
+    private Integer discountAmount; // 할인액
 
     private List<ImageDto> couponImgDtoList = new ArrayList<>();
 

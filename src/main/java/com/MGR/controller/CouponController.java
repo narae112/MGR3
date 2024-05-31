@@ -49,7 +49,7 @@ public class CouponController {
         try {
             couponService.createCoupon(couponFormDto, couponImgFileList);
         } catch (DuplicateCouponNameException e) {
-            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("errorMessage", "중복 쿠폰이 있습니다.");
             return "coupon/couponForm";
         } catch (Exception e) {
             model.addAttribute("errorMessage", "쿠폰 등록 중 에러가 발생하였습니다");
