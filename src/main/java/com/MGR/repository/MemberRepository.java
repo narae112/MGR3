@@ -22,7 +22,10 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     List<Member> findAll();
 
 
-    @Query("SELECT m FROM Member m WHERE m.birth = :today")
-    List<Member> findByBirth(String today);
+//    @Query("SELECT m FROM Member m WHERE m.birth = :today")
+//    List<Member> findByBirth(String today);
+
+    @Query("SELECT m FROM Member m WHERE SUBSTRING(m.birth, 6, 5) = :today")
+    List<Member> findByBirth(@Param("today") String today);
 
 }
