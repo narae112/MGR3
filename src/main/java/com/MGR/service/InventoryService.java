@@ -17,7 +17,7 @@ public class InventoryService {
     private final InventoryRepository inventoryRepository;
     private final TicketRepository ticketRepository;
 
-    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정마다 실행
+    @Scheduled(cron = "0 */3 * * * *")
     public void resetInventory() {
         // 현재 날짜를 가져옴
         LocalDate currentDate = LocalDate.now();
