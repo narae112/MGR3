@@ -12,14 +12,12 @@ import java.util.Set;
 @Entity
 @Setter
 @Getter
-public class QnaQuestion {
+public class ReviewBoard {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 50)
-    private String title;
 
     @Column(columnDefinition = "TEXT")
     private String content;
@@ -42,8 +40,8 @@ public class QnaQuestion {
     @ManyToMany
     Set<Member> voter;
 
-    @OneToMany(mappedBy = "qnaQuestion", cascade = CascadeType.ALL)
-    private List<QnaAnswer> answerList;
+    @OneToMany(mappedBy = "reviewBoard", cascade = CascadeType.ALL)
+    private List<ReviewComment> commentList;
 
     public int viewCount() {
         return this.count += 1;
