@@ -51,6 +51,7 @@ public class Coupon extends BaseEntity {
         this.startDate = couponFormDto.getStartDate();
         this.endDate = couponFormDto.getEndDate();
         this.couponContent = couponFormDto.getCouponContent();
+        this.couponType = couponFormDto.getCouponType();
     }
 
 }

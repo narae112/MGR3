@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -64,16 +65,24 @@ public class CouponService {
         }
 
         // 사용자에게 쿠폰 할당 및 알림
-        List<Member> memberList = memberService.findByAllUser();
+        List<Member> memberList;
+        if (coupon.getCouponType() == CouponType.BIRTH) {
+            memberList = memberService.findMembersWithBirthdayToday();
+        } else {
+            memberList = memberService.findByAllUser();
+        }
+
         for (Member member : memberList) {
             MemberCoupon memberCoupon = MemberCoupon.memberGetCoupon(member, coupon);
-            memberCouponRepository.save(memberCoupon); // MemberCoupon 객체 저장
+            memberCouponRepository.save(memberCoupon);
             notificationService.notifyCoupon(coupon, memberCoupon, member);
         }
 
         return coupon.getId();
 
     }
+
+
 
     // 쿠폰 수정
     public Long updateCoupon(CouponFormDto couponFormDto, List<MultipartFile> couponImgFileList) throws Exception {
