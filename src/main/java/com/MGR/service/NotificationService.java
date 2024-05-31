@@ -103,6 +103,54 @@ public class NotificationService {
 
     }
 
+    // 리뷰 추천 알림
+    @Transactional
+    public void reviewVoter(ReviewBoard board) {
+        Member member = board.getAuthor();
+        subscribe(member.getId());
+        //알림메세지 생성
+        String data = "다른 사용자가 다음 리뷰에 추천을 표시했습니다. [" +
+                board.getSubject() + "]";
+        System.out.println("data = " + data);
+        SseEmitter sseEmitter = sseEmitters.get(member.getId());
+        System.out.println("sseEmitter = " + sseEmitter);
+        if (sseEmitter != null) {
+            try {
+                sseEmitter.send(SseEmitter.event() //sseEmitter 객체에 메세지 담아서 보내기
+                        .name("message")
+                        .data(data));
+            } catch (Exception e) {
+                sseEmitters.remove(member.getId());
+            }
+            Notification notification = new Notification(member.getId(), data, "리뷰", board.getId());
+            notificationRepository.save(notification); // 보낸 메세지 저장
+        }
+    }
+
+    // 리뷰 댓글 알림
+    @Transactional
+    public void reviewComment(ReviewBoard board) {
+        Member member = board.getAuthor();
+        subscribe(member.getId());
+        //알림메세지 생성
+        String data = "다른 사용자가 다음 리뷰에 댓글을 등록했습니다. [" +
+                board.getSubject() + "]";
+        System.out.println("data = " + data);
+        SseEmitter sseEmitter = sseEmitters.get(member.getId());
+        System.out.println("sseEmitter = " + sseEmitter);
+        if (sseEmitter != null) {
+            try {
+                sseEmitter.send(SseEmitter.event() //sseEmitter 객체에 메세지 담아서 보내기
+                        .name("message")
+                        .data(data));
+            } catch (Exception e) {
+                sseEmitters.remove(member.getId());
+            }
+            Notification notification = new Notification(member.getId(), data, "리뷰", board.getId());
+            notificationRepository.save(notification); // 보낸 메세지 저장
+        }
+    }
+
     public List<Notification> findByMemberId(Long userId) {
         System.out.println("2= " + notificationRepository.findByMemberIdOrderByCreatedDateDesc(userId));
         return notificationRepository.findByMemberIdOrderByCreatedDateDesc(userId);

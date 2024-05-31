@@ -33,6 +33,7 @@ public class ReviewBoardService {
     private final ReviewBoardRepository reviewBoardRepository;
     private final ImageRepository imageRepository;
     private final ImageService imageService;
+    private final NotificationService notificationService;
 
 
     @SuppressWarnings("unused")
@@ -148,6 +149,7 @@ public class ReviewBoardService {
 
     public void vote(ReviewBoard reviewBoard, Member siteUser) {
         reviewBoard.getVoter().add(siteUser);
+        notificationService.reviewVoter(reviewBoard);
         this.reviewBoardRepository.save(reviewBoard);
     }
 

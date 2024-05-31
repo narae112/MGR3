@@ -15,6 +15,7 @@ import java.util.Optional;
 @Service
 public class ReviewCommentService {
     private final ReviewCommentRepository reviewCommentRepository;
+    private final NotificationService notificationService;
 
     public ReviewComment create(ReviewBoard reviewBoard, String content, Member author){
         ReviewComment reviewComment = new ReviewComment();
@@ -23,6 +24,7 @@ public class ReviewCommentService {
         reviewComment.setAuthor(author);
         reviewComment.setReviewBoard(reviewBoard);
         this.reviewCommentRepository.save(reviewComment);
+        notificationService.reviewComment(reviewBoard);
         return reviewComment;
     }
 
