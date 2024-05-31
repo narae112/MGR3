@@ -95,7 +95,6 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom {
                         new QCouponMainDto(
                                 coupon.id,
                                 coupon.name,
-                                coupon.discountRate,
                                 couponImg.imgUrl,
                                 coupon.startDate,
                                 coupon.endDate,

@@ -37,7 +37,7 @@ public class CouponService {
     private final MemberService memberService;
     private final MemberCouponRepository memberCouponRepository;
     // 쿠폰 생성
-     public Long createCoupon(CouponFormDto couponFormDto,
+    public Long createCoupon(CouponFormDto couponFormDto,
                              List<MultipartFile> couponImgFileList) throws Exception {
         // 중복 데이터 검사
         boolean isDuplicate = isDuplicateCoupon(couponFormDto);
@@ -46,11 +46,10 @@ public class CouponService {
         }
 
         // 쿠폰 저장
-       Coupon coupon = Coupon.createCoupon(
-                 couponFormDto.getName(), couponFormDto.getDiscountRate(),
-                 couponFormDto.getStartDate(), couponFormDto.getEndDate(), couponFormDto.getCouponContent(),
-                 couponFormDto.getCouponType()); // 쿠폰 타입 추가
-         couponRepository.save(coupon);
+        Coupon coupon = Coupon.createCoupon(
+                couponFormDto.getName(), couponFormDto.getDiscountType(), couponFormDto.getStartDate(), couponFormDto.getEndDate(),
+                couponFormDto.getCouponContent(), couponFormDto.getCouponType(), couponFormDto.getDiscountRate(), couponFormDto.getDiscountAmount());// 쿠폰 타입 추가
+        couponRepository.save(coupon);
 
         // 이미지 저장
         for (int i = 0; i < couponImgFileList.size(); i++) {
@@ -82,7 +81,6 @@ public class CouponService {
         return coupon.getId();
 
     }
-
 
     // 쿠폰 수정
     public Long updateCoupon(CouponFormDto couponFormDto, List<MultipartFile> couponImgFileList) throws Exception {

@@ -21,6 +21,89 @@
         </div>
     </div>
 </div>
+<script th:inline="javascript">
+    $(document).ready(function(){
+         var errorMessage = /*[[${errorMessage}]]*/ '';
+         if(errorMessage != null && errorMessage !== ''){
+             $('#errorMessage').text(errorMessage);
+             $('#errorModal').modal('show');
+         }
+
+         bindDomEvent();
+     });
+
+     function bindDomEvent() {
+         $(".custom-file-input").on("change", function() {
+             var fileName = $(this).val().split("\\").pop();
+             var fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+
+             if (fileExt != "jpg" && fileExt != "jpeg" && fileExt != "gif" && fileExt != "png" && fileExt != "bmp") {
+                 alert("이미지 파일만 등록이 가능합니다.");
+                 return;
+             }
+
+             $(this).siblings(".custom-file-label").html(fileName);
+         });
+     }
+
+     function initializeDatePickers() {
+         $('.datepicker').datepicker({
+             format: 'yyyy-MM-dd HH:mm',
+             autoclose: true,
+             todayHighlight: true
+         });
+     }
+
+     function checkEndDate() {
+         var startDate = document.getElementById("startDate").value;
+         var endDate = document.getElementById("endDate").value;
+         var startDateObj = new Date(startDate);
+         var endDateObj = new Date(endDate);
+
+         if (endDateObj < startDateObj) {
+             alert("종료 날짜는 시작 날짜 이후여야 합니다.");
+             document.getElementById("endDate").value = "";
+             return false;
+         }
+         return true;
+     }
+
+     function checkStartDate() {
+         var selectedDate = document.getElementById("startDate").value;
+         var currentDate = new Date().toISOString().split('T')[0];
+
+         if (selectedDate < currentDate) {
+             alert("과거 날짜는 선택할 수 없습니다.");
+             document.getElementById("startDate").value = "";
+         }
+     }
+
+     $(document).ready(function() {
+         // 오늘 날짜를 가져오는 함수
+         function getTodayDate() {
+             var today = new Date();
+             var dd = String(today.getDate()).padStart(2, '0');
+             var mm = String(today.getMonth() + 1).padStart(2, '0'); // 1월은 0부터 시작하므로 +1
+             var yyyy = today.getFullYear();
+             return yyyy + '-' + mm + '-' + dd;
+         }
+
+         // 시작일(input id="startDate")의 값을 오늘 날짜로 설정
+         $('#startDate').val(getTodayDate());
+         $('#startDate').attr("min",getTodayDate());
+
+         var startDate = $('#startDate').val();
+         $('#endDate').attr("min",startDate);
+
+         $('#startDate').on('change', function() {
+             var startDate = $(this).val();
+             $('#endDate').attr("min", startDate);
+         });
+
+
+     });
+</script>
+
 <th:block layout:fragment="css">
     <style>
         .fieldError {
@@ -43,14 +126,27 @@
                 <input type="text" th:field="*{name}" class="form-control" placeholder="쿠폰 이름을 입력해주세요">
             </div>
             <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="fieldError"></p>
-            <!-- 할인율 등록 -->
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">할인율</span>
-                </div>
-                <input type="number" th:field="*{discountRate}" class="form-control" placeholder="쿠폰 할인율의 숫자만 입력해주세요(% 제외)" min="0">
+            <!-- 할인 유형 -->
+            <div>
+                <!-- 할인 유형 선택 -->
+                <label for="discountType" >할인 유형:</label>
+                <select id="discountType" name="discountType" th:field="*{discountType}" onchange="toggleDiscountFields()">
+                    <option value="PERCENT">할인율(%)</option>
+                    <option value="AMOUNT">할인액(원)</option>
+                </select>
             </div>
-            <p th:if="${#fields.hasErrors('discountRate')}" th:errors="*{discountRate}" class="fieldError"></p>
+
+            <!-- 할인율 입력 필드 -->
+            <div id="discountRateField" th:style="${couponFormDto.discountType == 'PERCENT' ? '' : 'display: none;'}">
+                <label for="discountRate">할인율(%):</label>
+                <input type="number" id="discountRate" name="discountRate" th:field="*{discountRate}" min="0" max="100">
+            </div>
+
+            <!-- 할인액 입력 필드 -->
+            <div id="discountAmountField" th:style="${couponFormDto.discountType == 'AMOUNT' ? '' : 'display: none;'}">
+                <label for="discountAmount">할인액(원):</label>
+                <input type="number" id="discountAmount" name="discountAmount" th:field="*{discountAmount}" min="0">
+            </div>
             <!-- 대상 -->
             <div class="input-group">
                 <div class="input-group-prepend">
@@ -76,8 +172,8 @@
                     <span class="input-group-text">쿠폰 이용 시작 날짜</span>
                 </div>
                 <input type="date" th:field="*{startDate}" class="form-control" placeholder="티켓 이용 시작 날짜를 입력해주세요" onchange="checkStartDate()">
-                    <!-- 종료 날짜 -->
-                    <span class="input-group-text"> ~ 쿠폰 이용 종료 날짜</span>
+                <!-- 종료 날짜 -->
+                <span class="input-group-text"> ~ 쿠폰 이용 종료 날짜</span>
                 <input type="date" th:field="*{endDate}" class="form-control" placeholder="티켓 이용 마감 날짜를 입력해주세요" onchange="checkEndDate()">
             </div>
             <!-- 이미지 저장 -->
@@ -110,88 +206,27 @@
             </div>
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
         </div>
-
     </form>
-</div>
-<script th:inline="javascript">
-    $(document).ready(function(){
-        var errorMessage = /*[[${errorMessage}]]*/ '';
-        if(errorMessage != null && errorMessage !== ''){
-            $('#errorMessage').text(errorMessage);
-            $('#errorModal').modal('show');
-        }
+    <script type="text/javascript">
+        function toggleDiscountFields() {
+            var discountType = document.getElementById("discountType").value;
+            var discountRateField = document.getElementById("discountRateField");
+            var discountAmountField = document.getElementById("discountAmountField");
 
-        bindDomEvent();
-    });
-
-    function bindDomEvent() {
-        $(".custom-file-input").on("change", function() {
-            var fileName = $(this).val().split("\\").pop();
-            var fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
-
-            if (fileExt != "jpg" && fileExt != "jpeg" && fileExt != "gif" && fileExt != "png" && fileExt != "bmp") {
-                alert("이미지 파일만 등록이 가능합니다.");
-                return;
+            if (discountType === "PERCENT") {
+                discountRateField.style.display = "block";
+                discountAmountField.style.display = "none";
+            } else if (discountType === "AMOUNT") {
+                discountRateField.style.display = "none";
+                discountAmountField.style.display = "block";
+            } else {
+                discountRateField.style.display = "none";
+                discountAmountField.style.display = "none";
             }
-
-            $(this).siblings(".custom-file-label").html(fileName);
-        });
-    }
-
-    function initializeDatePickers() {
-        $('.datepicker').datepicker({
-            format: 'yyyy-MM-dd HH:mm',
-            autoclose: true,
-            todayHighlight: true
-        });
-    }
-
-    function checkEndDate() {
-        var startDate = document.getElementById("startDate").value;
-        var endDate = document.getElementById("endDate").value;
-        var startDateObj = new Date(startDate);
-        var endDateObj = new Date(endDate);
-
-        if (endDateObj < startDateObj) {
-            alert("종료 날짜는 시작 날짜 이후여야 합니다.");
-            document.getElementById("endDate").value = "";
-            return false;
         }
-        return true;
-    }
 
-    function checkStartDate() {
-        var selectedDate = document.getElementById("startDate").value;
-        var currentDate = new Date().toISOString().split('d')[1];
-
-        if (selectedDate < currentDate) {
-            alert("과거 날짜는 선택할 수 없습니다.");
-            document.getElementById("startDate").value = "";
-        }
-    }
-
-    $(document).ready(function() {
-    // 오늘 날짜를 가져오는 함수
-    function getTodayDate() {
-        var today = new Date();
-        var dd = String(today.getDate()).padStart(2, '0');
-        var mm = String(today.getMonth() + 1).padStart(2, '0'); // 1월은 0부터 시작하므로 +1
-        var yyyy = today.getFullYear();
-        return yyyy + '-' + mm + '-' + dd;
-    }
-
-    // 시작일(input id="startDate")의 값을 오늘 날짜로 설정
-    $('#startDate').val(getTodayDate());
-    $('#startDate').attr("min",getTodayDate());
-
-    var startDate = $('#startDate').val();
-    $('#endDate').attr("min",startDate);
-
-    $('#startDate').on('change', function() {
-        var startDate = $(this).val();
-        $('#endDate').attr("min", startDate);
-    });
-
-
-</script>
+        // 페이지 로드시 한번 호출하여 초기 상태 설정
+        window.onload = toggleDiscountFields;
+    </script>
+</div>
 </html>
