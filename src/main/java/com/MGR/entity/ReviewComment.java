@@ -6,13 +6,11 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-import java.util.Set;
-
 
 @Setter
 @Getter
 @Entity
-public class QnaAnswer {
+public class ReviewComment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +29,7 @@ public class QnaAnswer {
     private Member author;
 
     @ManyToOne
-    private QnaQuestion qnaQuestion;
+    private ReviewBoard reviewBoard;
 
     @PrePersist
     protected void onCreate() {
