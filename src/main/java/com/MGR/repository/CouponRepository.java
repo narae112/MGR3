@@ -17,6 +17,6 @@ public interface CouponRepository extends JpaRepository<Coupon, Long>,
     Optional<Coupon> findByNameAndDiscountRateAndStartDateAndEndDate(
         String name, int discountRate, LocalDate startDate, LocalDate endDate
     );
-
+    List<Coupon> findByEndDateBefore(LocalDate currentDate);
 
 }
