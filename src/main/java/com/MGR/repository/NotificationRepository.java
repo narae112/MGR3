@@ -10,4 +10,5 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     List<Notification> findByBoardId(Long boardId);
     List<Notification> findByMemberId(Long memberId);
+    List<Notification> findByMemberIdOrderByCreatedDateDesc(Long memberId);
 }
