@@ -67,18 +67,11 @@ public class EventBoardController {
         return "redirect:/board/events";
     }
 
-
     @GetMapping("/eventBoard/edit/{id}")
     public String editEventBoard(@PathVariable("id") Long id, Model model,
                                  @AuthenticationPrincipal PrincipalDetails member){
 
         EventBoard eventBoard = eventBoardService.findById(id).orElseThrow();
-//        String authorEmail = eventBoard.getMember().getEmail(); //작성자의 이메일 구하기
-//        String userEmail = member.getUsername(); //로그인 되어있는 사용자의 이메일 구하기
-//
-//        if(!userEmail.equals(authorEmail)){
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "작성자만 수정할 수 있습니다.");
-//        }
         model.addAttribute("eventBoardFormDto",eventBoard);
 
         Image findImage = imageService.findByEvent(eventBoard);
@@ -87,20 +80,6 @@ public class EventBoardController {
         return "board/event/eventBoardForm";
     }
 
-//    @PostMapping("/eventBoard/update/{id}")
-//    public String UpdateEventBoard(@Valid EventBoardFormDto boardFormDto,
-//                                   Errors errors, Model model,
-//                                   @PathVariable("id") Long id){
-//        if(errors.hasErrors()) {
-//            return "/event/eventBoardForm";
-//        }
-//
-//        EventBoard update = eventBoardService.update(id, boardFormDto);
-//        model.addAttribute("eventBoardFormDto",update);
-//
-//        return "redirect:/board/event/" + id;
-//    }
-
     @PostMapping("/eventBoard/update/{id}")
     public String UpdateEventBoard(@Valid EventBoard eventBoard,
                                    BindingResult result, Model model, @PathVariable("id") Long id,
@@ -108,12 +87,6 @@ public class EventBoardController {
         if(result.hasErrors()) {
             return "board/event/eventBoardForm";
         }
-
-//        if (eventBoardFormDto.getEventImgDtoList() == null) {
-//            eventBoardFormDto.setEventImgDtoList(new HashMap<>());
-//        }
-//        model.addAttribute("eventBoardFormDto", eventBoardFormDto);
-
 
         try {
             eventBoardService.update(id, eventBoard, imgFileList);
@@ -150,7 +123,7 @@ public class EventBoardController {
             eventBoardService.delete(eventBoard);
             return "게시글이 삭제되었습니다";
         }
-        return "작성자가 아니면 삭제가 불가능합니다.";
+        return "삭제 오류";
     }
 
 }

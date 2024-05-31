@@ -1,5 +1,6 @@
 package com.MGR.service;
 
+import com.MGR.entity.Attraction;
 import com.MGR.entity.EventBoard;
 import com.MGR.entity.Image;
 import com.MGR.entity.Member;
@@ -33,7 +34,10 @@ public class ImageService {
     private String boardImgLocation;
 
     @Value("${couponImgLocation}")
-    private String coupImgLocation;
+    private String couponImgLocation;
+
+    @Value("${attractionImgLocation}")
+    private String attractionImgLocation;
 
     public void saveTicketImage(Image ticketImage, MultipartFile ticketImgFile) throws Exception {
         saveImage(ticketImage, ticketImgFile, ticketImgLocation);
@@ -46,9 +50,13 @@ public class ImageService {
     public void saveBoardImage(Image boardImage, MultipartFile boardImgFile) throws Exception {
         saveImage(boardImage, boardImgFile, boardImgLocation);
     }
-  
+
     public void saveCouponImage(Image couponImage, MultipartFile couponImgFile) throws Exception {
-        saveImage(couponImage, couponImgFile, coupImgLocation);
+        saveImage(couponImage, couponImgFile, couponImgLocation);
+    }
+
+    public void saveAttractionImage(Image attractionImage, MultipartFile attractionImgFile) throws Exception {
+        saveImage(attractionImage, attractionImgFile, attractionImgLocation);
     }
 
     private void saveImage(Image image, MultipartFile imgFile, String imgLocation) throws Exception {
@@ -86,7 +94,7 @@ public class ImageService {
     }
 
     public void updateCouponImage(Long couponImgId, MultipartFile couponFile) throws Exception {
-        updateImage(couponImgId, couponFile, coupImgLocation);
+        updateImage(couponImgId, couponFile, couponImgLocation);
     }
 
     public void updateImage(Long id, MultipartFile imgFile, String imgLocation) throws Exception {
@@ -108,11 +116,11 @@ public class ImageService {
     public void deleteImagesByTicketId(Long ticketId) {
         imageRepository.deleteByTicketId(ticketId);
     }
-  
+
     public void deleteImagesByCouponId(Long couponId) {
         imageRepository.deleteById(couponId);
     }
-  
+
     public void deleteImagesByReviewBoardId(Long reviewBoardId) throws Exception {
         List<Image> images = imageRepository.findByReviewBoardId(reviewBoardId);
         for (Image image : images) {
@@ -126,13 +134,22 @@ public class ImageService {
             }
         }
     }
-    
+
+    public void deleteImage(EventBoard eventBoard) {
+        Image image = imageRepository.findByEventBoard(eventBoard);
+        imageRepository.delete(image);
+    }
+
+    public void deleteImage(Attraction attraction) {
+        Image image = imageRepository.findByAttraction(attraction);
+        imageRepository.delete(image);
+    }
+
     public Image findByEvent(EventBoard eventBoard) {
         return imageRepository.findByEventBoard(eventBoard);
     }
 
-    public void deleteImage(EventBoard eventBoard) {
-        Optional<Image> image = imageRepository.findById(eventBoard.getId());
-        imageRepository.delete(image.get());
+    public Image findByAttraction(Attraction attraction) {
+        return imageRepository.findByAttraction(attraction);
     }
 }

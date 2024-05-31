@@ -24,6 +24,8 @@ public class QImage extends EntityPathBase<Image> {
 
     public final QBaseEntity _super = new QBaseEntity(this);
 
+    public final QAttraction attraction;
+
     public final QCoupon coupon;
 
     //inherited
@@ -72,7 +74,7 @@ public class QImage extends EntityPathBase<Image> {
 
     public QImage(Class<? extends Image> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.coupon = inits.isInitialized("coupon") ? new QCoupon(forProperty("coupon"), inits.get("coupon")) : null;
+        this.coupon = inits.isInitialized("coupon") ? new QCoupon(forProperty("coupon")) : null;
         this.eventBoard = inits.isInitialized("eventBoard") ? new QEventBoard(forProperty("eventBoard"), inits.get("eventBoard")) : null;
         this.qnaQuestion = inits.isInitialized("qnaQuestion") ? new QQnaQuestion(forProperty("qnaQuestion"), inits.get("qnaQuestion")) : null;
         this.ticket = inits.isInitialized("ticket") ? new QTicket(forProperty("ticket")) : null;
