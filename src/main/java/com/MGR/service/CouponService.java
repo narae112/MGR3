@@ -18,7 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
+import org.springframework.scheduling.annotation.Scheduled;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +36,19 @@ public class CouponService {
     private final NotificationService notificationService;
     private final MemberService memberService;
     private final MemberCouponRepository memberCouponRepository;
+
+     @Transactional
+    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
+    public void deleteExpiredCoupons() {
+        LocalDate currentDate = LocalDate.now();
+        List<Coupon> expiredCoupons = couponRepository.findByEndDateBefore(currentDate);
+        // 현재 날짜보다 유효기간이 이전인 쿠폰들을 조회
+
+        for (Coupon coupon : expiredCoupons) {
+            couponRepository.delete(coupon);
+        }
+        // 조회된 쿠폰들을 삭제
+    }
     // 쿠폰 생성
     public Long createCoupon(CouponFormDto couponFormDto,
                              List<MultipartFile> couponImgFileList) throws Exception {
