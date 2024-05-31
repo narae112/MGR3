@@ -46,10 +46,11 @@ public class CouponService {
         }
 
         // 쿠폰 저장
-        Coupon coupon = Coupon.createCoupon(
-                couponFormDto.getName(), couponFormDto.getDiscountRate(),
-                couponFormDto.getStartDate(), couponFormDto.getEndDate(), couponFormDto.getCouponContent());
-        couponRepository.save(coupon);
+       Coupon coupon = Coupon.createCoupon(
+                 couponFormDto.getName(), couponFormDto.getDiscountRate(),
+                 couponFormDto.getStartDate(), couponFormDto.getEndDate(), couponFormDto.getCouponContent(),
+                 couponFormDto.getCouponType()); // 쿠폰 타입 추가
+         couponRepository.save(coupon);
 
         // 이미지 저장
         for (int i = 0; i < couponImgFileList.size(); i++) {
