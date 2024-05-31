@@ -110,21 +110,24 @@ public class SecurityConfig {
     public CommandLineRunner initDbUser(MemberRepository memberRepository, PasswordEncoder passwordEncoder){
 
         return createAdmin -> {
-            boolean isAdminPresent = memberRepository.findByName("관리자").isPresent();
+            boolean isAdminPresent = memberRepository.findByName("사용자").isPresent();
 
             if (!isAdminPresent) {
-                Member admin = new Member();
+                Member user = new Member();
 
-                admin.setName("");
-                admin.setEmail("user@mgr.com");
-                admin.setNickname("초기사용자");
-                admin.setPassword(passwordEncoder.encode("1"));
-                admin.setRole("ROLE_USER");
+                user.setName("");
+                user.setEmail("user@mgr.com");
+                user.setNickname("지구123");
+                user.setBirth("2023-05-31");
+                user.setPassword(passwordEncoder.encode("1"));
+                user.setRole("ROLE_USER");
 
-                memberRepository.save(admin);
+                memberRepository.save(user);
             }
         };
     }
+
+
 
 //    @Bean
 //    public ServerEndpointExporter serverEndpointExporter() {
