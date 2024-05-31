@@ -25,7 +25,7 @@
                     <li class="nav-item"><a class="nav-link" th:href="@{/board/events}">이벤트/공지</a></li>
                     <li class="nav-item"><a class="nav-link" sec:authorize="hasAnyRole('ROLE_USER')" th:href="@{/member/reservations}">예약내역</a></li>
                     <li class="nav-item"><a class="nav-link" sec:authorize="hasAnyRole('ROLE_USER')" th:href="@{/member/myPage}">쿠폰내역</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/qna/question/list}">Q&A</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/review/board/list}">리뷰</a></li>
                     <li class="nav-item"><a class="nav-link" th:href="@{/tickets}">티켓 확인</a></li>
                     <li class="nav-item"><a class="nav-link" th:href="@{/location}">오시는 길</a></li>
                     <li class="nav-item"><a class="nav-link" sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/admin/ticket/new}">티켓 등록</a></li>
