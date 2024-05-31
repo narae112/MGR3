@@ -4,16 +4,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Getter @Setter
+@Getter @Setter @ToString
 @NoArgsConstructor
 public class Notification {
 
@@ -34,7 +31,7 @@ public class Notification {
     private Long paymentId;
 
     @CreatedDate
-    private LocalDateTime createdTime;
+    private LocalDateTime createdDate;
 
     public Notification(Long memberId, String message, String type, Long id) {
         switch (type) {
@@ -53,7 +50,7 @@ public class Notification {
         this.memberId = memberId;
         this.message = message;
         this.type = type;
-        this.createdTime = LocalDateTime.now();
+        this.createdDate = LocalDateTime.now();
     }
 
 }

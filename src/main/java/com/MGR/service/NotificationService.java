@@ -104,7 +104,8 @@ public class NotificationService {
     }
 
     public List<Notification> findByMemberId(Long userId) {
-        return notificationRepository.findByMemberId(userId);
+        System.out.println("2= " + notificationRepository.findByMemberIdOrderByCreatedDateDesc(userId));
+        return notificationRepository.findByMemberIdOrderByCreatedDateDesc(userId);
     }
 
     public void deleteNotification(Long id) {

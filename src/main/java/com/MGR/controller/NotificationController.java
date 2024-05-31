@@ -29,6 +29,7 @@ public class NotificationController {
     @GetMapping("/api/notifications")
     public List<Notification> getNotification(@AuthenticationPrincipal PrincipalDetails member){
         Long userId = member.getId();
+        System.out.println(notificationService.findByMemberId(userId).toString());
         return notificationService.findByMemberId(userId);
     }
 
