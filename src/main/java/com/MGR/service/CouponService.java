@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -145,4 +146,7 @@ public class CouponService {
         return couponFormDto;
     }
 
+    public Coupon findById(Long couponId) {
+        return couponRepository.findById(couponId).orElseThrow(() -> new NoSuchElementException("쿠폰서비스 최하단, 쿠폰아이디 못찾음: " + couponId));
+    }
 }
