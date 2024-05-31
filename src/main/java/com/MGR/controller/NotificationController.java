@@ -18,8 +18,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class NotificationController {
     private final NotificationService notificationService;
-    public static Map<Long, SseEmitter> sseEmitters = new ConcurrentHashMap<>();
-    // 1. 모든 Emitters를 저장하는 ConcurrentHashMap
 
     // 메시지 알림
     @GetMapping(value = "/api", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
@@ -31,6 +29,7 @@ public class NotificationController {
     @GetMapping("/api/notifications")
     public List<Notification> getNotification(@AuthenticationPrincipal PrincipalDetails member){
         Long userId = member.getId();
+        System.out.println(notificationService.findByMemberId(userId).toString());
         return notificationService.findByMemberId(userId);
     }
 
@@ -38,5 +37,12 @@ public class NotificationController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteNotification(@PathVariable Long id) {
         notificationService.deleteNotification(id);
+    }
+
+    @GetMapping("/api/notifications/count")
+    public int getNotificationCount(@AuthenticationPrincipal PrincipalDetails member) {
+        Long memberId = member.getId();
+        return notificationService.countNotificationsForMember(memberId);
+        //알림 갯수 나타내는 메서드
     }
 }

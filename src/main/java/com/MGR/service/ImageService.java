@@ -113,8 +113,8 @@ public class ImageService {
         imageRepository.deleteById(couponId);
     }
   
-    public void deleteImagesByQnaQuestionId(Long qnaQuestionId) throws Exception {
-        List<Image> images = imageRepository.findByQnaQuestionId(qnaQuestionId);
+    public void deleteImagesByReviewBoardId(Long reviewBoardId) throws Exception {
+        List<Image> images = imageRepository.findByReviewBoardId(reviewBoardId);
         for (Image image : images) {
             try {
                 fileService.deleteFile(image.getImgName()); // 파일 시스템에서 이미지 파일 삭제

@@ -35,13 +35,14 @@ public class Coupon extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public static Coupon createCoupon(String name, int discountRate, LocalDate startDate, LocalDate endDate, String couponContent) {
+    public static Coupon createCoupon(String name, int discountRate, LocalDate startDate, LocalDate endDate, String couponContent, CouponType couponType) {
         Coupon coupon = new Coupon();
         coupon.setName(name);
         coupon.setDiscountRate(discountRate);
         coupon.setStartDate(startDate);
         coupon.setEndDate(endDate);
         coupon.setCouponContent(couponContent);
+        coupon.setCouponType(couponType); // 쿠폰 타입 설정
         return coupon;
     }
 
@@ -51,6 +52,7 @@ public class Coupon extends BaseEntity {
         this.startDate = couponFormDto.getStartDate();
         this.endDate = couponFormDto.getEndDate();
         this.couponContent = couponFormDto.getCouponContent();
+        this.couponType = couponFormDto.getCouponType();
     }
 
 }

@@ -4,16 +4,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Getter @Setter
+@Getter @Setter @ToString
 @NoArgsConstructor
 public class Notification {
 
@@ -33,8 +30,12 @@ public class Notification {
 
     private Long paymentId;
 
+    private Long reviewId;
+
+    private Long reviewCommentId;
+
     @CreatedDate
-    private LocalDateTime createdTime;
+    private LocalDateTime createdDate;
 
     public Notification(Long memberId, String message, String type, Long id) {
         switch (type) {
@@ -47,13 +48,19 @@ public class Notification {
             case "결제":
                 this.paymentId = id;
                 break;
+            case "리뷰":
+                this.reviewId = id;
+                break;
+            case "리뷰댓글":
+                this.reviewCommentId = id;
+                break;
             default:
-                throw new IllegalArgumentException("Invalid notification type: " + type);
+                throw new IllegalArgumentException("공지 타입 입력 오류= " + type);
         }
         this.memberId = memberId;
         this.message = message;
         this.type = type;
-        this.createdTime = LocalDateTime.now();
+        this.createdDate = LocalDateTime.now();
     }
 
 }

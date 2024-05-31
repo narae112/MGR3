@@ -8,6 +8,5 @@ import lombok.Setter;
 public class ChatMessage {
     private String from;
     private String text;
-    // getters and setters...
 }
 

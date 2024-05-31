@@ -74,6 +74,7 @@ public class EventBoardService {
 
     public void saveBoard(EventBoard board) {
         eventBoardRepository.save(board);
+        notificationService.notifyBoard(board);
     }
 
     public List<EventBoard> findAll() {

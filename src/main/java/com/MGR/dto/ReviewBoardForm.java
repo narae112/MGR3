@@ -1,13 +1,11 @@
 package com.MGR.dto;
 
-import com.MGR.entity.QnaQuestion;
-import com.MGR.entity.Ticket;
+import com.MGR.entity.ReviewBoard;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,7 +13,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class QnaQuestionForm {
+public class ReviewBoardForm {
     private Long id;
 
     private List<ImageDto> reviewImgDtoList = new ArrayList<>();
@@ -34,11 +32,11 @@ public class QnaQuestionForm {
 
     private static ModelMapper modelMapper = new ModelMapper();
 
-    public QnaQuestion createQnaQuestion() {
-        return modelMapper.map(this, QnaQuestion.class);
+    public ReviewBoard createReviewBoard() {
+        return modelMapper.map(this, ReviewBoard.class);
     }
-    public static QnaQuestionForm of(QnaQuestion qnaQuestion) {
-        return modelMapper.map(qnaQuestion, QnaQuestionForm.class);
+    public static ReviewBoardForm of(ReviewBoard reviewBoard) {
+        return modelMapper.map(reviewBoard, ReviewBoardForm.class);
     }
 
 }

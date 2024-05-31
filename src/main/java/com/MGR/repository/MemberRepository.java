@@ -21,4 +21,11 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByOauth2Id(String oauth2Id);
     List<Member> findAll();
 
+
+//    @Query("SELECT m FROM Member m WHERE m.birth = :today")
+//    List<Member> findByBirth(String today);
+
+    @Query("SELECT m FROM Member m WHERE SUBSTRING(m.birth, 6, 5) = :today")
+    List<Member> findByBirth(@Param("today") String today);
+
 }

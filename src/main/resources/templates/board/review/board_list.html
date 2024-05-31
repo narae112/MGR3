@@ -8,7 +8,7 @@
         <h2>리뷰 게시판</h2>
             <div class="row my-3">
                 <div class="col-6">
-                    <a th:href="@{/qna/question/create}" class="btn btn-primary">리뷰 등록하기</a>
+                    <a th:href="@{/review/board/create}" class="btn btn-primary">리뷰 등록하기</a>
                 </div>
                 <div class="col-6">
                     <div class="input-group">
@@ -28,14 +28,14 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr class="text-center" th:each="question, loop : ${paging}">
+                <tr class="text-center" th:each="reviewBoard, loop : ${paging}">
                     <td th:text="${paging.getTotalElements - (paging.number * paging.size) - loop.index}"></td>
                     <td class="text-start">
-                        <a th:href="@{|/qna/question/detail/${question.id}|}" th:text="${question.subject}"></a>
+                        <a th:href="@{|/review/board/detail/${reviewBoard.id}|}" th:text="${reviewBoard.subject}"></a>
                     </td>
-                    <td><span th:if="${question.author != null}" th:text="${question.author.nickname}"></span></td>
-                    <td th:text="${question.count}"></td>
-                    <td th:text="${#temporals.format(question.createDate, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td><span th:if="${reviewBoard.author != null}" th:text="${reviewBoard.author.nickname}"></span></td>
+                    <td th:text="${reviewBoard.count}"></td>
+                    <td th:text="${#temporals.format(reviewBoard.createDate, 'yyyy-MM-dd HH:mm')}"></td>
                 </tr>
                 </tbody>
             </table>
@@ -60,7 +60,7 @@
                 </ul>
             </div>
         <!-- 페이징처리 끝 -->
-        <form th:action="@{/qna/question/list}" method="get" id="searchForm">
+        <form th:action="@{/review/board/list}" method="get" id="searchForm">
                 <input type="hidden" id="kw" name="kw" th:value="${kw}">
                 <input type="hidden" id="page" name="page" th:value="${paging.number}">
             </form>

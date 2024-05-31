@@ -29,7 +29,6 @@ public class ChatRequestDto { //챗봇한테 요청하는 dto
         private int candidate_count; //생성할 텍스트 수
         private int max_output_tokens; //생성할 텍스트의 최대 토큰 수
         private double temperature; // 텍스트 생성의 다양성 조절
-
     }
 
     public ChatRequestDto(String prompt) { //설정 초기화

@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -36,7 +37,7 @@ public class CouponService {
     private final MemberService memberService;
     private final MemberCouponRepository memberCouponRepository;
     // 쿠폰 생성
-    public Long createCoupon(CouponFormDto couponFormDto,
+     public Long createCoupon(CouponFormDto couponFormDto,
                              List<MultipartFile> couponImgFileList) throws Exception {
         // 중복 데이터 검사
         boolean isDuplicate = isDuplicateCoupon(couponFormDto);
@@ -45,10 +46,11 @@ public class CouponService {
         }
 
         // 쿠폰 저장
-        Coupon coupon = Coupon.createCoupon(
-                couponFormDto.getName(), couponFormDto.getDiscountRate(),
-                couponFormDto.getStartDate(), couponFormDto.getEndDate(), couponFormDto.getCouponContent());
-        couponRepository.save(coupon);
+       Coupon coupon = Coupon.createCoupon(
+                 couponFormDto.getName(), couponFormDto.getDiscountRate(),
+                 couponFormDto.getStartDate(), couponFormDto.getEndDate(), couponFormDto.getCouponContent(),
+                 couponFormDto.getCouponType()); // 쿠폰 타입 추가
+         couponRepository.save(coupon);
 
         // 이미지 저장
         for (int i = 0; i < couponImgFileList.size(); i++) {
@@ -64,16 +66,23 @@ public class CouponService {
         }
 
         // 사용자에게 쿠폰 할당 및 알림
-        List<Member> memberList = memberService.findByAllUser();
+        List<Member> memberList;
+        if (coupon.getCouponType() == CouponType.BIRTH) {
+            memberList = memberService.findMembersWithBirthdayToday();
+        } else {
+            memberList = memberService.findByAllUser();
+        }
+
         for (Member member : memberList) {
             MemberCoupon memberCoupon = MemberCoupon.memberGetCoupon(member, coupon);
-            memberCouponRepository.save(memberCoupon); // MemberCoupon 객체 저장
+
             notificationService.notifyCoupon(coupon, memberCoupon, member);
         }
 
         return coupon.getId();
 
     }
+
 
     // 쿠폰 수정
     public Long updateCoupon(CouponFormDto couponFormDto, List<MultipartFile> couponImgFileList) throws Exception {
@@ -145,4 +154,7 @@ public class CouponService {
         return couponFormDto;
     }
 
+    public Coupon findById(Long couponId) {
+        return couponRepository.findById(couponId).orElseThrow(() -> new NoSuchElementException("쿠폰서비스 최하단, 쿠폰아이디 못찾음: " + couponId));
+    }
 }

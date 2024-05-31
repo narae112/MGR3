@@ -5,30 +5,39 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
+
+@Setter
+@Getter
 @Entity
-@Setter @Getter
 public class ReviewComment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
+    private LocalDateTime createDate;
+
+    @Column
+    private LocalDateTime modifiedDate;
+
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    @Column(columnDefinition = "DATETIME")
-    private LocalDateTime createDate;
-
-    @Column(columnDefinition = "DATETIME")
-    private LocalDateTime modifiedDate;
+    @ManyToOne
+    private Member author;
 
     @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member member;
-
-    @ManyToOne
-    @JoinColumn(name = "review_board_id")
     private ReviewBoard reviewBoard;
+
+    @PrePersist
+    protected void onCreate() {
+        createDate = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        modifiedDate = LocalDateTime.now();
+    }
 }
