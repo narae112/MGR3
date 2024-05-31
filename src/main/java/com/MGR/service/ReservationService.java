@@ -1,9 +1,12 @@
 package com.MGR.service;
 
+import com.MGR.dto.OrderDto;
 import com.MGR.dto.ReservationDtlDto;
+import com.MGR.dto.ReservationOrderDto;
 import com.MGR.dto.ReservationTicketDto;
 import com.MGR.entity.*;
 import com.MGR.repository.*;
+import io.netty.channel.EventLoopException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,7 +32,7 @@ public class ReservationService {
     private final MemberRepository memberRepository;
     private final ReservationRepository reservationRepository;
     private final ReservationTicketRepository reservationTicketRepository;
-    // private final OrderService orderService; // 결제
+     private final OrderService orderService;
 
     // 예약 내역에 추가
     public Long addReservation(ReservationTicketDto reservationTicketDto, String email) {
@@ -95,7 +98,6 @@ public class ReservationService {
                 .orElseThrow(EntityNotFoundException::new);
 
         Inventory inventory = inventoryRepository.findByTicketIdAndDate(reservationTicket.getTicket().getId(), LocalDate.parse(reservationTicket.getVisitDate()));
-        inventory.removeQuantity(ticketCount);
 
         if(reservationTicket.getTicketCount() < ticketCount) { // 수정된 수량이 원래 예약한 수량보다 커지면
             int result = ticketCount-reservationTicket.getTicketCount(); // 추가한 갯수만큼
@@ -107,6 +109,7 @@ public class ReservationService {
 
         reservationTicket.updateCount(ticketCount); // 예약한 티켓 내역에 수정된 수량을 업데이트
 
+        reservationTicketRepository.save(reservationTicket);
     }
 
     // 예약 취소
@@ -122,6 +125,33 @@ public class ReservationService {
     }
 
     // 결제
+    public Long orderReservationTicket(List<ReservationOrderDto> reservationOrderDtoList, String email) {
+        List<OrderDto> orderDtoList = new ArrayList<>();
+
+        for(ReservationOrderDto reservationOrderDto : reservationOrderDtoList) {
+            //ReservationOrderDto 객체 만들어서 reservationTicket 정보 넣기
+            ReservationTicket reservationTicket = reservationTicketRepository.findById(reservationOrderDto.getReservationTicketId())
+                    .orElseThrow(EntityNotFoundException::new);
+
+            // OrderDto 객체 만들어서 reservationTicket 정보 넣기
+            OrderDto orderDto = new OrderDto();
+
+            orderDto.setTicketId(reservationTicket.getTicket().getId());
+            orderDto.setCount(reservationTicket.getTicketCount());
+
+            orderDtoList.add(orderDto);
+        }
+
+        Long orderId = orderService.orders(orderDtoList, email);
+
+//        for(ReservationOrderDto reservationOrderDto : reservationOrderDtoList) {
+//            ReservationTicket reservationTicket = reservationTicketRepository.findById(reservationOrderDto.getReservationTicketId())
+//                    .orElseThrow(EventLoopException::new);
+//            reservationTicketRepository.delete(reservationTicket);
+//        }
+
+        return orderId;
+    }
 
     // 검증
     @Transactional(readOnly = true)
