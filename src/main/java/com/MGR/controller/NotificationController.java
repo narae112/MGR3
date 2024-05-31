@@ -39,4 +39,11 @@ public class NotificationController {
     public void deleteNotification(@PathVariable Long id) {
         notificationService.deleteNotification(id);
     }
+
+    @GetMapping("/api/notifications/count")
+    public int getNotificationCount(@AuthenticationPrincipal PrincipalDetails member) {
+        Long memberId = member.getId();
+        return notificationService.countNotificationsForMember(memberId);
+        //알림 갯수 나타내는 메서드
+    }
 }

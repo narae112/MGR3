@@ -24,7 +24,7 @@ public class NotificationService {
         // 1. 현재 클라이언트를 위한 sseEmitter 객체 생성
         SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
 
-        // 2. 연결
+        // 2. 연결 확인 메세지
 //        try {
 //            sseEmitter.send(SseEmitter.event()
 //                    .name("connect")
@@ -102,6 +102,12 @@ public class NotificationService {
 
     public void deleteNotification(Long id) {
         notificationRepository.deleteById(id);
+    }
+
+    public int countNotificationsForMember(Long memberId){
+        //알림이 등록된 수 반환
+        List<Notification> byMemberId = notificationRepository.findByMemberId(memberId);
+        return byMemberId.size();
     }
 }
 
