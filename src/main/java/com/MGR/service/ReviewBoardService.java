@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -67,6 +68,12 @@ public class ReviewBoardService {
         }else{
             throw new DataNotFoundException("review not found");
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReviewBoardForm> getReviewBoardForms() {
+        List<ReviewBoard> reviewBoards = reviewBoardRepository.findAll();
+        return reviewBoards.stream().map(this::convertToForm).collect(Collectors.toList());
     }
     public Long createReviewBoard(String subject, String content, Member user, List<MultipartFile> reviewImgFileList) throws Exception {
         ReviewBoard q = new ReviewBoard();
@@ -184,5 +191,13 @@ public Page<ReviewBoard> getList(int page, String keyword, String sort) {
         }
     }
 }
+    private ReviewBoardForm convertToForm(ReviewBoard reviewBoard) {
+        List<Image> reviewImgList = imageRepository.findByReviewBoardIdOrderByIdAsc(reviewBoard.getId());
+        List<ImageDto> reviewImgDtoList = reviewImgList.stream().map(ImageDto::of).collect(Collectors.toList());
+
+        ReviewBoardForm form = ReviewBoardForm.of(reviewBoard);
+        form.setReviewImgDtoList(reviewImgDtoList);
+        return form;
+    }
 }
 
