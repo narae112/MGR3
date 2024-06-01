@@ -33,6 +33,7 @@
                     <li class="nav-item"><a class="nav-link" sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/admin/coupon/new}">쿠폰 등록</a></li>
                     <li class="nav-item"><a class="nav-link" sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/admin/coupons}">쿠폰 관리</a></li>
                     <li class="nav-item"><a class="nav-link" sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/attraction/attractionList}">놀이기구</a></li>
+                    <li class="nav-item"><a class="nav-link" sec:authorize="isAnonymous()"  th:href="@{/attraction/schedule}">운휴</a></li>
                 </ul>
             </div>
         </div>

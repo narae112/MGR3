@@ -19,7 +19,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/attraction")
@@ -139,4 +141,30 @@ public class AttractionController {
         return "redirect:/attraction/" + id;
     }
 
+    @GetMapping({"/schedule", "/schedule/{date}"})
+    public String attractionSchedule(@PathVariable(value = "date", required = false) String dateStr,
+                                     Model model) {
+        System.out.println("dateStr = " + dateStr);
+        LocalDate date = dateStr != null ? LocalDate.parse(dateStr) : LocalDate.now();
+        System.out.println("date = " + date);
+        int dayOfMonth = date.getDayOfMonth();
+        System.out.println("dayOfMonth = " + dayOfMonth);
+        List<Attraction> attractions = attractionService.findAll();
+        //운휴가 오늘인 놀이기구 필터링
+        List<Attraction> attractionList = attractions.stream()
+                .filter(attraction -> attraction.getClosureDay() == dayOfMonth)
+                .collect(Collectors.toList());
+        model.addAttribute("attractionList", attractionList);
+
+        //이미지 찾기
+        Map<Long,String> imageUrls  = new HashMap<>();
+        for (Attraction attraction : attractionList) {
+            Image image = imageService.findByAttraction(attraction);
+            imageUrls.put(attraction.getId(),image.getImgUrl());
+        }
+        model.addAttribute("imageUrls", imageUrls);
+        model.addAttribute("schedule", date);
+
+        return "attraction/schedule";
+    }
 }
