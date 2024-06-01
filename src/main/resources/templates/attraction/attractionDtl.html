@@ -75,7 +75,7 @@
 
         <div class="detail-footer">
             <a class="btn btn-primary" th:onclick="|location.href='@{/attraction/attractionList}'|">목록으로</a>
-            <a th:href="@{|/attraction/edit/${attraction.id}|}" class="btn btn-sm btn-primary"
+            <a th:href="@{|/attraction/edit/${attraction.id}|}" class="btn btn-primary"
                sec:authorize="isAuthenticated()"
                th:if="${attraction.id != null}"
                th:text="수정"></a>

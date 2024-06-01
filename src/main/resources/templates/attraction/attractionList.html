@@ -26,6 +26,7 @@
         <table class="table">
             <thead>
             <tr>
+                <th>이미지</th>
                 <th>이름</th>
                 <th>상세설명</th>
                 <th>운휴일</th>
@@ -34,12 +35,15 @@
             <tbody>
             <tr th:each="attractionList, loop : ${paging}">
                 <td>
+                    <img th:src="${imageUrls[attractionList.id]}" alt="이미지" style="width:100px;height:auto;">
+                </td>
+                <td>
                     <a th:text="${attractionList.name}"
                        th:href="@{|/attraction/${attractionList.id}|}"
                     >이름</a>
                 </td>
-                <td th:text="${attractionList.information}">상세설명</td>
-                <td th:text="'매 월 ' + ${attractionList.closureDay} + ' 일'">운휴일</td>
+                <td th:text="${#strings.length(attractionList.information) > 20 ? #strings.substring(attractionList.information, 0, 20) + '...' : attractionList.information}">상세설명</td>
+                <td th:text="'매월 ' + ${attractionList.closureDay} + ' 일'">운휴일</td>
             </tr>
             </tbody>
         </table>

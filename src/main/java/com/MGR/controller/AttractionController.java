@@ -19,9 +19,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 @RequestMapping("/attraction")
@@ -36,6 +34,13 @@ public class AttractionController {
     public String attractionList(Model model, @RequestParam(value = "page", defaultValue = "0") int page){
         Page<Attraction> paging = attractionService.getAttractionList(page);
         model.addAttribute("paging", paging);
+
+        Map<Long,String> imageUrls  = new HashMap<>();
+        for (Attraction attraction : paging) {
+            Image image = imageService.findByAttraction(attraction);
+            imageUrls.put(attraction.getId(),image.getImgUrl());
+        }
+        model.addAttribute("imageUrls", imageUrls);
 
         return "/attraction/attractionList";
     }
