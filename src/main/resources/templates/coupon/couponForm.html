@@ -199,11 +199,11 @@
                 <button th:formaction="@{/admin/coupon/new}" type="submit" class="btn btn-primary">저장</button>
             </div>
             <!-- 수정 버튼 -->
-            <div th:unless="${#strings.isEmpty(couponFormDto.id)}" style="text-align: center">
-                <button th:formaction="@{'/admin/coupon/' + ${couponFormDto.id} }" type="submit" class="btn btn-primary">수정</button>
-                <!--                삭제 버튼-->
-                <a th:href="@{/admin/coupon/delete/{couponId}(couponId=${couponFormDto.id})}" class="btn btn-danger" onclick="return confirm('쿠폰을 삭제하시겠습니까?')">삭제</a>
-            </div>
+<!--            <div th:unless="${#strings.isEmpty(couponFormDto.id)}" style="text-align: center">-->
+<!--                <button th:formaction="@{'/admin/coupon/' + ${couponFormDto.id} }" type="submit" class="btn btn-primary">수정</button>-->
+<!--                &lt;!&ndash;                삭제 버튼&ndash;&gt;-->
+<!--                <a th:href="@{/admin/coupon/delete/{couponId}(couponId=${couponFormDto.id})}" class="btn btn-danger" onclick="return confirm('쿠폰을 삭제하시겠습니까?')">삭제</a>-->
+<!--            </div>-->
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
         </div>
     </form>
