@@ -10,12 +10,18 @@
                 <div class="col-6">
                     <a th:href="@{/review/board/create}" class="btn btn-primary">리뷰 등록하기</a>
                 </div>
-                <div class="col-6">
-                    <div class="input-group">
-                        <input type="text" id="search_kw" class="form-control" th:value="${kw}">
-                        <button class="btn btn-outline-secondary" type="button" id="btn_search">찾기</button>
+                <form th:action="@{/review/board/list}" method="get">
+                    <div class="input-group mb-3">
+
+                        <select class="form-select" name="sort">
+                            <option value="date" th:selected="${sort == 'date'}">등록일순</option>
+                            <option value="votes" th:selected="${sort == 'votes'}">추천순</option>
+                            <option value="views" th:selected="${sort == 'views'}">조회순</option>
+                        </select>
+                        <input type="text" class="form-control" placeholder="검색어" name="kw" th:value="${kw}">
+                        <button class="btn btn-outline-secondary" type="submit">검색</button>
                     </div>
-                </div>
+                </form>
             </div>
             <table class="table">
                 <thead class="table-dark">

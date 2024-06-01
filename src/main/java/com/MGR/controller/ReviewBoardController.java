@@ -41,14 +41,14 @@ public class ReviewBoardController {
     private final FileService fileService;
     @GetMapping("/list")
     public String list(Model model, @RequestParam(value = "page", defaultValue = "0") int page,
-                       @RequestParam(value = "kw", defaultValue = "") String kw) {
-        log.info("page:{}, kw:{}", page, kw);
-        Page<ReviewBoard> paging = this.reviewBoardService.getList(page, kw);
+                       @RequestParam(value = "kw", defaultValue = "") String kw,
+                       @RequestParam(value = "sort", defaultValue = "date") String sort) {
+        Page<ReviewBoard> paging = this.reviewBoardService.getList(page, kw, sort);
         model.addAttribute("paging", paging);
         model.addAttribute("kw", kw);
+        model.addAttribute("sort", sort);
         return "board/review/board_list";
     }
-
     @GetMapping(value = "/detail/{id}")
     public String detail(Model model, @PathVariable("id") Long id, ReviewCommentForm reviewCommentForm) {
         ReviewBoard reviewBoard = this.reviewBoardService.getReviewBoard(id);
