@@ -24,6 +24,10 @@ public class QImage extends EntityPathBase<Image> {
 
     public final QBaseEntity _super = new QBaseEntity(this);
 
+    public final QAttraction attraction;
+
+    public final QCoupon coupon;
+
     //inherited
     public final StringPath createdBy = _super.createdBy;
 
@@ -40,14 +44,12 @@ public class QImage extends EntityPathBase<Image> {
     //inherited
     public final StringPath modifiedBy = _super.modifiedBy;
 
-    public final QQnaAnswer qnAAnswer;
+    public final QQnaQuestion qnaQuestion;
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> regTime = _super.regTime;
 
     public final BooleanPath repImgYn = createBoolean("repImgYn");
-
-    public final QReviewComment reviewComment;
 
     public final QTicket ticket;
 
@@ -72,9 +74,9 @@ public class QImage extends EntityPathBase<Image> {
 
     public QImage(Class<? extends Image> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.coupon = inits.isInitialized("coupon") ? new QCoupon(forProperty("coupon")) : null;
         this.eventBoard = inits.isInitialized("eventBoard") ? new QEventBoard(forProperty("eventBoard"), inits.get("eventBoard")) : null;
-        this.qnAAnswer = inits.isInitialized("qnAAnswer") ? new QQnaAnswer(forProperty("qnAAnswer"), inits.get("qnAAnswer")) : null;
-        this.reviewComment = inits.isInitialized("reviewComment") ? new QReviewComment(forProperty("reviewComment"), inits.get("reviewComment")) : null;
+        this.qnaQuestion = inits.isInitialized("qnaQuestion") ? new QQnaQuestion(forProperty("qnaQuestion"), inits.get("qnaQuestion")) : null;
         this.ticket = inits.isInitialized("ticket") ? new QTicket(forProperty("ticket")) : null;
     }
 

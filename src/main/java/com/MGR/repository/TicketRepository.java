@@ -2,6 +2,7 @@ package com.MGR.repository;
 
 import com.MGR.constant.LocationCategory;
 import com.MGR.constant.TicketCategory;
+import com.MGR.entity.Coupon;
 import com.MGR.entity.Ticket;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,7 +15,7 @@ import java.util.Optional;
 
 public interface TicketRepository extends JpaRepository<Ticket, Long> ,
         QuerydslPredicateExecutor<Ticket>, TicketRepositoryCustom{
-
+    List<Ticket> findByEndDateBefore(LocalDate currentDate);
     List<Ticket> findByName(String name);
     List<Ticket> findByNameOrMemo(String name, String memo);
     List<Ticket> findByPriceLessThan(Integer price);

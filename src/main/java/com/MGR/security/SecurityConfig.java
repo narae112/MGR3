@@ -15,7 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.web.socket.server.standard.ServerEndpointExporter;
+//import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
 
 @Configuration
@@ -39,6 +39,8 @@ public class SecurityConfig {
 //                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/websocket/**").permitAll()
+                        .requestMatchers("/api/**").hasRole( "USER")
+                        .requestMatchers("/gemini/**").permitAll()
                         .requestMatchers("/js/**").permitAll()
                         .requestMatchers("/css/**").permitAll()
                         .requestMatchers("/admin/**").authenticated() // ~로 시작하는 uri 는 로그인 필수
@@ -104,28 +106,31 @@ public class SecurityConfig {
         };
     }
 
-    @Bean
-    public CommandLineRunner initDbUser(MemberRepository memberRepository, PasswordEncoder passwordEncoder){
+//    @Bean
+//    public CommandLineRunner initDbUser(MemberRepository memberRepository, PasswordEncoder passwordEncoder){
+//
+//        return createAdmin -> {
+//            boolean isAdminPresent = memberRepository.findByName("사용자").isPresent();
+//
+//            if (!isAdminPresent) {
+//                Member user = new Member();
+//
+//                user.setName("");
+//                user.setEmail("user@mgr.com");
+//                user.setNickname("지구123");
+//                user.setBirth("2023-05-31");
+//                user.setPassword(passwordEncoder.encode("1"));
+//                user.setRole("ROLE_USER");
+//
+//                memberRepository.save(user);
+//            }
+//        };
+//    }
 
-        return createAdmin -> {
-            boolean isAdminPresent = memberRepository.findByName("관리자").isPresent();
 
-            if (!isAdminPresent) {
-                Member admin = new Member();
 
-                admin.setName("");
-                admin.setEmail("user@mgr.com");
-                admin.setNickname("초기사용자");
-                admin.setPassword(passwordEncoder.encode("1"));
-                admin.setRole("ROLE_USER");
-
-                memberRepository.save(admin);
-            }
-        };
-    }
-
-    @Bean
-    public ServerEndpointExporter serverEndpointExporter() {
-        return new ServerEndpointExporter();
-    }
+//    @Bean
+//    public ServerEndpointExporter serverEndpointExporter() {
+//        return new ServerEndpointExporter();
+//    }
 }

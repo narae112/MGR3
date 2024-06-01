@@ -19,7 +19,6 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,56 +67,29 @@ public class EventBoardController {
         return "redirect:/board/events";
     }
 
-
     @GetMapping("/eventBoard/edit/{id}")
     public String editEventBoard(@PathVariable("id") Long id, Model model,
                                  @AuthenticationPrincipal PrincipalDetails member){
 
         EventBoard eventBoard = eventBoardService.findById(id).orElseThrow();
-//        String authorEmail = eventBoard.getMember().getEmail(); //작성자의 이메일 구하기
-//        String userEmail = member.getUsername(); //로그인 되어있는 사용자의 이메일 구하기
-//
-//        if(!userEmail.equals(authorEmail)){
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "작성자만 수정할 수 있습니다.");
-//        }
         model.addAttribute("eventBoardFormDto",eventBoard);
 
-        List<Image> findImage = imageService.findByEvent(eventBoard);
+        Image findImage = imageService.findByEvent(eventBoard);
         model.addAttribute("eventImage",findImage);
 
         return "board/event/eventBoardForm";
     }
 
-//    @PostMapping("/eventBoard/update/{id}")
-//    public String UpdateEventBoard(@Valid EventBoardFormDto boardFormDto,
-//                                   Errors errors, Model model,
-//                                   @PathVariable("id") Long id){
-//        if(errors.hasErrors()) {
-//            return "/event/eventBoardForm";
-//        }
-//
-//        EventBoard update = eventBoardService.update(id, boardFormDto);
-//        model.addAttribute("eventBoardFormDto",update);
-//
-//        return "redirect:/board/event/" + id;
-//    }
-
     @PostMapping("/eventBoard/update/{id}")
-    public String UpdateEventBoard(@Valid EventBoardFormDto eventBoardFormDto,
+    public String UpdateEventBoard(@Valid EventBoard eventBoard,
                                    BindingResult result, Model model, @PathVariable("id") Long id,
                                    @RequestParam(value = "eventImgFile", required = false) List<MultipartFile> imgFileList){
         if(result.hasErrors()) {
             return "board/event/eventBoardForm";
         }
 
-//        if (eventBoardFormDto.getEventImgDtoList() == null) {
-//            eventBoardFormDto.setEventImgDtoList(new HashMap<>());
-//        }
-//        model.addAttribute("eventBoardFormDto", eventBoardFormDto);
-
-
         try {
-            eventBoardService.update(id, eventBoardFormDto, imgFileList);
+            eventBoardService.update(id, eventBoard, imgFileList);
         } catch (Exception e) {
             model.addAttribute("errorMessage", "수정 중 오류가 발생했습니다.");
             return "board/event/eventBoardForm";
@@ -135,7 +107,7 @@ public class EventBoardController {
         eventBoardService.saveBoard(eventBoard);
         model.addAttribute("eventBoard",eventBoard);
 
-        List<Image> findImage = imageService.findByEvent(eventBoard);
+        Image findImage = imageService.findByEvent(eventBoard);
         model.addAttribute("eventImage",findImage);
 
         return "board/event/eventBoardDtl";
@@ -151,7 +123,7 @@ public class EventBoardController {
             eventBoardService.delete(eventBoard);
             return "게시글이 삭제되었습니다";
         }
-        return "작성자가 아니면 삭제가 불가능합니다.";
+        return "삭제 오류";
     }
 
 }

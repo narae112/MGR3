@@ -22,13 +22,13 @@ public class QReviewComment extends EntityPathBase<ReviewComment> {
 
     public static final QReviewComment reviewComment = new QReviewComment("reviewComment");
 
+    public final QMember author;
+
     public final StringPath content = createString("content");
 
     public final DateTimePath<java.time.LocalDateTime> createDate = createDateTime("createDate", java.time.LocalDateTime.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
-
-    public final QMember member;
 
     public final DateTimePath<java.time.LocalDateTime> modifiedDate = createDateTime("modifiedDate", java.time.LocalDateTime.class);
 
@@ -52,7 +52,7 @@ public class QReviewComment extends EntityPathBase<ReviewComment> {
 
     public QReviewComment(Class<? extends ReviewComment> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.member = inits.isInitialized("member") ? new QMember(forProperty("member")) : null;
+        this.author = inits.isInitialized("author") ? new QMember(forProperty("author")) : null;
         this.reviewBoard = inits.isInitialized("reviewBoard") ? new QReviewBoard(forProperty("reviewBoard"), inits.get("reviewBoard")) : null;
     }
 

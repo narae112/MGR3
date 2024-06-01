@@ -5,26 +5,28 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
 
 @Entity
-@Setter @Getter
+@Setter
+@Getter
 public class ReviewBoard {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 50)
-    private String title;
 
     @Column(columnDefinition = "TEXT")
     private String content;
 
+    @Column(length = 200)
+    private String subject;
+
     @Column
     private int count = 0;
-    //조회수 초기값 0 설정
 
     @Column(columnDefinition = "DATETIME")
     private LocalDateTime createDate;
@@ -32,23 +34,17 @@ public class ReviewBoard {
     @Column(columnDefinition = "DATETIME")
     private LocalDateTime modifiedDate;
 
-    private int likeCount;
-
     @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member member;
+    private Member author;
 
-    @OneToMany(mappedBy = "reviewBoard", cascade = CascadeType.REMOVE)
-    private List<ReviewComment> reviewCommentList = new ArrayList<>();
+    @ManyToMany
+    Set<Member> voter;
 
-    @PrePersist
-    private void onCreate() {
-        createDate = LocalDateTime.now();
-    }
+    @OneToMany(mappedBy = "reviewBoard", cascade = CascadeType.ALL)
+    private List<ReviewComment> commentList;
 
-    @PreUpdate
-    private void onUpdate() {
-        modifiedDate = LocalDateTime.now();
+    public int viewCount() {
+        return this.count += 1;
     }
 
 }

@@ -31,7 +31,6 @@
             ticketCount : $("#ticketCount").val(),
             visitDate : $("#visitDate").val(),
             reservationDate : new Date()
-            <!-- visitDate : 달력 구현해서 방문예정일 넣기 -->
         };
 
         var param = JSON.stringify(paramData);
@@ -48,20 +47,44 @@
             dataType : "json",
             cache   : false,
             success  : function(result, status){
-                alert("티켓을 예약했습니다.");
+                alert("티켓이 예약되었습니다 \n결제 후 사용이 가능합니다");
                 location.href='/';
             },
             error : function(jqXHR, status, error){
 
                 if(jqXHR.status == '401'){
                     alert('로그인 후 이용해주세요');
-                    location.href='/members/login';
+                    location.href='/member/login';
                 } else{
                     alert(jqXHR.responseText);
                 }
             }
         });
     }
+
+     $(document).ready(function() {
+    // 오늘 날짜를 가져오는 함수
+    function getTodayDate() {
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); // 1월은 0부터 시작하므로 +1
+        var yyyy = today.getFullYear();
+        return yyyy + '-' + mm + '-' + dd;
+    }
+
+    // 시작일(input id="startDate")의 값을 오늘 날짜로 설정
+    $('#startDate').val(getTodayDate());
+    $('#startDate').attr("min",getTodayDate());
+
+    var startDate = $('#startDate').val();
+    $('#endDate').attr("min",startDate);
+
+    $('#startDate').on('change', function() {
+        var startDate = $(this).val();
+        $('#endDate').attr("min", startDate);
+    });
+
+});
 
 </script>
 </th:block>
@@ -95,8 +118,10 @@
 
 <div layout:fragment="content" style="width:100%; padding: 0 5%;">
 
-    <input type="hidden" id="ticketId" th:value="${ticket.id}">
-    <!-- ticketId 히든으로 넣어놓기 -->
+    <input type="hidden" id="ticketId" th:value="${ticket.id}"> <!-- ticketId 히든으로 넣어놓기 -->
+    <input type="hidden" id="startDate" th:value="${ticket.startDate}">
+    <input type="hidden" id="endDate" th:value="${ticket.endDate}">
+
 
     <div class="d-flex mt-4">
         <div class="repImgDiv"> <!-- 티켓이미지 -->
@@ -109,7 +134,7 @@
             <div>
                 <p>방문예정일</p>
                 <input class="form-control" type="date" id="visitDate"
-                       th:min="2024-05-24"/>
+                       th:min="${ticket.startDate}" th:max="${ticket.endDate}"/>
                 <div id="datePicker" class="mb-4"></div> <!-- 달력 Flatpickr 써서 넣고 싶은데 잘 안됨;; 일단 보류 -->
             </div>
             <div class="text-end">

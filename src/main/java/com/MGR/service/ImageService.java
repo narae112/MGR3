@@ -1,5 +1,6 @@
 package com.MGR.service;
 
+import com.MGR.entity.Attraction;
 import com.MGR.entity.EventBoard;
 import com.MGR.entity.Image;
 import com.MGR.entity.Member;
@@ -18,7 +19,6 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class ImageService {
     private final ImageRepository imageRepository;
     private final FileService fileService;
@@ -32,6 +32,12 @@ public class ImageService {
     @Value("${boardImgLocation}")
     private String boardImgLocation;
 
+    @Value("${couponImgLocation}")
+    private String couponImgLocation;
+
+    @Value("${attractionImgLocation}")
+    private String attractionImgLocation;
+
     public void saveTicketImage(Image ticketImage, MultipartFile ticketImgFile) throws Exception {
         saveImage(ticketImage, ticketImgFile, ticketImgLocation);
     }
@@ -42,6 +48,14 @@ public class ImageService {
 
     public void saveBoardImage(Image boardImage, MultipartFile boardImgFile) throws Exception {
         saveImage(boardImage, boardImgFile, boardImgLocation);
+    }
+
+    public void saveCouponImage(Image couponImage, MultipartFile couponImgFile) throws Exception {
+        saveImage(couponImage, couponImgFile, couponImgLocation);
+    }
+
+    public void saveAttractionImage(Image attractionImage, MultipartFile attractionImgFile) throws Exception {
+        saveImage(attractionImage, attractionImgFile, attractionImgLocation);
     }
 
     private void saveImage(Image image, MultipartFile imgFile, String imgLocation) throws Exception {
@@ -78,13 +92,17 @@ public class ImageService {
         updateImage(boardImgId, boardImgFile, boardImgLocation);
     }
 
+    public void updateCouponImage(Long couponImgId, MultipartFile couponFile) throws Exception {
+        updateImage(couponImgId, couponFile, couponImgLocation);
+    }
+
     public void updateImage(Long id, MultipartFile imgFile, String imgLocation) throws Exception {
-        if(!imgFile.isEmpty()){ // 업로드한 파일이 있는경우(새로운 이미지를 업로드한경우)
+        if (!imgFile.isEmpty()) { // 업로드한 파일이 있는경우(새로운 이미지를 업로드한경우)
             Image savedImg = imageRepository.findById(id).
                     orElseThrow(EntityNotFoundException::new);
             //기존 이미지 파일삭제
-            if(!StringUtils.isEmpty(savedImg.getImgName())){
-                fileService.deleteFile(imgLocation+"/"+savedImg.getImgName());
+            if (!StringUtils.isEmpty(savedImg.getImgName())) {
+                fileService.deleteFile(imgLocation + "/" + savedImg.getImgName());
             }
             String imgOriName = imgFile.getOriginalFilename();
             String imgName = fileService.uploadFile(imgLocation, imgOriName, imgFile.getBytes());
@@ -94,17 +112,43 @@ public class ImageService {
         }
     }
 
-
     public void deleteImagesByTicketId(Long ticketId) {
         imageRepository.deleteByTicketId(ticketId);
     }
 
-    public List<Image> findByEvent(EventBoard eventBoard) {
-        return imageRepository.findByEventBoard(eventBoard);
+    public void deleteImagesByCouponId(Long couponId) {
+        imageRepository.deleteById(couponId);
+    }
+
+    public void deleteImagesByReviewBoardId(Long reviewBoardId) throws Exception {
+        List<Image> images = imageRepository.findByReviewBoardId(reviewBoardId);
+        for (Image image : images) {
+            try {
+                fileService.deleteFile(image.getImgName()); // 파일 시스템에서 이미지 파일 삭제
+                imageRepository.delete(image); // 데이터베이스에서 이미지 레코드 삭제
+            } catch (Exception e) {
+                // 개별 이미지 삭제 실패 시 로그 기록 또는 별도 처리
+                System.err.println("이미지 삭제 실패: " + e.getMessage());
+                throw new Exception("이미지 삭제 중 오류가 발생하였습니다.", e);
+            }
+        }
     }
 
     public void deleteImage(EventBoard eventBoard) {
-        Optional<Image> image = imageRepository.findById(eventBoard.getId());
-        imageRepository.delete(image.get());
+        Image image = imageRepository.findByEventBoard(eventBoard);
+        imageRepository.delete(image);
+    }
+
+    public void deleteImage(Attraction attraction) {
+        Image image = imageRepository.findByAttraction(attraction);
+        imageRepository.delete(image);
+    }
+
+    public Image findByEvent(EventBoard eventBoard) {
+        return imageRepository.findByEventBoard(eventBoard);
+    }
+
+    public Image findByAttraction(Attraction attraction) {
+        return imageRepository.findByAttraction(attraction);
     }
 }

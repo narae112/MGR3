@@ -18,9 +18,9 @@ public class ReservationTicket {
 
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="reservation_id")
-    private Reservation reservation;
+    private Reservation reservation; // member 한 명 당 하나의 reservation
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="ticket_id")
     private Ticket ticket;
 
@@ -29,8 +29,7 @@ public class ReservationTicket {
 
     @Column
     private String visitDate; // 방문예정일
-    private int ticketCount; // 인원수
-
+    private int ticketCount; // 인원수 = 티켓수
 
     @Enumerated(EnumType.STRING)
     private ReservationStatus reservationStatus; // 예약 상태(예약 / 취소 / 결제완료)

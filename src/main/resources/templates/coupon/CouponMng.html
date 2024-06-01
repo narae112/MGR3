@@ -1,0 +1,109 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+
+<th:block layout:fragment="script">
+    <!--스크립트-->
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            /* 성공 메시지 처리 */
+            var successMessage = /*[[${successMessage}]]*/ '[[${successMessage}]]';
+            if (successMessage) {
+                alert(successMessage);
+            }
+
+            /* 오류 메시지 처리 */
+            var errorMessage = /*[[${errorMessage}]]*/ '[[${errorMessage}]]';
+            if (errorMessage) {
+                alert(errorMessage);
+            }
+
+            bindDomEvent();
+        });
+
+        function page(page){
+            var searchDateType = $("#searchDateType").val();
+            var searchCouponCategory = $("#searchCouponCategory").val();
+            var searchBy = $("#searchBy").val();
+            var searchQuery = $("#searchQuery").val();
+
+            location.href="/admin/coupons/" + page + "?searchDateType=" + searchDateType
+            + "&searchCouponCategory=" + searchCouponCategory
+            + "&searchBy=" + searchBy
+            + "&searchQuery=" + searchQuery;
+        }
+    </script>
+</th:block>
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+    <style>
+        select {
+            margin-right: 10px;
+        }
+    </style>
+</th:block>
+
+<div layout:fragment="content">
+    <form th:action="@{'/admin/coupons/' + ${coupons.number}}" role="form" method="get" th:object="${coupons}">
+        <table class="table">
+            <thead>
+            <tr>
+                <td>쿠폰아이디</td>
+                <td>쿠폰이름</td>
+                <td>등록일</td>
+                <td>적용대상</td>
+                <td>등록자</td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="coupon, status: ${coupons.getContent()}">
+                <td th:text="${coupon.id}"></td>
+                <td>
+                    <a th:href="'/admin/coupon/'+${coupon.id}" th:text="${coupon.name}"></a>
+                </td>
+                <td th:text="${coupon.regTime}"></td>
+                <td th:text="${coupon.couponType?.displayName}"></td>
+                <td th:text="${coupon.createdBy}"></td>
+            </tr>
+            </tbody>
+        </table>
+        <!-- 현재페이지 -->
+        <div th:with="start=${(coupons.number/maxPage)*maxPage + 1}, end=(${(coupons.totalPages == 0) ? 1
+       : (start + (maxPage - 1) < coupons.totalPages ? start + (maxPage - 1) : coupons.totalPages)})">
+            <ul class="pagination justify-content-center">
+                <li class="page-coupon" th:classappend="${coupons.first}?'disabled'">
+                    <a th:onclick="'javascript:page(' + ${coupons.number - 1} + ')'" aria-label='Previous' class="page-link">
+                        <span aria-hidden='true'>Previous</span>
+                    </a>
+                </li>
+                <li class="page-coupon" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${coupons.number eq page-1}?'active':''">
+                    <a th:onclick="'javascript:page(' + ${page - 1} + ')'" th:inline="text" class="page-link">[[${page}]]</a>
+                </li>
+                <li class="page-coupon" th:classappend="${coupons.last}?'disabled'">
+                    <a th:onclick="'javascript:page(' + ${coupons.number + 1} + ')'" aria-label='Next' class="page-link">
+                        <span aria-hidden='true'>Next</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="form-inline d-flex justify-content-center" th:object="${couponSearchDto}">
+            <select th:field="*{searchDateType}" class="form-control" style="width:auto;">
+                <option value="all">전체기간</option>
+                <option value="1d">1일</option>
+                <option value="1w">1주</option>
+                <option value="1m">1개월</option>
+                <option value="6m">6개월</option>
+            </select>
+            <select th:field="*{searchBy}" class="form-control" style="width:auto;">
+                <option value="name">쿠폰이름</option>
+                <option value="createdBy">등록자</option>
+            </select>
+            <input th:field="*{searchQuery}" type="text" class="form-control" placeholder="검색어를 입력해주세요">
+            <button id="searchBtn" type="submit" class="btn btn-primary">검색</button>
+        </div>
+    </form>
+</div>
+</html>
