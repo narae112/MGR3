@@ -1473,7 +1473,7 @@ ol {
 .header {
   width: 100%;
   background: transparent;
-
+  position: absolute;
   width: 100%;
   left: 0;
   top: 0;
@@ -1693,7 +1693,7 @@ ol {
 }
 
 .sticky {
-/*position: fixed;*/
+  position: fixed;
   z-index: 99;
   -webkit-box-shadow: 0px 20px 50px 0px rgba(0, 0, 0, 0.05);
           box-shadow: 0px 20px 50px 0px rgba(0, 0, 0, 0.05);
@@ -1732,11 +1732,10 @@ ol {
   -webkit-transition: all 0.3s ease-out 0s;
   transition: all 0.3s ease-out 0s;
   padding: 0;
-
 }
 
 .navbar-area.sticky {
-/*position: fixed;*/
+  position: fixed;
   z-index: 99;
   -webkit-box-shadow: 0px 20px 50px 0px rgba(0, 0, 0, 0.05);
           box-shadow: 0px 20px 50px 0px rgba(0, 0, 0, 0.05);
@@ -2059,7 +2058,16 @@ ol {
 /*======================================
     Hero Area CSS
 ========================================*/
-
+.hero-area {
+  position: relative;
+  background-color: #101130;
+  padding: 200px 0 150px 0;
+  padding-bottom: 240px;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
 
 @media only screen and (min-width: 768px) and (max-width: 991px) {
   .hero-area {
