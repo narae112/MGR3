@@ -13,8 +13,8 @@ public class QCouponMainDto extends ConstructorExpression<CouponMainDto> {
 
     private static final long serialVersionUID = -708449970L;
 
-    public QCouponMainDto(com.querydsl.core.types.Expression<Long> id, com.querydsl.core.types.Expression<String> name, com.querydsl.core.types.Expression<Integer> discountRate, com.querydsl.core.types.Expression<String> imgUrl, com.querydsl.core.types.Expression<java.time.LocalDate> startDate, com.querydsl.core.types.Expression<java.time.LocalDate> endDate, com.querydsl.core.types.Expression<String> couponContent) {
-        super(CouponMainDto.class, new Class<?>[]{long.class, String.class, int.class, String.class, java.time.LocalDate.class, java.time.LocalDate.class, String.class}, id, name, discountRate, imgUrl, startDate, endDate, couponContent);
+    public QCouponMainDto(com.querydsl.core.types.Expression<Long> id, com.querydsl.core.types.Expression<String> name, com.querydsl.core.types.Expression<String> imgUrl, com.querydsl.core.types.Expression<java.time.LocalDate> startDate, com.querydsl.core.types.Expression<java.time.LocalDate> endDate, com.querydsl.core.types.Expression<String> couponContent) {
+        super(CouponMainDto.class, new Class<?>[]{long.class, String.class, String.class, java.time.LocalDate.class, java.time.LocalDate.class, String.class}, id, name, imgUrl, startDate, endDate, couponContent);
     }
 
 }

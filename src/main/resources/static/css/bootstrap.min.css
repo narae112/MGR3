@@ -669,7 +669,7 @@ progress {
     .container-lg,
     .container-md,
     .container-sm {
-        max-width: 960px
+        max-width: 970px
     }
 }
 
@@ -710,8 +710,8 @@ progress {
     flex-shrink: 0;
     width: 100%;
     max-width: 100%;
-    padding-right: calc(var(--bs-gutter-x)/ 2);
-    padding-left: calc(var(--bs-gutter-x)/ 2);
+    padding-right: calc(var(--bs-gutter-x)/ 4);
+    padding-left: calc(var(--bs-gutter-x)/ 4);
     margin-top: var(--bs-gutter-y)
 }
 
