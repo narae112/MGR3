@@ -19,7 +19,6 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class ImageService {
     private final ImageRepository imageRepository;
     private final FileService fileService;

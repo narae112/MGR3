@@ -18,7 +18,7 @@ public class Attraction {
     @Column(length = 20)
     private String name;
 
-    private Boolean condition;
+//    private Boolean condition;
 
     private int closureDay;
 
@@ -28,7 +28,7 @@ public class Attraction {
 
     public static Attraction create(AttractionDto attractionDto) {
         Attraction attraction = new Attraction();
-        attraction.setCondition(true);
+//        attraction.setCondition(true);
         attraction.setName(attractionDto.getName());
         attraction.setInformation(attractionDto.getInformation());
         attraction.setClosureDay(attractionDto.getClosureDay());
