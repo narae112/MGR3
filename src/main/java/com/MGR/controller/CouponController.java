@@ -45,7 +45,10 @@ public class CouponController {
         if (bindingResult.hasErrors()) {
             return "coupon/couponForm";
         }
-
+        if (couponFormDto.getDiscountAmount() == null && couponFormDto.getDiscountRate() == null) {
+            model.addAttribute("errorMessage", "할인액 또는 할인률을 입력해주세요");
+            return "coupon/couponForm";
+        }
         try {
             couponService.createCoupon(couponFormDto, couponImgFileList);
         } catch (DuplicateCouponNameException e) {
@@ -72,29 +75,29 @@ public class CouponController {
         return "coupon/couponForm";
     }
 
-    // 쿠폰 수정
-    @PostMapping(value = "/admin/coupon/{couponId}")
-    public String couponUpdate(@Valid CouponFormDto couponFormDto, BindingResult bindingResult,
-                               Model model, @RequestParam("couponImgFile") List<MultipartFile> couponImgFileList
-    ) {
-        if(couponImgFileList.get(0).isEmpty() && couponFormDto.getId() == null) {
-            model.addAttribute("errorMessage", "이미지는 필수 입력값입니다");
-            return "coupon/couponForm";
-        }
-        if (couponFormDto.getStartDate() == null || couponFormDto.getEndDate() == null) {
-            model.addAttribute("errorMessage", "날짜는 필수 입력값입니다");
-            return "coupon/couponForm";
-        }
-
-        try {
-            couponService.updateCoupon(couponFormDto, couponImgFileList);
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", "쿠폰 수정 중 오류가 발생했습니다");
-            return "coupon/couponForm";
-        }
-
-        return "redirect:/admin/coupons"; // 성공 시 쿠폰 관리 페이지로 리다이렉트
-    }
+//    // 쿠폰 수정
+//    @PostMapping(value = "/admin/coupon/{couponId}")
+//    public String couponUpdate(@Valid CouponFormDto couponFormDto, BindingResult bindingResult,
+//                               Model model, @RequestParam("couponImgFile") List<MultipartFile> couponImgFileList
+//    ) {
+//        if(couponImgFileList.get(0).isEmpty() && couponFormDto.getId() == null) {
+//            model.addAttribute("errorMessage", "이미지는 필수 입력값입니다");
+//            return "coupon/couponForm";
+//        }
+//        if (couponFormDto.getStartDate() == null || couponFormDto.getEndDate() == null) {
+//            model.addAttribute("errorMessage", "날짜는 필수 입력값입니다");
+//            return "coupon/couponForm";
+//        }
+//
+//        try {
+//            couponService.updateCoupon(couponFormDto, couponImgFileList);
+//        } catch (Exception e) {
+//            model.addAttribute("errorMessage", "쿠폰 수정 중 오류가 발생했습니다");
+//            return "coupon/couponForm";
+//        }
+//
+//        return "redirect:/admin/coupons"; // 성공 시 쿠폰 관리 페이지로 리다이렉트
+//    }
 
     // 쿠폰 받기 페이지(예정)
     @GetMapping(value={"coupons", "/coupons/{page}"})
@@ -122,17 +125,17 @@ public class CouponController {
         return "coupon/couponMng";
     }
 
-    // 쿠폰 삭제
-    @GetMapping("/admin/coupon/delete/{couponId}")
-    public String deleteCoupon(@PathVariable("couponId") Long couponId, RedirectAttributes redirectAttributes) {
-        try {
-            couponService.deleteCoupon(couponId);
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "배포된 쿠폰은 삭제할 수 없습니다");
-            return "redirect:/admin/coupons";
-        }
-
-        return "redirect:/admin/coupons";
-    }
+//    // 쿠폰 삭제
+//    @GetMapping("/admin/coupon/delete/{couponId}")
+//    public String deleteCoupon(@PathVariable("couponId") Long couponId, RedirectAttributes redirectAttributes) {
+//        try {
+//            couponService.deleteCoupon(couponId);
+//        } catch (Exception e) {
+//            redirectAttributes.addFlashAttribute("errorMessage", "배포된 쿠폰은 삭제할 수 없습니다");
+//            return "redirect:/admin/coupons";
+//        }
+//
+//        return "redirect:/admin/coupons";
+//    }
 
 }
