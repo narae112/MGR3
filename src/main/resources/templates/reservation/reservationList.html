@@ -13,23 +13,27 @@
             });
         });
 
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
         function getOrderTotalPrice(){
             var orderTotalPrice = 0;
             $("input[name=reserveChkBox]:checked").each(function(){
                 var reservationTicketId = $(this).val(); // 현재 checked 된 value 값 : reservationTicket.reservationTicketId
-                var price = $("#price_" + reservationTicketId).attr("data-price");
-                var count = $("#count_" + reservationTicketId).val();
+                var price = parseInt($("#price_" + reservationTicketId).attr("data-price")); // 문자열을 정수로 변환
+                var count = parseInt($("#count_" + reservationTicketId).val()); // 문자열을 정수로 변환
                 orderTotalPrice += price * count;
             });
-            $("#orderTotalPrice").html(orderTotalPrice + '원');
+            $("#orderTotalPrice").html(formatNumber(orderTotalPrice) + '원');
         }
 
         function changeCount(obj){
-            var count = obj.value;
+            var count = parseInt(obj.value); // 문자열을 정수로 변환
             var reservationTicketId = obj.id.split('_')[1]; // ex) count_2 : 2 추출
-            var price = $("#price_" + reservationTicketId).data("price");
+            var price = parseInt($("#price_" + reservationTicketId).data("price")); // 문자열을 정수로 변환
             var totalPrice = count * price;
-            $("#totalPrice_" + reservationTicketId).html(totalPrice + '원');
+            $("#totalPrice_" + reservationTicketId).html(formatNumber(totalPrice) + '원');
             getOrderTotalPrice();
             updateReservationTicketCount(reservationTicketId, count);
         }
@@ -142,7 +146,7 @@
                 dataType : "json",
                 cache   : false,
                 success  : function(result, status){
-
+                    location.href='/member/orders';
                 },
                 error : function(jqXHR, status, error){
 
@@ -188,10 +192,12 @@
     </style>
 </th:block>
 
-<div layout:fragment="content" class="container my-5">
+<div layout:fragment="content" class="content-mg">
 
+    <h2 class="mb-4">
+        티켓 예약 내역
+    </h2>
 
-    <h3 class="mb-5 text-center">티켓 목록</h3>
     <div>
         <table class="table">
             <colgroup>
@@ -225,10 +231,18 @@
                 </td><!-- 티켓 정보 -->
                 <td class="d-flex">
                     <div class="align-self-center">
-                        <span th:text="'[' + ${reservationTicket.locationCategory.displayName} + '점] ' + ${reservationTicket.name} + '_' + ${reservationTicket.ticketCategory.displayName}" class="fs15 font-weight-bold"></span>
+                        <span th:text="'[' + ${reservationTicket.locationCategory.displayName} + '점] '
+                        + ${reservationTicket.name} + '_' + ${reservationTicket.ticketCategory.displayName}" class="fs15 font-weight-bold"></span>
                         <!-- [지점]티켓 이름_티켓종류(성인/아동) -->
                         <div class="d-flex fs15 font-weight-light">
-                            <span th:text="'금액: ' + ${reservationTicket.price} + '원 / 수량: ' + ${reservationTicket.ticketCount} + '개'" class="align-self-center me-2">
+                                <span th:id="'price_' + ${reservationTicket.reservationTicketId}"
+                                      th:data-price="${reservationTicket.price}"
+                                      th:text="'금액: ' + ${reservationTicket.price} + '원 / 수량: '" class="align-self-center me-2"><!-- 예약 티켓 금액 -->
+                                </span>
+                            <span>
+                                <input type="number" name="count" th:id="'count_' + ${reservationTicket.reservationTicketId}"
+                                       th:value="${reservationTicket.ticketCount}" min="1" onchange="changeCount(this)" class="form-control" >
+<!--                                여기 수정하면 총 결제 금액이 자꾸 깨짐-->
                             </span>
                         </div>
                     </div>
@@ -252,8 +266,7 @@
                     </th:block>
                 </td>
                 <td class="text-center align-middle">
-                    <span th:text="${reservationTicket.price * reservationTicket.ticketCount} + '원'">
-                    </span>
+                    <span th:text="${reservationTicket.price * reservationTicket.ticketCount} + '원'"></span>
                 </td>
             </tr>
             </tbody>
