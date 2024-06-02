@@ -2,8 +2,67 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
+
+<!-- CSS 스타일 시트 -->
+<th:block layout:fragment="css">
+    <style>
+        .form-row {
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+        .form-control {
+            font-size: 0.875rem; /* 폰트 크기를 한 사이즈 줄이기 */
+            border: none;
+            padding-right: 30px; /* 아이콘과 간격을 주기 위해 */
+            background-color: transparent;
+            -webkit-appearance: none; /* 기본 화살표 제거 */
+            -moz-appearance: none;
+            appearance: none;
+        }
+        .select-container {
+            position: relative;
+            margin: 0 5px; /* 좌우 간격 추가 */
+            display: flex;
+            align-items: center;
+        }
+        .select-container::after {
+            content: "▼"; /* 셀렉트 박스 아이콘 추가 */
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            pointer-events: none;
+            font-size: 0.75rem; /* 아이콘 크기 */
+            color: #999;
+        }
+        .select {
+            position: relative;
+            margin: 0 5px; /* 좌우 간격 추가 */
+            display: flex;
+            align-items: center;
+        }
+        .select-container button {
+            background-color: transparent;
+            border: none;
+            padding: 0;
+            font-size: 0.875rem;
+        }
+
+        .select-search input {
+            border-bottom: 1px solid #000;
+            padding-bottom: 0px !important;
+            border-radius: 0 !important; /* 보더 라디오스를 없애서 밑줄 표시 효과 */
+            padding: 5px;
+            font-size: 0.875rem; /* 폰트 크기 줄이기 */
+
+        }
+    </style>
+</th:block>
+
+<!-- 스크립트 -->
 <th:block layout:fragment="script">
-    <!--스크립트-->
     <script th:inline="javascript">
         $(document).ready(function(){
            var errorMessage = /*[[${errorMessage}]]*/ '';
@@ -13,49 +72,21 @@
 
            bindDomEvent();
        });
+
        function search() {
-   var searchPeriodType = $("#searchPeriodType").val();
-   var ticketCategory = $("#ticketCategory").val();
-   var locationCategory = $("#locationCategory").val(); // 수정된 부분
-   var searchBy = $("#searchBy").val();
-   var searchQuery = $("#searchQuery").val();
+           var searchPeriodType = $("#searchPeriodType").val();
+           var ticketCategory = $("#ticketCategory").val();
+           var locationCategory = $("#locationCategory").val();
+           var searchBy = $("#searchBy").val();
+           var searchQuery = $("#searchQuery").val();
 
-   location.href = "/tickets?searchPeriodType=" + searchPeriodType
-       + "&ticketCategory=" + ticketCategory
-       + "&locationCategory=" + locationCategory // 수정된 부분
-       + "&searchBy=" + searchBy
-       + "&searchQuery=" + searchQuery;
-}
+           location.href = "/tickets?searchPeriodType=" + searchPeriodType
+               + "&ticketCategory=" + ticketCategory
+               + "&locationCategory=" + locationCategory
+               + "&searchBy=" + searchBy
+               + "&searchQuery=" + searchQuery;
+       }
     </script>
-</th:block>
-
-<!-- CSS 스타일 시트 -->
-<th:block layout:fragment="css">
-    <style>
-        .carousel-inner > .ticket {
-            height: 350px;
-        }
-        .margin {
-            margin-bottom: 30px;
-        }
-        .banner {
-            height: 300px;
-            position: absolute; top:0; left: 0;
-            width: 100%;
-            height: 100%;
-        }
-        .card-text {
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
-        }
-        a:hover {
-            text-decoration: none;
-        }
-        .center {
-            text-align: center;
-        }
-    </style>
 </th:block>
 
 <!-- 페이지 내용 -->
@@ -64,34 +95,46 @@
     <h3 class="mb-5 text-center">티켓 목록</h3>
 
     <!-- 검색 폼 -->
-    <div class="form-inline d-flex justify-content-center" th:object="${ticketSearchDto}">
-        <select id="searchPeriodType" class="form-control" style="width:auto;">
-            <option value="all">남은 유효 기간(전체)</option>
-            <option value="1d">1일 이내</option>
-            <option value="1w">1주 이내</option>
-            <option value="1m">1개월 이내</option>
-            <option value="6m">6개월 이내</option>
-        </select>
-        <select id="ticketCategory" class="form-control" style="width:auto;">
-            <option value="">회원 구분(전체)</option>
-            <option value="CHILD">어린이</option>
-            <option value="ADULT">성인</option>
-        </select>
-        <select id="locationCategory" class="form-control" style="width:auto;">
-            <option value="">지역 구분(전체)</option>
-            <option value="BUSAN">부산</option>
-            <option value="SEOUL">서울</option>
-        </select>
-        <select id="searchBy" class="form-control" style="width:auto;">
-            <option value="name">티켓명</option>
-        </select>
-        <input id="searchQuery" type="text" class="form-control" placeholder="검색어를 입력해주세요">
-        <button onclick="search()" class="btn btn-primary">검색</button>
+    <div class="form-row d-flex justify-content-center" th:object="${ticketSearchDto}">
+        <div class="select-container col-auto">
+            <select id="searchPeriodType" class="form-control">
+                <option value="all">남은 유효 기간(전체)</option>
+                <option value="1d">1일 이내</option>
+                <option value="1w">1주 이내</option>
+                <option value="1m">1개월 이내</option>
+                <option value="6m">6개월 이내</option>
+            </select>
+        </div>
+        <div class="select-container col-auto">
+            <select id="ticketCategory" class="form-control">
+                <option value="">회원 구분(전체)</option>
+                <option value="CHILD">어린이</option>
+                <option value="ADULT">성인</option>
+            </select>
+        </div>
+        <div class="select-container col-auto">
+            <select id="locationCategory" class="form-control">
+                <option value="">지역 구분(전체)</option>
+                <option value="BUSAN">부산</option>
+                <option value="SEOUL">서울</option>
+            </select>
+        </div>
+        <div class="select-container col-auto">
+            <select id="searchBy" class="form-control">
+                <option value="name">티켓명</option>
+            </select>
+        </div>
+        <div class="select select-search col-auto">
+            <input id="searchQuery" type="text" class="form-control" placeholder="검색어를 입력해주세요">
+        </div>
+        <div class="select col-auto">
+            <button onclick="search()" class="btn btn-primary">검색</button>
+        </div>
     </div>
 
     <!-- 검색 결과 -->
     <div th:if="${not #strings.isEmpty(ticketSearchDto.searchQuery)}" class="center my-3">
-        <p class="h3 font-weight-bold" th:text="${ticketSearchDto.searchQuery} + '검색 결과'"></p>
+        <p class="h3 font-weight-bold" th:text="${ticketSearchDto.searchQuery} + ' 검색 결과'"></p>
     </div>
 
     <!-- 티켓 목록 -->
