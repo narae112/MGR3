@@ -10,10 +10,10 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter @Setter
+@Table(name = "reservation_ticket")
 public class ReservationTicket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "reservation_ticket_id")
     private Long id;
 
     @ManyToOne(fetch=FetchType.LAZY)
@@ -29,6 +29,8 @@ public class ReservationTicket {
 
     @Column
     private String visitDate; // 방문예정일
+
+    @Column
     private int ticketCount; // 인원수 = 티켓수
 
     @Enumerated(EnumType.STRING)

@@ -34,6 +34,8 @@ public class QReviewBoard extends EntityPathBase<ReviewBoard> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final ListPath<Image, QImage> images = this.<Image, QImage>createList("images", Image.class, QImage.class, PathInits.DIRECT2);
+
     public final DateTimePath<java.time.LocalDateTime> modifiedDate = createDateTime("modifiedDate", java.time.LocalDateTime.class);
 
     public final StringPath subject = createString("subject");

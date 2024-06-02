@@ -4,17 +4,24 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Entity
 @Getter @Setter
+@Table(name = "order_ticket")
 public class OrderTicket {
     @Id
     @GeneratedValue
-    @Column(name="order_item_id")
+    @Column(name="order_ticket_id")
     private Long id;
 
-    @ManyToOne(fetch=FetchType.LAZY) //지연로딩
-    @JoinColumn(name="item_id")
+    @ManyToOne
+    @JoinColumn(name="ticket_id")
     private Ticket ticket;
+
+    @ManyToOne
+    @JoinColumn(name = "reservation_ticket_id")
+    private ReservationTicket reservationTicket;
 
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="order_id")
@@ -22,12 +29,14 @@ public class OrderTicket {
 
     private int orderPrice; //주문가격
     private int count; //주문수량
+    private LocalDate visitDate;
 
-    public static OrderTicket createOrderTicket(Ticket ticket, int count) {
+    public static OrderTicket createOrderTicket(Ticket ticket, int count, LocalDate visitDate) {
         OrderTicket orderTicket = new OrderTicket();
         orderTicket.setTicket(ticket);
         orderTicket.setCount(count);
         orderTicket.setOrderPrice(ticket.getPrice());
+        orderTicket.setVisitDate(visitDate);
 
         return orderTicket;
     }

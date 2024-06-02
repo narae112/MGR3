@@ -60,7 +60,7 @@ dependencies {
 
 	//recaptcha
 	implementation 'net.tanesha.recaptcha4j:recaptcha4j:0.0.7'
-	implementation 'org.glassfish:javax.json:1.1' 
+	implementation 'org.glassfish:javax.json:1.1'
 	implementation platform('org.springframework.boot:spring-boot-dependencies:3.1.11')
 	implementation 'com.fasterxml.jackson.core:jackson-databind'
 
@@ -83,6 +83,7 @@ dependencies {
 //	implementation 'org.infinispan:infinispan-marshaller-protostuff:13.0.8.Final'
 //	implementation 'org.jboss.marshalling:jboss-marshalling-osgi:2.0.12.Final'
 
+	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 }
 
 tasks.named('bootBuildImage') {

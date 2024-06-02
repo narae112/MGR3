@@ -13,27 +13,23 @@
             });
         });
 
-        function formatNumber(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        }
-
         function getOrderTotalPrice(){
             var orderTotalPrice = 0;
             $("input[name=reserveChkBox]:checked").each(function(){
                 var reservationTicketId = $(this).val(); // 현재 checked 된 value 값 : reservationTicket.reservationTicketId
-                var price = parseInt($("#price_" + reservationTicketId).attr("data-price")); // 문자열을 정수로 변환
-                var count = parseInt($("#count_" + reservationTicketId).val()); // 문자열을 정수로 변환
+                var price = $("#price_" + reservationTicketId).attr("data-price");
+                var count = $("#count_" + reservationTicketId).val();
                 orderTotalPrice += price * count;
             });
-            $("#orderTotalPrice").html(formatNumber(orderTotalPrice) + '원');
+            $("#orderTotalPrice").html(orderTotalPrice + '원');
         }
 
         function changeCount(obj){
-            var count = parseInt(obj.value); // 문자열을 정수로 변환
+            var count = obj.value;
             var reservationTicketId = obj.id.split('_')[1]; // ex) count_2 : 2 추출
-            var price = parseInt($("#price_" + reservationTicketId).data("price")); // 문자열을 정수로 변환
+            var price = $("#price_" + reservationTicketId).data("price");
             var totalPrice = count * price;
-            $("#totalPrice_" + reservationTicketId).html(formatNumber(totalPrice) + '원');
+            $("#totalPrice_" + reservationTicketId).html(totalPrice + '원');
             getOrderTotalPrice();
             updateReservationTicketCount(reservationTicketId, count);
         }
@@ -51,7 +47,7 @@
             var token = $("meta[name='_csrf']").attr("content");
             var header = $("meta[name='_csrf_header']").attr("content");
 
-            var url = "/member/reservationTicket/" + reservationTicketId + "?count=" + ticketCount;
+            var url = "/member/reservationTicket/" + reservationTicketId + "?count=" + count;
 
             $.ajax({
                 url      : url,
@@ -183,9 +179,6 @@
         .fs18{
             font-size:18px
         }
-        .fs15{
-            font-size:15px
-        }
         .fs24{
             font-size:24px
         }
@@ -232,18 +225,17 @@
                 <td class="d-flex">
                     <div class="align-self-center">
                         <span th:text="'[' + ${reservationTicket.locationCategory.displayName} + '점] '
-                        + ${reservationTicket.name} + '_' + ${reservationTicket.ticketCategory.displayName}" class="fs15 font-weight-bold"></span>
+                        + ${reservationTicket.name} + '_' + ${reservationTicket.ticketCategory.displayName}" class="fs24 font-weight-bold"></span>
                         <!-- [지점]티켓 이름_티켓종류(성인/아동) -->
-                        <div class="d-flex fs15 font-weight-light">
+                        <div class="d-flex fs18 font-weight-light">
                                 <span th:id="'price_' + ${reservationTicket.reservationTicketId}"
                                       th:data-price="${reservationTicket.price}"
-                                      th:text="'금액: ' + ${reservationTicket.price} + '원 / 수량: '" class="align-self-center me-2"><!-- 예약 티켓 금액 -->
+                                      th:text="${reservationTicket.price} + '원'" class="align-self-center me-2"><!-- 예약 티켓 금액 -->
                                 </span>
                             <span>
                                 <input type="number" name="count" th:id="'count_' + ${reservationTicket.reservationTicketId}"
-                                       th:value="${reservationTicket.ticketCount}" min="1" onchange="changeCount(this)" class="form-control" >
-<!--                                여기 수정하면 총 결제 금액이 자꾸 깨짐-->
-                            </span>
+                                       th:value="${reservationTicket.ticketCount}" min="1" onchange="changeCount(this)" class="form-control" ><!-- 티켓 수량 수정 -->
+                                </span>
                         </div>
                     </div>
                 </td>
@@ -252,8 +244,8 @@
                 </td>
                 <td class="text-center align-middle"><!-- 예약 상태 -->
                     <th:block th:if="${reservationTicket.reservationStatus == T(com.MGR.constant.ReservationStatus).RESERVE}">
-                        <span>예약 </span>
-                        <button type="button" class="btn btn-sm btn-outline-secondary" th:value="${reservationTicket.reservationTicketId}"
+                        <span>예  약</span>
+                        <button type="button" class="btn btn-outline-secondary" th:value="${reservationTicket.reservationTicketId}"
                                 onclick="cancelReservation(this.value)">예약 취소</button>
                     </th:block>
                     <th:block th:if="${reservationTicket.reservationStatus == T(com.MGR.constant.ReservationStatus).CANCEL}">
@@ -266,18 +258,20 @@
                     </th:block>
                 </td>
                 <td class="text-center align-middle">
-                    <span th:text="${reservationTicket.price * reservationTicket.ticketCount} + '원'"></span>
+                    <span th:id="'totalPrice_' + ${reservationTicket.reservationTicketId}"
+                          name="totalPrice" th:text="${reservationTicket.price * reservationTicket.ticketCount} + '원'"><!-- 티켓 한 항목 당 수량 * 가격 -->
+                    </span>
                 </td>
             </tr>
             </tbody>
         </table>
 
-        <h4 class="my-5 text-center">
+        <h2 class="text-center">
             총 결제 금액 : <span id="orderTotalPrice" class="text-danger">0원</span><!-- 체크된 예약 티켓 항목 전체 금액 -->
-        </h4>
+        </h2>
 
         <div class="text-center mt-3">
-            <button type="button" class="btn btn-primary" onclick="orders()">결제하기</button>
+            <button type="button" class="btn btn-primary btn-lg" onclick="orders()">결제하기</button>
         </div>
     </div>
 
