@@ -90,7 +90,7 @@
     </div>
 
     <!-- 검색 결과 -->
-    <div th:if="${not #strings.isEmpty(ticketSearchDto.searchQuery)}" class="center">
+    <div th:if="${not #strings.isEmpty(ticketSearchDto.searchQuery)}" class="center my-3">
         <p class="h3 font-weight-bold" th:text="${ticketSearchDto.searchQuery} + '검색 결과'"></p>
     </div>
 
