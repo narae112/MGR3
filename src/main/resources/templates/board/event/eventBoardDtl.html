@@ -157,8 +157,8 @@
             <textarea class="form-control" rows="5" id="content" name="content" readonly th:text="${eventBoard.content}"></textarea>
         </div>
         <div class="btn-container">
-            <a th:href="@{/board/events}" class="btn btn-primary btn-sm">목록으로</a>
-            <a th:href="@{|/board/eventBoard/edit/${eventBoard.id}|}" class="btn btn-primary btn-sm" sec:authorize="isAuthenticated()" th:if="${eventBoard.member != null and #authentication.getPrincipal().getUsername() == eventBoard.member.email}">수정</a>
+            <a th:href="@{/board/events}" class="btn btn-outline-secondary btn-sm">목록으로</a>
+            <a th:href="@{|/board/eventBoard/edit/${eventBoard.id}|}" class="btn btn-outline-secondary btn-sm" sec:authorize="isAuthenticated()" th:if="${eventBoard.member != null and #authentication.getPrincipal().getUsername() == eventBoard.member.email}">수정</a>
             <button onclick="eventDelete()" class="btn btn-outline-secondary btn-sm delete" sec:authorize="isAuthenticated()" th:if="${eventBoard.member != null and #authentication.getPrincipal().getUsername() == eventBoard.member.email}">삭제</button>
         </div>
     </div>
