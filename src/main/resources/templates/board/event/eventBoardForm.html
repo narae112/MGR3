@@ -4,6 +4,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
 
+
 <head>
     <!-- css -->
     <th:block layout:fragment="css">
@@ -97,6 +98,90 @@
         </script>
     </th:block>
 </head>
+
+<!-- css -->
+<th:block layout:fragment="css">
+    <style>
+
+    </style>
+</th:block>
+
+<!-- js -->
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+
+        var token = $("meta[name='_csrf']").attr('content');
+        var header = $("meta[name='_csrf_header']").attr('content');
+
+<!--        var eventBoardId = [[${eventBoardFormDto.id}]];-->
+
+<!--        function eventBoardEdit(){-->
+
+<!--            var url = "/board/eventBoard/edit/" + eventBoardId;-->
+<!--            var data = {-->
+<!--                id: eventBoardId,-->
+<!--                nickname: $('#nickname').val(),-->
+<!--                title: $('#title').val(),-->
+<!--                content: $('#content').val(),-->
+<!--                count: $('#count').val(),-->
+<!--                startDate: $('#startDate').val(),-->
+<!--                endDate: $('#endDate').val(),-->
+<!--                createDate: $('#createDate').val(),-->
+<!--                type: $('#type').val(),-->
+<!--                modifiedDate: new Date()-->
+<!--            };-->
+
+<!--            console.log(eventBoardId)-->
+<!--            console.log(url)-->
+
+<!--             $.ajax({-->
+<!--                    url: url,-->
+<!--                    type: 'PATCH',-->
+<!--                    contentType: 'application/json',-->
+<!--                    data: JSON.stringify(data),-->
+<!--                    success: function(result) {-->
+<!--                        alert(result);-->
+
+<!--                    },-->
+<!--                    beforeSend: function(xhr) {-->
+<!--                        xhr.setRequestHeader(header, token);-->
+<!--                    },-->
+<!--                    error: function(xhr, status, error) {-->
+<!--                        var errorMessage = xhr.status + ': ' + xhr.statusText;-->
+<!--                        alert("수정에 실패했습니다 " + errorMessage);-->
+<!--                    }-->
+<!--                });-->
+<!--        }-->
+
+ $(document).ready(function() {
+    // 오늘 날짜를 가져오는 함수
+    function getTodayDate() {
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); // 1월은 0부터 시작하므로 +1
+        var yyyy = today.getFullYear();
+        return yyyy + '-' + mm + '-' + dd;
+    }
+
+    // 시작일(input id="startDate")의 값을 오늘 날짜로 설정
+    $('#startDate').val(getTodayDate());
+    $('#startDate').attr("min",getTodayDate());
+
+    var startDate = $('#startDate').val();
+    $('#endDate').attr("min",startDate);
+
+    $('#startDate').on('change', function() {
+        var startDate = $(this).val();
+        $('#endDate').attr("min", startDate);
+    });
+
+});
+
+
+    </script>
+</th:block>
+
+
 <div layout:fragment="content">
 
     <form th:action="@{/board/eventBoard/create}" method="POST"

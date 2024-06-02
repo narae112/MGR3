@@ -59,7 +59,10 @@
 </th:block>
 
 <!-- 페이지 내용 -->
-<div layout:fragment="content">
+<div layout:fragment="content" class="container my-5">
+
+    <h3 class="mb-5 text-center">티켓 목록</h3>
+
     <!-- 검색 폼 -->
     <div class="form-inline d-flex justify-content-center" th:object="${ticketSearchDto}">
         <select id="searchPeriodType" class="form-control" style="width:auto;">
@@ -87,21 +90,23 @@
     </div>
 
     <!-- 검색 결과 -->
-    <div th:if="${not #strings.isEmpty(ticketSearchDto.searchQuery)}" class="center">
+    <div th:if="${not #strings.isEmpty(ticketSearchDto.searchQuery)}" class="center my-3">
         <p class="h3 font-weight-bold" th:text="${ticketSearchDto.searchQuery} + '검색 결과'"></p>
     </div>
 
     <!-- 티켓 목록 -->
-    <div class="row">
+    <div class="row my-5">
         <th:block th:each="ticket, status: ${tickets.getContent()}">
             <!-- 티켓 카드 영역 -->
-            <div class="col-md-4 margin">
+            <div class="col-md-4">
                 <a th:href="@{'/ticket/' + ${ticket.id}}" class="text-dark">
-                    <img th:src="${ticket.imgUrl}" class="card-img-top" th:alt="${ticket.id}" height="400">
-                    <div class="card-body">
-                        <h4 class="card-title" th:text="${ticket.name}"></h4>
-                        <p class="card-text" th:text="${ticket.memo}"></p>
-                        <h3 class="card-title text-danger" th:text="${ticket.price} + '원'"></h3>
+                    <div class="card h-100">
+                        <img th:src="${ticket.imgUrl}" class="card-img-top" th:alt="${ticket.id}" style="margin: 0; object-fit: cover; width: 100%; height: 400px;">
+                        <div class="card-body text-center bg-light">
+                            <h4 class="card-title" th:text="${ticket.name}"></h4>
+                            <p class="card-text" th:text="${ticket.memo}"></p>
+                            <h3 class="card-title text-danger" th:text="${ticket.price} + '원'"></h3>
+                        </div>
                     </div>
                 </a>
             </div>
@@ -109,28 +114,29 @@
     </div>
 
     <!-- 페이징 -->
-    <div th:with="start=${(tickets.number/maxPage)*maxPage + 1}, end=(${(tickets.totalPages == 0) ? 1
-       : (start + (maxPage - 1) < tickets.totalPages ? start + (maxPage - 1) : tickets.totalPages)})" >
+    <div class="d-flex justify-content-center my-3" th:if="${!tickets.isEmpty()}">
         <ul class="pagination justify-content-center">
-
-            <li class="page-ticket" th:classappend="${tickets.first}?'disabled'">
-                <a th:onclick="'javascript:page(' + ${tickets.number - 1} + ')'" aria-label='Previous' class="page-link">
-                    <span aria-hidden='true'>Previous</span>
+            <!-- 이전 버튼 -->
+            <li class="page-item" th:classappend="${!tickets.hasPrevious()} ? 'disabled'">
+                <a class="page-link" th:href="@{|/tickets/${tickets.number - 1}|}">
+                    <span>이전</span>
                 </a>
             </li>
 
-            <li class="page-ticket" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${tickets.number eq page-1}?'active':''">
-                <a th:onclick="'javascript:page(' + ${page - 1} + ')'" th:inline="text" class="page-link">[[${page}]]</a>
+            <!-- 페이지 번호 -->
+            <li th:each="page: ${#numbers.sequence(0, tickets.totalPages - 1)}"
+                th:if="${page >= tickets.number - 2 and page <= tickets.number + 2}"
+                th:classappend="${page == tickets.number} ? 'active'" class="page-item">
+                <a th:text="${page + 1}" class="page-link" th:href="@{|/tickets/${page}|}"></a>
             </li>
 
-            <li class="page-ticket" th:classappend="${tickets.last}?'disabled'">
-                <a th:onclick="'javascript:page(' + ${tickets.number + 1} + ')'" aria-label='Next' class="page-link">
-                    <span aria-hidden='true'>Next</span>
+            <!-- 다음 버튼 -->
+            <li class="page-item" th:classappend="${!tickets.hasNext()} ? 'disabled'">
+                <a class="page-link" th:href="@{|/tickets/${tickets.number + 1}|}">
+                    <span>다음</span>
                 </a>
             </li>
-
         </ul>
     </div>
-
 </div>
 </html>
