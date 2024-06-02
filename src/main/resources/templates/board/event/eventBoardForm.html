@@ -4,6 +4,101 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
 
+
+<head>
+    <!-- css -->
+    <th:block layout:fragment="css">
+        <style>
+            .form-page-styles {
+                max-width: 800px;
+                margin: auto;
+                padding: 20px;
+                background-color: #fff;
+                border-radius: 8px;
+            }
+            .form-page-styles h2 {
+                margin-bottom: 20px;
+                font-size: 24px;
+                font-weight: bold;
+                text-align: center;
+            }
+            .form-page-styles .form-control,
+            .form-page-styles .btn,
+            .form-page-styles .input-group-text {
+                border-radius: 4px;
+            }
+            .form-page-styles .input-group-text {
+                width: 100px;
+                text-align: center;
+                background-color: #f1f1f1;
+            }
+            .form-page-styles .input-group {
+                margin-bottom: 15px;
+            }
+            .form-page-styles .custom-file-label::after {
+                content: "찾아보기";
+            }
+            .form-page-styles .btn-primary {
+                background-color: #007bff;
+                border: none;
+                padding: 10px 20px;
+                cursor: pointer;
+            }
+            .form-page-styles .btn-primary:hover {
+                background-color: #0056b3;
+            }
+            .form-page-styles .form-group {
+                margin-bottom: 15px;
+            }
+            .form-page-styles .form-group label {
+                font-weight: bold;
+            }
+            .form-page-styles .form-control {
+                margin-top: 5px;
+            }
+            .form-page-styles .error {
+                color: red;
+                font-size: 0.9em;
+            }
+            .pagination {
+                margin-top: 20px;
+            }
+            .card {
+                margin-bottom: 20px;
+            }
+        </style>
+    </th:block>
+
+    <!-- js -->
+    <th:block layout:fragment="script">
+        <script th:inline="javascript">
+            $(document).ready(function() {
+                // 오늘 날짜를 가져오는 함수
+                function getTodayDate() {
+                    var today = new Date();
+                    var dd = String(today.getDate()).padStart(2, '0');
+                    var mm = String(today.getMonth() + 1).padStart(2, '0'); // 1월은 0부터 시작하므로 +1
+                    var yyyy = today.getFullYear();
+                    return yyyy + '-' + mm + '-' + dd;
+                }
+
+                // 시작일(input id="startDate")의 값을 오늘 날짜로 설정
+                $('#startDate').val(getTodayDate());
+                $('#startDate').attr("min",getTodayDate());
+
+                var startDate = $('#startDate').val();
+                $('#endDate').attr("min",startDate);
+
+                $('#startDate').on('change', function() {
+                    var startDate = $(this).val();
+                    $('#endDate').attr("min", startDate);
+                });
+
+            });
+        </script>
+    </th:block>
+</head>
+
 <!-- css -->
 <th:block layout:fragment="css">
     <style>
@@ -56,7 +151,7 @@
 <!--                        alert("수정에 실패했습니다 " + errorMessage);-->
 <!--                    }-->
 <!--                });-->
-        }
+<!--        }-->
 
  $(document).ready(function() {
     // 오늘 날짜를 가져오는 함수
@@ -85,6 +180,7 @@
 
     </script>
 </th:block>
+
 
 <div layout:fragment="content">
 

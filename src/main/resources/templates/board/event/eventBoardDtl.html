@@ -3,108 +3,142 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
-
 <!-- css -->
+<script th:inline="javascript">
+    function eventDelete() {
+        if (confirm("정말로 이 이벤트를 삭제하시겠습니까?")) {
+            // 여기에 삭제 처리를 위한 코드를 추가합니다.
+            console.log("삭제 버튼이 클릭되었습니다.");
+        } else {
+            console.log("삭제가 취소되었습니다.");
+        }
+    }
+</script>
 <th:block layout:fragment="css">
     <style>
+        .announcement-form {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
 
+        .announcement-form h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .announcement-form label {
+            font-weight: bold;
+        }
+
+        .announcement-form input[type="text"],
+        .announcement-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            box-sizing: border-box;
+            resize: none;
+            background-color: #f8f9fa;
+        }
+
+        .announcement-form .btn-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .announcement-form .btn-primary {
+            background-color: #007bff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            color: #ffffff;
+            border-radius: 4px;
+        }
+
+        .announcement-form .btn-outline-secondary {
+            background-color: transparent;
+            border: 1px solid #6c757d;
+            padding: 9px 19px;
+            border-radius: 4px;
+            color: #6c757d;
+            cursor: pointer;
+        }
+
+        .announcement-form .btn-outline-secondary:hover {
+            background-color: #6c757d;
+            color: #ffffff;
+        }
+
+        .announcement-form .rep-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+
+        /* 추가된 스타일 */
+        .announcement-form .info-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px; /* 이미지와 콘텐트 사이 간격 조절 */
+        }
+
+        .announcement-form .author-info {
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .announcement-form .rep-img-div {
+            text-align: center;
+            margin-bottom: 15px; /* 이미지 아래 여백 추가 */
+        }
     </style>
 </th:block>
 
 <!-- js -->
 <th:block layout:fragment="script">
     <script th:inline="javascript">
-
-        var token = $("meta[name='_csrf']").attr('content');
-        var header = $("meta[name='_csrf_header']").attr('content');
-
-        var eventBoardId = [[${eventBoard.id}]];
-
-        function eventDelete() {
-
-            var url = "/board/event/delete/" + eventBoardId;
-
-            console.log(url)
-            console.log(eventBoardId)
-            if (confirm("삭제하시겠습니까?")) {
-
-                $.ajax({
-                    url: url,
-                    type: 'POST',
-                    data: { id: eventBoardId },
-                    success: function(result) {
-                        alert(result);
-                        if (result === "게시글이 삭제되었습니다") {
-                            window.location.href = "/board/events";
-                        }
-                    },
-                    // Ajax 요청이 서버로 전송되기 전에 호출되는 함수
-                    beforeSend: function(xhr) {
-                        // 요청 헤더에 header와 token을 추가
-                        xhr.setRequestHeader(header, token);
-                    },
-                    error: function(xhr, status, error) {
-                        var errorMessage = xhr.status + ': ' + xhr.statusText;
-                        alert("아이디가 일치하지 않습니다");
-                        console.log("errorMessage= " + errorMessage);
-                    }
-                });
-            }
-        }
+        // JavaScript 코드가 필요한 경우 여기에 추가합니다.
     </script>
 </th:block>
 
 <div layout:fragment="content">
+    <div class="announcement-form">
+        <h2 th:text="${eventBoard.title}"></h2>
 
-    <h2 class="border-bottom py-2" th:text="${eventBoard.title}"></h2>
-
-<!--        <input input type="hidden" id="eventBoardId" name="eventBoardId" class="form-control"-->
-<!--                th:value="${eventBoard.id}" readonly>-->
-    <input type="text" id="eventBoardId" name="eventBoardId" class="form-control"
-           th:value="${eventBoard.id}" readonly>
-    <div>
-        <label for="title">제목</label>
-        <input type="text" id="title" name="title" class="form-control"
-               value="제목" th:value="${eventBoard.title}" readonly>
-    </div>
-    <div>
-        <label for="nickname">작성자</label>
-        <input type="text" id="nickname" name="nickname" class="form-control"
-               value="작성자" th:value="${eventBoard.member.nickname}" readonly>
-    </div>
-    <div>
-        <label for="createDate">작성일</label>
-        <input type="text" id="createDate" name="createDate" class="form-control"
-               value="작성일" th:value="${#temporals.format(eventBoard.createDate, 'yyyy-MM-dd HH:mm:ss')}" readonly>
-        <!--                    <td th:text="${#temporals.format(boardList.createDate, 'yyyy-MM-dd HH:mm:ss')}">등록일</td>-->
-    </div>
-    <div>
-        <label for="content">내용</label>
-        <!--    이미지 시작-->
-        <div class="repImgDiv">
-            <img th:if="${not #lists.isEmpty(eventImage)}"
-                 th:src="${eventImage.imgUrl}" class="rounded repImg">
+        <div class="info-container">
+            <div>
+            </div>
+            <div class="author-info">
+                <span th:text="${eventBoard.member.nickname}"></span>
+                <span th:text="${#temporals.format(eventBoard.createDate, 'yyyy-MM-dd HH:mm:ss')}"></span>
+            </div>
         </div>
-        <!--    이미지 끝-->
-        <textarea class="form-control" rows="5"
-                  id="content" name="content"
-                  th:value="${eventBoard.content}" th:text="${eventBoard.content}" readonly></textarea>
+        <div>
+            <label for="content"></label>
+            <!--    이미지 시작-->
+            <div class="rep-img-div"> <!-- 이미지 정렬 스타일 수정 -->
+                <img th:if="${not #lists.isEmpty(eventImage)}"
+                     th:src="@{|${eventImage.imgUrl}|}" class="rep-img">
+            </div>
+            <!--    이미지 끝-->
+            <textarea class="form-control" rows="5" id="content" name="content" readonly th:text="${eventBoard.content}"></textarea>
+        </div>
+        <div class="btn-container">
+            <a th:href="@{/board/events}" class="btn btn-primary btn-sm">목록으로</a>
+            <a th:href="@{|/board/eventBoard/edit/${eventBoard.id}|}" class="btn btn-primary btn-sm" sec:authorize="isAuthenticated()" th:if="${eventBoard.member != null and #authentication.getPrincipal().getUsername() == eventBoard.member.email}">수정</a>
+            <button onclick="eventDelete()" class="btn btn-outline-secondary btn-sm delete" sec:authorize="isAuthenticated()" th:if="${eventBoard.member != null and #authentication.getPrincipal().getUsername() == eventBoard.member.email}">삭제</button>
 
-    </div>
-<!--    <hr class="my-4">-->
-    <div class="my-3">
-        <a th:href="@{/board/events}" class="btn btn-sm btn-primary"
-           th:text="목록으로"></a>
-        <a th:href="@{|/board/eventBoard/edit/${eventBoard.id}|}" class="btn btn-sm btn-primary"
-           sec:authorize="isAuthenticated()"
-           th:if="${eventBoard.member != null and #authentication.getPrincipal().getUsername() == eventBoard.member.email}"
-           th:text="수정"></a>
-        <a onclick="eventDelete()"
-           class="delete btn btn-sm btn-outline-secondary"
-           sec:authorize="isAuthenticated()"
-           th:if="${eventBoard.member != null and #authentication.getPrincipal().getUsername() == eventBoard.member.email}"
-           th:text="삭제"></a>
+        </div>
     </div>
 </div>
 </html>
-

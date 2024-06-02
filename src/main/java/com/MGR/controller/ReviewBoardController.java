@@ -44,9 +44,13 @@ public class ReviewBoardController {
                        @RequestParam(value = "kw", defaultValue = "") String kw,
                        @RequestParam(value = "sort", defaultValue = "date") String sort) {
         Page<ReviewBoard> paging = this.reviewBoardService.getList(page, kw, sort);
+        List<ReviewBoardForm> reviewBoardForms = this.reviewBoardService.getReviewBoardForms();
+
         model.addAttribute("paging", paging);
         model.addAttribute("kw", kw);
         model.addAttribute("sort", sort);
+        model.addAttribute("reviewBoardForms", reviewBoardForms);
+
         return "board/review/board_list";
     }
     @GetMapping(value = "/detail/{id}")
