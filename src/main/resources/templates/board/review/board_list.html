@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
+
+<head>
+    <!-- Bootstrap CSS 추가 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
 
 <div layout:fragment="content" class="container my-3">
     <h2>리뷰 게시판</h2>
@@ -9,91 +15,93 @@
         <div class="col-6">
             <a th:href="@{/review/board/create}" class="btn btn-primary">리뷰 등록하기</a>
         </div>
-        <div class="row">
-            <div class="col-12 d-flex justify-content-end">
-                <form th:action="@{/review/board/list}" method="get" class="d-flex">
-                    <div class="input-group mb-3">
-                        <select class="form-select" name="sort" style="max-width: 150px;">
-                            <option value="date" th:selected="${sort == 'date'}">등록일순</option>
-                            <option value="votes" th:selected="${sort == 'votes'}">추천순</option>
-                            <option value="views" th:selected="${sort == 'views'}">조회순</option>
-                        </select>
-                        <input type="text" class="form-control" placeholder="검색어" name="kw" th:value="${kw}" style="max-width: 150px;">
-                        <button class="btn btn-outline-secondary" type="submit">검색</button>
+        <form th:action="@{/review/board/list}" method="get" class="col-6">
+            <div class="input-group mb-3">
+                <select class="form-select" name="sort">
+                    <option value="date" th:selected="${sort == 'date'}">등록일순</option>
+                    <option value="votes" th:selected="${sort == 'votes'}">추천순</option>
+                    <option value="views" th:selected="${sort == 'views'}">조회순</option>
+                </select>
+                <input type="text" class="form-control" placeholder="검색어" name="kw" th:value="${kw}">
+                <button class="btn btn-outline-secondary" type="submit">검색</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="row">
+        <div th:each="reviewBoard : ${paging}" class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column justify-content-between"> <!-- 카드 바디를 열기 전에 d-flex flex-column justify-content-between 클래스 추가 -->
+                    <h5 class="card-title">
+                        <a th:href="@{|/review/board/detail/${reviewBoard.id}|}" th:text="${reviewBoard.subject}"></a>
+                    </h5>
+                    <h6 class="card-subtitle mb-2 text-muted" th:text="${reviewBoard.author != null ? reviewBoard.author.nickname : '익명'}"></h6>
+                    <!-- 이미지 표시 -->
+                    <div th:if="${not #lists.isEmpty(reviewBoard.images)}" class="mb-3" style="height: 200px; overflow: hidden;"> <!-- 이미지 컨테이너에 mb-3 클래스 추가하여 아래 여백 추가 -->
+                        <img th:src="${reviewBoard.images[0].imgUrl}"
+                             class="card-img-top img-fluid rounded"
+                             th:alt="${reviewBoard.subject}"
+                             style="width: 100%; height: auto; object-fit: cover;"> <!-- 이미지를 가로로 꽉 차도록 하고, 세로 크기는 유지되도록 height: auto;를 추가하고, object-fit: cover;를 사용하여 이미지가 잘리지 않고 카드에 맞춰지도록 합니다. -->
                     </div>
-                </form>
+                    <!-- 이미지가 없을 경우 -->
+                    <div th:unless="${not #lists.isEmpty(reviewBoard.images)}" class="text-center mb-3">
+                        <span>No Image Available</span>
+                    </div>
+                    <!-- 기타 정보 표시 -->
+                    <p class="card-text">
+                        조회수: <span th:text="${reviewBoard.count}"></span><br>
+                        등록일: <span th:text="${#temporals.format(reviewBoard.createDate, 'yyyy-MM-dd HH:mm')}"></span>
+                    </p>
+                </div>
             </div>
         </div>
     </div>
-    <div class="row justify-content-end">
-        <!-- 리뷰 보드 카드 영역 -->
-        <th:block th:each="reviewBoardForm : ${reviewBoardForms}">
-            <div class="col-md-4 margin">
-                <a th:href="@{|/review/board/detail/${reviewBoardForm.id}|}" class="text-dark">
-                    <div th:if="${not #lists.isEmpty(reviewBoardForm.reviewImgDtoList)}" class="text-center">
-                        <img th:src="${reviewBoardForm.reviewImgDtoList[0].imgUrl}"
-                             class="card-img-top"
-                             th:alt="${reviewBoardForm.subject}"
-                             style="width: 350px; height: 400px;">
-                    </div>
-                    <div class="card-body">
-                        <h4 class="card-title" th:text="${reviewBoardForm.subject}"></h4>
-                        <p class="card-text">작성자: <span th:text="${reviewBoardForm.author.nickname}"></span></p>
-                        <p class="card-text">조회수: <span th:text="${reviewBoardForm.count}"></span></p>
-                        <p class="card-text">추천수: <span th:text="${#lists.size(reviewBoardForm.voter)}"></span></p>
-                    </div>
-                </a>
-            </div>
-        </th:block>
-    </div>
     <!-- 페이징처리 시작 -->
-    <div th:if="${!paging.isEmpty()}" class="pagination-container justify-content-center">
+    <div th:if="${!paging.empty}" class="pagination-container justify-content-center">
         <ul class="pagination pagination-sm">
-            <li class="page-item" th:classappend="${!paging.hasPrevious} ? 'disabled'">
-                <a class="page-link" href="javascript:void(0)" th:data-page="${paging.number-1}" aria-label="Previous">
+            <li class="page-item" th:classappend="${paging.first} ? 'disabled'">
+                <a class="page-link" href="#" th:attr="data-page=${paging.number - 1}" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
-                    <span class="sr-only">Previous</span>
+                    <span class="sr-only">이전</span>
                 </a>
             </li>
-            <li th:each="page: ${#numbers.sequence(0, paging.totalPages-1)}"
+            <li th:each="page: ${#numbers.sequence(0, paging.totalPages - 1)}"
                 th:classappend="${page == paging.number} ? 'active'" class="page-item">
-                <a th:text="${page}" class="page-link" href="javascript:void(0)" th:data-page="${page}"></a>
+                <a th:text="${page + 1}" class="page-link" href="#" th:attr="data-page=${page}"></a>
             </li>
-            <li class="page-item" th:classappend="${!paging.hasNext} ? 'disabled'">
-                <a class="page-link" href="javascript:void(0)" th:data-page="${paging.number+1}" aria-label="Next">
+            <li class="page-item" th:classappend="${paging.last} ? 'disabled'">
+                <a class="page-link" href="#" th:attr="data-page=${paging.number + 1}" aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
-                    <span class="sr-only">Next</span>
+                    <span class="sr-only">다음</span>
                 </a>
             </li>
         </ul>
     </div>
-
     <!-- 페이징처리 끝 -->
-    <form th:action="@{/review/board/list}" method="get" id="searchForm">
-        <input type="hidden" id="kw" name="kw" th:value="${kw}">
-        <input type="hidden" id="page" name="page" th:value="${paging.number}">
-    </form>
 </div>
-<!--스크립트-->
-<script layout:fragment="script" type='text/javascript'>
+
+<!-- 스크립트 -->
+<script layout:fragment="script" type="text/javascript">
     document.addEventListener("DOMContentLoaded", function() {
-        const page_elements = document.getElementsByClassName("page-link");
-        Array.from(page_elements).forEach(function (element) {
-            element.addEventListener('click', function () {
-                document.getElementById('page').value = this.dataset.page;
-                document.getElementById('searchForm').submit();
+        const page_elements = document.querySelectorAll('.page-link');
+        page_elements.forEach(function(element) {
+            element.addEventListener('click', function(event) {
+                event.preventDefault();
+                const page = this.dataset.page;
+                const form = document.createElement('form');
+                form.method = 'GET';
+                form.action = '/review/board/list';
+                form.innerHTML = '<input type="hidden" name="page" value="' + page + '">';
+                document.body.appendChild(form);
+                form.submit();
             });
         });
-        const btn_search = document.getElementById("btn_search");
-
-        if (btn_search) {
-            btn_search.addEventListener('click', function() {
-                document.getElementById('kw').value = document.getElementById('search_kw').value;
-                document.getElementById('page').value = 0;  // 검색버튼을 클릭할 경우 0페이지부터 조회한다.
-                document.getElementById('searchForm').submit();
-            });
-        }
     });
 </script>
+
+<!-- Bootstrap JS 추가 (필요시) -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
 </html>
