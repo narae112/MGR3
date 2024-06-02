@@ -13,11 +13,9 @@ import java.util.Set;
 @Setter
 @Getter
 public class ReviewBoard {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
 
     @Column(columnDefinition = "TEXT")
     private String content;
@@ -34,6 +32,9 @@ public class ReviewBoard {
     @Column(columnDefinition = "DATETIME")
     private LocalDateTime modifiedDate;
 
+    @OneToMany(mappedBy = "reviewBoard", cascade = CascadeType.ALL)
+    private List<Image> images;
+
     @ManyToOne
     private Member author;
 
@@ -46,5 +47,6 @@ public class ReviewBoard {
     public int viewCount() {
         return this.count += 1;
     }
+
 
 }
