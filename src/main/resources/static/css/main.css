@@ -1677,12 +1677,12 @@ ol {
 }
 
 .header .navbar-brand img {
-  width: 190px;
+  width: 210px;
 }
 
 @media only screen and (min-width: 768px) and (max-width: 991px) {
   .header .navbar-brand img {
-    width: 180px;
+    width: 210px;
   }
 }
 
@@ -1811,7 +1811,7 @@ ol {
   -webkit-transition: all 0.3s ease-out 0s;
   transition: all 0.3s ease-out 0s;
   position: relative;
-  padding: 35px 0;
+  padding: 30px 0;
   display: -webkit-inline-box;
   display: -ms-inline-flexbox;
   display: inline-flex;
@@ -1871,6 +1871,17 @@ ol {
 }
 
 @media only screen and (min-width: 992px) and (max-width: 1199px) {
+  .header .navbar-brand img {
+      width : 210px;
+    }
+    .navbar-nav .nav-item {
+    margin-right : 20px;
+    font-size : 14px;
+    }
+    .header .button .btn {
+    padding : 10px 20px !important;
+    }
+
   .navbar-nav .nav-item a.dd-menu::after {
     right: 13px;
   }
