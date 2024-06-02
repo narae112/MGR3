@@ -27,12 +27,12 @@
         <div class="col-md-6">
             <form role="form" method="post" enctype="multipart/form-data" th:object="${ticketFormDto}" class="needs-validation" novalidate>
                 <input type="hidden" name="_csrf" th:value="${_csrf.token}">
-                <h2 class="mb-4">티켓 등록</h2>
+                <h3 class="mb-5 text-center">티켓 등록</h3>
                 <input type="hidden" th:field="*{id}">
-                <hr class="my-4">
+
 
                 <div class="form-group mb-3">
-                    <label for="ticketCategory">할인 구분</label>
+                    <label for="ticketCategory" class="mb-1"> 할인 구분</label>
                     <select th:field="*{ticketCategory}" class="form-control" id="ticketCategory" required>
                         <option value="" disabled selected>구분을 선택해주세요</option>
                         <option value="CHILD">어린이</option>
@@ -42,21 +42,21 @@
                 </div>
 
                 <div class="form-group mb-3">
-                    <label for="name">티켓명</label>
+                    <label for="name" class="mb-1"> 티켓명</label>
                     <input type="text" th:field="*{name}" class="form-control" id="name" placeholder="티켓명을 입력해주세요" required>
                     <div class="invalid-feedback">티켓명을 입력해주세요.</div>
                     <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-danger">Incorrect data</p>
                 </div>
 
                 <div class="form-group mb-3">
-                    <label for="price">가격</label>
+                    <label for="price" class="mb-1"> 가격</label>
                     <input type="number" th:field="*{price}" id="price" class="form-control" placeholder="티켓의 가격을 입력해주세요" min="0" onchange="checkPrice()" required>
                     <div class="invalid-feedback">가격은 0원 이상이어야 합니다.</div>
                     <p th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="text-danger">가격은 0원 이상이어야 합니다.</p>
                 </div>
 
                 <div class="form-group mb-3">
-                    <label for="locationCategory">지점</label>
+                    <label for="locationCategory" class="mb-1"> 지점</label>
                     <select th:field="*{locationCategory}" class="form-control" id="locationCategory" required>
                         <option value="" disabled selected>지점을 선택해주세요</option>
                         <option value="BUSAN">부산</option>
@@ -66,27 +66,32 @@
                 </div>
 
                 <div class="form-group mb-3">
-                    <label for="memo">티켓 세부사항</label>
+                    <label for="memo" class="mb-1"> 티켓 세부사항</label>
                     <input type="text" th:field="*{memo}" class="form-control" id="memo" placeholder="티켓의 세부사항을 입력해주세요" required>
                     <div class="invalid-feedback">세부사항을 입력해주세요.</div>
                     <p th:if="${#fields.hasErrors('memo')}" th:errors="*{memo}" class="text-danger">Incorrect data</p>
                 </div>
 
-                <div class="form-group mb-3">
-                    <label for="startDate">티켓 이용 시작 날짜</label>
-                    <input type="date" th:field="*{startDate}" id="startDate" class="form-control" placeholder="티켓 이용 시작 날짜를 입력해주세요" onchange="checkStartDate()" required>
-                    <div class="invalid-feedback">시작 날짜를 선택해주세요.</div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="startDate" class="mb-1">티켓 이용 시작 날짜</label>
+                            <input type="date" th:field="*{startDate}" id="startDate" class="form-control" placeholder="티켓 이용 시작 날짜를 입력해주세요" onchange="checkStartDate()" required>
+                            <p th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}" class="text-danger">잘못된 데이터입니다.</p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="endDate" class="mb-1">티켓 이용 종료 날짜</label>
+                            <input type="date" id="endDate" th:field="*{endDate}" class="form-control" placeholder="티켓 이용 종료 날짜를 입력해주세요" onchange="checkEndDateInput()" required>
+                            <p th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}" class="text-danger">잘못된 데이터입니다.</p>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-group mb-3">
-                    <label for="endDate">티켓 이용 종료 날짜</label>
-                    <input type="date" id="endDate" th:field="*{endDate}" class="form-control" placeholder="티켓 이용 종료 날짜를 입력해주세요" onchange="checkEndDateInput()" required>
-                    <div class="invalid-feedback">종료 날짜를 선택해주세요.</div>
-                    <p th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}" class="text-danger">잘못된 데이터입니다.</p>
-                </div>
-
-                <div class="form-group mb-3">
-                    <label for="ticketImgFile">상품 이미지</label>
+                    <label for="ticketImgFile" class="mb-1"> 상품 이미지</label>
                     <div th:if="${#lists.isEmpty(ticketFormDto.ticketImgDtoList)}">
                         <div class="form-group mb-3">
                             <input type="file" class="form-control" name="ticketImgFile" id="ticketImgFile" required>
@@ -101,7 +106,7 @@
                     </div>
                 </div>
 
-                <div class="text-center">
+                <div class="text-center my-5">
                     <div th:if="${#strings.isEmpty(ticketFormDto.id)}">
                         <button th:formaction="@{/admin/ticket/new}" type="submit" class="btn btn-primary">저장</button>
                     </div>
