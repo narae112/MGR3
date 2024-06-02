@@ -3,17 +3,8 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
+
 <!-- css -->
-<script th:inline="javascript">
-    function eventDelete() {
-        if (confirm("정말로 이 이벤트를 삭제하시겠습니까?")) {
-            // 여기에 삭제 처리를 위한 코드를 추가합니다.
-            console.log("삭제 버튼이 클릭되었습니다.");
-        } else {
-            console.log("삭제가 취소되었습니다.");
-        }
-    }
-</script>
 <th:block layout:fragment="css">
     <style>
         .announcement-form {
@@ -105,9 +96,43 @@
 </th:block>
 
 <!-- js -->
+<!-- 스크립트 -->
 <th:block layout:fragment="script">
     <script th:inline="javascript">
-        // JavaScript 코드가 필요한 경우 여기에 추가합니다.
+        var token = $("meta[name='_csrf']").attr('content');
+        var header = $("meta[name='_csrf_header']").attr('content');
+        var eventBoardId = /*[[${eventBoard.id}]]*/ ''; // Thymeleaf 문법으로 변수 할당
+
+        function eventDelete() {
+            var url = "/board/event/delete/" + eventBoardId;
+            console.log(url);
+            console.log(eventBoardId);
+
+            if (confirm("삭제하시겠습니까?")) {
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: JSON.stringify({ id: eventBoardId }), // 요청 데이터를 JSON 형식으로 변환
+                    contentType: 'application/json', // Content-Type을 application/json으로 설정
+                    success: function(result) {
+                        alert(result);
+                        if (result === "게시글이 삭제되었습니다") {
+                            window.location.href = "/board/events";
+                        }
+                    },
+                    // Ajax 요청이 서버로 전송되기 전에 호출되는 함수
+                    beforeSend: function(xhr) {
+                        // 요청 헤더에 header와 token을 추가
+                        xhr.setRequestHeader(header, token);
+                    },
+                    error: function(xhr, status, error) {
+                        var errorMessage = xhr.status + ': ' + xhr.statusText;
+                        alert("아이디가 일치하지 않습니다");
+                        console.log("errorMessage= " + errorMessage);
+                    }
+                });
+            }
+        }
     </script>
 </th:block>
 
@@ -116,8 +141,7 @@
         <h2 th:text="${eventBoard.title}"></h2>
 
         <div class="info-container">
-            <div>
-            </div>
+            <div></div>
             <div class="author-info">
                 <span th:text="${eventBoard.member.nickname}"></span>
                 <span th:text="${#temporals.format(eventBoard.createDate, 'yyyy-MM-dd HH:mm:ss')}"></span>
@@ -125,20 +149,19 @@
         </div>
         <div>
             <label for="content"></label>
-            <!--    이미지 시작-->
-            <div class="rep-img-div"> <!-- 이미지 정렬 스타일 수정 -->
-                <img th:if="${not #lists.isEmpty(eventImage)}"
-                     th:src="@{|${eventImage.imgUrl}|}" class="rep-img">
+            <!-- 이미지 시작 -->
+            <div class="rep-img-div">
+                <img th:if="${not #lists.isEmpty(eventImage)}" th:src="@{|${eventImage.imgUrl}|}" class="rep-img">
             </div>
-            <!--    이미지 끝-->
+            <!-- 이미지 끝 -->
             <textarea class="form-control" rows="5" id="content" name="content" readonly th:text="${eventBoard.content}"></textarea>
         </div>
         <div class="btn-container">
             <a th:href="@{/board/events}" class="btn btn-primary btn-sm">목록으로</a>
             <a th:href="@{|/board/eventBoard/edit/${eventBoard.id}|}" class="btn btn-primary btn-sm" sec:authorize="isAuthenticated()" th:if="${eventBoard.member != null and #authentication.getPrincipal().getUsername() == eventBoard.member.email}">수정</a>
             <button onclick="eventDelete()" class="btn btn-outline-secondary btn-sm delete" sec:authorize="isAuthenticated()" th:if="${eventBoard.member != null and #authentication.getPrincipal().getUsername() == eventBoard.member.email}">삭제</button>
-
         </div>
     </div>
 </div>
+
 </html>
