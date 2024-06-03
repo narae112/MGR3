@@ -14,8 +14,6 @@ public class TicketSearchDto {
 
     private String searchPeriodType;
 
-    private TicketCategory ticketCategory; // 어린이, 성인
-
     private String searchBy; // 티켓 조회
 
     private String searchQuery = ""; // 조회할 검색어를 저장할 변수

@@ -72,10 +72,13 @@ public class TicketService {
 
 
     private boolean isDuplicateTicket(TicketFormDto ticketFormDto) {
-        Optional<Ticket> ticketOptional = ticketRepository.findByNameAndPriceAndMemoAndTicketCategoryAndStartDateAndEndDateAndLocationCategory(
-                ticketFormDto.getName(), ticketFormDto.getPrice(), ticketFormDto.getMemo(),
-                ticketFormDto.getTicketCategory(), ticketFormDto.getStartDate(), ticketFormDto.getEndDate(),
-                ticketFormDto.getLocationCategory()
+        // TicketFormDto를 Ticket 엔티티로 변환
+        Ticket ticket = ticketFormDto.createTicket();
+
+        // TicketRepository를 사용하여 중복 여부 확인
+        Optional<Ticket> ticketOptional = ticketRepository.findByNameAndAdultPriceAndChildPriceAndMemoAndStartDateAndEndDateAndLocationCategory(
+                ticket.getName(), ticket.getAdultPrice(), ticket.getChildPrice(), ticket.getMemo(),
+                ticket.getStartDate(), ticket.getEndDate(), ticket.getLocationCategory()
         );
         return ticketOptional.isPresent();
     }
