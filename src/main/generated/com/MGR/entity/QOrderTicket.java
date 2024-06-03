@@ -30,7 +30,11 @@ public class QOrderTicket extends EntityPathBase<OrderTicket> {
 
     public final NumberPath<Integer> orderPrice = createNumber("orderPrice", Integer.class);
 
+    public final QReservationTicket reservationTicket;
+
     public final QTicket ticket;
+
+    public final DatePath<java.time.LocalDate> visitDate = createDate("visitDate", java.time.LocalDate.class);
 
     public QOrderTicket(String variable) {
         this(OrderTicket.class, forVariable(variable), INITS);
@@ -51,6 +55,7 @@ public class QOrderTicket extends EntityPathBase<OrderTicket> {
     public QOrderTicket(Class<? extends OrderTicket> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.order = inits.isInitialized("order") ? new QOrder(forProperty("order"), inits.get("order")) : null;
+        this.reservationTicket = inits.isInitialized("reservationTicket") ? new QReservationTicket(forProperty("reservationTicket"), inits.get("reservationTicket")) : null;
         this.ticket = inits.isInitialized("ticket") ? new QTicket(forProperty("ticket")) : null;
     }
 

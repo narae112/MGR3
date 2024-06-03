@@ -33,6 +33,17 @@ public class Inventory {
         return inventory;
     }
 
+//    void init(){
+//        Ticket ticket = new Ticket();
+//        ticket.setId(1L);
+//        ticket.setName("test");
+//        ticket.setPrice(15000);
+//        Inventory inventory = new Inventory();
+//        inventory.setTicket(ticket);
+//        inventory.setQuantity(100);
+//        inventory.setDate(LocalDate.now());
+//    }
+
     public void removeQuantity(int reserveCount) {
         int rest = this.quantity - reserveCount; // 남은 재고 = 현재 재고 - 넘어온 주문수량
         if(rest < 0) {

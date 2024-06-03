@@ -8,6 +8,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter @Setter
@@ -17,6 +18,8 @@ public class Order {
     @GeneratedValue
     @Column(name = "order_id")
     private Long id;
+
+    private String orderNum;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -41,20 +44,19 @@ public class Order {
         // 양방향 연관관계를 관리한다
     }
 
-    // 결제
+    // 주문
     public static Order createOder(Member member, List<OrderTicket> orderTicketList) {
         Order order = new Order();
         order.setMember(member);
-
         for (OrderTicket orderTicket : orderTicketList) {
             order.addOrderTicket(orderTicket);
         }
-        order.setReservationStatus(ReservationStatus.PAYED);
+        order.setReservationStatus(ReservationStatus.RESERVE);
         order.setOrderDate(LocalDateTime.now());
-
+        order.setOrderNum(UUID.randomUUID().toString());
         return order;
     }
-    // 결제 티켓 객체를 이용하여 결제 객체를 만드는 메서드 작성
+    // 주문 티켓 객체를 이용하여 주문 객체를 만드는 메서드 작성
 
     public int getTotalPrice() {
         int totalPrice = 0;

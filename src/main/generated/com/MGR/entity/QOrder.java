@@ -28,6 +28,8 @@ public class QOrder extends EntityPathBase<Order> {
 
     public final DateTimePath<java.time.LocalDateTime> orderDate = createDateTime("orderDate", java.time.LocalDateTime.class);
 
+    public final StringPath orderNum = createString("orderNum");
+
     public final ListPath<OrderTicket, QOrderTicket> orderTickets = this.<OrderTicket, QOrderTicket>createList("orderTickets", OrderTicket.class, QOrderTicket.class, PathInits.DIRECT2);
 
     public final EnumPath<com.MGR.constant.ReservationStatus> reservationStatus = createEnum("reservationStatus", com.MGR.constant.ReservationStatus.class);
