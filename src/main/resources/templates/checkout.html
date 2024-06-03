@@ -60,6 +60,8 @@
   console.log("Order Number: " + orderNum)
   var amount =/*[[${totalPrice}]]*/
   var product =/*[[${orderTickets[0].name}]]*/
+  var RTOrderId =/*[[${orderTickets[0].orderId}]]*/
+  console.log("RTOrderId = " + RTOrderId);
 
   // ------  결제위젯 초기화 ------
   // TODO: clientKey는 개발자센터의 결제위젯 연동 키 > 클라이언트 키로 바꾸세요.
@@ -108,7 +110,7 @@
   paymentWidget.requestPayment({
   orderId: orderNum,
   orderName: product + "외 " + (orderQuantity-1) + " 건",
-  successUrl: window.location.origin + "/success",
+  successUrl: window.location.origin + "/success/" + RTOrderId,
   failUrl: window.location.origin + "/fail",
   });
   });

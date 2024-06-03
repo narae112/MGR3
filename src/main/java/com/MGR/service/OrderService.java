@@ -1,5 +1,6 @@
 package com.MGR.service;
 
+import com.MGR.constant.ReservationStatus;
 import com.MGR.dto.OrderDto;
 import com.MGR.entity.*;
 import com.MGR.repository.MemberRepository;
@@ -48,5 +49,11 @@ public class OrderService {
         // 생성된 주문 저장
         return order.getId();
         // 저장된 주문 아이디 반환
+    }
+
+    public void changeStatus(Long id) {
+        Order order = orderRepository.findById(id).get();
+        order.setReservationStatus(ReservationStatus.PAYED);
+        orderRepository.save(order);
     }
 }
