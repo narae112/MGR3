@@ -50,8 +50,7 @@ public class OrderTicket {
         orderTicket.setVisitDate(visitDate);
 
         return orderTicket;
-    }
-    // 주문할 상품과 주문 수량을 통해 orderTicket 객체를 만드는 메서드 작성
+    } // 주문할 상품과 주문 수량을 통해 orderTicket 객체를 만드는 메서드 작성
 
     public int getAdultTotalPrice() { return adultPrice * adultCount; } // 성인 티켓 토탈 가격(성인 티켓 가격 * 성인 인원수)
     public int getChildTotalPrice() {
