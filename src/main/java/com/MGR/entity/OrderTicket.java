@@ -43,8 +43,8 @@ public class OrderTicket {
 
         orderTicket.setTicket(ticket);
         orderTicket.setReservationTicketId(reservationTicketId);
-        orderTicket.setAdultPrice(ticket.getAdultPrice);
-        orderTicket.setChildCount(ticket.getChildPrice);
+        orderTicket.setAdultPrice(ticket.getAdultPrice());
+        orderTicket.setChildCount(ticket.getChildPrice());
         orderTicket.setAdultCount(adultCount);
         orderTicket.setChildCount(childCount);
         orderTicket.setVisitDate(visitDate);
@@ -58,4 +58,5 @@ public class OrderTicket {
         return childPrice * childCount;
     } // 아동 티켓 토탈 가격
 
+    public int getTotalPrice() { return (getAdultTotalPrice() + getChildTotalPrice()); } // 전체(성인 + 아동) 주문 가격
 }

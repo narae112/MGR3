@@ -127,7 +127,7 @@ public class ReservationService {
         ReservationTicket reservationTicket = reservationTicketRepository.findById(reservationId)
                                                                     .orElseThrow(EntityNotFoundException::new);
 
-        reservationTicket.cancelReservation();
+        reservationTicket.cancelReservation(); // 예약 상태를 취소로 변경
 
         Inventory inventory = inventoryRepository.findByTicketIdAndDate(reservationTicket.getTicket().getId(), LocalDate.parse(reservationTicket.getVisitDate()));
 

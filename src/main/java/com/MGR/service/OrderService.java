@@ -23,12 +23,13 @@ public class OrderService {
     private final OrderTicketRepository orderTicketRepository;
     private final ReservationTicketRepository reservationTicketRepository;
 
+    // 이용자가 결제 요청한 정보 저장
     public Long orders(List<OrderDto> orderDtoList, String email) {
         // orderDtoList : 주문 목록(에약한 티켓의 티켓아이디와 방문일, 수량이 담긴)
         Optional<Member> member = memberRepository.findByEmail(email);
         // 주어진 이메일 주소로 회원 레포지토리에서 회원을 가져옴
         List<OrderTicket> orderTicketList = new ArrayList<>();
-        // 결제할 티켓을 보관할 빈 목록(reservationTicketList)을 초기화
+        // 결제할 티켓을 보관할 빈 목록을 초기화
         for(OrderDto orderDto : orderDtoList) {
             Ticket ticket = ticketRepository.findById(orderDto.getTicketId())
                     .orElseThrow(EntityNotFoundException::new);
@@ -54,10 +55,6 @@ public class OrderService {
         Order order = orderRepository.findById(id).get();
         order.setReservationStatus(ReservationStatus.PAYED);
         orderRepository.save(order);
-
-        List<OrderTicket> orderTickets = order.getOrderTickets();
-        for(OrderTicket orderTicket : orderTickets) {
-            Optional<ReservationTicket> reservationTicket = reservationTicketRepository.findById(orderTicket.getReservationTicketId());
-        }
     }
+
 }

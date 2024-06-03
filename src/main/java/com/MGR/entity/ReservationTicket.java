@@ -42,6 +42,7 @@ public class ReservationTicket {
     public static ReservationTicket createReservationTicket(Reservation reservation,
                                                             Ticket ticket, int adultCount, int childCount, String visitDate){
         ReservationTicket reservationTicket = new ReservationTicket();
+
         reservationTicket.setReservation(reservation);
         reservationTicket.setTicket(ticket);
         reservationTicket.setAdultCount(adultCount);

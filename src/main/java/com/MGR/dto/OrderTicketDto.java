@@ -14,11 +14,14 @@ public class OrderTicketDto {
     private Long orderId;
     private LocationCategory locationCategory; // 지점
     private String name; // 티켓 이름
-    private TicketCategory ticketCategory; // 연령구분(성인/아동)
     private LocalDate visitDate; // 방문예정일
-    private int count; // 주문 수량
-    private int orderPrice; // 주문 금액
-    private int totalPrice; // 전체 주문 금액
+    private int adultCount; // 성인 인원
+    private int childCount; // 아동 인원
+    private int adultPrice; // 성인 금액
+    private int childPrice; // 아동 금액
+    private int adultTotalPrice; // 성인 전체 금액
+    private int childTotalPrice; // 아동 전체 금액
+    private int totalPrice; // 전체(성인 + 아동) 주문 금액
 
 
     // 생성 메서드
@@ -26,10 +29,13 @@ public class OrderTicketDto {
         this.orderId = orderTicket.getOrder().getId();
         this.locationCategory = orderTicket.getTicket().getLocationCategory();
         this.name = orderTicket.getTicket().getName();
-        this.ticketCategory = orderTicket.getTicket().getTicketCategory();
         this.visitDate = orderTicket.getVisitDate();
-        this.count = orderTicket.getCount();
-        this.orderPrice = orderTicket.getOrderPrice();
+        this.adultCount = orderTicket.getAdultCount();
+        this.childCount = orderTicket.getChildCount();
+        this.adultPrice = orderTicket.getTicket().getAdultPrice();
+        this.childPrice = orderTicket.getTicket().getChildPrice();
+        this.adultTotalPrice = orderTicket.getAdultTotalPrice();
+        this.childTotalPrice = orderTicket.getChildTotalPrice();
         this.totalPrice = orderTicket.getTotalPrice();
     }
 
