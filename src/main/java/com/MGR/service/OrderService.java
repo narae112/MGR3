@@ -1,11 +1,9 @@
 package com.MGR.service;
 
+import com.MGR.constant.ReservationStatus;
 import com.MGR.dto.OrderDto;
 import com.MGR.entity.*;
-import com.MGR.repository.MemberRepository;
-import com.MGR.repository.OrderRepository;
-import com.MGR.repository.OrderTicketRepository;
-import com.MGR.repository.TicketRepository;
+import com.MGR.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +21,7 @@ public class OrderService {
     private final MemberRepository memberRepository;
     private final TicketRepository ticketRepository;
     private final OrderTicketRepository orderTicketRepository;
+    private final ReservationTicketRepository reservationTicketRepository;
 
     public Long orders(List<OrderDto> orderDtoList, String email) {
         // orderDtoList : 주문 목록(에약한 티켓의 티켓아이디와 방문일, 수량이 담긴)
@@ -34,7 +33,8 @@ public class OrderService {
             Ticket ticket = ticketRepository.findById(orderDto.getTicketId())
                     .orElseThrow(EntityNotFoundException::new);
             // orderDto 객체에 대해 해당하는 티켓 아이디를 사용하여 데이터베이스에서 티켓 정보를 가지고 옴
-            OrderTicket orderTicket = OrderTicket.createOrderTicket(ticket, orderDto.getCount(), orderDto.getVisitDate());
+            OrderTicket orderTicket = OrderTicket.createOrderTicket(ticket, orderDto.getReservationTicketId(),
+                                                                    orderDto.getAdultCount(), orderDto.getChildCount(), orderDto.getVisitDate());
             // createOrderTicket : 검색된 티켓을 사용하여 orderDto 에서 지정된 수량을 사용, orderTicket 객체 생성
 
             orderTicketRepository.save(orderTicket);
@@ -48,5 +48,16 @@ public class OrderService {
         // 생성된 주문 저장
         return order.getId();
         // 저장된 주문 아이디 반환
+    }
+
+    public void changeStatus(Long id) {
+        Order order = orderRepository.findById(id).get();
+        order.setReservationStatus(ReservationStatus.PAYED);
+        orderRepository.save(order);
+
+        List<OrderTicket> orderTickets = order.getOrderTickets();
+        for(OrderTicket orderTicket : orderTickets) {
+            Optional<ReservationTicket> reservationTicket = reservationTicketRepository.findById(orderTicket.getReservationTicketId());
+        }
     }
 }

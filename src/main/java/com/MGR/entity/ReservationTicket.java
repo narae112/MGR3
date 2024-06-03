@@ -58,8 +58,21 @@ public class ReservationTicket {
         this.childCount += childCount;
     }
 
-    public void updateCount(int ticketCount) {
-        this.ticketCount = ticketCount;
+    public int getAllCount() {
+        return adultCount + childCount;
+    }
+
+    public void updateAdultCount(int adultCount) {
+        this.adultCount = adultCount;
+    }
+
+    public void updateChildCount(int childCount) {
+        this.childCount = childCount;
+    }
+
+    public void updateAllCount(int adultCount, int childCount) {
+        this.adultCount = adultCount;
+        this.childCount = childCount;
     }
 
     public void cancelReservation() {
