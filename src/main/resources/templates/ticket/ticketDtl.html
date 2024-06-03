@@ -5,30 +5,45 @@
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
+    <!-- jQuery UI CSS 추가 -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 </head>
 <th:block layout:fragment="script">
+    <!-- jQuery 및 jQuery UI JavaScript 추가 -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
     <script th:inline="javascript">
         $(function(){
             calculateTotalPrice();
             $("#adultCount").change(function(){
                 calculateTotalPrice();
             });
-        });
-        $(function(){
-            calculateTotalPrice();
             $("#childCount").change(function(){
                 calculateTotalPrice();
             });
+
+            // datepicker 초기화 및 달력만 보이도록 설정
+            $("#datepicker").datepicker({
+                dateFormat: "yy-mm-dd",
+                minDate: new Date($('#startDate').val()),
+                maxDate: new Date($('#endDate').val()),
+                onSelect: function(dateText) {
+                    $("#visitDate").val(dateText);
+                }
+            });
+
         });
 
-    function calculateTotalPrice() {
-        var adultCount = $("#adultCount").val() || 0;
-        var childCount = $("#childCount").val() || 0;
-        var adultPrice = $("#adultPrice").val() || 0;
-        var childPrice = $("#childPrice").val() || 0;
-        var totalPrice = adultPrice * adultCount + childPrice * childCount;
-        $("#totalPrice").html(totalPrice + '원');
-    }
+        function calculateTotalPrice() {
+            var adultCount = $("#adultCount").val() || 0;
+            var childCount = $("#childCount").val() || 0;
+            var adultPrice = $("#adultPrice").val() || 0;
+            var childPrice = $("#childPrice").val() || 0;
+            var totalPrice = adultPrice * adultCount + childPrice * childCount;
+            $("#totalPrice").html(totalPrice + '원');
+        }
+
         function addReservation(){
             var token = $("meta[name='_csrf']").attr("content");
             var header = $("meta[name='_csrf_header']").attr("content");
@@ -36,8 +51,8 @@
             var url = "/member/reservation";
             var paramData = {
                 ticketId : $("#ticketId").val(),
-                adultCount : $("#adultCount").val(), // adultCount 값 가져오기
-                childCount : $("#childCount").val(), // childCount 값 가져오기
+                adultCount : $("#adultCount").val(),
+                childCount : $("#childCount").val(),
                 visitDate : $("#visitDate").val(),
                 reservationDate : new Date()
             };
@@ -71,64 +86,99 @@
             });
         }
 
-         $(document).ready(function() {
-        // 오늘 날짜를 가져오는 함수
-        function getTodayDate() {
-            var today = new Date();
-            var dd = String(today.getDate()).padStart(2, '0');
-            var mm = String(today.getMonth() + 1).padStart(2, '0'); // 1월은 0부터 시작하므로 +1
-            var yyyy = today.getFullYear();
-            return yyyy + '-' + mm + '-' + dd;
-        }
+        $(document).ready(function() {
+            // 오늘 날짜를 가져오는 함수
+            function getTodayDate() {
+                var today = new Date();
+                var dd = String(today.getDate()).padStart(2, '0');
+                var mm = String(today.getMonth() + 1).padStart(2, '0'); // 1월은 0부터 시작하므로 +1
+                var yyyy = today.getFullYear();
+                return yyyy + '-' + mm + '-' + dd;
+            }
 
-        // 시작일(input id="startDate")의 값을 오늘 날짜로 설정
-        $('#startDate').val(getTodayDate());
-        $('#startDate').attr("min",getTodayDate());
+            // 시작일(input id="startDate")의 값을 오늘 날짜로 설정
+            $('#startDate').val(getTodayDate());
+            $('#startDate').attr("min", getTodayDate());
 
-        var startDate = $('#startDate').val();
-        $('#endDate').attr("min",startDate);
-
-        $('#startDate').on('change', function() {
-            var startDate = $(this).val();
+            var startDate = $('#startDate').val();
             $('#endDate').attr("min", startDate);
+
+            $('#startDate').on('change', function() {
+                var startDate = $(this).val();
+                $('#endDate').attr("min", startDate);
+            });
         });
-
-        // 페이지 로드 시 달력 자동으로 펼치기
-        $('#visitDate').focus();
-
-    });
-
     </script>
 </th:block>
 <!-- css -->
 <th:block layout:fragment="css">
     <style>
-        .mgb-15{
-            margin-bottom:15px;
+        .mgb-15 {
+            margin-bottom: 15px;
         }
-        .mgt-30{
-            margin-top:30px;
+        .mgt-30 {
+            margin-top: 30px;
         }
-        .mgt-50{
-            margin-top:50px;
+        .mgt-50 {
+            margin-top: 50px;
         }
-        .repImgDiv{
+        .repImgDiv {
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
-        .repImg{
+        .repImg {
             height: 100%;
             object-fit: cover;
         }
-        .wd50{
-            height:auto;
-            width:50%;
+        .wd50 {
+            height: auto;
+            width: 50%;
         }
         .flex-column-full {
             flex: 1;
             display: flex;
             flex-direction: column;
+        }
+
+        .container {
+            margin-top: 20px; /* 상단 여백 설정 */
+            background-color: white; /* 배경색 설정 */
+            padding: 20px; /* 내부 여백 설정 */
+            border-radius: 10px; /* 테두리 둥글기 설정 */
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1); /* 그림자 설정 */
+        }
+        h4 {
+            color: #343a40; /* 헤더 색상 설정 */
+        }
+        hr {
+            border-top: 1px solid #dee2e6; /* 수평선 색상 설정 */
+            margin-top: 1rem; /* 수평선 위 여백 설정 */
+            margin-bottom: 1rem; /* 수평선 아래 여백 설정 */
+        }
+        p {
+            color: #6c757d; /* 문단 색상 설정 */
+        }
+        .input-group-text {
+            background-color: #007bff; /* 입력 그룹 텍스트 배경색 설정 */
+            color: white; /* 입력 그룹 텍스트 색상 설정 */
+            border-color: #007bff; /* 입력 그룹 텍스트 테두리 색상 설정 */
+        }
+        .form-control {
+            border-color: #ced4da; /* 입력 폼 테두리 색상 설정 */
+        }
+        .btn-primary {
+            background-color: #007bff; /* 버튼 배경색 설정 */
+            border-color: #007bff; /* 버튼 테두리 색상 설정 */
+        }
+        .btn-primary:hover {
+            background-color: #0056b3; /* 호버 시 버튼 배경색 설정 */
+            border-color: #0056b3; /* 호버 시 버튼 테두리 색상 설정 */
+        }
+        .jumbotron {
+            background-color: #f8f9fa; /* 점보트론 배경색 설정 */
+            padding-top: 20px; /* 점보트론 위 여백 설정 */
+            padding-bottom: 20px; /* 점보트론 아래 여백 설정 */
         }
     </style>
 </th:block>
@@ -138,6 +188,7 @@
     <input type="hidden" id="ticketId" th:value="${ticket.id}"> <!-- ticketId 히든으로 넣어놓기 -->
     <input type="hidden" id="startDate" th:value="${ticket.startDate}">
     <input type="hidden" id="endDate" th:value="${ticket.endDate}">
+    <input type="hidden" id="visitDate"> <!-- 선택된 날짜를 저장할 히든 필드 -->
 
     <div class="d-flex mt-4" style="height: 100%;">
         <div class="repImgDiv flex-shrink-0 me-3" style="width: 50%;"> <!-- 티켓이미지 -->
@@ -149,8 +200,7 @@
                 <hr class="my-4">
                 <div>
                     <p>방문예정일</p>
-                    <input class="form-control" type="date" id="visitDate" th:min="${ticket.startDate}" th:max="${ticket.endDate}"/>
-                    <div id="datePicker" class="mb-4"></div>
+                    <div id="datepicker"  class="text-center"></div> <!-- 달력만 표시 -->
                 </div>
             </div>
             <div class="mt-auto">
@@ -190,7 +240,7 @@
 
     <div class="jumbotron jumbotron-fluid mgt-30">
         <div class="container">
-            <h3 >티켓 상세 정보</h3>
+            <h3>티켓 상세 정보</h3>
             <hr class="my-4">
             <p class="lead" th:text="${ticket.memo}"></p>
         </div>
