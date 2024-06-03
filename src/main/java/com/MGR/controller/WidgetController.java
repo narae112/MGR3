@@ -1,6 +1,11 @@
 package com.MGR.controller;
 
+import com.MGR.constant.ReservationStatus;
+import com.MGR.entity.Order;
+import com.MGR.repository.OrderRepository;
+import com.MGR.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -8,21 +13,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Optional;
 
 @Controller
+@RequiredArgsConstructor
 public class WidgetController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final OrderService orderService;
 
     @RequestMapping(value = "/confirm")
     public ResponseEntity<JSONObject> confirmPayment(@RequestBody String jsonBody) throws Exception {
@@ -90,8 +96,11 @@ public class WidgetController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/success", method = RequestMethod.GET)
-    public String paymentRequest(HttpServletRequest request, Model model) throws Exception {
+    @GetMapping("/success/{RTOrderId}")
+    public String paymentRequest(HttpServletRequest request,
+                                 @PathVariable("RTOrderId") Long id,
+                                 Model model) throws Exception {
+        orderService.changeStatus(id);
         return "/success";
     }
 
