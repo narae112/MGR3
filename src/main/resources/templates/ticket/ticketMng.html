@@ -25,12 +25,10 @@
 
         function page(page){
             var searchDateType = $("#searchDateType").val();
-            var searchTicketCategory = $("#searchTicketCategory").val();
             var searchBy = $("#searchBy").val();
             var searchQuery = $("#searchQuery").val();
 
             location.href="/admin/tickets/" + page + "?searchDateType=" + searchDateType
-            + "&searchTicketCategory=" + searchTicketCategory
             + "&searchBy=" + searchBy
             + "&searchQuery=" + searchQuery;
         }
@@ -58,11 +56,6 @@
             <option value="1m">1개월</option>
             <option value="6m">6개월</option>
         </select>
-        <select th:field="*{ticketCategory}" class="form-control" style="width:auto;">
-            <option value="">회원 구분(전체)</option>
-            <option value="CHILD">어린이</option>
-            <option value="ADULT">성인</option>
-        </select>
         <select th:field="*{searchBy}" class="form-control" style="width:auto;">
             <option value="name">티켓명</option>
             <option value="createdBy">등록자</option>
@@ -89,7 +82,6 @@
                 <td>
                     <a th:href="'/admin/ticket/'+${ticket.id}" th:text="${ticket.name}"></a>
                 </td>
-                <td th:text="${ticket.ticketCategory == T(com.MGR.constant.TicketCategory).CHILD} ? '어린이' : '성인'"></td>
                 <td i th:text="${#temporals.format(ticket.regTime, 'MM-dd')}"></td>
                 <td th:text="${ticket.createdBy}"></td>
             </tr>

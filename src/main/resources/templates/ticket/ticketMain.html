@@ -75,13 +75,11 @@
 
        function search() {
            var searchPeriodType = $("#searchPeriodType").val();
-           var ticketCategory = $("#ticketCategory").val();
            var locationCategory = $("#locationCategory").val();
            var searchBy = $("#searchBy").val();
            var searchQuery = $("#searchQuery").val();
 
            location.href = "/tickets?searchPeriodType=" + searchPeriodType
-               + "&ticketCategory=" + ticketCategory
                + "&locationCategory=" + locationCategory
                + "&searchBy=" + searchBy
                + "&searchQuery=" + searchQuery;
@@ -103,13 +101,6 @@
                 <option value="1w">1주 이내</option>
                 <option value="1m">1개월 이내</option>
                 <option value="6m">6개월 이내</option>
-            </select>
-        </div>
-        <div class="select-container col-auto">
-            <select id="ticketCategory" class="form-control">
-                <option value="">회원 구분(전체)</option>
-                <option value="CHILD">어린이</option>
-                <option value="ADULT">성인</option>
             </select>
         </div>
         <div class="select-container col-auto">

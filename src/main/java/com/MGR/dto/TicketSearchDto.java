@@ -1,7 +1,6 @@
 package com.MGR.dto;
 
 import com.MGR.constant.LocationCategory;
-import com.MGR.constant.TicketCategory;
 import lombok.Getter;
 import lombok.Setter;
 
