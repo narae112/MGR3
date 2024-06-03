@@ -16,7 +16,6 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final JwtUtil jwtUtil;
 
@@ -25,12 +24,22 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
         System.out.println(principal.getAttributes());
         System.out.println("oauth2 인증 성공");
+
         String jwt = jwtUtil.createJwt(principal.getMember().getOauth2Id(), principal.getMember().getId());
         System.out.println("OAuth2 jwt 토큰= " + jwt);
+
+        response.setHeader("Authorization","Bearer" + jwt);
+        //토큰값을 헤더에 추가
+
+//        String redirectUri = UriComponentsBuilder.fromUriString("/")
+//                .queryParam("accessToken", jwt).build().toUriString();
+        // 토큰값을 url 로 보내는 방식
+
         String redirectUri = UriComponentsBuilder.fromUriString("/")
-                .queryParam("accessToken", jwt).build().toUriString();
-        log.info("jwt = " + jwt);
-        log.info("redirectUri = " + redirectUri);
+                .build().toUriString();
+
+        System.out.println("redirectUri = " + redirectUri);
+
         getRedirectStrategy().sendRedirect(request, response, redirectUri);
     }
 }
