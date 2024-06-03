@@ -30,15 +30,18 @@
                 <h3 class="mb-5 text-center">티켓 등록</h3>
                 <input type="hidden" th:field="*{id}">
 
+                <div class="form-group mb-3">
+                    <label for="childPrice" class="mb-1"> 어린이 티켓 가격</label>
+                    <input type="number" th:field="*{childPrice}" id="childPrice" class="form-control" placeholder="어린이 티켓의 가격을 입력해주세요" min="0" onchange="checkPrice()" required>
+                    <div class="invalid-feedback">가격은 0원 이상이어야 합니다.</div>
+                    <p th:if="${#fields.hasErrors('childPrice')}" th:errors="*{childPrice}" class="text-danger">어린이 티켓의 가격은 0원 이상이어야 합니다.</p>
+                </div>
 
                 <div class="form-group mb-3">
-                    <label for="ticketCategory" class="mb-1"> 할인 구분</label>
-                    <select th:field="*{ticketCategory}" class="form-control" id="ticketCategory" required>
-                        <option value="" disabled selected>구분을 선택해주세요</option>
-                        <option value="CHILD">어린이</option>
-                        <option value="ADULT">성인</option>
-                    </select>
-                    <div class="invalid-feedback">구분을 선택해주세요.</div>
+                    <label for="adultPrice" class="mb-1"> 성인 티켓 가격</label>
+                    <input type="number" th:field="*{adultPrice}" id="adultPrice" class="form-control" placeholder="티켓의 가격을 입력해주세요" min="0" onchange="checkPrice()" required>
+                    <div class="invalid-feedback">성인 티켓의 가격은 0원 이상이어야 합니다.</div>
+                    <p th:if="${#fields.hasErrors('adultPrice')}" th:errors="*{adultPrice}" class="text-danger">성인 티켓의 가격은 0원 이상이어야 합니다.</p>
                 </div>
 
                 <div class="form-group mb-3">
@@ -46,13 +49,6 @@
                     <input type="text" th:field="*{name}" class="form-control" id="name" placeholder="티켓명을 입력해주세요" required>
                     <div class="invalid-feedback">티켓명을 입력해주세요.</div>
                     <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-danger">Incorrect data</p>
-                </div>
-
-                <div class="form-group mb-3">
-                    <label for="price" class="mb-1"> 가격</label>
-                    <input type="number" th:field="*{price}" id="price" class="form-control" placeholder="티켓의 가격을 입력해주세요" min="0" onchange="checkPrice()" required>
-                    <div class="invalid-feedback">가격은 0원 이상이어야 합니다.</div>
-                    <p th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="text-danger">가격은 0원 이상이어야 합니다.</p>
                 </div>
 
                 <div class="form-group mb-3">

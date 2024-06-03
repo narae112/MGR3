@@ -1,7 +1,6 @@
 package com.MGR.repository;
 
 import com.MGR.constant.LocationCategory;
-import com.MGR.constant.TicketCategory;
 import com.MGR.dto.MainTicketDto;
 import com.MGR.dto.QMainTicketDto;
 import com.MGR.dto.TicketSearchDto;
@@ -32,9 +31,7 @@ public class TicketRepositoryCustomImpl implements TicketRepositoryCustom {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    private BooleanExpression searchTicketCategoryEq(TicketCategory searchTicketCategory) {
-        return searchTicketCategory == null ? null : QTicket.ticket.ticketCategory.eq(searchTicketCategory);
-    }
+
 
     private BooleanExpression searchLocationCategoryEq(LocationCategory searchLocationCategory) {
         return searchLocationCategory == null ? null : QTicket.ticket.locationCategory.eq(searchLocationCategory);
@@ -71,7 +68,6 @@ public class TicketRepositoryCustomImpl implements TicketRepositoryCustom {
         List<Ticket> content = queryFactory
                 .selectFrom(QTicket.ticket)
                 .where(regDtsAfter(ticketSearchDto.getSearchDateType()),
-                        searchTicketCategoryEq(ticketSearchDto.getTicketCategory()),
                         searchByLike(ticketSearchDto.getSearchBy(),
                                 ticketSearchDto.getSearchQuery()))
                 .orderBy(QTicket.ticket.id.desc())// 아이템을 아이디 기준으로 내림차순
@@ -81,7 +77,6 @@ public class TicketRepositoryCustomImpl implements TicketRepositoryCustom {
                 .fetch();//쿼리를 실행하고 결과를 가져온다.
         long total = queryFactory.select(Wildcard.count).from(QTicket.ticket)
                 .where(regDtsAfter(ticketSearchDto.getSearchDateType()),
-                        searchTicketCategoryEq(ticketSearchDto.getTicketCategory()),
                         searchByLike(ticketSearchDto.getSearchBy(), ticketSearchDto.getSearchQuery()))
                 .fetchOne();
 
@@ -113,10 +108,6 @@ public class TicketRepositoryCustomImpl implements TicketRepositoryCustom {
             builder.and(locationCategoryCondition);
         }
 
-        BooleanExpression categoryCondition = searchTicketCategoryEq(ticketSearchDto.getTicketCategory());
-        if (categoryCondition != null) {
-            builder.and(categoryCondition);
-        }
 
         List<MainTicketDto> content = queryFactory
                 .select(
@@ -125,7 +116,6 @@ public class TicketRepositoryCustomImpl implements TicketRepositoryCustom {
                                 ticket.name,
                                 ticket.memo,
                                 ticketImg.imgUrl,
-                                ticket.price,
                                 ticket.startDate,
                                 ticket.endDate
 

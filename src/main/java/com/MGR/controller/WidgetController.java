@@ -1,5 +1,8 @@
 package com.MGR.controller;
 
+import com.MGR.constant.ReservationStatus;
+import com.MGR.entity.Order;
+import com.MGR.repository.OrderRepository;
 import com.MGR.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -98,7 +102,6 @@ public class WidgetController {
                                  Model model) throws Exception {
         orderService.changeStatus(id);
         return "/success";
-
     }
 
     @RequestMapping(value = "/checkout", method = RequestMethod.GET)
