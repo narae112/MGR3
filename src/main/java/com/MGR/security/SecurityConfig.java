@@ -41,9 +41,10 @@ public class SecurityConfig {
                         .requestMatchers("/websocket/**").permitAll()
                         .requestMatchers("/api/**").hasRole( "USER")
                         .requestMatchers("/gemini/**").permitAll()
+                        .requestMatchers("/board/**").permitAll()
                         .requestMatchers("/js/**").permitAll()
                         .requestMatchers("/css/**").permitAll()
-                        .requestMatchers("/images/**").permitAll()
+                        .requestMatchers("/img/**").permitAll()
                         .requestMatchers("/admin/**").authenticated() // ~로 시작하는 uri 는 로그인 필수
                         .requestMatchers("/admin/**").hasRole("ADMIN") //admin 으로 시작하는 uri 는 관리자 계정만 접근 가능
                         .anyRequest().permitAll())//나머지 uri 는 모든 접근 허용

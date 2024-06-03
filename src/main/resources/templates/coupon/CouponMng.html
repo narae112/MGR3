@@ -2,9 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
-<head>
-    <!-- Bootstrap CSS 추가 -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+
+<th:block layout:fragment="css">
     <style>
         .pagination {
             display: flex;
@@ -17,8 +17,9 @@
             margin-top: 20px; /* 페이지네이션과 검색 폼 사이에 여백 추가 */
         }
     </style>
-</head>
-<body>
+</th:block>
+
+
 <div layout:fragment="content">
     <form th:action="@{'/admin/coupons/' + ${coupons.number}}" role="form" method="get" th:object="${coupons}">
         <table class="table">
@@ -99,5 +100,5 @@
             + "&searchQuery=" + searchQuery;
     }
 </script>
-</body>
+
 </html>
