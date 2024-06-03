@@ -32,7 +32,7 @@ public class ReservationController {
     // 예약하기
     @PostMapping("/reservation")
     public @ResponseBody ResponseEntity reservation(@RequestBody @Valid ReservationTicketDto reservationTicketDto,
-                                              BindingResult bindingResult, @AuthenticationPrincipal PrincipalDetails member) {
+                                                    BindingResult bindingResult, @AuthenticationPrincipal PrincipalDetails member) {
         if(bindingResult.hasErrors()){
             StringBuilder sb = new StringBuilder();
             List<FieldError> fieldErrors = bindingResult.getFieldErrors();
@@ -95,21 +95,26 @@ public class ReservationController {
     // 결제할 티켓 정보
     @PostMapping("/reservation/orders")
     public @ResponseBody ResponseEntity orderReservationTicket(@RequestBody ReservationOrderDto reservationOrderDto,
-                                                                                          @AuthenticationPrincipal PrincipalDetails member) {
+                                                               @AuthenticationPrincipal PrincipalDetails member) {
         List<ReservationOrderDto> reservationOrderDtoList = reservationOrderDto.getReservationOrderDtoList();
+        String email = member.getUsername();
 
         if(reservationOrderDtoList == null || reservationOrderDtoList.size() == 0) {
             return new ResponseEntity<String>("주문할 상품을 선택해주세요", HttpStatus.FORBIDDEN);
         }
 
         for(ReservationOrderDto reservationOrder : reservationOrderDtoList) {
-            if(!reservationService.validateReserveTicket(reservationOrder.getReservationTicketId(), member.getUsername())) {
+            if(!reservationService.validateReserveTicket(reservationOrder.getReservationTicketId(), email)) {
                 return new ResponseEntity<String>("주문 권한이 없습니다.", HttpStatus.FORBIDDEN);
             }
         }
 
-        Long orderId = reservationService.orderReservationTicket(reservationOrderDtoList, member.getUsername());
+        Long orderId = reservationService.orderReservationTicket(reservationOrderDtoList, email);
 
         return new ResponseEntity<Long>(orderId, HttpStatus.OK);
     }
+
+
+
+
 }

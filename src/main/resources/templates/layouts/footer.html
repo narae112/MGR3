@@ -1,10 +1,29 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
-<footer th:fragment="footer" class="py-5 bg-dark">
-    <div class="container">
-        <p class="m-0 text-center text-white">Copyright © MGRProject 2024</p>
+<footer th:fragment="footer" class="footer">
+
+<!-- Start Footer Area -->
+    <!-- Start Footer Top -->
+    <!-- 원래 푸터가 있었음 -->
+    <!--/ End Footer Top -->
+
+    <!-- Start Copyright Area -->
+    <div class="copyright">
+        <div class="container">
+            <div class="inner-content">
+                <div class="row">
+                    <div class="col-12">
+                        <p>여기에 우리 로고하고 깃 연결되는 링크 넣고싶음</p>
+                        <p class="copyright-text">Copyright © Merry Go Ride. All rights reserved.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <!-- JS-->
-    <script th:src="@{/js/bootstrap.min.js}"></script>
+
+    <a href="#" class="scroll-top">
+        <i class="lni lni-chevron-up"></i>
+    </a>
+<!-- End Copyright Area -->
 </footer>
 </html>

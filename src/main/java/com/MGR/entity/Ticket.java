@@ -1,7 +1,6 @@
 package com.MGR.entity;
 
 import com.MGR.constant.LocationCategory;
-import com.MGR.constant.TicketCategory;
 import com.MGR.dto.TicketFormDto;
 import com.MGR.exception.DuplicateTicketNameException;
 import com.fasterxml.jackson.databind.ser.Serializers;
@@ -30,8 +29,6 @@ public class Ticket extends BaseEntity {
     @Column(columnDefinition = "DATE")
     private LocalDate endDate;
 
-    @Enumerated(EnumType.STRING)
-    private TicketCategory ticketCategory;
 
     @Enumerated(EnumType.STRING)
     private LocationCategory locationCategory;
@@ -39,24 +36,23 @@ public class Ticket extends BaseEntity {
     @Column(nullable = false, length = 50, unique = true)
     private String name;
 
-    @Column(name="price", nullable = false)
-    private int price;
+    @Column(name="adultPrice", nullable = false)
+    private Integer adultPrice;
+
+    @Column(name="childPrice", nullable = false)
+    private Integer childPrice;
 
     @Column(columnDefinition = "TEXT")
     private String memo;
 
+
     public void updateTicket(TicketFormDto ticketFormDto) {
         this.name = ticketFormDto.getName();
-        this.price = ticketFormDto.getPrice();
         this.memo = ticketFormDto.getMemo();
-        this.ticketCategory = ticketFormDto.getTicketCategory();
         this.startDate = ticketFormDto.getStartDate();
         this.endDate = ticketFormDto.getEndDate();
+        this.adultPrice = ticketFormDto.getAdultPrice();
+        this.childPrice = ticketFormDto.getChildPrice();
         this.locationCategory = ticketFormDto.getLocationCategory();
-
     }
-
-
-
 }
-

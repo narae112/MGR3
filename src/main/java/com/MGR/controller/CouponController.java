@@ -46,7 +46,7 @@ public class CouponController {
             return "coupon/couponForm";
         }
         if (couponFormDto.getDiscountAmount() == null && couponFormDto.getDiscountRate() == null) {
-            model.addAttribute("errorMessage", "할인액 또는 할인률을 입력해주세요");
+            model.addAttribute("errorMessage", "할인액 또는 할인율을 입력해주세요");
             return "coupon/couponForm";
         }
         try {
@@ -99,8 +99,7 @@ public class CouponController {
 //        return "redirect:/admin/coupons"; // 성공 시 쿠폰 관리 페이지로 리다이렉트
 //    }
 
-    // 쿠폰 받기 페이지(예정)
-    @GetMapping(value={"coupons", "/coupons/{page}"})
+     @GetMapping(value={"coupons", "/coupons/{page}"})
     public String couponMain(CouponSearchDto couponSearchDto,
                              @PathVariable Optional<Integer> page, Model model){
         Pageable pageable = PageRequest.of(page.orElse(0), 6); // 페이지 번호
@@ -117,13 +116,21 @@ public class CouponController {
     @GetMapping(value = {"/admin/coupons", "/admin/coupons/{page}"})
     public String couponManage(CouponSearchDto couponSearchDto,
                                @PathVariable("page") Optional<Integer> page, Model model){
-        Pageable pageable = PageRequest.of(page.isPresent() ? page.get():0, 3);
+        // 페이지 매개변수 처리
+        int pageNumber = page.orElse(0); // 페이지 매개변수가 없는 경우 0으로 초기화
+        Pageable pageable = PageRequest.of(pageNumber, 3);
+
+        // 쿠폰 페이지 가져오기
         Page<Coupon> coupons = couponService.getAdminCouponPage(couponSearchDto, pageable);
-        model.addAttribute("coupons",coupons);
+
+        // 모델에 쿠폰 페이지 및 기타 데이터 추가
+        model.addAttribute("coupons", coupons);
         model.addAttribute("couponSearchDto", couponSearchDto);
-        model.addAttribute("maxPage",5);
+        model.addAttribute("pageNumber", coupons.getNumber()); // 페이지 번호 추가
+
         return "coupon/couponMng";
     }
+
 
 //    // 쿠폰 삭제
 //    @GetMapping("/admin/coupon/delete/{couponId}")

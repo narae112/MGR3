@@ -62,10 +62,9 @@
 
         <button class="btn btn-primary"
                 onClick="location.href='/board/eventBoard/new'"
-                sec:authorize="hasRole('ADMIN')"
-        >등록</button>
+                sec:authorize="hasRole('ADMIN')">등록</button>
 
-    <div th:if="${!paging.isEmpty()}">
+    <div th:if="${!paging.isEmpty()}" class="text-center pagination-container">
         <ul class="pagination justify-content-center">
             <li class="page-item" th:classappend="${!paging.hasPrevious} ? 'disabled'">
                 <a class="page-link" th:href="@{|?page=${paging.number-1}|}">
@@ -84,6 +83,8 @@
             </li>
         </ul>
     </div>
+
+
 
 </div>
 </html>

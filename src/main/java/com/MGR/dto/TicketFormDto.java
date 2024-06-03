@@ -1,7 +1,6 @@
 package com.MGR.dto;
 
 import com.MGR.constant.LocationCategory;
-import com.MGR.constant.TicketCategory;
 import com.MGR.entity.Ticket;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +11,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,9 +22,6 @@ public class TicketFormDto {
     @NotBlank(message = "티켓명은 필수 입력 값입니다.")
     private String name;
 
-    @NotNull(message = "가격은 필수 입력 값입니다.")
-    private Integer price;
-
     @NotBlank(message = "티켓 세부사항은 필수 입력 값입니다.")
     private String memo;
 
@@ -36,7 +31,13 @@ public class TicketFormDto {
     @NotNull(message = "종료 날짜는 필수 입력 값입니다.")
     private LocalDate endDate;
 
-    private TicketCategory ticketCategory;
+    @NotNull(message = "성인 가격은 필수 입력 값입니다.")
+    @Min(value = 0, message = "성인 가격은 0보다 큰 값이어야 합니다.")
+    private Integer adultPrice;
+
+    @NotNull(message = "어린이 가격은 필수 입력 값입니다.")
+    @Min(value = 0, message = "어린이 가격은 0보다 큰 값이어야 합니다.")
+    private Integer childPrice;
 
     private LocationCategory locationCategory;
 

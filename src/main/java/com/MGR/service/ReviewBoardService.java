@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -57,12 +58,7 @@ public class ReviewBoardService {
             }
         };
     }
-    public Page<ReviewBoard>getList(int page, String kw){
-        List<Sort.Order> sorts = new ArrayList<>();
-        sorts.add(Sort.Order.desc("createDate"));
-        Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
-        return this.reviewBoardRepository.findAllByKeyword(kw, pageable);
-    }
+
 
     public ReviewBoard getReviewBoard(Long id){
         Optional<ReviewBoard> reviewBoard = this.reviewBoardRepository.findById(id);
@@ -72,6 +68,12 @@ public class ReviewBoardService {
         }else{
             throw new DataNotFoundException("review not found");
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReviewBoardForm> getReviewBoardForms() {
+        List<ReviewBoard> reviewBoards = reviewBoardRepository.findAll();
+        return reviewBoards.stream().map(this::convertToForm).collect(Collectors.toList());
     }
     public Long createReviewBoard(String subject, String content, Member user, List<MultipartFile> reviewImgFileList) throws Exception {
         ReviewBoard q = new ReviewBoard();
@@ -160,5 +162,42 @@ public class ReviewBoardService {
         reviewBoard.getVoter().remove(siteUser);
         this.reviewBoardRepository.save(reviewBoard);
     }
+//    public Page<ReviewBoard> getList(int page, String keyword) {
+//        Pageable pageable = PageRequest.of(page, 10);
+//        return reviewBoardRepository.findAllByKeyword(keyword, pageable);
+//    }
+public Page<ReviewBoard> getList(int page, String keyword, String sort) {
+    Pageable pageable = PageRequest.of(page, 10);
 
+    if (keyword != null && !keyword.isEmpty()) {
+        switch (sort) {
+            case "views":
+                return reviewBoardRepository.findByKeywordOrderByCountDesc(keyword, pageable);
+            case "votes":
+                return reviewBoardRepository.findByKeywordOrderByVoterCountDesc(keyword, pageable);
+            case "date":
+            default:
+                return reviewBoardRepository.findByKeywordOrderByCreateDateDesc(keyword, pageable);
+        }
+    } else {
+        switch (sort) {
+            case "views":
+                return reviewBoardRepository.findAllOrderByCountDesc(pageable);
+            case "votes":
+                return reviewBoardRepository.findAllOrderByVoterCountDesc(pageable);
+            case "date":
+            default:
+                return reviewBoardRepository.findAllOrderByCreateDateDesc(pageable);
+        }
+    }
 }
+    private ReviewBoardForm convertToForm(ReviewBoard reviewBoard) {
+        List<Image> reviewImgList = imageRepository.findByReviewBoardIdOrderByIdAsc(reviewBoard.getId());
+        List<ImageDto> reviewImgDtoList = reviewImgList.stream().map(ImageDto::of).collect(Collectors.toList());
+
+        ReviewBoardForm form = ReviewBoardForm.of(reviewBoard);
+        form.setReviewImgDtoList(reviewImgDtoList);
+        return form;
+    }
+}
+

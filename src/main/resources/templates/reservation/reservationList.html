@@ -142,7 +142,7 @@
                 dataType : "json",
                 cache   : false,
                 success  : function(result, status){
-
+                    location.href='/member/orders';
                 },
                 error : function(jqXHR, status, error){
 
@@ -214,9 +214,9 @@
             <tbody>
             <!-- 예약 티켓 항목 -->
             <tr th:each="reservationTicket : ${reservationTickets}">
-<!--            <tr>-->
-<!--                <td th:text="'예약날짜' + ${reservationTicket.reservationDate}"></td>-->
-<!--            </tr>-->
+                <!--            <tr>-->
+                <!--                <td th:text="'예약날짜' + ${reservationTicket.reservationDate}"></td>-->
+                <!--            </tr>-->
                 <td class="text-center align-middle"><!-- 체크박스 -->
                     <th:block th:if="${reservationTicket.reservationStatus == T(com.MGR.constant.ReservationStatus).RESERVE}">
                         <input type="checkbox" name="reserveChkBox" th:value="${reservationTicket.reservationTicketId}">
@@ -232,7 +232,7 @@
                                       th:data-price="${reservationTicket.price}"
                                       th:text="${reservationTicket.price} + '원'" class="align-self-center me-2"><!-- 예약 티켓 금액 -->
                                 </span>
-                                <span>
+                            <span>
                                 <input type="number" name="count" th:id="'count_' + ${reservationTicket.reservationTicketId}"
                                        th:value="${reservationTicket.ticketCount}" min="1" onchange="changeCount(this)" class="form-control" ><!-- 티켓 수량 수정 -->
                                 </span>

@@ -31,7 +31,11 @@ public class QCoupon extends EntityPathBase<Coupon> {
     //inherited
     public final StringPath createdBy = _super.createdBy;
 
+    public final NumberPath<Integer> discountAmount = createNumber("discountAmount", Integer.class);
+
     public final NumberPath<Integer> discountRate = createNumber("discountRate", Integer.class);
+
+    public final EnumPath<com.MGR.constant.DiscountType> discountType = createEnum("discountType", com.MGR.constant.DiscountType.class);
 
     public final DatePath<java.time.LocalDate> endDate = createDate("endDate", java.time.LocalDate.class);
 

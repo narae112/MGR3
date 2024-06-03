@@ -32,7 +32,7 @@ public class ReservationService {
     private final MemberRepository memberRepository;
     private final ReservationRepository reservationRepository;
     private final ReservationTicketRepository reservationTicketRepository;
-     private final OrderService orderService;
+    private final OrderService orderService;
 
     // 예약 내역에 추가
     public Long addReservation(ReservationTicketDto reservationTicketDto, String email) {
@@ -126,18 +126,20 @@ public class ReservationService {
 
     // 결제
     public Long orderReservationTicket(List<ReservationOrderDto> reservationOrderDtoList, String email) {
+        // reservationOrderDtoList : 결제 할 (구매자가 선택한) 예약티켓 아이디들
         List<OrderDto> orderDtoList = new ArrayList<>();
 
         for(ReservationOrderDto reservationOrderDto : reservationOrderDtoList) {
-            //ReservationOrderDto 객체 만들어서 reservationTicket 정보 넣기
+            //ReservationOrderDto 객체 만들어서 reservationTicket 정보 가져오기
             ReservationTicket reservationTicket = reservationTicketRepository.findById(reservationOrderDto.getReservationTicketId())
                     .orElseThrow(EntityNotFoundException::new);
 
             // OrderDto 객체 만들어서 reservationTicket 정보 넣기
             OrderDto orderDto = new OrderDto();
 
-            orderDto.setTicketId(reservationTicket.getTicket().getId());
-            orderDto.setCount(reservationTicket.getTicketCount());
+            orderDto.setTicketId(reservationTicket.getTicket().getId()); // 예약한 티켓의 티켓아이디
+            orderDto.setCount(reservationTicket.getTicketCount()); // 예약한 티켓 갯수
+            orderDto.setVisitDate(LocalDate.parse(reservationTicket.getVisitDate())); // 예약한 티켓의 방문일
 
             orderDtoList.add(orderDto);
         }

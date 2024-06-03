@@ -1,7 +1,6 @@
 package com.MGR.dto;
 
 import com.MGR.constant.LocationCategory;
-import com.MGR.constant.TicketCategory;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,8 +12,6 @@ public class TicketSearchDto {
     private String searchDateType; // 현재시간과 상품등록일을 비교하여 조회
 
     private String searchPeriodType;
-
-    private TicketCategory ticketCategory; // 어린이, 성인
 
     private String searchBy; // 티켓 조회
 

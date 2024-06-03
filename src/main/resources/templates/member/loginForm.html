@@ -9,34 +9,64 @@
         .loginError{
             color: red;
         }
+        img {
+            width: 80px;
+            margin: 0;
+            cursor: pointer;
+        }
+        .social-login {
+            display: flex;
+            justify-content: space-between;
+        }
+        .social-login .col-3 {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
     </style>
 </th:block>
 
-<div layout:fragment="content">
-
+<div layout:fragment="content" class="container my-5">
     <div class="container my-3">
-        <h5 class="my-3 border-bottom pb-2">로그인</h5>
-        <form th:action="@{/login}" method="POST">
-            <div class="mb-3">
-                <label for="email"> 이메일</label>
-                <input class="form-control" type="text" name="email" id="email"/>
+        <h5 class="mb-5 border-bottom pb-2 text-center">로그인</h5>
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <form th:action="@{/login}" method="POST">
+                    <div class="mb-3">
+                        <label for="email"> 이메일</label>
+                        <input class="form-control" type="text" name="email" id="email"/>
+                    </div>
+                    <div class="mb-4">
+                        <label for="password"> 비밀번호</label>
+                        <input class="form-control" type="password" name="password" id="password"/>
+                    </div>
+                    <p class="loginError" th:text="${loginError}"></p>
+                    <div class="row mb-4">
+                        <div class="col-6">
+                            <button class="btn btn-primary w-100" type="submit" id="member-create">로그인</button>
+                        </div>
+                        <div class="col-6">
+                            <button class="btn btn-primary w-100" type="button" id="member-join" onClick="location.href='/join'">회원가입</button>
+                        </div>
+                    </div>
+                    <div class="row social-login">
+                        <div class="col-3 mb-2">
+                            <img src="/img/login/btn_kakao.png" id="kakao-login" onClick="location.href='/oauth2/authorization/kakao'" alt="kakao">
+                        </div>
+                        <div class="col-3 mb-2">
+                            <img src="/img/login/btn_naver.png" id="naver-login" onClick="location.href='/oauth2/authorization/naver'" alt="naver">
+                        </div>
+                        <div class="col-3 mb-2">
+                            <img src="/img/login/btn_google.png" id="google-login" onClick="location.href='/oauth2/authorization/google'" alt="google">
+                        </div>
+                        <div class="col-3 mb-2">
+                            <img src="/img/login/btn_github.png" id="github-login" onClick="location.href='/oauth2/authorization/github'" alt="github">
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div class="mb-3">
-                <label for="password"> 비밀번호</label>
-                <input class="form-control" type="password" name="password" id="password"/>
-            </div>
-            <p class="loginError" th:text="${loginError}"></p>
-            <button class="btn btn-primary" type="submit" id="member-create">로그인</button>
-            <button class="btn btn-primary" type="button" id="kakao-login" onClick="location.href='/oauth2/authorization/kakao'">카카오</button>
-            <button class="btn btn-primary" type="button" id="naver-login" onClick="location.href='/oauth2/authorization/naver'">네이버</button>
-            <button class="btn btn-primary" type="button" id="google-login" onClick="location.href='/oauth2/authorization/google'">구글</button>
-            <button class="btn btn-primary" type="button" id="git-login" onClick="location.href='/oauth2/authorization/github'">깃허브</button>
-            <button class="btn btn-primary" type="button" id="member-join" onClick="location.href='/join'">회원가입</button>
-<!--            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">-->
-
-        </form>
-
+        </div>
     </div>
-
 </div>
+
 </html>

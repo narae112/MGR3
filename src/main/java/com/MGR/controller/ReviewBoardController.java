@@ -40,15 +40,24 @@ public class ReviewBoardController {
     private final MemberService memberService;
     private final FileService fileService;
     @GetMapping("/list")
-    public String list(Model model, @RequestParam(value = "page", defaultValue = "0") int page,
-                       @RequestParam(value = "kw", defaultValue = "") String kw) {
-        log.info("page:{}, kw:{}", page, kw);
-        Page<ReviewBoard> paging = this.reviewBoardService.getList(page, kw);
+    public String list(Model model,
+                       @RequestParam(value = "page", defaultValue = "0") int page,
+                       @RequestParam(value = "kw", defaultValue = "") String kw,
+                       @RequestParam(value = "sort", defaultValue = "date") String sort) {
+        // 페이징된 리뷰 게시글 목록 가져오기
+        Page<ReviewBoard> paging = this.reviewBoardService.getList(page, kw, sort);
+
+        // 전체 리뷰 게시글의 정보 가져오기 (이미지 포함)
+        List<ReviewBoardForm> reviewBoardForms = this.reviewBoardService.getReviewBoardForms();
+
+        // 페이징 정보와 리뷰 게시글 폼을 모델에 추가
         model.addAttribute("paging", paging);
         model.addAttribute("kw", kw);
+        model.addAttribute("sort", sort);
+        model.addAttribute("reviewBoardForms", reviewBoardForms);
+
         return "board/review/board_list";
     }
-
     @GetMapping(value = "/detail/{id}")
     public String detail(Model model, @PathVariable("id") Long id, ReviewCommentForm reviewCommentForm) {
         ReviewBoard reviewBoard = this.reviewBoardService.getReviewBoard(id);
