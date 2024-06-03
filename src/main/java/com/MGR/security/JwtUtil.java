@@ -18,8 +18,14 @@ public class JwtUtil {
     private Long expiredMs;
 
     public String getMemberId(String token) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token)
-                .getBody().get("memberId", String.class);
+//        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token)
+//                .getBody().get("memberId", String.class);
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("memberId", String.class);
     }
     public Long getId(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token)
@@ -35,7 +41,7 @@ public class JwtUtil {
         Claims claims = Jwts.claims();
         claims.put("memberId", memberId);
         claims.put("id", id);
-        System.out.println(secretKey);
+        System.out.println("jwt 발행 확인 = " + claims);
 
         String token = Jwts.builder()
                 .setClaims(claims)
@@ -43,6 +49,7 @@ public class JwtUtil {
                 .setExpiration(new Date(System.currentTimeMillis() + expiredMs))
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
+        System.out.println("token 발행 확인 = " + token);
         return token;
     }
 }

@@ -35,7 +35,7 @@ public class OrderTicket {
         OrderTicket orderTicket = new OrderTicket();
         orderTicket.setTicket(ticket);
         orderTicket.setCount(count);
-        orderTicket.setOrderPrice(ticket.getPrice());
+//        orderTicket.setOrderPrice(ticket.getPrice());
         orderTicket.setVisitDate(visitDate);
 
         return orderTicket;

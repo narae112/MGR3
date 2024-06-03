@@ -26,7 +26,7 @@ public class OrderTicketDto {
         this.orderId = orderTicket.getOrder().getId();
         this.locationCategory = orderTicket.getTicket().getLocationCategory();
         this.name = orderTicket.getTicket().getName();
-        this.ticketCategory = orderTicket.getTicket().getTicketCategory();
+//        this.ticketCategory = orderTicket.getTicket().getTicketCategory();
         this.visitDate = orderTicket.getVisitDate();
         this.count = orderTicket.getCount();
         this.orderPrice = orderTicket.getOrderPrice();
