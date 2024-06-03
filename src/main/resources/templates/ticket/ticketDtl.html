@@ -113,72 +113,74 @@
 <!-- css -->
 <th:block layout:fragment="css">
     <style>
-        .mgb-15 {
-            margin-bottom: 15px;
-        }
-        .mgt-30 {
-            margin-top: 30px;
-        }
-        .mgt-50 {
-            margin-top: 50px;
-        }
-        .repImgDiv {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        .repImg {
-            height: 100%;
-            object-fit: cover;
-        }
-        .wd50 {
-            height: auto;
-            width: 50%;
-        }
-        .flex-column-full {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .container {
-            margin-top: 20px; /* 상단 여백 설정 */
-            background-color: white; /* 배경색 설정 */
-            padding: 20px; /* 내부 여백 설정 */
-            border-radius: 10px; /* 테두리 둥글기 설정 */
-            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1); /* 그림자 설정 */
-        }
-        h4 {
-            color: #343a40; /* 헤더 색상 설정 */
-        }
-        hr {
-            border-top: 1px solid #dee2e6; /* 수평선 색상 설정 */
-            margin-top: 1rem; /* 수평선 위 여백 설정 */
-            margin-bottom: 1rem; /* 수평선 아래 여백 설정 */
-        }
-        p {
-            color: #6c757d; /* 문단 색상 설정 */
-        }
-        .input-group-text {
-            background-color: #007bff; /* 입력 그룹 텍스트 배경색 설정 */
-            color: white; /* 입력 그룹 텍스트 색상 설정 */
-            border-color: #007bff; /* 입력 그룹 텍스트 테두리 색상 설정 */
-        }
-        .form-control {
-            border-color: #ced4da; /* 입력 폼 테두리 색상 설정 */
-        }
-        .btn-primary {
-            background-color: #007bff; /* 버튼 배경색 설정 */
-            border-color: #007bff; /* 버튼 테두리 색상 설정 */
-        }
-        .btn-primary:hover {
-            background-color: #0056b3; /* 호버 시 버튼 배경색 설정 */
-            border-color: #0056b3; /* 호버 시 버튼 테두리 색상 설정 */
-        }
-        .jumbotron {
-            background-color: #f8f9fa; /* 점보트론 배경색 설정 */
-            padding-top: 20px; /* 점보트론 위 여백 설정 */
-            padding-bottom: 20px; /* 점보트론 아래 여백 설정 */
+        /* .content 클래스로 감싸진 요소에만 스타일이 적용되도록 설정 */
+        .content {
+            .mgb-15 {
+                margin-bottom: 15px;
+            }
+            .mgt-30 {
+                margin-top: 30px;
+            }
+            .mgt-50 {
+                margin-top: 50px;
+            }
+            .repImgDiv {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+            .repImg {
+                height: 100%;
+                object-fit: cover;
+            }
+            .wd50 {
+                height: auto;
+                width: 50%;
+            }
+            .flex-column-full {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+            }
+            .container {
+                margin-top: 20px; /* 상단 여백 설정 */
+                background-color: white; /* 배경색 설정 */
+                padding: 20px; /* 내부 여백 설정 */
+                border-radius: 10px; /* 테두리 둥글기 설정 */
+                box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1); /* 그림자 설정 */
+            }
+            h4 {
+                color: #343a40; /* 헤더 색상 설정 */
+            }
+            hr {
+                border-top: 1px solid #dee2e6; /* 수평선 색상 설정 */
+                margin-top: 1rem; /* 수평선 위 여백 설정 */
+                margin-bottom: 1rem; /* 수평선 아래 여백 설정 */
+            }
+            p {
+                color: #6c757d; /* 문단 색상 설정 */
+            }
+            .input-group-text {
+                background-color: #007bff; /* 입력 그룹 텍스트 배경색 설정 */
+                color: white; /* 입력 그룹 텍스트 색상 설정 */
+                border-color: #007bff; /* 입력 그룹 텍스트 테두리 색상 설정 */
+            }
+            .form-control {
+                border-color: #ced4da; /* 입력 폼 테두리 색상 설정 */
+            }
+            .btn-primary {
+                background-color: #007bff; /* 버튼 배경색 설정 */
+                border-color: #007bff; /* 버튼 테두리 색상 설정 */
+            }
+            .btn-primary:hover {
+                background-color: #0056b3; /* 호버 시 버튼 배경색 설정 */
+                border-color: #0056b3; /* 호버 시 버튼 테두리 색상 설정 */
+            }
+            .jumbotron {
+                background-color: #f8f9fa; /* 점보트론 배경색 설정 */
+                padding-top: 20px; /* 점보트론 위 여백 설정 */
+                padding-bottom: 20px; /* 점보트론 아래 여백 설정 */
+            }
         }
     </style>
 </th:block>
