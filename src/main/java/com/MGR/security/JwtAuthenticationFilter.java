@@ -17,47 +17,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import java.io.IOException;
 
-//@Slf4j
-//@RequiredArgsConstructor
-//public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-//    private final AuthenticationManager authenticationManager;
-//    private final JwtUtil jwtUtil;
-//
-//    @Override
-//    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        MemberFormDto memberDto = null;
-//        try {
-//            memberDto = objectMapper.readValue(request.getInputStream(), MemberFormDto.class);
-//        } catch (Exception e) {
-//            log.error("Error parsing authentication request", e);
-//            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-//
-//            return null;
-//        }
-//
-//        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(memberDto.getEmail(), memberDto.getPassword());
-//        return authenticationManager.authenticate(token);
-//    }
-//
-//    @Override
-//    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-//        PrincipalDetails principal = (PrincipalDetails) authResult.getPrincipal();
-//        Member member = principal.getMember();
-//        String jwt = jwtUtil.createJwt(member.getEmail(), member.getId());
-//        response.setHeader("Authorization", jwt);
-//        log.info("Authentication successful for user: {}", member.getEmail());
-//    }
-//
-//    @Override
-//    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-//        log.error("Authentication failed", failed);
-//        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//        response.getWriter().write("Authentication failed: " + failed.getMessage());
-//        response.getWriter().flush();
-//    }
-//}
-
 @Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {

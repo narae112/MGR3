@@ -24,13 +24,13 @@ public class ReservationDtlDto {
     public ReservationDtlDto(ReservationTicket reservationTicket) {
         this.reservationTicketId = reservationTicket.getId();
         this.name = reservationTicket.getTicket().getName();
-        this.price = reservationTicket.getTicket().getPrice();
+//        this.price = reservationTicket.getTicket().getPrice();
         this.ticketCount = reservationTicket.getTicketCount();
         this.locationCategory = reservationTicket.getTicket().getLocationCategory();
         this.visitDate = reservationTicket.getVisitDate();
         this.reservationDate = reservationTicket.getReservationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         this.reservationStatus = reservationTicket.getReservationStatus();
-        this.ticketCategory = reservationTicket.getTicket().getTicketCategory();
+//        this.ticketCategory = reservationTicket.getTicket().getTicketCategory();
     }
 
 }
