@@ -126,7 +126,7 @@ public class CouponController {
         // 모델에 쿠폰 페이지 및 기타 데이터 추가
         model.addAttribute("coupons", coupons);
         model.addAttribute("couponSearchDto", couponSearchDto);
-        model.addAttribute("pageNumber", pageNumber); // 페이지 번호 추가
+        model.addAttribute("pageNumber", coupons.getNumber()); // 페이지 번호 추가
 
         return "coupon/couponMng";
     }
