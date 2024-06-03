@@ -22,6 +22,10 @@ public class QReservationTicket extends EntityPathBase<ReservationTicket> {
 
     public static final QReservationTicket reservationTicket = new QReservationTicket("reservationTicket");
 
+    public final NumberPath<Integer> adultCount = createNumber("adultCount", Integer.class);
+
+    public final NumberPath<Integer> childCount = createNumber("childCount", Integer.class);
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final QReservation reservation;
@@ -31,8 +35,6 @@ public class QReservationTicket extends EntityPathBase<ReservationTicket> {
     public final EnumPath<com.MGR.constant.ReservationStatus> reservationStatus = createEnum("reservationStatus", com.MGR.constant.ReservationStatus.class);
 
     public final QTicket ticket;
-
-    public final NumberPath<Integer> ticketCount = createNumber("ticketCount", Integer.class);
 
     public final StringPath visitDate = createString("visitDate");
 

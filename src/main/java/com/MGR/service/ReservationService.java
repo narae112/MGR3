@@ -44,7 +44,7 @@ public class ReservationService {
         // 티켓 아이디와 방문날짜로 해당 티켓의 해당 날짜 재고 정보를 가져온다
 
         inventory.removeQuantity(reservationTicketDto.getTicketCount());
-        // 재고 체크(남아있는 재고보다 주문수량이 많으면 X)
+        // 재고 체크(남아있는 재고보다 주문수량이 많으면 예약 X)
 
         Optional<Member> member = memberRepository.findByEmail(email);
         // 이메일을 이용, 로그인 한 멤버를 데이터베이스에서 찾는다
@@ -63,14 +63,14 @@ public class ReservationService {
         for(ReservationTicket savedReservationTicket : savedReservationTickets) {
             // 이미 예약한 티켓 리스트에 있고 방문날짜가 동일하면
             if(savedReservationTicket != null && savedReservationTicket.getVisitDate().equals(reservationTicketDto.getVisitDate())) {
-                savedReservationTicket.addCount(reservationTicketDto.getTicketCount()); // 수량만 증가
+                savedReservationTicket.addCount(reservationTicketDto.getAdultCount(), reservationTicketDto.getChildCount()); // 수량만 증가
 
                 return savedReservationTicket.getId(); // 예약 티켓 아이디 반환
             }
         }
 
         ReservationTicket reservationTicket = ReservationTicket.createReservationTicket(reservation, ticket,
-                reservationTicketDto.getTicketCount(), reservationTicketDto.getVisitDate());
+                reservationTicketDto.getAdultCount(), reservationTicketDto.getChildCount(), reservationTicketDto.getVisitDate());
 
         reservationTicketRepository.save(reservationTicket); // 새로운 예약 티켓 저장
 
@@ -93,35 +93,45 @@ public class ReservationService {
     }
 
     // 티켓 수량 수정
-    public void updateReservationTicketCount(Long reservationTicketId, int ticketCount) {
+    public void updateReservationTicketCount(Long reservationTicketId, int adultCount, int childCount) {
         ReservationTicket reservationTicket = reservationTicketRepository.findById(reservationTicketId)
                 .orElseThrow(EntityNotFoundException::new);
 
         Inventory inventory = inventoryRepository.findByTicketIdAndDate(reservationTicket.getTicket().getId(), LocalDate.parse(reservationTicket.getVisitDate()));
+        // 인벤토리 데이터베이스에서 해당 티켓 찾기
 
-        if(reservationTicket.getTicketCount() < ticketCount) { // 수정된 수량이 원래 예약한 수량보다 커지면
-            int result = ticketCount-reservationTicket.getTicketCount(); // 추가한 갯수만큼
+        int allReserveCount = adultCount + childCount;
+        // 성인티켓 수량 + 아동티켓 수량
+
+        if(reservationTicket.getAllCount() < allReserveCount) { // 수정된 전체 수량이 원래 예약한 전체 수량보다 커지면
+            int result = allReserveCount - reservationTicket.getAllCount(); // 추가한 갯수만큼
             inventory.removeQuantity(result); // 재고에서 빼준다
-        } else if(reservationTicket.getTicketCount() > ticketCount) { // 수정된 수량이 원래 예약한 수량보다 적어지면
-            int result = reservationTicket.getTicketCount() - ticketCount; // 뺀 갯수만큼
+        } else if(reservationTicket.getAllCount() > allReserveCount) { // 수정된 전체 수량이 원래 예약한 전체 수량보다 적어지면
+            int result = reservationTicket.getAllCount() - allReserveCount; // 뺀 갯수만큼
             inventory.addQuantity(result); // 재고에 더해준다
         }
 
-        reservationTicket.updateCount(ticketCount); // 예약한 티켓 내역에 수정된 수량을 업데이트
+        if(reservationTicket.getAdultCount() != adultCount && reservationTicket.getChildCount() == childCount) { // 수량의 변동이 어른티켓만 있으면
+            reservationTicket.updateAdultCount(adultCount);
+        } else if(reservationTicket.getAdultCount() == adultCount && reservationTicket.getChildCount() != childCount) { // 수량의 변동이 아동티켓만 있으면
+            reservationTicket.updateChildCount(childCount);
+        } // else if(reservationTicket.getAdultCount() != adultCount && reservationTicket.getChildCount() != childCount) { // 수량의 변동이 양쪽 다 있으면
+//            reservationTicket.updateAllCount(adultCount, childCount);
+//        }
 
-        reservationTicketRepository.save(reservationTicket);
+        reservationTicketRepository.save(reservationTicket); // 데이터베이스에 수정된 내용 저장
     }
 
     // 예약 취소
     public void cancelReservation(Long reservationId) {
         ReservationTicket reservationTicket = reservationTicketRepository.findById(reservationId)
-                .orElseThrow(EntityNotFoundException::new);
+                                                                    .orElseThrow(EntityNotFoundException::new);
 
-        reservationTicket.cancelReservation();
+        reservationTicket.cancelReservation(); // 예약 상태를 취소로 변경
 
         Inventory inventory = inventoryRepository.findByTicketIdAndDate(reservationTicket.getTicket().getId(), LocalDate.parse(reservationTicket.getVisitDate()));
 
-        inventory.addQuantity(reservationTicket.getTicketCount()); // 예약 되어 있던 티켓 갯수만큼 재고에 다시 더해준다
+        inventory.addQuantity(reservationTicket.getAllCount()); // 예약 되어 있던 티켓 갯수만큼 재고에 다시 더해준다
     }
 
     // 결제
@@ -138,7 +148,9 @@ public class ReservationService {
             OrderDto orderDto = new OrderDto();
 
             orderDto.setTicketId(reservationTicket.getTicket().getId()); // 예약한 티켓의 티켓아이디
-            orderDto.setCount(reservationTicket.getTicketCount()); // 예약한 티켓 갯수
+            orderDto.setReservationTicketId(reservationTicket.getId()); // 예약티켓 아이디
+            orderDto.setAdultCount(reservationTicket.getAdultCount()); // 예약한 성인 티켓 갯수
+            orderDto.setChildCount(reservationTicket.getChildCount()); // 예약한 아동 티켓 갯수
             orderDto.setVisitDate(LocalDate.parse(reservationTicket.getVisitDate())); // 예약한 티켓의 방문일
 
             orderDtoList.add(orderDto);

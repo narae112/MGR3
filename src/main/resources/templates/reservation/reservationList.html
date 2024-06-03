@@ -47,7 +47,7 @@
             var token = $("meta[name='_csrf']").attr("content");
             var header = $("meta[name='_csrf_header']").attr("content");
 
-            var url = "/member/reservationTicket/" + reservationTicketId + "?count=" + count;
+            var url = "/member/reservationTicket/" + reservationTicketId + "?ticketCount=" + ticketCount;
 
             $.ajax({
                 url      : url,
@@ -59,6 +59,8 @@
                 dataType : "json",
                 cache   : false,
                 success  : function(result, status){
+
+                    alert('티켓 수량이 변경되었습니다');
                     console.log("cartItem count update success")
                 },
                 error : function(jqXHR, status, error){
