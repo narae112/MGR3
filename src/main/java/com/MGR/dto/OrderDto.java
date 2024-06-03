@@ -18,4 +18,6 @@ public class OrderDto {
     private int count;
 
     private LocalDate visitDate;
+
+    private Long reservationTicketId;
 }

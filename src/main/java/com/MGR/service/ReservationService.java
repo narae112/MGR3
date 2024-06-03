@@ -63,14 +63,14 @@ public class ReservationService {
         for(ReservationTicket savedReservationTicket : savedReservationTickets) {
             // 이미 예약한 티켓 리스트에 있고 방문날짜가 동일하면
             if(savedReservationTicket != null && savedReservationTicket.getVisitDate().equals(reservationTicketDto.getVisitDate())) {
-                savedReservationTicket.addCount(reservationTicketDto.getTicketCount()); // 수량만 증가
+                savedReservationTicket.addCount(reservationTicketDto.getAdultCount(), reservationTicketDto.getChildCount()); // 수량만 증가
 
                 return savedReservationTicket.getId(); // 예약 티켓 아이디 반환
             }
         }
 
         ReservationTicket reservationTicket = ReservationTicket.createReservationTicket(reservation, ticket,
-                reservationTicketDto.getTicketCount(), reservationTicketDto.getVisitDate());
+                reservationTicketDto.getAdultCount(), reservationTicketDto.getChildCount(), reservationTicketDto.getVisitDate());
 
         reservationTicketRepository.save(reservationTicket); // 새로운 예약 티켓 저장
 
@@ -140,6 +140,7 @@ public class ReservationService {
             orderDto.setTicketId(reservationTicket.getTicket().getId()); // 예약한 티켓의 티켓아이디
             orderDto.setCount(reservationTicket.getTicketCount()); // 예약한 티켓 갯수
             orderDto.setVisitDate(LocalDate.parse(reservationTicket.getVisitDate())); // 예약한 티켓의 방문일
+            orderDto.setReservationTicketId(reservationTicket.getId()); // 예약티켓 아이디
 
             orderDtoList.add(orderDto);
         }

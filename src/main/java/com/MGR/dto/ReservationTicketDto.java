@@ -14,7 +14,15 @@ public class ReservationTicketDto {
     private Long ticketId;
 
     @Min(value = 1, message = "인원 수를 입력해주세요")
+    private int adultCount;
+
+    private int childCount;
+
     private int ticketCount;
+
+    public int getTicketCount(int adultCount, int childCount) {
+        this.ticketCount = adultCount + childCount;
+    }
 
     @NotNull(message = "방문 예정일을 선택해주세요")
     private String visitDate;

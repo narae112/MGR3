@@ -44,11 +44,11 @@ public class ReservationController {
             return new ResponseEntity<String>(sb.toString(), HttpStatus.BAD_REQUEST);
         }
 
-        String email = member.getUsername();
+        String email = member.getUsername(); // 로그인한 멤버 이메일
         Long reservationTicketId;
 
         try {
-            reservationTicketId = reservationService.addReservation(reservationTicketDto, email);
+            reservationTicketId = reservationService.addReservation(reservationTicketDto, email); // 받아온 요청 & 이메일 넘겨서 reservationTicketId 가져오기
         } catch (Exception e) {
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
