@@ -7,62 +7,60 @@
 <!-- css -->
 <th:block layout:fragment="css">
     <style>
-        .edit-form{
+        .edit-form {
             display: none;
         }
-        .email_ok{
+        .email_ok {
             color: blue;
             display: none;
         }
-        .email_already{
+        .email_already {
             color: red;
             display: none;
         }
-        .nickname_ok{
+        .nickname_ok {
             color: blue;
             display: none;
         }
-        .nickname_already{
+        .nickname_already {
             color: red;
             display: none;
         }
-        .nickname_null{
+        .nickname_null {
             color: red;
             display: inline-block;
         }
-        .nickname-btn{
+        .nickname-btn {
             display: none;
         }
-        .empty-nickname-btn{
+        .empty-nickname-btn {
+            display: inline-block;
+        }
+        .empty-password-btn {
+            display: inline-block;
+        }
+        #member-info-password {
             display: none;
         }
-        .empty-password-btn{
-        display: inline-block;
-        }
-        #member-info-password{
-            display: none;
-        }
-        .password_already{
+        .password_already {
             color: red;
             display: none;
         }
-        .validationError{
+        .errorMessage {
             color: red;
         }
         .fieldError {
             color: #bd2130;
         }
-
     </style>
 </th:block>
 
 <!-- js -->
 <th:block layout:fragment="script">
     <script th:inline="javascript">
-
-        $(document).ready(function(){
-            var errorMessage = [[${errorMessage}]];
-            if(errorMessage != null){
+        $(document).ready(function() {
+            var errorMessage = /*[[${errorMessage}]]*/ '';
+            if (errorMessage) {
                 alert(errorMessage);
             }
         });
@@ -79,11 +77,11 @@
                 data: {
                     verifyPassword: password
                 },
-                beforeSend : function(xhr){
+                beforeSend: function(xhr) {
                     xhr.setRequestHeader(header, token);
                 },
                 success: function(result) {
-                     if(result === 0){
+                    if (result === 0) {
                         alert("비밀번호 인증이 완료되었습니다");
                         $('.edit-form').css("display", "inline-block");
                         $('.verifyPassword').css("display", "none");
@@ -101,32 +99,32 @@
         }
 
         var prevNickname = "";
-        function checkNickname(){
+        function checkNickname() {
             var nickname = $('#nickname').val();
             prevNickname = nickname;
 
             $.ajax({
-                url:'/member/nicknameCheck',
-                type:'POST',
-                data:{nickname:nickname},
-                beforeSend : function(xhr){
+                url: '/member/nicknameCheck',
+                type: 'POST',
+                data: { nickname: nickname },
+                beforeSend: function(xhr) {
                     xhr.setRequestHeader(header, token);
                 },
-                success:function(result){
-                    if(result === 0){
-                        $('.nickname_ok').css("display","inline-block");
+                success: function(result) {
+                    if (result === 0) {
+                        $('.nickname_ok').css("display", "inline-block");
                         $('.nickname_already').css("display", "none");
                     } else {
-                        $('.nickname_already').css("display","inline-block");
+                        $('.nickname_already').css("display", "inline-block");
                         $('.nickname_ok').css("display", "none");
                         $('#nickname').val(prevNickname);
                     }
-                    if(!nickname){
-                        $('.nickname_null').css("display","inline-block");
+                    if (!nickname) {
+                        $('.nickname_null').css("display", "inline-block");
                         $('.nickname_ok').css("display", "none");
                         $('.nickname_already').css("display", "none");
-                    }else{
-                        $('.nickname_null').css("display","none");
+                    } else {
+                        $('.nickname_null').css("display", "none");
                     }
                 }
             });
@@ -136,12 +134,22 @@
             var password = $('#password').val();
             var password2 = $('#password2').val();
 
+            if (!password || !password2 || password.length < 8 || password.length > 16 || password2.length < 8 || password2.length > 16) {
+                $('.password_already').css("display", "none");
+                $('.empty-password-btn').css("display", "inline-block");
+                $('#member-info-password').css("display", "none");
+                return;
+            }
+
             $.ajax({
                 url: '/member/passwordCheck',
                 type: 'POST',
                 data: {
                     password: password,
                     password2: password2
+                },
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader(header, token);
                 },
                 success: function(result) {
                     if (result === 0) {
@@ -151,17 +159,15 @@
                         $('.empty-password-btn').css("display", "none");
                     } else {
                         $('.password_already').css("display", "inline-block");
-                        $('.empty-password-btn').css("display", "inline-block");
+                        $('.password_ok').css("display", "none");
                         $('#member-info-password').css("display", "none");
+                        $('.empty-password-btn').css("display", "inline-block");
                     }
-                },
-                beforeSend: function(xhr) {
-                    xhr.setRequestHeader(header, token);
                 }
             });
         }
 
-        function emptyNickname(){
+        function emptyNickname() {
             var nickname = $('#nickname').val().trim(); // 입력된 닉네임 값 (공백 제거)
 
             // 닉네임 값이 없거나 공백인 경우
@@ -173,28 +179,23 @@
                 $('.empty-nickname-btn').css("display", "none");
             }
         };
-
     </script>
 </th:block>
 
 <div layout:fragment="content">
-<!--ajax 로 비밀번호 인증 받아서 성공하면 변경 폼(클래스) display: none-->
-<!--변경 폼은 따로 form POST -> id 값 받아서 set__-->
+    <!--ajax 로 비밀번호 인증 받아서 성공하면 변경 폼(클래스) display: none-->
+    <!--변경 폼은 따로 form POST -> id 값 받아서 set__-->
 
     <div class="mb-3 verifyPassword">
         <h4>비밀번호 인증이 필요합니다</h4>
         <label for="verifyPassword">비밀번호</label>
-        <input class="form-control" type="password" id="verifyPassword"/>
+        <input class="form-control" type="password" id="verifyPassword" />
         <button class="btn btn-primary" type="submit" id="member-edit" onClick="verifyPassword()">확인</button>
     </div>
 
-    <form th:action="@{member/edit}" th:object="${memberInfo}" class="edit-form" role="form" method="POST">
+    <form th:action="@{/member/edit}" th:object="${memberInfo}" class="edit-form" role="form" method="POST">
         <h4>회원정보 수정</h4>
-        <div>
-            <label for="name">이름</label>
-            <input type="text" id="name" name="name" class="form-control"
-                   th:value="${memberInfo.name}" readonly>
-        </div>
+
         <div>
             <label for="email">이메일</label>
             <input type="text" id="email" name="email" class="form-control"
@@ -213,20 +214,17 @@
                 </span>
             </div>
             <span class="nickname_ok">사용 가능한 닉네임 입니다</span>
-            <span class="validationError" th:if="${#fields.hasErrors('nickname')}"
+            <span class="errorMessage" th:if="${#fields.hasErrors('nickname')}"
                   th:errors="*{nickname}"></span>
         </div>
         <div class="mb-3">
             <label for="password">비밀번호</label>
-            <input class="form-control" name="password" type="password" id="password" th:field="*{password}" onblur="checkPassword()"/>
-            <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="fieldError">Incorrect data</p>
-            <span class="validationError" th:if="${#fields.hasErrors('password')}"
-                  th:errors="*{password}"></span>
+            <input class="form-control" name="password" type="password" id="password" th:field="*{password}" onblur="checkPassword()" />
         </div>
         <div class="mb-3">
             <label for="password2">비밀번호 확인</label>
-            <input class="form-control" name="password2" type="password" id="password2"  onblur="checkPassword()"/>
-
+            <input class="form-control" name="password2" type="password" id="password2" onkeyup="checkPassword()" />
+            <div>비밀번호는 8자 이상, 16자 이하로 입력해주세요</div>
             <div class="password_already">비밀번호가 일치하지 않습니다</div>
         </div>
         <button th:formaction="@{'/member/editPassword/' + ${memberInfo.id}}"
@@ -234,8 +232,5 @@
         <button class="btn btn-secondary empty-password-btn" type="button">비밀번호 변경</button>
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
     </form>
-
 </div>
 </html>
-
-
