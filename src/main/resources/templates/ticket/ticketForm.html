@@ -21,7 +21,66 @@
         </div>
     </div>
 </div>
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        $(document).ready(function(){
+            var errorMessage = /*[[${errorMessage}]]*/ '';
+            if(errorMessage != null && errorMessage !== ''){
+                $('#errorMessage').text(errorMessage);
+                $('#errorModal').modal('show');
+            }
 
+            bindDomEvent();
+        });
+
+        function bindDomEvent() {
+            $(".custom-file-input").on("change", function() {
+                var fileName = $(this).val().split("\\").pop();
+                var fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+
+                if (fileExt != "jpg" && fileExt != "jpeg" && fileExt != "gif" && fileExt != "png" && fileExt != "bmp") {
+                    alert("이미지 파일만 등록이 가능합니다.");
+                    return;
+                }
+
+                $(this).siblings(".custom-file-label").html(fileName);
+            });
+        }
+
+               $(document).ready(function() {
+       // 오늘 날짜를 가져오는 함수
+       function getTodayDate() {
+           var today = new Date();
+           var dd = String(today.getDate()).padStart(2, '0');
+           var mm = String(today.getMonth() + 1).padStart(2, '0'); // 1월은 0부터 시작하므로 +1
+           var yyyy = today.getFullYear();
+           return yyyy + '-' + mm + '-' + dd;
+       }
+
+       // 시작일(input id="startDate")의 값을 오늘 날짜로 설정
+       $('#startDate').val(getTodayDate());
+       $('#startDate').attr("min",getTodayDate());
+
+       var startDate = $('#startDate').val();
+       $('#endDate').attr("min",startDate);
+
+       $('#startDate').on('change', function() {
+           var startDate = $(this).val();
+           $('#endDate').attr("min", startDate);
+       });
+
+    });
+     function checkEndDate() {
+           var startDate = document.getElementById("startDate").value;
+           var endDate = document.getElementById("endDate").value;
+
+           if (endDate < startDate) {
+               alert("종료 날짜는 시작 날짜 이후여야 합니다.");
+               document.getElementById("endDate").value = startDate;
+           }
+       }
+    </script>
+</th:block>
 <div layout:fragment="content" class="container my-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
@@ -117,61 +176,4 @@
     </div>
 </div>
 
-<script th:inline="javascript">
-    $(document).ready(function(){
-        var errorMessage = /*[[${errorMessage}]]*/ '';
-        if(errorMessage != null && errorMessage !== ''){
-            $('#errorMessage').text(errorMessage);
-            $('#errorModal').modal('show');
-        }
-
-        bindDomEvent();
-    });
-
-    function bindDomEvent() {
-        $(".custom-file-input").on("change", function() {
-            var fileName = $(this).val().split("\\").pop();
-            var fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
-
-            if (fileExt != "jpg" && fileExt != "jpeg" && fileExt != "gif" && fileExt != "png" && fileExt != "bmp") {
-                alert("이미지 파일만 등록이 가능합니다.");
-                return;
-            }
-
-            $(this).siblings(".custom-file-label").html(fileName);
-        });
-    }
-
-    function initializeDatePickers() {
-        $('.datepicker').datepicker({
-            format: 'yyyy-MM-ddTHH:mm',
-            autoclose: true,
-            todayHighlight: true
-        });
-    }
-
-    function checkEndDateInput() {
-        var startDate = document.getElementById("startDate").value;
-        var endDate = document.getElementById("endDate").value;
-        var startDateObj = new Date(startDate);
-        var endDateObj = new Date(endDate);
-
-        if (endDateObj < startDateObj) {
-            alert("종료 날짜는 시작 날짜 이후여야 합니다.");
-            document.getElementById("endDate").value = "";
-            return false;
-        }
-        return true;
-    }
-
-    function checkStartDate() {
-        var selectedDate = document.getElementById("startDate").value;
-        var currentDate = new Date().toISOString().split('T')[0];
-
-        if (selectedDate < currentDate) {
-            alert("과거 날짜는 선택할 수 없습니다.");
-            document.getElementById("startDate").value = "";
-        }
-    }
-</script>
 </html>
