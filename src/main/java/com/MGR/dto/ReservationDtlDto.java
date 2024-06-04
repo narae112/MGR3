@@ -29,6 +29,10 @@ public class ReservationDtlDto {
         this.visitDate = reservationTicket.getVisitDate();
         this.reservationDate = reservationTicket.getReservationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         this.reservationStatus = reservationTicket.getReservationStatus();
+        this.adultCount = reservationTicket.getAdultCount();
+        this.childCount = reservationTicket.getChildCount();
+        this.adultPrice = reservationTicket.getTicket().getAdultPrice();
+        this.childPrice = reservationTicket.getTicket().getChildPrice();
     }
 
 }
