@@ -44,48 +44,57 @@
     </div>
 </div>
 <script>
-    $(document).ready(function() {
-        // 폼 제출 시 실행될 함수
-        $('#add_member_form').submit(function(e) {
-            e.preventDefault(); // 기본 제출 방지
+    $(document).ready(function(){
+          var errorMessage = /*[[${errorMessage}]]*/ '';
+          if(errorMessage != null && errorMessage !== ''){
+              $('#errorMessage').text(errorMessage);
+              $('#errorModal').modal('show');
+          }
 
-            var captcha = 1;
-            $.ajax({
-                url: '/verifyRecaptcha',
-                type: 'post',
-                data: {
-                    recaptcha: $("#g-recaptcha-response").val()
-                },
-                success: function(data) {
-                    switch (data) {
-                        case 0:
-                            console.log("자동 가입 방지 봇 통과");
-                            captcha = 0;
-                            $('#add_member_form').unbind('submit').submit(); // 리캡챠를 통과했으므로 폼 제출
-                            break;
-                        case 1:
-                            alert("자동 가입 방지 봇을 확인 한뒤 진행 해 주세요.");
-                            break;
-                        default:
-                            alert("자동 가입 방지 봇을 실행 하던 중 오류가 발생 했습니다. [Error bot Code : " + Number(data) + "]");
-                            break;
-                    }
-                }
-            });
-        });
+          bindDomEvent();
+      });
+   $(document).ready(function() {
+       // 폼 제출 시 실행될 함수
+       $('#add_member_form').submit(function(e) {
+           e.preventDefault(); // 기본 제출 방지
 
-       $(document).on('change', '.reviewImgFile', function() {
-    var fileList = $(this)[0].files; // 선택된 파일 목록 가져오기
-    var container = $('#imageUploadContainer'); // 부모 컨테이너 선택
+           var captcha = 1;
+           $.ajax({
+               url: '/verifyRecaptcha',
+               type: 'post',
+               data: {
+                   recaptcha: $("#g-recaptcha-response").val()
+               },
+               success: function(data) {
+                   switch (data) {
+                       case 0:
+                           console.log("자동 가입 방지 봇 통과");
+                           captcha = 0;
+                           $('#add_member_form').unbind('submit').submit(); // 리캡챠를 통과했으므로 폼 제출
+                           break;
+                       case 1:
+                           alert("자동 가입 방지 봇을 확인 한뒤 진행 해 주세요.");
+                           break;
+                       default:
+                           alert("자동 가입 방지 봇을 실행 하던 중 오류가 발생 했습니다. [Error bot Code : " + Number(data) + "]");
+                           break;
+                   }
+               }
+           });
+       });
 
-    // 선택된 각 파일에 대해 반복하여 새로운 입력 필드 추가
-    for (var i = 0; i < fileList.length; i++) {
-        var newInput = '<div class="mb-3"><label class="form-label"></label><input type="file" class="form-control reviewImgFile" name="reviewImgFile" multiple></div>';
-        container.append(newInput);
-    }
+      $(document).on('change', '.reviewImgFile', function() {
+   var fileList = $(this)[0].files; // 선택된 파일 목록 가져오기
+   var container = $('#imageUploadContainer'); // 부모 컨테이너 선택
+
+   // 선택된 각 파일에 대해 반복하여 새로운 입력 필드 추가
+   for (var i = 0; i < fileList.length; i++) {
+       var newInput = '<div class="mb-3"><label class="form-label"></label><input type="file" class="form-control reviewImgFile" name="reviewImgFile" multiple></div>';
+       container.append(newInput);
+   }
 
 });
-    });
+   });
 </script>
 </body>
 </html>

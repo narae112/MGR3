@@ -33,7 +33,7 @@ public class ReviewBoard {
     @Column(columnDefinition = "DATETIME")
     private LocalDateTime modifiedDate;
 
-    @OneToMany(mappedBy = "reviewBoard", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "reviewBoard", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Image> images;
 
     @ManyToOne

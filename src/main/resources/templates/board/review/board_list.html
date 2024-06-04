@@ -38,20 +38,25 @@
                             <h5 class="card-title">
                                 <a th:href="@{|/review/board/detail/${reviewBoard.id}|}" th:text="${reviewBoard.subject}"></a>
                             </h5>
-                                <h6 class="card-subtitle mb-2 text-muted" th:text="${reviewBoard.author != null ? reviewBoard.author.nickname : '익명'}"></h6>
+                                <h6 class="card-subtitle mb-2 text-muted" th:text="${reviewBoard.author.nickname}"></h6>
                                 <!-- 이미지 표시 -->
-                                <div th:if="${not #lists.isEmpty(reviewBoard.images)}" class="mb-3" style="height: 300px; overflow: hidden;"> <!-- 이미지 컨테이너에 mb-3 클래스 추가하여 아래 여백 추가 -->
-                                    <img th:src="${reviewBoard.images[0].imgUrl}"
-                                         class="card-img-top img-fluid rounded"
-                                         th:alt="${reviewBoard.subject}"
-                                         style="width: 100%; height: auto; object-fit: cover;"> <!-- 이미지를 가로로 꽉 차도록 하고, 세로 크기는 유지되도록 height: auto;를 추가하고, object-fit: cover;를 사용하여 이미지가 잘리지 않고 카드에 맞춰지도록 합니다. -->
-                                </div>
-                                <!-- 이미지가 없을 경우 -->
-                            <div th:unless="${not #lists.isEmpty(reviewBoard.images)}" class="mb-3" style="height: 300px; overflow: hidden;">
-                                <img th:src="@{/img/attraction/attraction8.png}" alt="No Image Available" class="card-img-top img-fluid rounded" style="width: 100%; max-height: 200px;">
+                            <div class="mb-3" style="height: 300px; overflow: hidden;">
+                                <img th:if="${reviewBoard.images[0].imgUrl != null}"
+                                     th:src="${reviewBoard.images[0].imgUrl}"
+                                     class="card-img-top img-fluid rounded"
+                                     style="width: 100%; height: auto; object-fit: cover;">
+                                <img th:unless="${#lists.isEmpty(reviewBoard.images) && reviewBoard.images[0].imgUrl != null}"
+                                     th:src="@{/img/unicorn.png}"
+                                     class="card-img-top img-fluid rounded"
+                                     style="width: 100%; height: auto; object-fit: cover;">
                             </div>
 
-                                <!-- 기타 정보 표시 -->
+                                <!-- 이미지가 없을 경우 -->
+                            <!--  <div th:unless="${not #lists.isEmpty(reviewBoard.images)}" class="mb-3" style="height: 300px; overflow: hidden;">
+                        <img th:src="@{/img/attraction/attraction8.png}" alt="No Image Available" class="card-img-top img-fluid rounded" style="width: 100%; max-height: 200px;">
+                         </div>-->
+
+                              <!-- 기타 정보 표시 -->
                                 <p class="card-text">
                                     조회수: <span th:text="${reviewBoard.count}"></span><br>
                                     등록일: <span th:text="${#temporals.format(reviewBoard.createDate, 'yyyy-MM-dd HH:mm')}"></span>
@@ -66,7 +71,7 @@
         <ul class="pagination pagination-sm">
             <li class="page-item" th:classappend="${paging.first} ? 'disabled'">
                 <a class="page-link" href="#" th:attr="data-page=${paging.number - 1}" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
+                    <span aria-hidden="true"></span>
                     <span class="sr-only">이전</span>
                 </a>
             </li>
@@ -76,7 +81,7 @@
             </li>
             <li class="page-item" th:classappend="${paging.last} ? 'disabled'">
                 <a class="page-link" href="#" th:attr="data-page=${paging.number + 1}" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
+                    <span aria-hidden="true"></span>
                     <span class="sr-only">다음</span>
                 </a>
             </li>
