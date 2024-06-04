@@ -74,17 +74,17 @@
             });
         });
 
-        // 파일 선택 이벤트 핸들러
-        $(document).on('change', '.reviewImgFile', function() {
-            var fileList = $(this)[0].files; // 선택된 파일 목록 가져오기
-            var container = $('#imageUploadContainer'); // 부모 컨테이너 선택
+       $(document).on('change', '.reviewImgFile', function() {
+    var fileList = $(this)[0].files; // 선택된 파일 목록 가져오기
+    var container = $('#imageUploadContainer'); // 부모 컨테이너 선택
 
-            // 선택된 각 파일에 대해 반복하여 새로운 입력 필드 추가
-            for (var i = 0; i < fileList.length; i++) {
-                var newInput = '<div class="mb-3"><label class="form-label"></label><input type="file" class="form-control reviewImgFile" name="reviewImgFile" multiple></div>';
-                container.append(newInput);
-            }
-        });
+    // 선택된 각 파일에 대해 반복하여 새로운 입력 필드 추가
+    for (var i = 0; i < fileList.length; i++) {
+        var newInput = '<div class="mb-3"><label class="form-label"></label><input type="file" class="form-control reviewImgFile" name="reviewImgFile" multiple></div>';
+        container.append(newInput);
+    }
+
+});
     });
 </script>
 </body>

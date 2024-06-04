@@ -40,16 +40,17 @@
                             </h5>
                                 <h6 class="card-subtitle mb-2 text-muted" th:text="${reviewBoard.author != null ? reviewBoard.author.nickname : '익명'}"></h6>
                                 <!-- 이미지 표시 -->
-                                <div th:if="${not #lists.isEmpty(reviewBoard.images)}" class="mb-3" style="height: 200px; overflow: hidden;"> <!-- 이미지 컨테이너에 mb-3 클래스 추가하여 아래 여백 추가 -->
+                                <div th:if="${not #lists.isEmpty(reviewBoard.images)}" class="mb-3" style="height: 300px; overflow: hidden;"> <!-- 이미지 컨테이너에 mb-3 클래스 추가하여 아래 여백 추가 -->
                                     <img th:src="${reviewBoard.images[0].imgUrl}"
                                          class="card-img-top img-fluid rounded"
                                          th:alt="${reviewBoard.subject}"
                                          style="width: 100%; height: auto; object-fit: cover;"> <!-- 이미지를 가로로 꽉 차도록 하고, 세로 크기는 유지되도록 height: auto;를 추가하고, object-fit: cover;를 사용하여 이미지가 잘리지 않고 카드에 맞춰지도록 합니다. -->
                                 </div>
                                 <!-- 이미지가 없을 경우 -->
-                                <div th:unless="${not #lists.isEmpty(reviewBoard.images)}" class="text-center mb-3">
-                                    <span>No Image Available</span>
-                                </div>
+                            <div th:unless="${not #lists.isEmpty(reviewBoard.images)}" class="mb-3" style="height: 300px; overflow: hidden;">
+                                <img th:src="@{/img/attraction/attraction8.png}" alt="No Image Available" class="card-img-top img-fluid rounded" style="width: 100%; max-height: 200px;">
+                            </div>
+
                                 <!-- 기타 정보 표시 -->
                                 <p class="card-text">
                                     조회수: <span th:text="${reviewBoard.count}"></span><br>

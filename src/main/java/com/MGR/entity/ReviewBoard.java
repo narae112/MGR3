@@ -3,6 +3,7 @@ package com.MGR.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Formula;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -47,6 +48,9 @@ public class ReviewBoard {
     public int viewCount() {
         return this.count += 1;
     }
+
+    @Formula("(SELECT COUNT(*) FROM review_board_voter WHERE review_board_voter.review_board_id = id)")
+    private int voterCount;
 
 
 }
