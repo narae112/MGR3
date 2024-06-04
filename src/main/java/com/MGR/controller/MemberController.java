@@ -72,7 +72,7 @@ public class MemberController {
 
         if(!StringUtils.hasText(memberInfo.getNickname())) {
             model.addAttribute("stringError", "닉네임을 입력하세요");
-            return "member/edit";
+            return "member/editForm";
         }
 
         try {
@@ -80,7 +80,7 @@ public class MemberController {
             memberService.updateNickname(id,memberInfo.getNickname());
         } catch (IllegalStateException e){
             model.addAttribute("errorMessage", e.getMessage());
-            return "member/edit";
+            return "member/editForm";
         }
 
         return "redirect:/";
@@ -89,17 +89,13 @@ public class MemberController {
     @PostMapping("/editPassword/{id}")
     public String memberInfoEditPassword(@PathVariable("id") Long id,
                                  @AuthenticationPrincipal PrincipalDetails member,
-                                 @Valid MemberFormDto memberInfo,
-                                 BindingResult result, Model model){
+                                 Member memberInfo,
+                                 Model model){
 
-//        if(!StringUtils.hasText(memberInfo.getPassword())) {
-//            model.addAttribute("errorMessage", "비밀번호를 입력하세요");
-//            return "/member/edit";
-//        }
-
-        if(result.hasErrors()){
-
-            return "redirect:/member/edit";
+        if(memberInfo.getPassword().length() < 8 || memberInfo.getPassword().length() > 16) {
+            model.addAttribute("errorMessage", "비밀번호를 8자 이상 16자 이하로 입력하세요");
+            System.out.println("StringUtils 에러");
+            return "member/editForm";
         }
 
         try {
@@ -107,7 +103,8 @@ public class MemberController {
             memberService.updatePassword(id, memberInfo.getPassword());
         }catch (IllegalStateException e){
             model.addAttribute("errorMessage", e.getMessage());
-            return "redirect:/member/edit";
+            System.out.println("IllegalStateException 에러" + e.getMessage());
+            return "member/editForm";
         }
 
         return "redirect:/";
