@@ -199,5 +199,14 @@ public Page<ReviewBoard> getList(int page, String keyword, String sort) {
         form.setReviewImgDtoList(reviewImgDtoList);
         return form;
     }
+
+    public List<ReviewBoardForm> getTopRatedReviews() {
+        Pageable pageable = PageRequest.of(0, 3, Sort.by("voterCount").descending());
+        Page<ReviewBoard> topRatedReviewsPage = reviewBoardRepository.findAll(pageable);
+        List<ReviewBoard> topRatedReviews = topRatedReviewsPage.getContent();
+        return topRatedReviews.stream()
+                .map(this::convertToForm)
+                .collect(Collectors.toList());
+    }
 }
 
