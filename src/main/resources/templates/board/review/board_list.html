@@ -2,13 +2,18 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
-
-<div layout:fragment="content" class="container my-3">
-    <h2>리뷰 게시판</h2>
+<!-- css -->
+<th:block layout:fragment="css">
+    <style>
+        /* 테이블과 h3 사이에 간격을 주는 CSS */
+        .row {
+               margin-top: 30px; /* 필요에 따라 조정하세요 */
+           }
+    </style>
+</th:block>
+<div layout:fragment="content">
+    <h3 class="mb-5 text-center">리뷰 게시판</h3>
     <div class="row my-3">
-        <div class="col-6">
-            <a th:href="@{/review/board/create}" class="btn btn-primary">리뷰 등록하기</a>
-        </div>
         <form th:action="@{/review/board/list}" method="get" class="col-6">
             <div class="input-group mb-3">
                 <select class="form-select" name="sort">
@@ -21,35 +26,40 @@
             </div>
         </form>
     </div>
-
-    <div class="row">
-        <div th:each="reviewBoard : ${paging}" class="col-md-4 mb-4">
-            <div class="card h-100">
-                <div class="card-body d-flex flex-column justify-content-between"> <!-- 카드 바디를 열기 전에 d-flex flex-column justify-content-between 클래스 추가 -->
-                    <h5 class="card-title">
-                        <a th:href="@{|/review/board/detail/${reviewBoard.id}|}" th:text="${reviewBoard.subject}"></a>
-                    </h5>
-                    <h6 class="card-subtitle mb-2 text-muted" th:text="${reviewBoard.author != null ? reviewBoard.author.nickname : '익명'}"></h6>
-                    <!-- 이미지 표시 -->
-                    <div th:if="${not #lists.isEmpty(reviewBoard.images)}" class="mb-3" style="height: 200px; overflow: hidden;"> <!-- 이미지 컨테이너에 mb-3 클래스 추가하여 아래 여백 추가 -->
-                        <img th:src="${reviewBoard.images[0].imgUrl}"
-                             class="card-img-top img-fluid rounded"
-                             th:alt="${reviewBoard.subject}"
-                             style="width: 100%; height: auto; object-fit: cover;"> <!-- 이미지를 가로로 꽉 차도록 하고, 세로 크기는 유지되도록 height: auto;를 추가하고, object-fit: cover;를 사용하여 이미지가 잘리지 않고 카드에 맞춰지도록 합니다. -->
+    <hr class="my-4">
+    <!--    등록버튼-->
+    <div class="col-6">
+        <a th:href="@{/review/board/create}" class="btn btn-primary">리뷰 등록하기</a>
+            </div>
+            <div class="row">
+                <div th:each="reviewBoard : ${paging}" class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body d-flex flex-column justify-content-between"> <!-- 카드 바디를 열기 전에 d-flex flex-column justify-content-between 클래스 추가 -->
+                            <h5 class="card-title">
+                                <a th:href="@{|/review/board/detail/${reviewBoard.id}|}" th:text="${reviewBoard.subject}"></a>
+                            </h5>
+                                <h6 class="card-subtitle mb-2 text-muted" th:text="${reviewBoard.author != null ? reviewBoard.author.nickname : '익명'}"></h6>
+                                <!-- 이미지 표시 -->
+                                <div th:if="${not #lists.isEmpty(reviewBoard.images)}" class="mb-3" style="height: 200px; overflow: hidden;"> <!-- 이미지 컨테이너에 mb-3 클래스 추가하여 아래 여백 추가 -->
+                                    <img th:src="${reviewBoard.images[0].imgUrl}"
+                                         class="card-img-top img-fluid rounded"
+                                         th:alt="${reviewBoard.subject}"
+                                         style="width: 100%; height: auto; object-fit: cover;"> <!-- 이미지를 가로로 꽉 차도록 하고, 세로 크기는 유지되도록 height: auto;를 추가하고, object-fit: cover;를 사용하여 이미지가 잘리지 않고 카드에 맞춰지도록 합니다. -->
+                                </div>
+                                <!-- 이미지가 없을 경우 -->
+                                <div th:unless="${not #lists.isEmpty(reviewBoard.images)}" class="text-center mb-3">
+                                    <span>No Image Available</span>
+                                </div>
+                                <!-- 기타 정보 표시 -->
+                                <p class="card-text">
+                                    조회수: <span th:text="${reviewBoard.count}"></span><br>
+                                    등록일: <span th:text="${#temporals.format(reviewBoard.createDate, 'yyyy-MM-dd HH:mm')}"></span>
+                                </p>
+                        </div>
                     </div>
-                    <!-- 이미지가 없을 경우 -->
-                    <div th:unless="${not #lists.isEmpty(reviewBoard.images)}" class="text-center mb-3">
-                        <span>No Image Available</span>
-                    </div>
-                    <!-- 기타 정보 표시 -->
-                    <p class="card-text">
-                        조회수: <span th:text="${reviewBoard.count}"></span><br>
-                        등록일: <span th:text="${#temporals.format(reviewBoard.createDate, 'yyyy-MM-dd HH:mm')}"></span>
-                    </p>
                 </div>
             </div>
-        </div>
-    </div>
+
     <!-- 페이징처리 시작 -->
     <div th:if="${!paging.empty}" class="pagination-container justify-content-center">
         <ul class="pagination pagination-sm">

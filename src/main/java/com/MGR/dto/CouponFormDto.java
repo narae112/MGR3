@@ -52,13 +52,4 @@ public class CouponFormDto {
         return modelMapper.map(coupon, CouponFormDto.class);
     }
 
-    @AssertTrue(message = "할인율 또는 할인액을 올바르게 입력하세요")
-    public boolean isValidDiscount() {
-        if (discountType == DiscountType.PERCENT) {
-            return discountRate != null && discountAmount == null;
-        } else if (discountType == DiscountType.AMOUNT) {
-            return discountAmount != null && discountRate == null;
-        }
-        return true;
-    }
 }

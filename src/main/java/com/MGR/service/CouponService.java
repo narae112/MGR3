@@ -123,8 +123,8 @@ public class CouponService {
 
     // 중복 데이터 검사
     private boolean isDuplicateCoupon(CouponFormDto couponFormDto) {
-        Optional<Coupon> couponOptional = couponRepository.findByNameAndDiscountRateAndStartDateAndEndDate(
-                couponFormDto.getName(), couponFormDto.getDiscountRate(), couponFormDto.getStartDate(), couponFormDto.getEndDate()
+        Optional<Coupon> couponOptional = couponRepository.findByNameAndStartDateAndEndDate(
+                couponFormDto.getName(), couponFormDto.getStartDate(), couponFormDto.getEndDate()
         );
         return couponOptional.isPresent();
     }

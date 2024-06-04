@@ -101,11 +101,14 @@ public class TicketController {
     @GetMapping(value = {"/admin/tickets", "/admin/tickets/{page}"})
     public String ticketManage(TicketSearchDto ticketSearchDto,
                                @PathVariable("page") Optional<Integer> page, Model model){
-        Pageable pageable = PageRequest.of(page.isPresent() ? page.get():0, 3);
+        int pageNumber = page.orElse(0); // 페이지 매개변수가 없는 경우 0으로 초기화
+        Pageable pageable = PageRequest.of(pageNumber, 3);
+
         Page<Ticket> tickets = ticketService.getAdminTicketPage(ticketSearchDto, pageable);
+
         model.addAttribute("tickets",tickets);
         model.addAttribute("ticketSearchDto", ticketSearchDto);
-        model.addAttribute("maxPage",3);
+        model.addAttribute("pageNumber", tickets.getNumber());
         return "ticket/ticketMng";
     }
 
