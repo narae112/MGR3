@@ -5,7 +5,7 @@
   <link rel="stylesheet" type="text/css" href="/style.css" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>토스페이먼츠 샘플 프로젝트</title>
+  <title>MERRY GO RIDE.｡.:*☆</title>
   <!-- 결제위젯 SDK 추가 -->
   <script src="https://js.tosspayments.com/v1/payment-widget"></script>
 </head>
@@ -18,14 +18,12 @@
     <p>티켓 결제 하기</p>
     <!--          <input type="hidden" id="orderId" th:value="${orderTicket.orderId}">-->
     <div th:each="orderTicket : ${orderTickets}">
-      <span th:text="'[' + ${orderTicket.locationCategory.displayName} + '점] '
-                      + ${orderTicket.name} + '_' + ${orderTicket.ticketCategory.displayName}"></span>
-      <!-- [지점] 티켓 이름 _ 구분(성인/아동) -->
-      <span th:text="${orderTicket.orderPrice} + '원'"></span> <!-- 예약 티켓 당 금액 -->
-      <span th:text="${orderTicket.count}"></span>
-      <span th:text="${orderTicket.visitDate}"></span>
-      <hr/>
+      <span th:text="'방문예정일 : ' + ${orderTicket.visitDate}"></span>
+      <span th:text="'[' + ${orderTicket.locationCategory.displayName} + '점] ' + ${orderTicket.name}"></span>
+      <!-- [지점] 티켓 이름 -->
+      <span th:text="'성인 티켓 : ' + ${orderTicket.adultCount} + '장 [' + ${(orderTicket.adultPrice) * (orderTicket.adultCount)} + '원], ' + '아동 티켓 : ' + ${orderTicket.childCount} + '장 [' + ${(orderTicket.childPrice) * (orderTicket.childCount)} + '원]'"></span>
 
+      <hr/>
     </div>
     <div>
       총 주문건수: <span th:text="${#lists.size(orderTickets)}"></span> 건

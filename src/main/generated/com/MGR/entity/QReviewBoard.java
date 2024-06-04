@@ -42,6 +42,8 @@ public class QReviewBoard extends EntityPathBase<ReviewBoard> {
 
     public final SetPath<Member, QMember> voter = this.<Member, QMember>createSet("voter", Member.class, QMember.class, PathInits.DIRECT2);
 
+    public final NumberPath<Integer> voterCount = createNumber("voterCount", Integer.class);
+
     public QReviewBoard(String variable) {
         this(ReviewBoard.class, forVariable(variable), INITS);
     }
