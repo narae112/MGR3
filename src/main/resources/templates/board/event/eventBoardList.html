@@ -25,6 +25,10 @@
     <!--    <h2 th:text="#{page.boards}">글 목록</h2>-->
     <h3 class="mb-5 text-center">이벤트/공지 게시판</h3>
     <hr class="my-4">
+    <!-- 'ADMIN' 권한을 가진 사용자만 볼 수 있는 등록 버튼 -->
+    <button class="btn btn-primary"
+            onClick="location.href='/board/eventBoard/new'"
+            sec:authorize="hasRole('ADMIN')">등록</button>
     <div>
         <!-- 테이블을 감싸는 div에 table-container 클래스를 적용 -->
         <div class="table-container">
@@ -66,10 +70,7 @@
 
     </div>
 
-    <!-- 'ADMIN' 권한을 가진 사용자만 볼 수 있는 등록 버튼 -->
-    <button class="btn btn-primary"
-            onClick="location.href='/board/eventBoard/new'"
-            sec:authorize="hasRole('ADMIN')">등록</button>
+
 
     <div th:if="${!paging.isEmpty()}" class="text-center pagination-container">
         <ul class="pagination justify-content-center">
