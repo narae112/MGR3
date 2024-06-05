@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,11 +38,23 @@ public class OrderController {
 //        String email = member.getUsername();
 
 //        List<Order> orders = orderRepository.findOrders(email);
-        Optional<Order> order = orderRepository.findById(orderId);
-
-        List<OrderTicketDto> orderTicketList = new ArrayList<>();
+        List<String> orderNumList = new ArrayList<>(); //결제 후처리
+        Order order = orderRepository.findById(orderId).get();
+        List<OrderTicket> orderTicketList = orderRepository.findById(orderId).get().getOrderTickets();
+        List<OrderTicketDto> orderTickets = new ArrayList<>();
+        int totalPrice = orderRepository.findById(orderId).get().getAllTotalPrice();
+        String orderNum = order.getOrderNum();
+        System.out.println("orderNum1 = " + orderNum);
+        for (OrderTicket orderTicket : orderTicketList) {
+            orderNumList.add(orderNum);
+            System.out.println("orderNum2 = " + orderNum);
+            OrderTicketDto dto = new OrderTicketDto(orderTicket);
+            orderTickets.add(dto);
+        }
+        System.out.println(orderNumList.size());
+//        List<OrderTicketDto> orderTicketList = new ArrayList<>();
 //        int totalPrice = 0; //합계 금액 구하려고
-        List<String> orderNumLIst = new ArrayList<>(); //결제 후처리
+//        List<String> orderNumLIst = new ArrayList<>(); //결제 후처리
 //        for (Order order : orders) {
 //            totalPrice += order.getTotalPrice();
 //            orderNumLIst.add(order.getOrderNum());
@@ -54,13 +67,12 @@ public class OrderController {
 //            }
 //        }
 
-
-//        System.out.println("orderNumLIst = " + orderNumLIst);
-//        System.out.println("totalPrice = " + totalPrice);
+        
+        System.out.println("totalPrice = " + totalPrice);
 //
-//        model.addAttribute("orderTickets", orderTicketList);
-//        model.addAttribute("totalPrice", totalPrice);
-//        model.addAttribute("orderNumLIst", orderNumLIst);
+        model.addAttribute("orderTickets", orderTickets);
+        model.addAttribute("totalPrice", totalPrice);
+        model.addAttribute("orderNumList", orderNumList);
 
         return "/checkout";
     }
