@@ -116,10 +116,12 @@
 
   couponSelect.addEventListener("change", getSelectedCoupon);
 
-  function updatePrice() {
-      const discountedAmount = amount - (amount * coupon / 100);
-      paymentMethodWidget.updateAmount(discountedAmount);
-  }
+   function updatePrice() {
+  const discountedAmount = amount - (amount * coupon / 100);
+  const discountedPriceElement = document.getElementById("discountedPrice");
+  discountedPriceElement.textContent = discountedAmount + " 원";
+  paymentMethodWidget.updateAmount(discountedAmount);
+}
 
   // ------ '결제하기' 버튼 누르면 결제창 띄우기 ------
   // @docs https://docs.tosspayments.com/reference/widget-sdk#requestpayment결제-정보
