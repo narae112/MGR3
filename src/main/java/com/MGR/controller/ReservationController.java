@@ -99,6 +99,8 @@ public class ReservationController {
         List<ReservationOrderDto> reservationOrderDtoList = reservationOrderDto.getReservationOrderDtoList();
         String email = member.getUsername();
 
+
+
         if(reservationOrderDtoList == null || reservationOrderDtoList.size() == 0) {
             return new ResponseEntity<String>("주문할 상품을 선택해주세요", HttpStatus.FORBIDDEN);
         }
