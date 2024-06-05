@@ -64,6 +64,16 @@ public class MemberController {
         return "/member/editForm";
     }
 
+    @GetMapping("/changePasswordForm")
+    public String oAuthMemberEdit(Model model, @AuthenticationPrincipal PrincipalDetails member){
+
+        Member memberInfo = memberService.findByEmail(member.getUsername()).orElseThrow();
+        System.out.println("memberInfo: " + memberInfo); // 로깅 추가
+        model.addAttribute("memberInfo", memberInfo);
+
+        return "/member/changePasswordForm";
+    }
+
     @PostMapping("/editNickname/{id}")
     public String memberInfoEditNickname(@PathVariable("id") Long id,
                                          @AuthenticationPrincipal PrincipalDetails member,
