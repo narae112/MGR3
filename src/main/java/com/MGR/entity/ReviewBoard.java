@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Formula;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -36,6 +37,26 @@ public class ReviewBoard {
     @OneToMany(mappedBy = "reviewBoard", cascade = CascadeType.ALL)
     private List<Image> images;
 
+    public List<String> getImageUrls() {
+        List<String> imageUrls = new ArrayList<>();
+        if (images != null) {
+            for (Image image : images) {
+                imageUrls.add(image.getImgUrl());
+            }
+        }
+        return imageUrls;
+    }
+
+    // 다른 필드들과 함께 이미지 URL을 저장할 필드 추가
+    @ElementCollection
+    private List<String> imageUrls;
+
+    public String getFirstImageUrl() {
+        if (images != null && !images.isEmpty()) {
+            return images.get(0).getImgUrl();
+        }
+        return null;
+    }
     @ManyToOne
     private Member author;
 
