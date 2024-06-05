@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Getter @Setter
 public class MemberCouponDto {
     private String name; // 쿠폰 이름
-    private Integer discountAmount; //할인 금액
+//    private Integer discountAmount; //할인 금액
     private Integer discountRate; //할인률
     private LocalDate startDate; // 사용 시작일
     private LocalDate endDate; // 사용 기한
@@ -17,7 +17,7 @@ public class MemberCouponDto {
 
     public MemberCouponDto(MemberCoupon memberCoupon) {
         this.name = memberCoupon.getCoupon().getName();
-        this.discountAmount = memberCoupon.getCoupon().getDiscountAmount();
+//        this.discountAmount = memberCoupon.getCoupon().getDiscountAmount();
         this.discountRate = memberCoupon.getCoupon().getDiscountRate();
         this.startDate = memberCoupon.getCoupon().getStartDate();
         this.endDate = memberCoupon.getCoupon().getEndDate();
