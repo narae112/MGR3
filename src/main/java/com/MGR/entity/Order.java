@@ -4,6 +4,7 @@ import com.MGR.constant.ReservationStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Getter @Setter
+@Getter @Setter @ToString
 @Table(name="orders")
 public class Order {
     @Id

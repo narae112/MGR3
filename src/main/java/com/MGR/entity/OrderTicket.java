@@ -3,11 +3,12 @@ package com.MGR.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDate;
 
 @Entity
-@Getter @Setter
+@Getter @Setter @ToString
 @Table(name = "order_ticket")
 public class OrderTicket {
     @Id

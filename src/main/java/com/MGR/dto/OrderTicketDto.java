@@ -6,10 +6,11 @@ import com.MGR.entity.Order;
 import com.MGR.entity.OrderTicket;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDate;
 
-@Getter @Setter
+@Getter @Setter @ToString
 public class OrderTicketDto {
     private Long orderId;
     private LocationCategory locationCategory; // 지점
