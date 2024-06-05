@@ -114,12 +114,12 @@ public class WidgetController {
 
         orderService.changeStatus(id);
 
-        // 결제 완료한 예약 티켓은 디비에서 삭제
+        // 결제 완료한 예약 티켓 상태 변경
         Order order = orderRepository.findById(id).get();
         List<OrderTicket> orderTickets = order.getOrderTickets();
         for(OrderTicket orderTicket : orderTickets) {
             ReservationTicket reservationTicket = reservationTicketRepository.findById(orderTicket.getReservationTicketId()).orElseThrow();
-            reservationTicketRepository.delete(reservationTicket);
+            reservationTicket.setReservationStatus(ReservationStatus.PAYED);
         }
 
         return "/success";

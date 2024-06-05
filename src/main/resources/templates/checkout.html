@@ -2,7 +2,7 @@
 <head>
   <meta charset="utf-8" />
   <link rel="icon" href="https://static.toss.im/icons/png/4x/icon-toss-logo.png" />
-  <link rel="stylesheet" type="text/css" href="/style.css" />
+  <link rel="stylesheet" type="text/css" th:href="@{/css/toss_style.css}" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MERRY GO RIDE.｡.:*☆</title>
@@ -37,11 +37,9 @@
     <!-- 이용약관 UI -->
     <div id="agreement"></div>
     <!-- 쿠폰 체크박스 -->
-    <div class="checkable typography--p" style="padding-left: 25px">
-      <label for="coupon-box" class="checkable__label typography--regular"
-      ><input id="coupon-box" class="checkable__input" type="checkbox" aria-checked="true" disabled /><span class="checkable__label-text">5,000원 쿠폰 적용</span></label
-      >
-    </div>
+    <select th:each="memberCoupon : ${memberCouponList}" class="checkable typography--p" style="padding-left: 25px">
+      <option th:value="${memberCoupon}" th:text="${memberCoupon.name}"></option>
+    </select>
     <div></div>
 
     <!-- 결제하기 버튼 -->
@@ -53,8 +51,8 @@
   const coupon = document.getElementById("coupon-box");
   const generateRandomString = () => window.btoa(Math.random()).slice(0, 20);
 
-  var orderNum =/*[[${orderNumLIst[0]}]]*/
-  var orderQuantity =/*[[${#lists.size(orderNumLIst)}]]*/
+  var orderNum =/*[[${orderNumList[0]}]]*/
+  var orderQuantity =/*[[${#lists.size(orderNumList)}]]*/
   console.log("Order Number: " + orderNum)
   var amount =/*[[${totalPrice}]]*/
   var product =/*[[${orderTickets[0].name}]]*/
