@@ -6,6 +6,7 @@ import com.MGR.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -40,9 +41,15 @@ public class NotificationController {
     }
 
     @GetMapping("/api/notifications/count")
-    public int getNotificationCount(@AuthenticationPrincipal PrincipalDetails member) {
+    public ResponseEntity<Integer> getNotificationCount(@AuthenticationPrincipal PrincipalDetails member) {
+        if (member == null) {
+            // 사용자가 로그인하지 않은 경우
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
         Long memberId = member.getId();
-        return notificationService.countNotificationsForMember(memberId);
-        //알림 갯수 나타내는 메서드
+        int notificationCount = notificationService.countNotificationsForMember(memberId);
+
+        return new ResponseEntity<>(notificationCount, HttpStatus.OK);
     }
 }

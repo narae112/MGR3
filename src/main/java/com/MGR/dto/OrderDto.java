@@ -14,8 +14,12 @@ public class OrderDto {
     private Long ticketId;
 
     @Min(value = 1, message = "최소 주문 수량은 1개입니다")
-    @Max(value = 999, message = "최대 주문 수량은 999개입니다")
-    private int count;
+    @Max(value = 99, message = "최대 주문 수량은 99개입니다")
+    private int adultCount;
+
+    private int childCount;
 
     private LocalDate visitDate;
+
+    private Long reservationTicketId;
 }

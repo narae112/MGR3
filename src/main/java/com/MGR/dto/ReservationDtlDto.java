@@ -13,24 +13,26 @@ import java.time.format.DateTimeFormatter;
 public class ReservationDtlDto {
     private Long reservationTicketId; // 예약 내역 티켓 아이디
     private String name; // 티켓 이름
-    private int price; // 금액
-    private int ticketCount; // 수량
     private LocationCategory locationCategory; // 지점
     private String visitDate; // 방문예정일
     private String reservationDate; // 예약일
     private ReservationStatus reservationStatus; // 예약 상태
-    private TicketCategory ticketCategory; // 성인/아동
+    private int adultCount; // 성인 인원
+    private int childCount; // 아동 인원
+    private int adultPrice; // 성인 가격
+    private int childPrice; // 아동 가격
 
     public ReservationDtlDto(ReservationTicket reservationTicket) {
         this.reservationTicketId = reservationTicket.getId();
         this.name = reservationTicket.getTicket().getName();
-        this.price = reservationTicket.getTicket().getPrice();
-        this.ticketCount = reservationTicket.getTicketCount();
         this.locationCategory = reservationTicket.getTicket().getLocationCategory();
         this.visitDate = reservationTicket.getVisitDate();
         this.reservationDate = reservationTicket.getReservationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         this.reservationStatus = reservationTicket.getReservationStatus();
-        this.ticketCategory = reservationTicket.getTicket().getTicketCategory();
+        this.adultCount = reservationTicket.getAdultCount();
+        this.childCount = reservationTicket.getChildCount();
+        this.adultPrice = reservationTicket.getTicket().getAdultPrice();
+        this.childPrice = reservationTicket.getTicket().getChildPrice();
     }
 
 }

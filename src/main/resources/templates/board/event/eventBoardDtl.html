@@ -7,7 +7,7 @@
 <!-- css -->
 <th:block layout:fragment="css">
     <style>
-        .announcement-form {
+        .announcement-container {
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
@@ -16,19 +16,18 @@
             border: 1px solid #dee2e6;
         }
 
-        .announcement-form h2 {
+        .announcement-container h2 {
             margin-bottom: 20px;
             font-size: 24px;
             font-weight: bold;
             text-align: center;
         }
 
-        .announcement-form label {
+        .announcement-container label {
             font-weight: bold;
         }
 
-        .announcement-form input[type="text"],
-        .announcement-form textarea {
+        .announcement-container textarea {
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
@@ -36,26 +35,39 @@
             border-radius: 4px;
             box-sizing: border-box;
             resize: none;
-            background-color: #f8f9fa;
         }
 
-        .announcement-form .btn-container {
+        .announcement-container .info-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .announcement-container .author-info {
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .announcement-container .rep-img-div {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .announcement-container .rep-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+
+        .announcement-container .btn-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-top: 20px;
         }
 
-        .announcement-form .btn-primary {
-            background-color: #007bff;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            color: #ffffff;
-            border-radius: 4px;
-        }
-
-        .announcement-form .btn-outline-secondary {
+        .announcement-container .btn-outline-secondary {
             background-color: transparent;
             border: 1px solid #6c757d;
             padding: 9px 19px;
@@ -64,39 +76,14 @@
             cursor: pointer;
         }
 
-        .announcement-form .btn-outline-secondary:hover {
+        .announcement-container .btn-outline-secondary:hover {
             background-color: #6c757d;
             color: #ffffff;
-        }
-
-        .announcement-form .rep-img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 4px;
-        }
-
-        /* 추가된 스타일 */
-        .announcement-form .info-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px; /* 이미지와 콘텐트 사이 간격 조절 */
-        }
-
-        .announcement-form .author-info {
-            font-size: 14px;
-            color: #6c757d;
-        }
-
-        .announcement-form .rep-img-div {
-            text-align: center;
-            margin-bottom: 15px; /* 이미지 아래 여백 추가 */
         }
     </style>
 </th:block>
 
 <!-- js -->
-<!-- 스크립트 -->
 <th:block layout:fragment="script">
     <script th:inline="javascript">
         var token = $("meta[name='_csrf']").attr('content');
@@ -137,7 +124,7 @@
 </th:block>
 
 <div layout:fragment="content">
-    <div class="announcement-form">
+    <div class="announcement-container">
         <h2 th:text="${eventBoard.title}"></h2>
 
         <div class="info-container">
@@ -149,12 +136,12 @@
         </div>
         <div>
             <label for="content"></label>
+            <textarea rows="5" id="content" name="content" readonly th:text="${eventBoard.content}"></textarea>
             <!-- 이미지 시작 -->
             <div class="rep-img-div">
                 <img th:if="${not #lists.isEmpty(eventImage)}" th:src="@{|${eventImage.imgUrl}|}" class="rep-img">
             </div>
             <!-- 이미지 끝 -->
-            <textarea class="form-control" rows="5" id="content" name="content" readonly th:text="${eventBoard.content}"></textarea>
         </div>
         <div class="btn-container">
             <a th:href="@{/board/events}" class="btn btn-outline-secondary btn-sm">목록으로</a>

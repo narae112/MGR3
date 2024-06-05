@@ -44,11 +44,11 @@ public class ReservationController {
             return new ResponseEntity<String>(sb.toString(), HttpStatus.BAD_REQUEST);
         }
 
-        String email = member.getUsername();
+        String email = member.getUsername(); // 로그인한 멤버 이메일
         Long reservationTicketId;
 
         try {
-            reservationTicketId = reservationService.addReservation(reservationTicketDto, email);
+            reservationTicketId = reservationService.addReservation(reservationTicketDto, email); // 받아온 요청 & 이메일 넘겨서 reservationTicketId 가져오기
         } catch (Exception e) {
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -70,13 +70,13 @@ public class ReservationController {
 
     // 티켓 수량 수정
     @PatchMapping("/reservationTicket/{reservationTicketId}")
-    public @ResponseBody ResponseEntity updateReserveTicket(@PathVariable("reservationTicketId") Long reservationTicketId, int ticketCount, @AuthenticationPrincipal PrincipalDetails member) {
-        if(ticketCount <= 0) {
-            return new ResponseEntity<String>("티켓 수량은 1개 미만이 될 수 없습니다", HttpStatus.BAD_REQUEST);
+    public @ResponseBody ResponseEntity updateReserveTicket(@PathVariable("reservationTicketId") Long reservationTicketId, int adultCount, int childCount, @AuthenticationPrincipal PrincipalDetails member) {
+        if(adultCount <= 0) {
+            return new ResponseEntity<String>("성인 티켓 수량은 1개 미만이 될 수 없습니다, 아동은 반드시 성인 보호자를 동반해야 합니다", HttpStatus.BAD_REQUEST);
         } else if(!reservationService.validateReserveTicket(reservationTicketId, member.getUsername())) {
             return new ResponseEntity<String>("수정 권한이 없습니다", HttpStatus.FORBIDDEN);
         }
-        reservationService.updateReservationTicketCount(reservationTicketId, ticketCount);
+        reservationService.updateReservationTicketCount(reservationTicketId, adultCount, childCount);
 
         return new ResponseEntity<Long>(reservationTicketId, HttpStatus.OK);
     }

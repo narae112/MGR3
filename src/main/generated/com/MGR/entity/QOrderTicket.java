@@ -22,15 +22,19 @@ public class QOrderTicket extends EntityPathBase<OrderTicket> {
 
     public static final QOrderTicket orderTicket = new QOrderTicket("orderTicket");
 
-    public final NumberPath<Integer> count = createNumber("count", Integer.class);
+    public final NumberPath<Integer> adultCount = createNumber("adultCount", Integer.class);
+
+    public final NumberPath<Integer> adultPrice = createNumber("adultPrice", Integer.class);
+
+    public final NumberPath<Integer> childCount = createNumber("childCount", Integer.class);
+
+    public final NumberPath<Integer> childPrice = createNumber("childPrice", Integer.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final QOrder order;
 
-    public final NumberPath<Integer> orderPrice = createNumber("orderPrice", Integer.class);
-
-    public final QReservationTicket reservationTicket;
+    public final NumberPath<Long> reservationTicketId = createNumber("reservationTicketId", Long.class);
 
     public final QTicket ticket;
 
@@ -55,7 +59,6 @@ public class QOrderTicket extends EntityPathBase<OrderTicket> {
     public QOrderTicket(Class<? extends OrderTicket> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.order = inits.isInitialized("order") ? new QOrder(forProperty("order"), inits.get("order")) : null;
-        this.reservationTicket = inits.isInitialized("reservationTicket") ? new QReservationTicket(forProperty("reservationTicket"), inits.get("reservationTicket")) : null;
         this.ticket = inits.isInitialized("ticket") ? new QTicket(forProperty("ticket")) : null;
     }
 

@@ -1,6 +1,7 @@
 package com.MGR.security;
 
 import com.MGR.entity.Member;
+import com.MGR.oauth2.OAuth2SuccessHandler;
 import com.MGR.repository.MemberRepository;
 import com.MGR.service.OAuth2MemberService;
 import lombok.RequiredArgsConstructor;
@@ -27,21 +28,18 @@ public class SecurityConfig {
     private final OAuth2MemberService oAuth2MemberService;
     private final JwtUtil jwtUtil;
 
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
                 httpSecurity.csrf(csrf -> csrf
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
 
         httpSecurity
-
-                .authorizeHttpRequests(authorize -> authorize
-                    .requestMatchers("/ws/**").hasAnyRole("ADMIN", "USER"))
 //                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/websocket/**").permitAll()
-                        .requestMatchers("/api/**").hasRole( "USER")
+                        .requestMatchers("/api/**").permitAll()
                         .requestMatchers("/gemini/**").permitAll()
-                        .requestMatchers("/board/**").permitAll()
                         .requestMatchers("/js/**").permitAll()
                         .requestMatchers("/css/**").permitAll()
                         .requestMatchers("/img/**").permitAll()
@@ -65,10 +63,11 @@ public class SecurityConfig {
 
                 .oauth2Login((oauth2login) -> oauth2login//oauth2 관련 설정
                         .loginPage("/loginForm") //로그인이 필요한데 로그인을 하지 않았다면 이동할 uri 설정
-                        .defaultSuccessUrl("/ ") //OAuth 로그인이 성공하면 이동할 uri 설정
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(oAuth2MemberService))
-                );//로그인 완료 후 회원 정보 받기
+                        .successHandler(oAuth2SuccessHandler)
+                )
+                .apply(new MyCustomDsl());//로그인 완료 후 회원 정보 받기
 
 //        httpSecurity //JWT(토큰 기반)를 이용하기 때문에 session 필요 없음
 //                .sessionManagement((session) -> session
@@ -127,12 +126,5 @@ public class SecurityConfig {
 //                memberRepository.save(user);
 //            }
 //        };
-//    }
-
-
-
-//    @Bean
-//    public ServerEndpointExporter serverEndpointExporter() {
-//        return new ServerEndpointExporter();
 //    }
 }

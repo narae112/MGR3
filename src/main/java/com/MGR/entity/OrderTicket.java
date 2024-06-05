@@ -19,31 +19,43 @@ public class OrderTicket {
     @JoinColumn(name="ticket_id")
     private Ticket ticket;
 
-    @ManyToOne
-    @JoinColumn(name = "reservation_ticket_id")
-    private ReservationTicket reservationTicket;
+//    @ManyToOne
+//    @JoinColumn(name = "reservation_ticket_id")
+//    private ReservationTicket reservationTicket;
+
+    @Column
+    private Long reservationTicketId;
 
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="order_id")
     private Order order;
 
-    private int orderPrice; //주문가격
-    private int count; //주문수량
+    @Column
+    private int adultPrice; // 성인 티켓 가격
+    private int childPrice; // 아동 티켓 가격
+    private int adultCount; // 성인 주문 수량
+    private int childCount; // 아동 주문 수량
     private LocalDate visitDate;
 
-    public static OrderTicket createOrderTicket(Ticket ticket, int count, LocalDate visitDate) {
+    public static OrderTicket createOrderTicket(Ticket ticket, Long reservationTicketId, int adultCount, int childCount, LocalDate visitDate) {
+
         OrderTicket orderTicket = new OrderTicket();
+
         orderTicket.setTicket(ticket);
-        orderTicket.setCount(count);
-        orderTicket.setOrderPrice(ticket.getPrice());
+        orderTicket.setReservationTicketId(reservationTicketId);
+        orderTicket.setAdultPrice(ticket.getAdultPrice());
+        orderTicket.setChildCount(ticket.getChildPrice());
+        orderTicket.setAdultCount(adultCount);
+        orderTicket.setChildCount(childCount);
         orderTicket.setVisitDate(visitDate);
 
         return orderTicket;
-    }
-    // 주문할 상품과 주문 수량을 통해 orderTicket 객체를 만드는 메서드 작성
+    } // 주문할 상품과 주문 수량을 통해 orderTicket 객체를 만드는 메서드 작성
 
-    public int getTotalPrice() {
-        return orderPrice * count;
-    } // 물품 1개 항목 당 토탈가격(물건 갯수 * 물건 가격)
+    public int getAdultTotalPrice() { return adultPrice * adultCount; } // 성인 티켓 토탈 가격(성인 티켓 가격 * 성인 인원수)
+    public int getChildTotalPrice() {
+        return childPrice * childCount;
+    } // 아동 티켓 토탈 가격
 
+    public int getTotalPrice() { return (getAdultTotalPrice() + getChildTotalPrice()); } // 전체(성인 + 아동) 주문 가격
 }

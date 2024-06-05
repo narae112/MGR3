@@ -19,7 +19,7 @@ public class Order {
     @Column(name = "order_id")
     private Long id;
 
-    private String orderNum;
+    private String orderNum; // 주문번호
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -55,15 +55,14 @@ public class Order {
         order.setOrderDate(LocalDateTime.now());
         order.setOrderNum(UUID.randomUUID().toString());
         return order;
-    }
-    // 주문 티켓 객체를 이용하여 주문 객체를 만드는 메서드 작성
+    } // 주문 티켓 객체를 이용하여 주문 객체를 만드는 메서드 작성
 
-    public int getTotalPrice() {
-        int totalPrice = 0;
+    public int getAllTotalPrice() {
+        int allTotalPrice = 0;
         for (OrderTicket orderTicket : orderTickets) {
-            totalPrice += orderTicket.getTotalPrice();
+            allTotalPrice += orderTicket.getTotalPrice();
         }
-        return totalPrice;
+        return allTotalPrice;
     }
 
     public void cancelOrder() {
