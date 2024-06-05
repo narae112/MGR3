@@ -19,12 +19,9 @@ public class OrderTicket {
     @JoinColumn(name="ticket_id")
     private Ticket ticket;
 
-//    @ManyToOne
-//    @JoinColumn(name = "reservation_ticket_id")
-//    private ReservationTicket reservationTicket;
-
-    @Column
-    private Long reservationTicketId;
+    @ManyToOne
+    @JoinColumn(name = "reservation_ticket_id")
+    private ReservationTicket reservationTicket;
 
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="order_id")
@@ -37,12 +34,12 @@ public class OrderTicket {
     private int childCount; // 아동 주문 수량
     private LocalDate visitDate;
 
-    public static OrderTicket createOrderTicket(Ticket ticket, Long reservationTicketId, int adultCount, int childCount, LocalDate visitDate) {
+    public static OrderTicket createOrderTicket(Ticket ticket, ReservationTicket reservationTicket, int adultCount, int childCount, LocalDate visitDate) {
 
         OrderTicket orderTicket = new OrderTicket();
 
         orderTicket.setTicket(ticket);
-        orderTicket.setReservationTicketId(reservationTicketId);
+        orderTicket.setReservationTicket(reservationTicket);
         orderTicket.setAdultPrice(ticket.getAdultPrice());
         orderTicket.setChildCount(ticket.getChildPrice());
         orderTicket.setAdultCount(adultCount);

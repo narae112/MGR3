@@ -80,4 +80,7 @@ public class ReservationTicket {
         this.reservationStatus = ReservationStatus.CANCEL;
     }
 
+    public void updateStatus(){
+        this.reservationStatus = ReservationStatus.PAYED;
+    }
 }
