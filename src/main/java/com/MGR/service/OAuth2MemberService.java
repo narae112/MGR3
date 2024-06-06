@@ -27,6 +27,7 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         OAuth2MemberInfo memberInfo = null;
         System.out.println(oAuth2User.getAttributes());
+
         System.out.println(userRequest.getClientRegistration().getRegistrationId());
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();

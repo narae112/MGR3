@@ -81,10 +81,15 @@ public class CouponService {
         List<Member> memberList;
         if (coupon.getCouponType() == CouponType.BIRTH) {
             memberList = memberService.findMembersWithBirthdayToday();
-        } else {
+        } else if(coupon.getCouponType() == CouponType.ALL){
             memberList = memberService.findByAllUser();
+        }else{
+            throw new IllegalArgumentException("Coupon type is null or invalid.");
         }
-
+        if (memberList == null) {
+            // 적절한 예외 처리 또는 기본값 설정
+            throw new IllegalStateException("Member list is null.");
+        }
         for (Member member : memberList) {
             MemberCoupon memberCoupon = MemberCoupon.memberGetCoupon(member, coupon);
             memberCouponRepository.save(memberCoupon);

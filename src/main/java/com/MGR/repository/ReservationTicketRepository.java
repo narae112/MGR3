@@ -17,6 +17,7 @@ public interface ReservationTicketRepository extends JpaRepository<ReservationTi
 
     @Query("select rt from ReservationTicket rt " +
             "where rt.reservation.id = :reservationId " +
+            "and rt.reservationStatus = 'RESERVE' " +
             "order by rt.reservationDate desc"
     )
     List<ReservationDtlDto> findReservations(@Param("reservationId")Long id, Pageable pageable);

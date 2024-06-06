@@ -30,13 +30,13 @@ public class NotificationService {
         SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
 
         // 2. 연결 확인 메세지
-        try {
-            sseEmitter.send(SseEmitter.event()
-                    .name("connect")
-                    .data("연결성공"));
-        } catch (IOException e) {
-            System.out.println("연결 에러= " + e.getMessage());
-        }
+//        try {
+//            sseEmitter.send(SseEmitter.event()
+//                    .name("connect")
+//                    .data("연결성공"));
+//        } catch (IOException e) {
+//            System.out.println("연결 에러= " + e.getMessage());
+//        }
 
         // 3. 저장
         sseEmitters.put(memberId, sseEmitter);
@@ -48,6 +48,7 @@ public class NotificationService {
 
         return sseEmitter;
     }
+
 
     // 이벤트 등록 알림
     @Transactional

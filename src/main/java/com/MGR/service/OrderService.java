@@ -34,7 +34,9 @@ public class OrderService {
             Ticket ticket = ticketRepository.findById(orderDto.getTicketId())
                     .orElseThrow(EntityNotFoundException::new);
             // orderDto 객체에 대해 해당하는 티켓 아이디를 사용하여 데이터베이스에서 티켓 정보를 가지고 옴
-            OrderTicket orderTicket = OrderTicket.createOrderTicket(ticket, orderDto.getReservationTicketId(),
+            ReservationTicket reservationTicket = reservationTicketRepository.findById(orderDto.getReservationTicketId())
+                    .orElseThrow(EntityNotFoundException::new);
+            OrderTicket orderTicket = OrderTicket.createOrderTicket(ticket, reservationTicket,
                                                                     orderDto.getAdultCount(), orderDto.getChildCount(), orderDto.getVisitDate());
             // createOrderTicket : 검색된 티켓을 사용하여 orderDto 에서 지정된 수량을 사용, orderTicket 객체 생성
 
@@ -55,6 +57,15 @@ public class OrderService {
         Order order = orderRepository.findById(id).get();
         order.setReservationStatus(ReservationStatus.PAYED);
         orderRepository.save(order);
+    }
+
+    public void changeReservationTicketStatus(Long id) {
+        Optional<Order> order = orderRepository.findById(id);
+        List<OrderTicket> orderTickets = order.get().getOrderTickets();
+        for(OrderTicket orderTicket : orderTickets) {
+            ReservationTicket reservationTicket = reservationTicketRepository.findById(orderTicket.getReservationTicket().getId()).orElseThrow(EntityNotFoundException::new);
+            reservationTicket.setReservationStatus(ReservationStatus.PAYED);
+        }
     }
 
 }

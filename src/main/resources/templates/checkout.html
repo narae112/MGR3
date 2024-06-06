@@ -2,7 +2,7 @@
 <head>
   <meta charset="utf-8" />
   <link rel="icon" href="https://static.toss.im/icons/png/4x/icon-toss-logo.png" />
-  <link rel="stylesheet" type="text/css" href="/style.css" />
+  <link rel="stylesheet" type="text/css" href="/css/toss_style.css" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>토스페이먼츠 샘플 프로젝트</title>
@@ -18,14 +18,12 @@
     <p>티켓 결제 하기</p>
     <!--          <input type="hidden" id="orderId" th:value="${orderTicket.orderId}">-->
     <div th:each="orderTicket : ${orderTickets}">
-      <span th:text="'[' + ${orderTicket.locationCategory.displayName} + '점] '
-                      + ${orderTicket.name} + '_' + ${orderTicket.ticketCategory.displayName}"></span>
-      <!-- [지점] 티켓 이름 _ 구분(성인/아동) -->
-      <span th:text="${orderTicket.orderPrice} + '원'"></span> <!-- 예약 티켓 당 금액 -->
-      <span th:text="${orderTicket.count}"></span>
-      <span th:text="${orderTicket.visitDate}"></span>
-      <hr/>
+      <span th:text="'방문예정일 : ' + ${orderTicket.visitDate}"></span>
+      <span th:text="'[' + ${orderTicket.locationCategory.displayName} + '점] ' + ${orderTicket.name}"></span>
+      <!-- [지점] 티켓 이름 -->
+      <span th:text="'성인 티켓 : ' + ${orderTicket.adultCount} + '장 [' + ${(orderTicket.adultPrice) * (orderTicket.adultCount)} + '원], ' + '아동 티켓 : ' + ${orderTicket.childCount} + '장 [' + ${(orderTicket.childPrice) * (orderTicket.childCount)} + '원]'"></span>
 
+      <hr/>
     </div>
     <div>
       총 주문건수: <span th:text="${#lists.size(orderTickets)}"></span> 건
@@ -39,24 +37,45 @@
     <!-- 이용약관 UI -->
     <div id="agreement"></div>
     <!-- 쿠폰 체크박스 -->
-    <div class="checkable typography--p" style="padding-left: 25px">
-      <label for="coupon-box" class="checkable__label typography--regular"
-      ><input id="coupon-box" class="checkable__input" type="checkbox" aria-checked="true" disabled /><span class="checkable__label-text">5,000원 쿠폰 적용</span></label
-      >
-    </div>
+<!--    <div class="checkable typography&#45;&#45;p" style="padding-left: 25px">-->
+<!--      <label for="coupon-box" class="checkable__label typography&#45;&#45;regular"-->
+<!--      ><input id="coupon-box" class="checkable__input" type="checkbox" aria-checked="true" disabled /><span class="checkable__label-text">5,000원 쿠폰 적용</span></label-->
+<!--      >-->
+<!--    </div>-->
+    <label for="couponSelect">사용 가능 쿠폰 : </label>
+    <select name="couponSelect" id="couponSelect" onchange="getSelectedCoupon()">
+      <option value="0" selected>선택 안 함</option>
+      <option th:each="coupon : ${memberCouponList}" th:value="${coupon.discountRate}" th:text="${coupon.name} + ' - ' + ${coupon.discountRate} + '% 할인'"></option>
+    </select>
     <div></div>
 
+    <div>
+      총 주문금액: <span id="totalPrice" th:text="${totalPrice}"></span> 원
+    </div>
+    <div>
+      할인 적용 후 금액: <span id="discountedPrice"></span>
+    </div>
     <!-- 결제하기 버튼 -->
     <button class="button" id="payment-button" style="margin-top: 30px" disabled>결제하기</button>
   </div>
 </div>
 <script th:inline="javascript">
   const button = document.getElementById("payment-button");
-  const coupon = document.getElementById("coupon-box");
+<!--  const coupon = document.getElementById("coupon-box");-->
+  const couponSelect = document.getElementById("couponSelect");
+
+  let coupon = 0;
+
+  function getSelectedCoupon() {
+      coupon = parseInt(couponSelect.value);
+      console.log("Selected Coupon Rate: " + coupon);
+      updatePrice();
+  }
+
   const generateRandomString = () => window.btoa(Math.random()).slice(0, 20);
 
-  var orderNum =/*[[${orderNumLIst[0]}]]*/
-  var orderQuantity =/*[[${#lists.size(orderNumLIst)}]]*/
+  var orderNum =/*[[${orderNumList[0]}]]*/
+  var orderQuantity =/*[[${#lists.size(orderNumList)}]]*/
   console.log("Order Number: " + orderNum)
   var amount =/*[[${totalPrice}]]*/
   var product =/*[[${orderTickets[0].name}]]*/
@@ -94,13 +113,15 @@
 
   // ------  결제 금액 업데이트 ------
   // @docs https://docs.tosspayments.com/reference/widget-sdk#updateamount결제-금액
-  coupon.addEventListener("change", function () {
-  if (coupon.checked) {
-  paymentMethodWidget.updateAmount(amount - 5000);
-  } else {
-  paymentMethodWidget.updateAmount(amount);
-  }
-  });
+
+  couponSelect.addEventListener("change", getSelectedCoupon);
+
+   function updatePrice() {
+  const discountedAmount = amount - (amount * coupon / 100);
+  const discountedPriceElement = document.getElementById("discountedPrice");
+  discountedPriceElement.textContent = discountedAmount + " 원";
+  paymentMethodWidget.updateAmount(discountedAmount);
+}
 
   // ------ '결제하기' 버튼 누르면 결제창 띄우기 ------
   // @docs https://docs.tosspayments.com/reference/widget-sdk#requestpayment결제-정보

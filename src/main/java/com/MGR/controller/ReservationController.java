@@ -96,6 +96,7 @@ public class ReservationController {
     @PostMapping("/reservation/orders")
     public @ResponseBody ResponseEntity orderReservationTicket(@RequestBody ReservationOrderDto reservationOrderDto,
                                                                @AuthenticationPrincipal PrincipalDetails member) {
+
         List<ReservationOrderDto> reservationOrderDtoList = reservationOrderDto.getReservationOrderDtoList();
         String email = member.getUsername();
 

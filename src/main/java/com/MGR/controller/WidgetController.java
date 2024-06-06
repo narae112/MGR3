@@ -1,6 +1,5 @@
 package com.MGR.controller;
 
-import com.MGR.constant.ReservationStatus;
 import com.MGR.entity.Order;
 import com.MGR.entity.OrderTicket;
 import com.MGR.entity.ReservationTicket;
@@ -26,7 +25,6 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
@@ -114,13 +112,9 @@ public class WidgetController {
 
         orderService.changeStatus(id);
 
-        // 결제 완료한 예약 티켓은 디비에서 삭제
-        Order order = orderRepository.findById(id).get();
-        List<OrderTicket> orderTickets = order.getOrderTickets();
-        for(OrderTicket orderTicket : orderTickets) {
-            ReservationTicket reservationTicket = reservationTicketRepository.findById(orderTicket.getReservationTicketId()).orElseThrow();
-            reservationTicketRepository.delete(reservationTicket);
-        }
+        // 결제 완료한 예약 티켓 상태 변경
+        orderService.changeReservationTicketStatus(id);
+
 
         return "/success";
     }
