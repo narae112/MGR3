@@ -74,7 +74,29 @@ public class OrderController {
         model.addAttribute("totalPrice", totalPrice);
         model.addAttribute("orderNumList", orderNumList);
 
+        // 로그인한 멤버가 가진 쿠폰
+        List<MemberCoupon> memberCouponList = memberCouponRepository.findAllByMemberId(member.getId());
+        List<MemberCouponDto> memberCouponDtos = new ArrayList<>();
+
+        for(MemberCoupon memberCoupon : memberCouponList) {
+            MemberCouponDto memberCouponDto = new MemberCouponDto(memberCoupon);
+            memberCouponDtos.add(memberCouponDto);
+            System.out.println("memberCouponDto = " + memberCouponDto.getName());
+        }
+
+        System.out.println("orderNumList = " + orderNumList);
+        System.out.println("totalPrice = " + totalPrice);
+
+
+        model.addAttribute("orderTickets", orderTicketList); // OrderTicketDto 객체 담긴 리스트
+        model.addAttribute("totalPrice", totalPrice); // 전체 가격
+        model.addAttribute("orderNumList", orderNumList); // 주문 번호 리스트
+        model.addAttribute("memberCouponList", memberCouponDtos); // 쿠폰 리스트
+
         return "/checkout";
+
+
     }
+
 
 }
