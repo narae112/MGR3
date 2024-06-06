@@ -1,3 +1,5 @@
+
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="utf-8" />
@@ -11,24 +13,23 @@
 </head>
 
 <body>
-<!-- 주문서 영역 -->
-<div class="wrapper">
-  <div class="box_section" style="padding: 40px 30px 50px 30px; margin-top: 30px; margin-bottom: 50px">
-
+<!-- 모달 창 -->
+<div id="payment-modal" class="modal">
+  <div class="modal-content">
+    <!-- 모달 내용 -->
     <p>티켓 결제 하기</p>
-    <!--          <input type="hidden" id="orderId" th:value="${orderTicket.orderId}">-->
+    <!-- 주문서 내용 -->
     <div th:each="orderTicket : ${orderTickets}">
       <span th:text="'방문예정일 : ' + ${orderTicket.visitDate}"></span>
       <span th:text="'[' + ${orderTicket.locationCategory.displayName} + '점] ' + ${orderTicket.name}"></span>
       <!-- [지점] 티켓 이름 -->
       <span th:text="'성인 티켓 : ' + ${orderTicket.adultCount} + '장 [' + ${(orderTicket.adultPrice) * (orderTicket.adultCount)} + '원], ' + '아동 티켓 : ' + ${orderTicket.childCount} + '장 [' + ${(orderTicket.childPrice) * (orderTicket.childCount)} + '원]'"></span>
-
       <hr/>
     </div>
+    <!-- 주문서 정보 -->
     <div>
       총 주문건수: <span th:text="${#lists.size(orderTickets)}"></span> 건
     </div>
-
     <div>
       총 결제금액: <span th:text="${totalPrice}"></span> 원
     </div>
@@ -37,18 +38,12 @@
     <!-- 이용약관 UI -->
     <div id="agreement"></div>
     <!-- 쿠폰 체크박스 -->
-<!--    <div class="checkable typography&#45;&#45;p" style="padding-left: 25px">-->
-<!--      <label for="coupon-box" class="checkable__label typography&#45;&#45;regular"-->
-<!--      ><input id="coupon-box" class="checkable__input" type="checkbox" aria-checked="true" disabled /><span class="checkable__label-text">5,000원 쿠폰 적용</span></label-->
-<!--      >-->
-<!--    </div>-->
     <label for="couponSelect">사용 가능 쿠폰 : </label>
     <select name="couponSelect" id="couponSelect" onchange="getSelectedCoupon()">
       <option value="0" selected>선택 안 함</option>
       <option th:each="coupon : ${memberCouponList}" th:value="${coupon.discountRate}" th:text="${coupon.name} + ' - ' + ${coupon.discountRate} + '% 할인'"></option>
     </select>
     <div></div>
-
     <div>
       총 주문금액: <span id="totalPrice" th:text="${totalPrice}"></span> 원
     </div>
@@ -59,7 +54,38 @@
     <button class="button" id="payment-button" style="margin-top: 30px" disabled>결제하기</button>
   </div>
 </div>
+
+<!-- 스타일 및 모달 JavaScript -->
+<style>
+  /* 모달 스타일 */
+  .modal {
+    display: none; /* 기본적으로 모달 숨김 */
+    position: fixed; /* 고정 위치 */
+    z-index: 1; /* 모달이 다른 요소 위에 올라가도록 설정 */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* 스크롤 가능하도록 */
+    background-color: rgba(0,0,0,0.4); /* 반투명한 검은 배경 */
+  }
+
+  .modal-content {
+    background-color: #fefefe; /* 모달 배경색 */
+    margin: 15% auto; /* 화면 중앙에 위치 */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* 모달 너비 */
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19); /* 그림자 효과 */
+  }
+</style>
+
 <script th:inline="javascript">
+  // 페이지 로드 시 모달 열기
+  window.onload = function() {
+    document.getElementById('payment-modal').style.display = 'block';
+  };
+
   const button = document.getElementById("payment-button");
 <!--  const coupon = document.getElementById("coupon-box");-->
   const couponSelect = document.getElementById("couponSelect");
