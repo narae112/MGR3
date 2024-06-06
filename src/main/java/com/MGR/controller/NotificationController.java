@@ -11,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.net.URI;
 import java.util.Map;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,17 +22,20 @@ public class NotificationController {
     private final NotificationService notificationService;
 
     // 메시지 알림
-    @GetMapping(value = "/api", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "/api/notifications/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribe(@AuthenticationPrincipal PrincipalDetails member) {
         Long userId = member.getId();
         return notificationService.subscribe(userId);
     }
 
     @GetMapping("/api/notifications")
-    public List<Notification> getNotification(@AuthenticationPrincipal PrincipalDetails member){
-        Long userId = member.getId();
-        System.out.println(notificationService.findByMemberId(userId).toString());
-        return notificationService.findByMemberId(userId);
+    public ResponseEntity<?> getNotification(@AuthenticationPrincipal PrincipalDetails member){
+        if(member != null) {
+            Long userId = member.getId();
+            System.out.println(notificationService.findByMemberId(userId).toString());
+            return ResponseEntity.ok(notificationService.findByMemberId(userId));
+        }
+        return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("/")).build();
     }
 
     @DeleteMapping("/api/notifications/{id}")
@@ -49,7 +53,18 @@ public class NotificationController {
 
         Long memberId = member.getId();
         int notificationCount = notificationService.countNotificationsForMember(memberId);
+        System.out.println("알림수량 = " + notificationCount);
 
         return new ResponseEntity<>(notificationCount, HttpStatus.OK);
     }
+
+//    @GetMapping("/api/notifications/subscribe")
+//    public SseEmitter subscribe(@AuthenticationPrincipal PrincipalDetails member) {
+//        return notificationService.subscribe(member.getId());
+//    }
+//
+//    @PostMapping("/api/notifications/send")
+//    public void sendNotification(@AuthenticationPrincipal PrincipalDetails member, @RequestBody String message) {
+//        notificationService.sendNotification(member.getId(), message);
+//    }
 }
