@@ -96,25 +96,25 @@ public class NotificationService {
                 coupon.getName() + " 쿠폰 코드 : "
                 + memberCoupon.getCouponCode();
 
-            SseEmitter sseEmitter = sseEmitters.get(member.getId());
-            if (sseEmitter != null) {
-                try {
-                    sseEmitter.send(SseEmitter.event() //sseEmitter 객체에 메세지 담아서 보내기
-                            .name("message")
-                            .data(data));
+        SseEmitter sseEmitter = sseEmitters.get(member.getId());
+        if (sseEmitter != null) {
+            try {
+                sseEmitter.send(SseEmitter.event() //sseEmitter 객체에 메세지 담아서 보내기
+                        .name("message")
+                        .data(data));
 
-                    int notificationCount = countNotificationsForMember(member.getId());
-                    System.out.println("notificationCount 알림수량 = " + notificationCount);
-                    sseEmitter.send(SseEmitter.event()
-                            .name("notificationCount")
-                            .data(notificationCount));
+                int notificationCount = countNotificationsForMember(member.getId());
+                System.out.println("notificationCount 알림수량 = " + notificationCount);
+                sseEmitter.send(SseEmitter.event()
+                        .name("notificationCount")
+                        .data(notificationCount));
 
-                } catch (Exception e) {
-                    sseEmitters.remove(member.getId());
-                }
-                Notification notification = new Notification(member.getId(), data, "쿠폰", coupon.getId());
-                notificationRepository.save(notification); // 보낸 메세지 저장
+            } catch (Exception e) {
+                sseEmitters.remove(member.getId());
             }
+            Notification notification = new Notification(member.getId(), data, "쿠폰", coupon.getId());
+            notificationRepository.save(notification); // 보낸 메세지 저장
+        }
 
     }
 

@@ -6,7 +6,7 @@ import com.MGR.entity.Coupon;
 import com.MGR.entity.Member;
 import com.MGR.entity.MemberCoupon;
 import com.MGR.repository.MemberCouponRepository;
-import com.MGR.security.CustomUserDetails;
+//import com.MGR.security.CustomUserDetails;
 import com.MGR.security.PrincipalDetails;
 import com.MGR.service.CouponService;
 import com.MGR.service.MemberService;
