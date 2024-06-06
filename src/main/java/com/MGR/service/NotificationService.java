@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,20 +29,13 @@ public class NotificationService {
         SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
 
         // 2. 연결 확인 메세지
-//        try {
-//            sseEmitter.send(SseEmitter.event()
-//                    .name("connect")
-//                    .data("연결성공"));
-        //수정을
-
-
-        //테스트
-
-
-        //ㅇㅇ
-//        } catch (IOException e) {
-//            System.out.println("연결 에러= " + e.getMessage());
-//        }
+        try {
+            sseEmitter.send(SseEmitter.event()
+                    .name("connect")
+                    .data("연결성공"));
+        } catch (IOException e) {
+            System.out.println("연결 에러= " + e.getMessage());
+        }
 
         // 3. 저장
         sseEmitters.put(memberId, sseEmitter);
@@ -61,8 +55,6 @@ public class NotificationService {
         List<Member> memberList = memberService.findByAllUser();
 
         for (Member member : memberList) {
-            SseEmitter sseEmitter = sseEmitters.get(member.getId());
-//            subscribe(member.getId()); //객체 생성해서 멤버 아이디 넣어줌
 
             // SseEmitter 객체 가져오기
             SseEmitter sseEmitterReceiver = sseEmitters.get(member.getId());
