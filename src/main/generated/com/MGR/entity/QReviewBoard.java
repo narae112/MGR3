@@ -22,6 +22,10 @@ public class QReviewBoard extends EntityPathBase<ReviewBoard> {
 
     public static final QReviewBoard reviewBoard = new QReviewBoard("reviewBoard");
 
+    public final QMember author;
+
+    public final ListPath<ReviewComment, QReviewComment> commentList = this.<ReviewComment, QReviewComment>createList("commentList", ReviewComment.class, QReviewComment.class, PathInits.DIRECT2);
+
     public final StringPath content = createString("content");
 
     public final NumberPath<Integer> count = createNumber("count", Integer.class);
@@ -30,15 +34,17 @@ public class QReviewBoard extends EntityPathBase<ReviewBoard> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final NumberPath<Integer> likeCount = createNumber("likeCount", Integer.class);
+    public final ListPath<Image, QImage> images = this.<Image, QImage>createList("images", Image.class, QImage.class, PathInits.DIRECT2);
 
-    public final QMember member;
+    public final ListPath<String, StringPath> imageUrls = this.<String, StringPath>createList("imageUrls", String.class, StringPath.class, PathInits.DIRECT2);
 
     public final DateTimePath<java.time.LocalDateTime> modifiedDate = createDateTime("modifiedDate", java.time.LocalDateTime.class);
 
-    public final ListPath<ReviewComment, QReviewComment> reviewCommentList = this.<ReviewComment, QReviewComment>createList("reviewCommentList", ReviewComment.class, QReviewComment.class, PathInits.DIRECT2);
+    public final StringPath subject = createString("subject");
 
-    public final StringPath title = createString("title");
+    public final SetPath<Member, QMember> voter = this.<Member, QMember>createSet("voter", Member.class, QMember.class, PathInits.DIRECT2);
+
+    public final NumberPath<Integer> voterCount = createNumber("voterCount", Integer.class);
 
     public QReviewBoard(String variable) {
         this(ReviewBoard.class, forVariable(variable), INITS);
@@ -58,7 +64,7 @@ public class QReviewBoard extends EntityPathBase<ReviewBoard> {
 
     public QReviewBoard(Class<? extends ReviewBoard> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.member = inits.isInitialized("member") ? new QMember(forProperty("member")) : null;
+        this.author = inits.isInitialized("author") ? new QMember(forProperty("author")) : null;
     }
 
 }

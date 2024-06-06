@@ -16,7 +16,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.scheduling.annotation.Scheduled;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +31,19 @@ public class TicketService {
     private final ImageRepository imageRepository;
     private final ImageService imageService;
 
+@Transactional
+    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
+    public void deleteExpiredCoupons() {
+        LocalDate currentDate = LocalDate.now();
+        List<Ticket> expiredTicket = ticketRepository.findByEndDateBefore(currentDate);
+        // 현재 날짜보다 유효기간이 이전인 티켓들을 조회
 
+        for (Ticket ticket : expiredTicket) {
+           ticketRepository.delete(ticket);
+        }
+        // 조회된 티켓들을 삭제
+    }
+    
     public Long saveTicket(TicketFormDto ticketFormDto, List<MultipartFile> ticketImgFileList) throws Exception {
         boolean isDuplicate = isDuplicateTicket(ticketFormDto);
         if (isDuplicate) {
@@ -58,10 +72,13 @@ public class TicketService {
 
 
     private boolean isDuplicateTicket(TicketFormDto ticketFormDto) {
-        Optional<Ticket> ticketOptional = ticketRepository.findByNameAndPriceAndMemoAndTicketCategoryAndStartDateAndEndDateAndLocationCategory(
-                ticketFormDto.getName(), ticketFormDto.getPrice(), ticketFormDto.getMemo(),
-                ticketFormDto.getTicketCategory(), ticketFormDto.getStartDate(), ticketFormDto.getEndDate(),
-                ticketFormDto.getLocationCategory()
+        // TicketFormDto를 Ticket 엔티티로 변환
+        Ticket ticket = ticketFormDto.createTicket();
+
+        // TicketRepository를 사용하여 중복 여부 확인
+        Optional<Ticket> ticketOptional = ticketRepository.findByNameAndAdultPriceAndChildPriceAndMemoAndStartDateAndEndDateAndLocationCategory(
+                ticket.getName(), ticket.getAdultPrice(), ticket.getChildPrice(), ticket.getMemo(),
+                ticket.getStartDate(), ticket.getEndDate(), ticket.getLocationCategory()
         );
         return ticketOptional.isPresent();
     }

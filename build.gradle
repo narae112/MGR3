@@ -55,15 +55,12 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
-	//gson json
-//   implementation 'com.google.code.gson:gson:2.8.8'
-
 	//img
 	implementation 'org.commonmark:commonmark:0.18.0'
 
 	//recaptcha
 	implementation 'net.tanesha.recaptcha4j:recaptcha4j:0.0.7'
-	implementation 'org.glassfish:javax.json:1.1' 
+	implementation 'org.glassfish:javax.json:1.1'
 	implementation platform('org.springframework.boot:spring-boot-dependencies:3.1.11')
 	implementation 'com.fasterxml.jackson.core:jackson-databind'
 
@@ -72,14 +69,21 @@ dependencies {
 	//implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
 
 	//jwt
-//	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
-//	implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
-//	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
-	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+//	implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
 	//websocket
-	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+//	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
+	// Infinispan dependencies
+//	implementation 'org.infinispan:infinispan-core:13.0.8.Final'
+//	implementation 'org.infinispan:infinispan-commons:13.0.8.Final'
+//	implementation 'org.infinispan:infinispan-marshaller-protostuff:13.0.8.Final'
+//	implementation 'org.jboss.marshalling:jboss-marshalling-osgi:2.0.12.Final'
+
+	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 }
 
 tasks.named('bootBuildImage') {

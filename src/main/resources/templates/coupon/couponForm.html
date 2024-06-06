@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+
+            </div>
+            <div class="modal-body">
+                <p id="errorMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        $(document).ready(function(){
+           var errorMessage = /*[[${errorMessage}]]*/ '';
+           if(errorMessage != null && errorMessage !== ''){
+               $('#errorMessage').text(errorMessage);
+               $('#errorModal').modal('show');
+           }
+
+           bindDomEvent();
+       });
+
+       function bindDomEvent() {
+           $(".custom-file-input").on("change", function() {
+               var fileName = $(this).val().split("\\").pop();
+               var fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+
+               if (fileExt != "jpg" && fileExt != "jpeg" && fileExt != "gif" && fileExt != "png" && fileExt != "bmp") {
+                   alert("이미지 파일만 등록이 가능합니다.");
+                   return;
+               }
+
+               $(this).siblings(".custom-file-label").html(fileName);
+           });
+       }
+       $(document).ready(function() {
+      // 오늘 날짜를 가져오는 함수
+      function getTodayDate() {
+          var today = new Date();
+          var dd = String(today.getDate()).padStart(2, '0');
+          var mm = String(today.getMonth() + 1).padStart(2, '0'); // 1월은 0부터 시작하므로 +1
+          var yyyy = today.getFullYear();
+          return yyyy + '-' + mm + '-' + dd;
+      }
+
+      // 시작일(input id="startDate")의 값을 오늘 날짜로 설정
+      $('#startDate').val(getTodayDate());
+      $('#startDate').attr("min",getTodayDate());
+
+      var startDate = $('#startDate').val();
+      $('#endDate').attr("min",startDate);
+
+      $('#startDate').on('change', function() {
+          var startDate = $(this).val();
+          $('#endDate').attr("min", startDate);
+      });
+
+   });
+    function checkEndDate() {
+          var startDate = document.getElementById("startDate").value;
+          var endDate = document.getElementById("endDate").value;
+
+          if (endDate < startDate) {
+              alert("종료 날짜는 시작 날짜 이후여야 합니다.");
+              document.getElementById("endDate").value = startDate;
+          }
+      }
+    </script>
+</th:block>
+<th:block layout:fragment="css">
+    <style>
+        .fieldError {
+            color: #bd2130;
+        }
+    </style>
+</th:block>
+
+<div layout:fragment="content" class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form role="form" method="post" enctype="multipart/form-data" th:object="${couponFormDto}" class="needs-validation" novalidate>
+                <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+                <h3 class="mb-5 text-center">쿠폰 등록</h3>
+                <input type="hidden" th:field="*{id}"><!-- 쿠폰 id -->
+                <div class="form-group">
+                    <!-- 쿠폰명 등록 -->
+                    <div class="form-group mb-3">
+                        <label for="name" class="mb-1"> 쿠폰명</label>
+                        <input type="text" th:field="*{name}" class="form-control" id="name" placeholder="쿠폰 이름을 입력해주세요">
+                        <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="fieldError"></p>
+                    </div>
+                    <!-- 할인 유형 -->
+                    <div>
+                        <!-- 할인 유형 선택 -->
+                        <div class="form-group col-mb-3">
+                            <label for="discountType" class="mb-1"> 할인 유형</label>
+                            <select id="discountType" name="discountType" th:field="*{discountType}" class="form-control" onchange="toggleDiscountFields()">
+                                <option value="PERCENT">할인율(%)</option>
+                                <option value="AMOUNT">할인액(원)</option>
+                            </select>
+                        </div>
+
+                        <!-- 할인율 입력 필드 -->
+                        <div class="form-group mb-3">
+                        <div id="discountRateField" class="mb-1" th:style="${couponFormDto.discountType == 'PERCENT' ? '' : 'display: none;'}">
+                            <label for="discountRate" class="mb-1">할인율(%):</label>
+                            <input type="number" id="discountRate" name="discountRate" th:field="*{discountRate}" class="form-control" min="0" max="100">
+                        </div>
+                        </div>
+                        <!-- 할인액 입력 필드 -->
+                        <div class="form-group mb-3">
+                        <div id="discountAmountField" class="mb-1" th:style="${couponFormDto.discountType == 'AMOUNT' ? '' : 'display: none;'}">
+                            <label for="discountAmount" class="mb-1">할인액(원):</label>
+                            <input type="number" id="discountAmount" name="discountAmount" th:field="*{discountAmount}" class="form-control" min="0">
+                        </div>
+                        </div>
+                        <!-- 대상 -->
+                        <div class="form-group mb-3">
+                            <label for="couponType" class="mb-1">적용 대상:</label>
+                            <select id="couponType" name="couponType" th:field="*{couponType}" class="form-control">
+                                <option value="" disabled selected>적용 대상을 선택해주세요</option>
+                                <option value="BIRTH">생일자</option>
+                                <option value="ALL">전체 이용자</option>
+                            </select>
+                        </div>
+                        <!-- 세부사항 등록 -->
+                        <div class="form-group mb-3">
+                            <label for="couponContent" class="mb-1">쿠폰 세부사항:</label>
+                            <input type="text" th:field="*{couponContent}" class="form-control" id="couponContent" placeholder="세부사항을 입력해주세요" required>
+                            <div class="invalid-feedback">세부사항을 입력해주세요.</div>
+                            <p th:if="${#fields.hasErrors('couponContent')}" th:errors="*{couponContent}" class="fieldError"></p>
+                        </div>
+                        <!-- 시작 날짜 -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="startDate" class="mb-1">쿠폰 이용 시작 날짜</label>
+                                    <input type="date" th:field="*{startDate}" id="startDate" class="form-control" placeholder="티켓 이용 시작 날짜를 입력해주세요" onchange="checkStartDate()" required>
+                                    <p th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}" class="text-danger">잘못된 데이터입니다.</p>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="endDate" class="mb-1">쿠폰 이용 종료 날짜</label>
+                                    <input type="date" id="endDate" th:field="*{endDate}" class="form-control" placeholder="티켓 이용 종료 날짜를 입력해주세요" onchange="checkEndDateInput()" required>
+                                    <p th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}" class="text-danger">잘못된 데이터입니다.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 이미지 저장 -->
+                        <div class="form-group mb-3">
+                            <label for="couponImgFile" class="mb-1"> 쿠폰 이미지</label>
+                            <div th:if="${#lists.isEmpty(couponFormDto.couponImgDtoList)}">
+                                <div class="form-group mb-3">
+                                    <input type="file" class="form-control" name="couponImgFile" id="couponImgFile" required>
+                                    <div class="invalid-feedback">이미지를 선택해주세요.</div>
+                                </div>
+                            </div>
+                            <div th:if="${not #lists.isEmpty(couponFormDto.couponImgDtoList)}">
+                                <div class="form-group mb-3">
+                                    <input type="file" class="form-control" name="couponImgFile" id="couponImgFile" required>
+                                    <div class="invalid-feedback">이미지를 선택해주세요.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 저장 버튼 -->
+                        <div th:if="${#strings.isEmpty(couponFormDto.id)}" style="text-align: center;">
+                            <button th:formaction="@{/admin/coupon/new}" type="submit" class="btn btn-primary">저장</button>
+                        </div>
+
+                <!-- 수정 버튼 -->
+                <!--            <div th:unless="${#strings.isEmpty(couponFormDto.id)}" style="text-align: center">-->
+                <!--                <button th:formaction="@{'/admin/coupon/' + ${couponFormDto.id} }" type="submit" class="btn btn-primary">수정</button>-->
+                <!--                &lt;!&ndash;                삭제 버튼&ndash;&gt;-->
+                <!--                <a th:href="@{/admin/coupon/delete/{couponId}(couponId=${couponFormDto.id})}" class="btn btn-danger" onclick="return confirm('쿠폰을 삭제하시겠습니까?')">삭제</a>-->
+
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            </div>
+        </div>
+    </form>
+    <script th:inline="javascript">
+        function toggleDiscountFields() {
+            var discountType = document.getElementById("discountType").value;
+            var discountRateField = document.getElementById("discountRateField");
+            var discountAmountField = document.getElementById("discountAmountField");
+
+            if (discountType === "PERCENT") {
+                discountRateField.style.display = "block";
+                discountAmountField.style.display = "none";
+            } else if (discountType === "AMOUNT") {
+                discountRateField.style.display = "none";
+                discountAmountField.style.display = "block";
+            } else {
+                discountRateField.style.display = "none";
+                discountAmountField.style.display = "none";
+            }
+        }
+
+        // 페이지 로드시 한번 호출하여 초기 상태 설정
+        window.onload = toggleDiscountFields;
+            </script>
+        </div>
+    </div>
+</div>
+</html>

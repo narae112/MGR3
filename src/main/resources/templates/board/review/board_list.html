@@ -1,0 +1,113 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<!-- css -->
+<th:block layout:fragment="css">
+    <style>
+        /* 테이블과 h3 사이에 간격을 주는 CSS */
+        .row {
+               margin-top: 30px; /* 필요에 따라 조정하세요 */
+           }
+    </style>
+</th:block>
+<div layout:fragment="content">
+    <h3 class="mb-5 text-center">리뷰 게시판</h3>
+    <div class="row my-3">
+        <form th:action="@{/review/board/list}" method="get" class="col-6">
+            <div class="input-group mb-3">
+                <select class="form-select" name="sort">
+                    <option value="date" th:selected="${sort == 'date'}">등록일순</option>
+                    <option value="votes" th:selected="${sort == 'votes'}">추천순</option>
+                    <option value="views" th:selected="${sort == 'views'}">조회순</option>
+                </select>
+                <input type="text" class="form-control" placeholder="검색어" name="kw" th:value="${kw}">
+                <button class="btn btn-outline-secondary" type="submit">검색</button>
+            </div>
+        </form>
+    </div>
+    <hr class="my-4">
+    <!--    등록버튼-->
+    <div class="col-6">
+        <a th:href="@{/review/board/create}" class="btn btn-primary">리뷰 등록하기</a>
+            </div>
+            <div class="row">
+                <div th:each="reviewBoard : ${paging}" class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body d-flex flex-column justify-content-between"> <!-- 카드 바디를 열기 전에 d-flex flex-column justify-content-between 클래스 추가 -->
+                            <h5 class="card-title">
+                                <a th:href="@{|/review/board/detail/${reviewBoard.id}|}" th:text="${reviewBoard.subject}"></a>
+                            </h5>
+                                <h6 class="card-subtitle mb-2 text-muted" th:text="${reviewBoard.author.nickname}"></h6>
+                                <!-- 이미지 표시 -->
+                            <div class="mb-3" style="height: 300px; overflow: hidden;">
+                                <img th:if="${#strings.length(reviewBoard.getFirstImageUrl()) > 0}"
+                                     th:src="${reviewBoard.getFirstImageUrl()}"
+                                     class="card-img-top img-fluid rounded"
+                                     style="width: 100%; height: auto; object-fit: cover;">
+                                <img th:if="${#strings.length(reviewBoard.getFirstImageUrl()) == 0}"
+                                     th:src="@{/img/unicorn.png}"
+                                     class="card-img-top img-fluid rounded"
+                                     style="width: 100%; height: auto; object-fit: cover;">
+                            </div>
+
+
+                            <!-- 기타 정보 표시 -->
+                                <p class="card-text">
+                                    조회수: <span th:text="${reviewBoard.count}"></span><br>
+                                    등록일: <span th:text="${#temporals.format(reviewBoard.createDate, 'yyyy-MM-dd HH:mm')}"></span>
+                                </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+    <!-- 페이징처리 시작 -->
+    <div th:if="${!paging.empty}" class="pagination-container justify-content-center">
+        <ul class="pagination pagination-sm">
+            <li class="page-item" th:classappend="${paging.first} ? 'disabled'">
+                <a class="page-link" href="#" th:attr="data-page=${paging.number - 1}" aria-label="Previous">
+                    <span aria-hidden="true"></span>
+                    <span class="sr-only">이전</span>
+                </a>
+            </li>
+            <li th:each="page: ${#numbers.sequence(0, paging.totalPages - 1)}"
+                th:classappend="${page == paging.number} ? 'active'" class="page-item">
+                <a th:text="${page + 1}" class="page-link" href="#" th:attr="data-page=${page}"></a>
+            </li>
+            <li class="page-item" th:classappend="${paging.last} ? 'disabled'">
+                <a class="page-link" href="#" th:attr="data-page=${paging.number + 1}" aria-label="Next">
+                    <span aria-hidden="true"></span>
+                    <span class="sr-only">다음</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <!-- 페이징처리 끝 -->
+</div>
+
+<!-- 스크립트 -->
+<script layout:fragment="script" type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+        const page_elements = document.querySelectorAll('.page-link');
+        page_elements.forEach(function(element) {
+            element.addEventListener('click', function(event) {
+                event.preventDefault();
+                const page = this.dataset.page;
+                const form = document.createElement('form');
+                form.method = 'GET';
+                form.action = '/review/board/list';
+                form.innerHTML = '<input type="hidden" name="page" value="' + page + '">';
+                document.body.appendChild(form);
+                form.submit();
+            });
+        });
+    });
+</script>
+
+<!-- Bootstrap JS 추가 (필요시) -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+</html>

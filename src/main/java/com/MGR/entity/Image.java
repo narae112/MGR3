@@ -13,28 +13,31 @@ public class Image extends BaseEntity{
     private Long id;
 
     @Column(length = 50)
-    private String imgName;
+    private String imgName; // 이미지 이름
 
     @Column(length = 50)
-    private String imgOriName;
+    private String imgOriName; // 원본 파일명
 
     @Column(length = 100)
-    private String imgUrl;
+    private String imgUrl; // 이미지 경로
 
     @Column
-    private Boolean repImgYn;
+    private Boolean repImgYn; // 대표 이미지 여부
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Ticket ticket;
 
     @ManyToOne(fetch=FetchType.LAZY)
-    private QnaAnswer qnAAnswer;
-
-    @ManyToOne(fetch=FetchType.LAZY)
-    private ReviewComment reviewComment;
+    private ReviewBoard reviewBoard;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private EventBoard eventBoard;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Coupon coupon;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Attraction attraction;
 
     public void updateImg(String imgOriName, String imgName, String imgUrl){
         this.imgOriName = imgOriName;

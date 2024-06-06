@@ -1,11 +1,356 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/default}">
+<html  xmlns:th="http://www.thymeleaf.org"
+       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/main}">
 <div layout:fragment="content">
-    <h1>MGR 시작합시다</h1>
+
+
+    <!-- Start Hero Area -->
+    <section class="hero-area" th:style="'background-image: url(' + @{/img/bg1.jpg} + ');'">
+        <div class="main__circle"></div>
+        <div class="main__circle2"></div>
+        <div class="main__circle3"></div>
+        <div class="main__circle4"></div>
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 offset-lg-3 col-md-12 col-12">
+                    <div class="hero-content">
+                        <h5 th:onclick="@{/location}" class="wow zoomIn" data-wow-delay=".2s">
+                            <i class="lni lni-map-marker"></i> MGR 오는길
+                        </h5>
+                        <h2 class="wow fadeInUp" data-wow-delay=".4s">Merry Go Ride 2024</h2>
+                        <p class="wow fadeInUp" data-wow-delay=".6s">Lorem ipsum dolor sit amet, consectetur adipisicing
+                            elit. deleniti voluptatum! Natus
+                            beatae laborum veniam distinctio.</p>
+                        <div class="button wow fadeInUp" data-wow-delay=".8s">
+                            <a href="#" class="btn ">Buy Ticket Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End Hero Area -->
+
+    <!-- 메인 사진과 겹쳐있는 메뉴바 시작 -->
+    <div class="count-down">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="box-head">
+                        <div class="box-content">
+                            <div class="box-mgr">
+                                <h1 id="days"><i class="lni lni-ticket"></i></h1>
+                                <br>
+                                <h3 id="daystxt">Ticket</h3>
+                            </div>
+                            <div class="box-mgr">
+                                <h1 id="seconds"><i class="lni lni-bullhorn"></i></h1>
+                                <br>
+                                <h3 id="hourstxt">Event</h3>
+                            </div>
+                            <div class="box-mgr">
+                                <h1 id="minutes"><i class="lni lni-rocket"></i></h1>
+                                <br>
+                                <h3 id="minutestxt">Attraction</h3>
+                            </div>
+                            <div class="box-mgr">
+                                <h1 id="hours"><i class="lni lni-star-half"></i></h1>
+                                <br>
+                                <h3 id="secondstxt">Review</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 메인 사진과 겹쳐있는 메뉴바 끝 -->
+
+    <!-- 슬라이드 시작 -->
+    <section class="features section">
+    <div class="section-title">
+        <h3 class="wow zoomIn" data-wow-delay=".2s">What kind of attractions are here?</h3>
+        <h2 class="wow fadeInUp" data-wow-delay=".4s">Various types of rides are waiting for you!</h2>
+        <p class="wow fadeInUp" data-wow-delay=".6s">Swipe through the slides to check the types of attractions and their operating status.</p>
+    </div>
+
+    <div class="slider_wrapper">
+        <div class="att_slider">
+            <div class="slide_img"><img th:src="@{/img/attraction/attraction1.png}" alt=""></div>
+            <div class="slide_img"><img th:src="@{/img/attraction/attraction2.png}" alt=""></div>
+            <div class="slide_img"><img th:src="@{/img/attraction/attraction3.png}" alt=""></div>
+            <div class="slide_img"><img th:src="@{/img/attraction/attraction4.png}" alt=""></div>
+            <div class="slide_img"><img th:src="@{/img/attraction/attraction5.png}" alt=""></div>
+            <div class="slide_img"><img th:src="@{/img/attraction/attraction6.png}" alt=""></div>
+            <div class="slide_img"><img th:src="@{/img/attraction/attraction7.png}" alt=""></div>
+            <div class="slide_img"><img th:src="@{/img/attraction/attraction8.png}" alt=""></div>
+        </div>
+    </div>
+    </section>
+    <!-- 슬라이드 끝 -->
+
+    <!-- 리뷰 메뉴 시작 -->
+    <section id="review" class="pricing-table section extra-page bg-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="section-title">
+                        <h3 class="wow zoomIn" data-wow-delay=".2s">Review</h3>
+                        <h2 class="wow fadeInUp" data-wow-delay=".4s">MGR Best Review</h2>
+                        <p class="wow fadeInUp" data-wow-delay=".6s">There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <!-- Thymeleaf를 통해 서버에서 전달된 추천 수가 많은 리뷰를 동적으로 렌더링합니다. -->
+                <div th:each="review : ${topRatedReviews}" class="col-lg-4 col-md-6 col-12 wow fadeInUp" data-wow-delay=".4s">
+                    <!-- Single Review -->
+                    <div class="card-img-top img-fluid rounded">
+                        <!-- Review Image -->
+                        <div class="review-img" style="height: 400px; overflow: hidden;">
+                            <a th:href="@{/review/board/detail/{id}(id=${review.id})}">
+                                <!-- 이미지 URL을 reviewImgDtoList의 첫 번째 이미지에서 가져옵니다. -->
+                                <img th:src="${review.imageUrl.length() > 0 ? review.imageUrl : '/img/unicorn.png'}" alt="Review Image" style="width: 100%; height: auto; object-fit: cover;">
+                            </a>
+                        </div>
+                        <!-- Review Content -->
+                        <div class="review-content">
+                            <!-- 리뷰 제목 -->
+                            <h4 class="title" th:text="${review.subject}">Review Title</h4>
+                            <!-- 작성자 정보 -->
+                            <p class="author" th:text="${review.author.nickname}">Author</p>
+                            <!-- 추천 수 -->
+                            <p class="recommendation" th:text="${review.voter.size()} + ' recommendations'">0 recommendations</p>
+                        </div>
+                        <!-- End Review Content -->
+                    </div>
+                    <!-- End Single Review -->
+                </div>
+                <!-- End Thymeleaf Loop -->
+            </div>
+        </div>
+    </section>
+    <!-- 리뷰 메뉴 끝 -->
+    <!-- 섹션 나누는 이미지 시작 -->
+    <section class="call-action overlay" th:style="'background-image: url(' + @{/img/Frame2.jpg} + ');'">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8 offset-lg-2 col-md-12 col-12">
+                    <div class="inner-content">
+                        <div class="text">
+                            <!-- <h5 class="wow zoomIn" data-wow-delay=".2s">Free Lite Version</h5> -->
+                            <h2 class="wow fadeInUp" data-wow-delay=".4s">Currently you are using free LiteVersion of EventGrids
+                            </h2>
+                            <p class="wow fadeInUp" data-wow-delay=".6s">Please, purchase full version of the template
+                                to get all pages, features and commercial license.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- 섹션 나누는 이미지 끝 -->
+
     <button class="btn btn-primary" type="button" onClick="location.href='member/admin/test'">로그인인증테스트</button>
-<!--    <button class="btn btn-primary" type="button" onClick="location.href='chatRoom'">1:1</button>-->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#notificationModal" id="notificationButton">알림
+        <span class="badge rounded-pill bg-danger" id="notificationCount" sec:authorize="isAuthenticated()"></span>
+    </button>
+
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#chatModal">챗봇</button>
+
+
+    <div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="notificationModalLabel">알림</h5>
+                    <button type="button" class="btn btn-danger close" style="margin-left: auto;" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="notify" style="height: 300px; overflow-y: scroll; padding: 10px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="chatModalLabel">MGR 챗봇</h5>
+                    <button type="button" class="btn btn-danger close" style="margin-left: auto;" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="chatWindow" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
+                    </div>
+                    <div class="input-group mt-3">
+                        <input type="text" id="userInput" class="form-control" placeholder="메세지를 입력하세요">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="button" id="sendButton">전송</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" th:inline="javascript">
+    var token = $("meta[name='_csrf']").attr('content');
+    var header = $("meta[name='_csrf_header']").attr('content');
+
+$(document).ready(function() {
+<!--    // 슬라이드 초기화-->
+    $('.att_slider').slick({
+        slidesToShow: 3,
+        slidesToScroll: 1,
+        autoplay: false,
+        arrows: true,
+        responsive: [
+            {
+                breakpoint: 768,
+                settings: {
+                    slidesToShow: 2,
+                }
+            },
+            {
+                breakpoint: 480,
+                settings: {
+                    slidesToShow: 1,
+                }
+            }
+        ]
+    });
+
+<!--     알림 수 가져오기-->
+    $.ajax({
+        url: '/api/notifications/count',
+        type: 'GET',
+        success: function(data) {
+            $('#notificationCount').text(data);
+        },
+        error: function(xhr, status, error) {
+            console.error('Failed to fetch notification count:', error);
+        }
+    });
+
+<!--     EventSource 초기화-->
+    let eventSource = new EventSource('/api/notifications/subscribe');
+    eventSource.addEventListener('connect', function(event) {
+        displayMessage(event.data, null);
+    });
+    eventSource.addEventListener('message', function(event) {
+        displayMessage(event.data, null);
+    });
+    eventSource.onerror = function(event) {
+        displayMessage('EventSource failed: ' + event, null);
+    };
+
+    eventSource.addEventListener('notificationCount', function(event) {
+        updateNotificationCount(event.data);
+    });
+
+    function updateNotificationCount(count) {
+        console.log(count+1);
+        $('#notificationCount').text(count+1);
+    }
+
+    function displayMessage(message, id) {
+        const messagesDiv = document.getElementById('notify');
+        const fragment = document.createDocumentFragment();
+        const cardElement = document.createElement('div');
+        cardElement.className = 'card mb-3';
+        cardElement.innerHTML = `
+            <div class="card-body d-flex align-items-center">
+                <p class="card-text mb-0 flex-grow-1">${message}</p>
+                <button type="button" class="close ml-auto" aria-label="Close"
+                onclick="deleteNotification(${id}, this)">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        `;
+        fragment.appendChild(cardElement);
+        messagesDiv.appendChild(fragment);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+<!--    // 알림 모달 버튼 클릭 이벤트-->
+    $('#notificationButton').click(function() {
+<!--        // DB에서 기존 알림 가져오기-->
+        $.ajax({
+            url: '/api/notifications',
+            type: 'GET',
+            success: function(notifications) {
+                const messagesDiv = document.getElementById('notify');
+                messagesDiv.innerHTML = ''; // 기존 알림 지우기
+                notifications.forEach(notification => {
+                    displayMessage(notification.message, notification.id);
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Failed to load notifications:', error);
+            }
+        });
+    });
+
+    function sendMessage() {
+        var userMessage = $('#userInput').val();
+        if (userMessage.trim() !== "") {
+            $('#chatWindow').append('<div class="text-right"><strong>User :</strong> ' + userMessage + '</div>');
+            $('#userInput').val('');
+
+            $.ajax({
+                url: '/gemini/chat',
+                type: 'GET',
+                data: { message: userMessage },
+                success: function(response) {
+                    $('#chatWindow').append('<div class="text-left"><strong>ChatMRG :</strong> ' + response + '</div>');
+                    $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
+                },
+                error: function(xhr, status, error) {
+                    $('#chatWindow').append('<div class="text-left text-danger"><strong>Error:</strong> ' + xhr.responseText + '</div>');
+                    $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
+                }
+            });
+        }
+    }
+
+    $('#sendButton').click(function() {
+        sendMessage();
+        $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
+    });
+
+    $('#userInput').keypress(function(event) {
+        if (event.which === 13) {
+            sendMessage();
+            $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
+        }
+    });
+});
+
+function deleteNotification(id, button) {
+    $.ajax({
+        url: `/api/notifications/${id}`,
+        type: 'DELETE',
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader(header, token);
+        },
+        success: function() {
+            button.closest('.card').remove();
+        },
+        error: function(xhr, status, error) {
+            console.error('Failed to delete notification:', error);
+        }
+    });
+}
+</script>
+
+
 </div>
-
-
 </html>

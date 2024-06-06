@@ -1,6 +1,7 @@
 package com.MGR.security;
 
 import com.MGR.entity.Member;
+import com.MGR.oauth2.OAuth2SuccessHandler;
 import com.MGR.repository.MemberRepository;
 import com.MGR.service.OAuth2MemberService;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.web.socket.server.standard.ServerEndpointExporter;
+//import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
 
 @Configuration
@@ -27,20 +28,21 @@ public class SecurityConfig {
     private final OAuth2MemberService oAuth2MemberService;
     private final JwtUtil jwtUtil;
 
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
                 httpSecurity.csrf(csrf -> csrf
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
 
         httpSecurity
-
-                .authorizeHttpRequests(authorize -> authorize
-                    .requestMatchers("/ws/**").hasAnyRole("ADMIN", "USER"))
 //                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/websocket/**").permitAll()
+                        .requestMatchers("/api/**").permitAll()
+                        .requestMatchers("/gemini/**").permitAll()
                         .requestMatchers("/js/**").permitAll()
                         .requestMatchers("/css/**").permitAll()
+                        .requestMatchers("/img/**").permitAll()
                         .requestMatchers("/admin/**").authenticated() // ~로 시작하는 uri 는 로그인 필수
                         .requestMatchers("/admin/**").hasRole("ADMIN") //admin 으로 시작하는 uri 는 관리자 계정만 접근 가능
                         .anyRequest().permitAll())//나머지 uri 는 모든 접근 허용
@@ -61,10 +63,11 @@ public class SecurityConfig {
 
                 .oauth2Login((oauth2login) -> oauth2login//oauth2 관련 설정
                         .loginPage("/loginForm") //로그인이 필요한데 로그인을 하지 않았다면 이동할 uri 설정
-                        .defaultSuccessUrl("/ ") //OAuth 로그인이 성공하면 이동할 uri 설정
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(oAuth2MemberService))
-                );//로그인 완료 후 회원 정보 받기
+                        .successHandler(oAuth2SuccessHandler)
+                )
+                .apply(new MyCustomDsl());//로그인 완료 후 회원 정보 받기
 
 //        httpSecurity //JWT(토큰 기반)를 이용하기 때문에 session 필요 없음
 //                .sessionManagement((session) -> session
@@ -104,28 +107,24 @@ public class SecurityConfig {
         };
     }
 
-    @Bean
-    public CommandLineRunner initDbUser(MemberRepository memberRepository, PasswordEncoder passwordEncoder){
-
-        return createAdmin -> {
-            boolean isAdminPresent = memberRepository.findByName("관리자").isPresent();
-
-            if (!isAdminPresent) {
-                Member admin = new Member();
-
-                admin.setName("");
-                admin.setEmail("user@mgr.com");
-                admin.setNickname("초기사용자");
-                admin.setPassword(passwordEncoder.encode("1"));
-                admin.setRole("ROLE_USER");
-
-                memberRepository.save(admin);
-            }
-        };
-    }
-
-    @Bean
-    public ServerEndpointExporter serverEndpointExporter() {
-        return new ServerEndpointExporter();
-    }
+//    @Bean
+//    public CommandLineRunner initDbUser(MemberRepository memberRepository, PasswordEncoder passwordEncoder){
+//
+//        return createAdmin -> {
+//            boolean isAdminPresent = memberRepository.findByName("사용자").isPresent();
+//
+//            if (!isAdminPresent) {
+//                Member user = new Member();
+//
+//                user.setName("");
+//                user.setEmail("user@mgr.com");
+//                user.setNickname("지구123");
+//                user.setBirth("2023-05-31");
+//                user.setPassword(passwordEncoder.encode("1"));
+//                user.setRole("ROLE_USER");
+//
+//                memberRepository.save(user);
+//            }
+//        };
+//    }
 }

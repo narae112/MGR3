@@ -9,10 +9,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ReservationTicketRepository extends JpaRepository<ReservationTicket, Long> {
     // 예약 내역에 들어가는 티켓을 저장하거나 조회
-    ReservationTicket findByReservationIdAndTicketId(Long reservationId, Long ticketId);
+    List<ReservationTicket> findByReservationIdAndTicketId(Long reservationId, Long ticketId);
 
     @Query("select rt from ReservationTicket rt " +
             "where rt.reservation.id = :reservationId " +
@@ -24,6 +25,5 @@ public interface ReservationTicketRepository extends JpaRepository<ReservationTi
             "where rt.reservation.id = :reservationId "
     )
     Long countReservation(@Param("reservationId")Long id);
-
 
 }

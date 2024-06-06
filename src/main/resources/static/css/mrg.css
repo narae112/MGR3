@@ -1,0 +1,58 @@
+.navbar-brand > h3{
+    font-size: 25px !important;
+    color: #fff;
+}
+
+.count-down .box-content .box-mgr h1{
+    color: #aaa;
+  }
+  .count-down .box-content .box-mgr h3{
+    color: #aaa;
+  }
+
+.count-down .box-content .box-mgr:hover h1{
+    color: #000;
+    transition: all 0.8s ease;
+}
+.count-down .box-content .box-mgr:hover h3{
+    color: #000;
+    transition: all 0.8s ease;
+}
+
+.slider_wrapper {
+  width: 80%;
+  margin: 70px auto 0;
+  position:relative;
+}
+
+.att_slider .slick-slider {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.slick-slider .slick-slide {
+  margin: 0 15px;
+}
+
+.slick-prev::before {
+  left:-30px;
+}
+
+.slick-next::before {
+  right:-30px;
+}
+
+.slick-prev::before, .slick-next::before {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ccc !important;
+  font-size: 40px !important;
+}
+
+.container-mgr{
+  width: 100%;
+  height: 500px;
+  background-image: url(../images/logo/Frame2.jpg);
+}
+

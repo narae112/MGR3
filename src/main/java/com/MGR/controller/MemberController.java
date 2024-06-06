@@ -2,9 +2,13 @@ package com.MGR.controller;
 
 import com.MGR.dto.EventBoardFormDto;
 import com.MGR.dto.MemberFormDto;
+import com.MGR.entity.Coupon;
 import com.MGR.entity.Member;
+import com.MGR.entity.MemberCoupon;
+import com.MGR.repository.MemberCouponRepository;
 import com.MGR.security.CustomUserDetails;
 import com.MGR.security.PrincipalDetails;
+import com.MGR.service.CouponService;
 import com.MGR.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +21,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -26,6 +32,8 @@ public class MemberController {
 
     private final MemberService memberService;
     private final PasswordEncoder passwordEncoder;
+    private final MemberCouponRepository memberCouponRepository;
+    private final CouponService couponService;
 
     @PostMapping("/create")
     public String createMember(@Valid MemberFormDto memberFormDto,
@@ -56,6 +64,16 @@ public class MemberController {
         return "/member/editForm";
     }
 
+    @GetMapping("/changePasswordForm")
+    public String oAuthMemberEdit(Model model, @AuthenticationPrincipal PrincipalDetails member){
+
+        Member memberInfo = memberService.findByEmail(member.getUsername()).orElseThrow();
+        System.out.println("memberInfo: " + memberInfo); // 로깅 추가
+        model.addAttribute("memberInfo", memberInfo);
+
+        return "/member/changePasswordForm";
+    }
+
     @PostMapping("/editNickname/{id}")
     public String memberInfoEditNickname(@PathVariable("id") Long id,
                                          @AuthenticationPrincipal PrincipalDetails member,
@@ -64,7 +82,7 @@ public class MemberController {
 
         if(!StringUtils.hasText(memberInfo.getNickname())) {
             model.addAttribute("stringError", "닉네임을 입력하세요");
-            return "member/edit";
+            return "member/editForm";
         }
 
         try {
@@ -72,7 +90,7 @@ public class MemberController {
             memberService.updateNickname(id,memberInfo.getNickname());
         } catch (IllegalStateException e){
             model.addAttribute("errorMessage", e.getMessage());
-            return "member/edit";
+            return "member/editForm";
         }
 
         return "redirect:/";
@@ -81,17 +99,13 @@ public class MemberController {
     @PostMapping("/editPassword/{id}")
     public String memberInfoEditPassword(@PathVariable("id") Long id,
                                  @AuthenticationPrincipal PrincipalDetails member,
-                                 @Valid MemberFormDto memberInfo,
-                                 BindingResult result, Model model){
+                                 Member memberInfo,
+                                 Model model){
 
-//        if(!StringUtils.hasText(memberInfo.getPassword())) {
-//            model.addAttribute("errorMessage", "비밀번호를 입력하세요");
-//            return "/member/edit";
-//        }
-
-        if(result.hasErrors()){
-
-            return "redirect:/member/edit";
+        if(memberInfo.getPassword().length() < 8 || memberInfo.getPassword().length() > 16) {
+            model.addAttribute("errorMessage", "비밀번호를 8자 이상 16자 이하로 입력하세요");
+            System.out.println("StringUtils 에러");
+            return "member/editForm";
         }
 
         try {
@@ -99,7 +113,8 @@ public class MemberController {
             memberService.updatePassword(id, memberInfo.getPassword());
         }catch (IllegalStateException e){
             model.addAttribute("errorMessage", e.getMessage());
-            return "redirect:/member/edit";
+            System.out.println("IllegalStateException 에러" + e.getMessage());
+            return "member/editForm";
         }
 
         return "redirect:/";
@@ -135,4 +150,45 @@ public class MemberController {
         //회원정보 변경 전 비밀번호 인증
     }
 
+    @GetMapping("/myPage")
+    public String myPage(Model model, @AuthenticationPrincipal PrincipalDetails member){
+
+        Long memberId = member.getId(); // 현재 인증 되어있는 사용자의 id로
+
+        List<MemberCoupon> memberCouponList = memberCouponRepository.findAllByMemberId(memberId);//member coupon 을 전부 찾아서
+        model.addAttribute("memberCouponList", memberCouponList); // 반환
+
+        List<Coupon> couponList = new ArrayList<>();
+        for (MemberCoupon memberCoupon : memberCouponList) {
+            Coupon coupon = couponService.findById(memberCoupon.getCoupon().getId());
+            memberCoupon.setCoupon(coupon); // MemberCoupon 객체에 Coupon 객체 설정
+            couponList.add(coupon);
+            // member coupon 쿠폰의 id로 coupon 찾아서
+        }
+
+        model.addAttribute("couponList", couponList); // 반환
+
+        return "member/myPage";
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

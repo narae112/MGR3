@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.5.8/swiper-bundle.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script layout:fragment="script" type='text/javascript' src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.5.8/swiper-bundle.min.js"></script>
+    <script type='text/javascript'>
+        var swiper = new Swiper('.swiper-container', {
+        slidesPerView: 'auto',
+        spaceBetween: 10,
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+        },
+    });
+    </script>
+    <style>
+        /* 카드 및 댓글 스타일링 */
+        .card {
+            border: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .comment-card {
+            background-color: #f8f9fa;
+        }
+
+
+        .btn-outline-secondary {
+            color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: #6c757d;
+            color: #fff;
+        }
+
+        /* 답변 폼 스타일링 */
+        .answer-form {
+            margin-top: 20px;
+        }
+  /* 이미지 갤러리 스타일링 */
+        .image-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center; /* 수직 정렬을 위해 추가 */
+        position: relative; /* 부모 요소의 position을 설정합니다. */
+    }
+
+       .image-wrapper {
+        display: inline-block;
+        justify-content: center;
+        align-items: center;
+        width: 50%;
+        transition: transform 0.5s ease;
+        position: relative; /* 자식 요소의 position을 설정합니다. */
+    }
+        .swiper-wrapper {
+        display: flex;
+        height: max-auto;
+         position: relative;
+    }
+        .image-wrapper img {
+        max-width: 100%;
+        max-height: 100%;
+        transition: transform 0.3s ease;
+    }
+
+        .swiper-container {
+        width: 50%;
+        height: auto;
+        position: relative; /* 스와이퍼 컨테이너의 position을 설정합니다. */
+        }
+
+        .swiper-pagination {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+        }
+
+        .more-link {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .image-wrapper .fas {
+        position: absolute;
+        bottom: 5px; /* 이미지의 아래에 여백을 조절 */
+        right: 5px; /* 이미지의 오른쪽에 여백을 조절 */
+        font-size: 30px; /* 아이콘 크기 조정 */
+        z-index: 1; /* 아이콘을 이미지 위에 표시합니다. */
+     }
+    </style>
+</head>
+<body>
+
+<div layout:fragment="content" class="container my-5">
+    <div th:if="${error}" class="alert alert-danger" role="alert">
+        <span th:text="${error}"></span>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h3 class="mb-5 text-center" th:text="${reviewBoardForm.subject}"></h3>
+
+            <!-- 컨텐츠 -->
+            <div class="review-content">
+                <div class="card my-3">
+                    <div class="card-body">
+                        <div class="card-text" th:utext="${@commonUtil.markdown(reviewBoardForm.content)}"></div>
+                        <div class="d-flex justify-content-end">
+                            <div th:if="${reviewBoard.modifiedDate != null}" class="badge bg-light text-dark p-2 text-start mx-3">
+                                <div class="mb-2">modified at</div>
+                                <div th:text="${#temporals.format(reviewBoard.modifiedDate, 'yyyy-MM-dd HH:mm')}"></div>
+                            </div>
+                            <div class="badge bg-light text-dark p-2 text-start">
+                                <div class="mb-2">
+                                    <span th:if="${reviewBoard.author != null}" th:text="${reviewBoard.author.nickname}"></span>
+                                </div>
+                                <div th:text="${#temporals.format(reviewBoard.createDate, 'yyyy-MM-dd HH:mm')}"></div>
+                            </div>
+                        </div>
+                        <hr>
+                        <!-- 이미지 칸 -->
+                        <div class="image-container my-3">
+                            <div class="swiper-container">
+                                <div class="swiper-wrapper">
+                                    <div th:each="reviewImage, iterStat : ${reviewBoardForm.reviewImgDtoList}" class="swiper-slide">
+                                        <a th:if="${not #strings.isEmpty(reviewImage.imgUrl)}" th:href="${reviewImage.imgUrl}" data-lightbox="image-gallery">
+                                            <img th:src="${reviewImage.imgUrl}" class="rounded">
+                                            <i class="fas fa-plus-circle"></i>
+                                        </a>
+                                    </div>
+                                    </div>
+                                </div>
+                                <div class="swiper-pagination"></div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="recommendation my-3">
+                            <a href="javascript:void(0);" class="recommend btn btn-sm btn-outline-secondary"
+                               th:data-uri="@{|/review/board/vote/${reviewBoard.id}|}" onclick="recommendQuestion(event)">
+                                추천
+                                <span class="badge rounded-pill bg-success" th:text="${#lists.size(reviewBoard.voter)}"></span>
+                            </a>
+                        </div>
+                        <div class="my-3">
+                            <a th:href="@{|/review/board/modify/${reviewBoard.id}|}" class="btn btn-sm btn-outline-secondary"
+                               sec:authorize="isAuthenticated()"
+                               th:if="${reviewBoard.author != null and #authentication.getPrincipal().getName() == reviewBoard.author.name}"
+                               th:text="수정"></a>
+                            <a href="javascript:void(0);" class="delete btn btn-sm btn-outline-secondary"
+                               th:data-uri="@{|/review/board/delete/${reviewBoard.id}|}"
+                               sec:authorize="isAuthenticated()"
+                               th:if="${reviewBoard.author != null and #authentication.getPrincipal().getName() == reviewBoard.author.name}"
+                               th:text="삭제" onclick="deleteQuestion(event)">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                    <h5 class="border-bottom my-3 py-2" th:text="|${#lists.size(reviewBoard.commentList)}개의 댓글이 있습니다.|"></h5>
+                    <div class="card my-3" th:each="comment : ${reviewBoard.commentList}">
+                        <a th:id="|comment_${comment.id}|"></a>
+                        <div class="card-body">
+                            <div class="card-text" th:utext="${@commonUtil.markdown(comment.content)}"></div>
+                            <div class="d-flex justify-content-end">
+                                <div th:if="${comment.modifiedDate != null}" class="badge bg-light text-dark p-2 text-start mx-3">
+                                    <div class="mb-2">modified at</div>
+                                    <div th:text="${#temporals.format(comment.modifiedDate, 'yyyy-MM-dd HH:mm')}"></div>
+                                </div>
+                                <div class="badge bg-light text-dark p-2 text-start">
+                                    <div class="mb-2">
+                                        <span th:if="${comment.author != null}" th:text="${comment.author.nickname}"></span>
+                                    </div>
+                                    <div th:text="${#temporals.format(comment.createDate, 'yyyy-MM-dd HH:mm')}"></div>
+                                </div>
+                            </div>
+                            <div class="my-3">
+                                <a th:href="@{|/review/comment/modify/${comment.id}|}" class="btn btn-sm btn-outline-secondary"
+                                   sec:authorize="isAuthenticated()"
+                                   th:if="${comment.author != null and #authentication.getPrincipal().getName() == comment.author.name}"
+                                   th:text="수정"></a>
+                                <a href="javascript:void(0);" th:data-uri="@{|/review/comment/delete/${comment.id}|}"
+                                   class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()"
+                                   th:if="${comment.author != null and #authentication.getPrincipal().getName() == comment.author.name}"
+                                   th:text="삭제" onclick="deleteAnswer(event)"></a>
+                            </div>
+                        </div>
+                    </div>
+                        <form th:action="@{|/review/comment/create/${reviewBoard.id}|}" th:object="${reviewCommentForm}" method="post" class="my-3">
+                            <div th:replace="board/review/form_errors :: formErrorsFragment"></div>
+                            <textarea th:field="*{content}" class="form-control" rows="5"></textarea>
+                            <input type="submit" value="답변 등록" class="btn btn-primary my-2">
+                        </form>
+                    </div>
+            </div>
+         </div>
+        </div>
+    </div>
+</div>
+<script layout:fragment="script" type='text/javascript'>
+    function deleteQuestion(event) {
+        event.preventDefault(); // 기본 동작인 링크 이동을 방지합니다.
+        if (confirm("정말로 삭제하시겠습니까?")) {
+            const uri = event.target.getAttribute('data-uri'); // 버튼의 data-uri 속성 값 가져오기
+            location.href = uri; // URI로 이동
+        }
+    }
+
+    function deleteAnswer(event) {
+        event.preventDefault(); // 기본 동작인 링크 이동을 방지합니다.
+        if (confirm("정말로 삭제하시겠습니까?")) {
+            const uri = event.target.getAttribute('data-uri'); // 버튼의 data-uri 속성 값 가져오기
+            location.href = uri; // URI로 이동
+        }
+    }
+
+    function recommendQuestion(event) {
+    event.preventDefault(); // 기본 동작인 링크 이동을 방지합니다.
+    const uri = event.target.getAttribute('data-uri'); // 버튼의 data-uri 속성 값 가져오기
+    if (confirm("추천하시겠습니까?")) {
+        location.href = uri; // URI로 이동
+    } else {
+        if (confirm("추천을 취소하시겠습니까?")) {
+            location.href = uri; // URI로 이동
+        }
+    }
+}
+</script>
+</body>
+</html>

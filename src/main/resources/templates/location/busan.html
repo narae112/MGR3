@@ -22,7 +22,7 @@
             width: 100%;
             height: 50px;
         }
-        #map {
+        #map1, #map2 { /* 수정된 부분 */
             width: 100%;
             max-width: 500px;
             height: 400px;
@@ -117,22 +117,102 @@
 <body>
 <div layout:fragment="content">
     <h2 class="title">오시는 길</h2>
-    <div id="map"></div>
+    <div id="map1"></div> <!-- 수정된 부분 -->
+    <div id="map2"></div> <!-- 수정된 부분 -->
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=91a33b69084e7e19defca68fb0f0f32a"></script>
     <script>
-        var mapContainer = document.getElementById('map');
-        var mapOption = {
+        // 첫 번째 지도 설정
+        var mapContainer1 = document.getElementById('map1');
+        var mapOption1 = {
             center: new kakao.maps.LatLng(35.196139288167934, 129.21339048352203),
             level: 3
         };
-        var map = new kakao.maps.Map(mapContainer, mapOption);
-        var marker = new kakao.maps.Marker({
-            position: map.getCenter()
+        var map1 = new kakao.maps.Map(mapContainer1, mapOption1);
+        var marker1 = new kakao.maps.Marker({
+            position: map1.getCenter()
         });
-         var infowindow = new kakao.maps.InfoWindow({
+        var infowindow1 = new kakao.maps.InfoWindow({
             content: '<div style="padding:5px;">MERRY GO RIDE</div>'
         });
-        infowindow.open(map, marker);
+        marker1.setMap(map1); // 마커를 지도에 표시
+        kakao.maps.event.addListener(marker1, 'click', function() {
+            infowindow1.open(map1, marker1);
+        });
+        infowindow1.open(map1, marker1);
+
+        // 두 번째 지도 설정
+       // 두 번째 지도 설정
+var mapContainer2 = document.getElementById('map2');
+var mapOption2 = {
+    center: new kakao.maps.LatLng(35.196139288167934, 129.21339048352203), // 밥집의 좌표로 지도 중심 설정
+    level: 3
+};
+var map2 = new kakao.maps.Map(mapContainer2, mapOption2);
+var infowindow2 = new kakao.maps.InfoWindow({ zIndex: 1 });
+
+// 밥집의 위치를 마커로 표시
+var marker2 = new kakao.maps.Marker({
+    map: map2,
+    position: new kakao.maps.LatLng(35.196939011464316, 129.21341657863988)
+});
+
+// 마커를 클릭하면 인포윈도우를 표시
+kakao.maps.event.addListener(marker2, 'click', function() {
+    infowindow2.setContent('<div style="padding:5px;font-size:12px;">할매순대국 부산점</div>');
+    infowindow2.open(map2, marker2);
+});
+
+        // 밥집의 위치를 마커로 표시
+var marker3 = new kakao.maps.Marker({
+    map: map2,
+    position: new kakao.maps.LatLng(35.19606531645605, 129.21329626244628)
+});
+
+// 마커를 클릭하면 인포윈도우를 표시
+kakao.maps.event.addListener(marker3, 'click', function() {
+    infowindow2.setContent('<div style="padding:5px;font-size:12px;">BBQ 롯데월드어드벤처 부산점</div>');
+    infowindow2.open(map2, marker3);
+});
+        var marker4 = new kakao.maps.Marker({
+    map: map2,
+    position: new kakao.maps.LatLng(35.19629811802532, 129.21591420709456)
+});
+
+// 마커를 클릭하면 인포윈도우를 표시
+kakao.maps.event.addListener(marker4, 'click', function() {
+    infowindow2.setContent('<div style="padding:5px;font-size:12px;">롯데월드어드벤처 부산점 파이러츠바</div>');
+    infowindow2.open(map2, marker4);
+});
+        var marker5 = new kakao.maps.Marker({
+    map: map2,
+    position: new kakao.maps.LatLng(35.19765573500107, 129.21214172193703 )
+});
+
+// 마커를 클릭하면 인포윈도우를 표시
+kakao.maps.event.addListener(marker5, 'click', function() {
+    infowindow2.setContent('<div style="padding:5px;font-size:12px;">샤론테라스 디트로네</div>');
+    infowindow2.open(map2, marker5);
+});
+            var marker6 = new kakao.maps.Marker({
+    map: map2,
+    position: new kakao.maps.LatLng(35.196664975271176, 129.21544114786963)
+});
+
+// 마커를 클릭하면 인포윈도우를 표시
+kakao.maps.event.addListener(marker6, 'click', function() {
+    infowindow2.setContent('<div style="padding:5px;font-size:12px;">춘리마라탕</div>');
+    infowindow2.open(map2, marker6);
+});
+            var marker7 = new kakao.maps.Marker({
+    map: map2,
+    position: new kakao.maps.LatLng( 35.19655586040046, 129.21426355183044)
+});
+
+// 마커를 클릭하면 인포윈도우를 표시
+kakao.maps.event.addListener(marker7, 'click', function() {
+    infowindow2.setContent('<div style="padding:5px;font-size:12px;">피자헛 부산점</div>');
+    infowindow2.open(map2, marker7);
+});
 
     </script>
     <div class="button">

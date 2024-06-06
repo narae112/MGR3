@@ -19,7 +19,7 @@ public class QAttraction extends EntityPathBase<Attraction> {
 
     public static final QAttraction attraction = new QAttraction("attraction");
 
-    public final StringPath condition = createString("condition");
+    public final NumberPath<Integer> closureDay = createNumber("closureDay", Integer.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 

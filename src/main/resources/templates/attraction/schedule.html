@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+
+<!-- css -->
+<th:block layout:fragment="css">
+    <style>
+        .carousel-schedule {
+            display: flex;
+            justify-content: center;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        .carousel-item-schedule {
+            flex: 0 0 auto;
+            text-align: center;
+            margin: 0 10px;
+        }
+        .date-navigation {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+        .center {
+            text-align: center;
+        }
+    </style>
+</th:block>
+
+<!-- js -->
+<th:block layout:fragment="script">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            function changeDate(days) {
+                const dateElement = document.getElementById('currentDate');
+                let currentDate = new Date(dateElement.getAttribute('data-date') + 'T00:00:00');
+                console.log('Days:', days);
+                console.log('Current Date:', currentDate);
+                currentDate.setUTCDate(currentDate.getUTCDate() + days);
+                const newDateStr = currentDate.toISOString().split('T')[0];
+                console.log('New Date String:', newDateStr);
+                window.location.href = '/attraction/schedule/' + newDateStr;
+            }
+
+            document.getElementById('prevButton').addEventListener('click', function () {
+                changeDate(0);
+            });
+
+            document.getElementById('nextButton').addEventListener('click', function () {
+                changeDate(2);
+            });
+        });
+    </script>
+</th:block>
+
+<div layout:fragment="content">
+
+    <h2 class="center">운휴 일정</h2>
+    <hr class="my-4">
+
+    <div class="date-navigation">
+        <button id="prevButton" class="btn btn-primary">&lt;</button>
+        <h2 id="currentDate" th:text="${#temporals.format(schedule, 'yyyy-MM-dd')}"
+            th:data-date="${#temporals.format(schedule, 'yyyy-MM-dd')}"></h2>
+        <button id="nextButton" class="btn btn-primary">&gt;</button>
+    </div>
+
+    <div class="carousel-schedule">
+        <div th:each="attraction : ${attractionList}" class="carousel-item-schedule">
+            <img th:src="${imageUrls[attraction.id]}" alt="이미지" style="width:200px;height:auto;">
+            <h3 th:text="${attraction.name}">이름</h3>
+        </div>
+    </div>
+
+</div>
+
+</html>

@@ -7,31 +7,100 @@
 <!-- css -->
 <th:block layout:fragment="css">
     <style>
+        .announcement-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
 
+        .announcement-container h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .announcement-container label {
+            font-weight: bold;
+        }
+
+        .announcement-container textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            box-sizing: border-box;
+            resize: none;
+        }
+
+        .announcement-container .info-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .announcement-container .author-info {
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .announcement-container .rep-img-div {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .announcement-container .rep-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+
+        .announcement-container .btn-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .announcement-container .btn-outline-secondary {
+            background-color: transparent;
+            border: 1px solid #6c757d;
+            padding: 9px 19px;
+            border-radius: 4px;
+            color: #6c757d;
+            cursor: pointer;
+        }
+
+        .announcement-container .btn-outline-secondary:hover {
+            background-color: #6c757d;
+            color: #ffffff;
+        }
     </style>
 </th:block>
 
 <!-- js -->
 <th:block layout:fragment="script">
     <script th:inline="javascript">
-
         var token = $("meta[name='_csrf']").attr('content');
         var header = $("meta[name='_csrf_header']").attr('content');
-
-        var eventBoardId = [[${eventBoard.id}]];
+        var eventBoardId = /*[[${eventBoard.id}]]*/ ''; // Thymeleaf 문법으로 변수 할당
 
         function eventDelete() {
-
             var url = "/board/event/delete/" + eventBoardId;
+            console.log(url);
+            console.log(eventBoardId);
 
-            console.log(url)
-            console.log(eventBoardId)
             if (confirm("삭제하시겠습니까?")) {
-
                 $.ajax({
                     url: url,
                     type: 'POST',
-                    data: { id: eventBoardId },
+                    data: JSON.stringify({ id: eventBoardId }), // 요청 데이터를 JSON 형식으로 변환
+                    contentType: 'application/json', // Content-Type을 application/json으로 설정
                     success: function(result) {
                         alert(result);
                         if (result === "게시글이 삭제되었습니다") {
@@ -55,56 +124,31 @@
 </th:block>
 
 <div layout:fragment="content">
+    <div class="announcement-container">
+        <h2 th:text="${eventBoard.title}"></h2>
 
-    <h2 class="border-bottom py-2" th:text="${eventBoard.title}"></h2>
-
-<!--        <input input type="hidden" id="eventBoardId" name="eventBoardId" class="form-control"-->
-<!--                th:value="${eventBoard.id}" readonly>-->
-        <input type="text" id="eventBoardId" name="eventBoardId" class="form-control"
-               th:value="${eventBoard.id}" readonly>
-    <div>
-        <label for="title">제목</label>
-        <input type="text" id="title" name="title" class="form-control"
-               value="제목" th:value="${eventBoard.title}" readonly>
-    </div>
-    <div>
-        <label for="nickname">작성자</label>
-        <input type="text" id="nickname" name="nickname" class="form-control"
-               value="작성자" th:value="${eventBoard.member.nickname}" readonly>
-    </div>
-    <div>
-        <label for="createDate">작성일</label>
-        <input type="text" id="createDate" name="createDate" class="form-control"
-               value="작성일" th:value="${#temporals.format(eventBoard.createDate, 'yyyy-MM-dd HH:mm:ss')}" readonly>
-        <!--                    <td th:text="${#temporals.format(boardList.createDate, 'yyyy-MM-dd HH:mm:ss')}">등록일</td>-->
-    </div>
-    <div>
-        <label for="content">내용</label>
-        <!--    이미지 시작-->
-        <div class="repImgDiv">
-            <img th:if="${not #lists.isEmpty(eventImage)}"
-                 th:src="${eventImage[0].imgUrl}" class="rounded repImg">
+        <div class="info-container">
+            <div></div>
+            <div class="author-info">
+                <span th:text="${eventBoard.member.nickname}"></span>
+                <span th:text="${#temporals.format(eventBoard.createDate, 'yyyy-MM-dd HH:mm:ss')}"></span>
+            </div>
         </div>
-        <!--    이미지 끝-->
-        <textarea class="form-control" rows="5"
-                  id="content" name="content"
-                  th:value="${eventBoard.content}" th:text="${eventBoard.content}" readonly></textarea>
-
-    </div>
-<!--    <hr class="my-4">-->
-    <div class="my-3">
-        <a th:href="@{/board/events}" class="btn btn-sm btn-primary"
-           th:text="목록으로"></a>
-        <a th:href="@{|/board/eventBoard/edit/${eventBoard.id}|}" class="btn btn-sm btn-primary"
-           sec:authorize="isAuthenticated()"
-           th:if="${eventBoard.member != null and #authentication.getPrincipal().getUsername() == eventBoard.member.email}"
-           th:text="수정"></a>
-        <a onclick="eventDelete()"
-           class="delete btn btn-sm btn-outline-secondary"
-           sec:authorize="isAuthenticated()"
-           th:if="${eventBoard.member != null and #authentication.getPrincipal().getUsername() == eventBoard.member.email}"
-           th:text="삭제"></a>
+        <div>
+            <label for="content"></label>
+            <textarea rows="5" id="content" name="content" readonly th:text="${eventBoard.content}"></textarea>
+            <!-- 이미지 시작 -->
+            <div class="rep-img-div">
+                <img th:if="${not #lists.isEmpty(eventImage)}" th:src="@{|${eventImage.imgUrl}|}" class="rep-img">
+            </div>
+            <!-- 이미지 끝 -->
+        </div>
+        <div class="btn-container">
+            <a th:href="@{/board/events}" class="btn btn-outline-secondary btn-sm">목록으로</a>
+            <a th:href="@{|/board/eventBoard/edit/${eventBoard.id}|}" class="btn btn-outline-secondary btn-sm" sec:authorize="isAuthenticated()" th:if="${eventBoard.member != null and #authentication.getPrincipal().getUsername() == eventBoard.member.email}">수정</a>
+            <button onclick="eventDelete()" class="btn btn-outline-secondary btn-sm delete" sec:authorize="isAuthenticated()" th:if="${eventBoard.member != null and #authentication.getPrincipal().getUsername() == eventBoard.member.email}">삭제</button>
+        </div>
     </div>
 </div>
-</html>
 
+</html>

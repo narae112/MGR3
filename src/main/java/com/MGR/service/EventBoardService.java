@@ -9,21 +9,25 @@ import com.MGR.entity.Ticket;
 import com.MGR.repository.EventBoardRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -31,6 +35,22 @@ public class EventBoardService {
 
     private final EventBoardRepository eventBoardRepository;
     private final ImageService imageService;
+    private final NotificationService notificationService;
+
+    @Transactional
+    @Scheduled(cron = "0 0 0 * * ?")  // 이벤트가 진행중인 게시글의 진행여부를 매일 자정에 업데이트
+    public void updateEventStatuses() {
+        LocalDate now = LocalDate.now();
+        List<EventBoard> eventBoards = eventBoardRepository.findAll();
+        //자정이 되면 이벤트 게시판을 모두 불러냄
+
+        for (EventBoard eventBoard : eventBoards) {
+            //이벤트 진행 여부를 다시 설정함
+            boolean isCurrent = (now.isEqual(LocalDate.parse(eventBoard.getStartDate())) || now.isAfter(LocalDate.parse(eventBoard.getStartDate())))
+                    && (now.isEqual(LocalDate.parse(eventBoard.getEndDate())) || now.isBefore(LocalDate.parse(eventBoard.getEndDate())));
+            eventBoard.setIsEventCurrent(isCurrent);
+        }
+    }
 
     public void saveBoard(EventBoardFormDto boardFormDto, Member member, List<MultipartFile> imgFileList) throws Exception {
         EventBoard board = EventBoard.createBoard(boardFormDto, member);
@@ -49,10 +69,12 @@ public class EventBoardService {
             imageService.saveBoardImage(boardImage, imgFileList.get(i));
         }
 
+        notificationService.notifyBoard(board);
     }
 
     public void saveBoard(EventBoard board) {
         eventBoardRepository.save(board);
+        notificationService.notifyBoard(board);
     }
 
     public List<EventBoard> findAll() {
@@ -78,18 +100,7 @@ public class EventBoardService {
         eventBoardRepository.delete(eventBoard);
     }
 
-//    public EventBoard update(Long id, EventBoardFormDto boardFormDto) {
-//        EventBoard eventBoard = eventBoardRepository.findById(id).orElseThrow();
-//        eventBoard.setContent(boardFormDto.getContent());
-//        eventBoard.setTitle(boardFormDto.getTitle());
-//        eventBoard.setStartDate(boardFormDto.getStartDate());
-//        eventBoard.setEndDate(boardFormDto.getEndDate());
-//        eventBoard.setModifiedDate(LocalDateTime.now());
-////        eventBoard.setType(boardFormDto.getType());
-//        return eventBoard;
-//    }
-
-    public EventBoard update(Long id, EventBoardFormDto boardFormDto, List<MultipartFile> imgFileList) throws Exception {
+    public EventBoard update(Long id, EventBoard boardFormDto, List<MultipartFile> imgFileList) throws Exception {
         EventBoard eventBoard = eventBoardRepository.findById(id).orElseThrow();
         eventBoard.setContent(boardFormDto.getContent());
         eventBoard.setTitle(boardFormDto.getTitle());
@@ -98,13 +109,23 @@ public class EventBoardService {
         eventBoard.setModifiedDate(LocalDateTime.now());
         eventBoardRepository.save(eventBoard);
 
-        Map<Long, ImageDto> boardMap = boardFormDto.getEventImgDtoList();
-        List<Long> keys = new ArrayList<>(boardMap.keySet());
+        Image findImage = imageService.findByEvent(eventBoard);
 
-        for(int i=0; i<imgFileList.size(); i++){
-            imageService.updateBoardImage(keys.get(i),imgFileList.get(i));
-        }
+        MultipartFile imgFile = imgFileList.get(0);
+
+        imageService.saveBoardImage(findImage,imgFile);
 
         return eventBoard;
+    }
+
+    public List<EventBoard> findAllCurrentEvents() {
+        List<EventBoard> eventBoardList = eventBoardRepository.findAll();
+        List<EventBoard> currentEventList = new ArrayList<>();
+        for (EventBoard eventBoard : eventBoardList) {
+            if (eventBoard.getIsEventCurrent()) {
+                currentEventList.add(eventBoard);
+            }
+        }
+        return currentEventList;
     }
 }
