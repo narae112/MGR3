@@ -55,4 +55,13 @@
   height: 500px;
   background-image: url(../images/logo/Frame2.jpg);
 }
-
+.chatbot {
+  width : 180px !important;
+  height : auto !important;
+  position : fixed !important;
+  bottom : 100px !important;
+  right : 50px !important;
+  border : none !important;
+  background-color : transparent !important;
+  z-index: 50 !important;
+}

@@ -33,6 +33,10 @@
     </section>
     <!-- End Hero Area -->
 
+    <button type="button" class="chatbot" data-toggle="modal" data-target="#chatModal">
+        <img th:src="@{/img/chatbot_icon.png}">
+    </button>
+
     <!-- 메인 사진과 겹쳐있는 메뉴바 시작 -->
     <div class="count-down">
         <div class="container">
@@ -158,7 +162,9 @@
         <span class="badge rounded-pill bg-danger" id="notificationCount" sec:authorize="isAuthenticated()"></span>
     </button>
 
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#chatModal">챗봇</button>
+<!--    <button type="button" class="chatbot" data-toggle="modal" data-target="#chatModal">-->
+<!--        <img th:src="@{/img/chatbot_icon.png}">-->
+<!--    </button>-->
 
 
     <div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
