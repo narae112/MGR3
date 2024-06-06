@@ -28,6 +28,16 @@ public class NotificationService {
         // 1. 현재 클라이언트를 위한 sseEmitter 객체 생성
         SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
 
+        // 2. 연결 확인 메세지
+        try {
+            sseEmitter.send(SseEmitter.event()
+                    .name("connect")
+                    .data("연결성공"));
+        } catch (IOException e) {
+            System.out.println("연결 에러= " + e.getMessage());
+        }
+
+        // 3. 저장
         sseEmitters.put(memberId, sseEmitter);
 
         // 4. 연결 종료 처리
@@ -45,8 +55,6 @@ public class NotificationService {
         List<Member> memberList = memberService.findByAllUser();
 
         for (Member member : memberList) {
-            SseEmitter sseEmitter = sseEmitters.get(member.getId());
-//            subscribe(member.getId()); //객체 생성해서 멤버 아이디 넣어줌
 
             // SseEmitter 객체 가져오기
             SseEmitter sseEmitterReceiver = sseEmitters.get(member.getId());
