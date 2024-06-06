@@ -25,7 +25,7 @@ public class NotificationService {
 
     // 메시지 알림
     public SseEmitter subscribe(Long memberId) {
-
+    //Test
         // 1. 현재 클라이언트를 위한 sseEmitter 객체 생성
         SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
 
