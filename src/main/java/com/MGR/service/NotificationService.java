@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,13 +30,13 @@ public class NotificationService {
         SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
 
         // 2. 연결 확인 메세지
-//        try {
-//            sseEmitter.send(SseEmitter.event()
-//                    .name("connect")
-//                    .data("연결성공"));
-//        } catch (IOException e) {
-//            System.out.println("연결 에러= " + e.getMessage());
-//        }
+        try {
+            sseEmitter.send(SseEmitter.event()
+                    .name("connect")
+                    .data("연결성공"));
+        } catch (IOException e) {
+            System.out.println("연결 에러= " + e.getMessage());
+        }
 
         // 3. 저장
         sseEmitters.put(memberId, sseEmitter);
@@ -48,7 +49,6 @@ public class NotificationService {
         return sseEmitter;
     }
 
-
     // 이벤트 등록 알림
     @Transactional
     public void notifyBoard(EventBoard board) {
@@ -56,8 +56,8 @@ public class NotificationService {
         List<Member> memberList = memberService.findByAllUser();
 
         for (Member member : memberList) {
-
-            subscribe(member.getId()); //객체 생성해서 멤버 아이디 넣어줌
+            SseEmitter sseEmitter = sseEmitters.get(member.getId());
+//            subscribe(member.getId()); //객체 생성해서 멤버 아이디 넣어줌
 
             // SseEmitter 객체 가져오기
             SseEmitter sseEmitterReceiver = sseEmitters.get(member.getId());
@@ -65,8 +65,16 @@ public class NotificationService {
             if (sseEmitterReceiver != null) {
                 try {
                     sseEmitterReceiver.send(SseEmitter.event()
+                                            
                             .name("message") // message라는 이름을 가지고
                             .data(board.getTitle())); // 내용은 이거
+
+                    int notificationCount = countNotificationsForMember(member.getId());
+                    System.out.println("notificationCount 알림수량 = " + notificationCount);
+                    sseEmitterReceiver.send(SseEmitter.event()
+                            .name("notificationCount")
+                            .data(notificationCount));
+
                 } catch (Exception e) {
                     sseEmitters.remove(member.getId());
                 }
@@ -82,7 +90,7 @@ public class NotificationService {
     // 쿠폰 등록 알림
     @Transactional
     public void notifyCoupon(Coupon coupon, MemberCoupon memberCoupon, Member member) {
-        subscribe(member.getId());
+
         //알림메세지 생성
         String data = "쿠폰이 발행되었습니다! " +
                 coupon.getName() + " 쿠폰 코드 : "
@@ -94,6 +102,13 @@ public class NotificationService {
                     sseEmitter.send(SseEmitter.event() //sseEmitter 객체에 메세지 담아서 보내기
                             .name("message")
                             .data(data));
+
+                    int notificationCount = countNotificationsForMember(member.getId());
+                    System.out.println("notificationCount 알림수량 = " + notificationCount);
+                    sseEmitter.send(SseEmitter.event()
+                            .name("notificationCount")
+                            .data(notificationCount));
+
                 } catch (Exception e) {
                     sseEmitters.remove(member.getId());
                 }
@@ -107,7 +122,7 @@ public class NotificationService {
     @Transactional
     public void reviewVoter(ReviewBoard board) {
         Member member = board.getAuthor();
-        subscribe(member.getId());
+
         //알림메세지 생성
         String data = "다른 사용자가 다음 리뷰에 추천을 표시했습니다. [" +
                 board.getSubject() + "]";
@@ -119,6 +134,13 @@ public class NotificationService {
                 sseEmitter.send(SseEmitter.event() //sseEmitter 객체에 메세지 담아서 보내기
                         .name("message")
                         .data(data));
+
+                int notificationCount = countNotificationsForMember(member.getId());
+                System.out.println("notificationCount 알림수량 = " + notificationCount);
+                sseEmitter.send(SseEmitter.event()
+                        .name("notificationCount")
+                        .data(notificationCount));
+
             } catch (Exception e) {
                 sseEmitters.remove(member.getId());
             }
@@ -131,7 +153,7 @@ public class NotificationService {
     @Transactional
     public void reviewComment(ReviewBoard board) {
         Member member = board.getAuthor();
-        subscribe(member.getId());
+
         //알림메세지 생성
         String data = "다른 사용자가 다음 리뷰에 댓글을 등록했습니다. [" +
                 board.getSubject() + "]";
@@ -143,6 +165,13 @@ public class NotificationService {
                 sseEmitter.send(SseEmitter.event() //sseEmitter 객체에 메세지 담아서 보내기
                         .name("message")
                         .data(data));
+
+                int notificationCount = countNotificationsForMember(member.getId());
+                System.out.println("notificationCount 알림수량 = " + notificationCount);
+                sseEmitter.send(SseEmitter.event()
+                        .name("notificationCount")
+                        .data(notificationCount));
+
             } catch (Exception e) {
                 sseEmitters.remove(member.getId());
             }

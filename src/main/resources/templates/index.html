@@ -111,8 +111,8 @@
                         <!-- Review Image -->
                         <div class="review-img" style="height: 400px; overflow: hidden;">
                             <a th:href="@{/review/board/detail/{id}(id=${review.id})}">
-                            <!-- 이미지 URL을 reviewImgDtoList의 첫 번째 이미지에서 가져옵니다. -->
-                            <img th:src="${review.imageUrl}" alt="Review Image" style="width: 100%; height: auto; object-fit: cover;">
+                                <!-- 이미지 URL을 reviewImgDtoList의 첫 번째 이미지에서 가져옵니다. -->
+                                <img th:src="${review.imageUrl.length() > 0 ? review.imageUrl : '/img/unicorn.png'}" alt="Review Image" style="width: 100%; height: auto; object-fit: cover;">
                             </a>
                         </div>
                         <!-- Review Content -->
@@ -202,145 +202,154 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" th:inline="javascript">
+    var token = $("meta[name='_csrf']").attr('content');
+    var header = $("meta[name='_csrf_header']").attr('content');
 
-        var token = $("meta[name='_csrf']").attr('content');
-        var header = $("meta[name='_csrf_header']").attr('content');
-
-        function deleteNotification(id, button) {
-            $.ajax({
-                url: `/api/notifications/${id}`,
-                type: 'DELETE',
-                beforeSend: function(xhr) {
-                    xhr.setRequestHeader(header, token);
-                },
-                success: function() {
-                    button.closest('.card').remove();
-                },
-                error: function(xhr, status, error) {
-                    console.error('Failed to delete notification:', error);
+$(document).ready(function() {
+<!--    // 슬라이드 초기화-->
+    $('.att_slider').slick({
+        slidesToShow: 3,
+        slidesToScroll: 1,
+        autoplay: false,
+        arrows: true,
+        responsive: [
+            {
+                breakpoint: 768,
+                settings: {
+                    slidesToShow: 2,
                 }
-            });
-        }
-
-        $(document).ready(function() {
-
-            $('.att_slider').slick({
-                slidesToShow: 3,
-                slidesToScroll: 1,
-                autoplay: false,
-                arrows: true,
-                responsive: [
-                    {
-                        breakpoint: 768,
-                        settings: {
-                            slidesToShow: 2,
-                        }
-                    },
-                    {
-                        breakpoint: 480,
-                        settings: {
-                            slidesToShow: 1,
-                        }
-                    }
-                ]
-            });
-
-            $.ajax({
-                url: '/api/notifications/count',
-                type: 'GET',
-                success: function(data) {
-                    $('#notificationCount').text(data);
-                },
-                error: function(xhr, status, error) {
-                    console.error('Failed to fetch notification count:', error);
-                }
-            });
-
-            function sendMessage() {
-                var userMessage = $('#userInput').val();
-                if (userMessage.trim() !== "") {
-                    $('#chatWindow').append('<div class="text-right"><strong>User :</strong> ' + userMessage + '</div>');
-                    $('#userInput').val('');
-
-                    $.ajax({
-                        url: '/gemini/chat',
-                        type: 'GET',
-                        data: { message: userMessage },
-                        success: function(response) {
-                            $('#chatWindow').append('<div class="text-left"><strong>ChatMRG :</strong> ' + response + '</div>');
-                            $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
-                        },
-                        error: function(xhr, status, error) {
-                            $('#chatWindow').append('<div class="text-left text-danger"><strong>Error:</strong> ' + xhr.responseText + '</div>');
-                            $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
-                        }
-                    });
+            },
+            {
+                breakpoint: 480,
+                settings: {
+                    slidesToShow: 1,
                 }
             }
+        ]
+    });
 
-            $('#sendButton').click(function() {
-                sendMessage();
-                $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
-            });
+<!--     알림 수 가져오기-->
+    $.ajax({
+        url: '/api/notifications/count',
+        type: 'GET',
+        success: function(data) {
+            $('#notificationCount').text(data);
+        },
+        error: function(xhr, status, error) {
+            console.error('Failed to fetch notification count:', error);
+        }
+    });
 
-            $('#userInput').keypress(function(event) {
-                if (event.which === 13) {
-                    sendMessage();
+<!--     EventSource 초기화-->
+    let eventSource = new EventSource('/api/notifications/subscribe');
+    eventSource.addEventListener('connect', function(event) {
+        displayMessage(event.data, null);
+    });
+    eventSource.addEventListener('message', function(event) {
+        displayMessage(event.data, null);
+    });
+    eventSource.onerror = function(event) {
+        displayMessage('EventSource failed: ' + event, null);
+    };
+
+    eventSource.addEventListener('notificationCount', function(event) {
+        updateNotificationCount(event.data);
+    });
+
+    function updateNotificationCount(count) {
+        console.log(count+1);
+        $('#notificationCount').text(count+1);
+    }
+
+    function displayMessage(message, id) {
+        const messagesDiv = document.getElementById('notify');
+        const fragment = document.createDocumentFragment();
+        const cardElement = document.createElement('div');
+        cardElement.className = 'card mb-3';
+        cardElement.innerHTML = `
+            <div class="card-body d-flex align-items-center">
+                <p class="card-text mb-0 flex-grow-1">${message}</p>
+                <button type="button" class="close ml-auto" aria-label="Close"
+                onclick="deleteNotification(${id}, this)">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        `;
+        fragment.appendChild(cardElement);
+        messagesDiv.appendChild(fragment);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+<!--    // 알림 모달 버튼 클릭 이벤트-->
+    $('#notificationButton').click(function() {
+<!--        // DB에서 기존 알림 가져오기-->
+        $.ajax({
+            url: '/api/notifications',
+            type: 'GET',
+            success: function(notifications) {
+                const messagesDiv = document.getElementById('notify');
+                messagesDiv.innerHTML = ''; // 기존 알림 지우기
+                notifications.forEach(notification => {
+                    displayMessage(notification.message, notification.id);
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Failed to load notifications:', error);
+            }
+        });
+    });
+
+    function sendMessage() {
+        var userMessage = $('#userInput').val();
+        if (userMessage.trim() !== "") {
+            $('#chatWindow').append('<div class="text-right"><strong>User :</strong> ' + userMessage + '</div>');
+            $('#userInput').val('');
+
+            $.ajax({
+                url: '/gemini/chat',
+                type: 'GET',
+                data: { message: userMessage },
+                success: function(response) {
+                    $('#chatWindow').append('<div class="text-left"><strong>ChatMRG :</strong> ' + response + '</div>');
+                    $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
+                },
+                error: function(xhr, status, error) {
+                    $('#chatWindow').append('<div class="text-left text-danger"><strong>Error:</strong> ' + xhr.responseText + '</div>');
                     $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
                 }
             });
+        }
+    }
 
-            let eventSource;
-            $('#notificationButton').click(function() {
-                if (!eventSource) {
-                    eventSource = new EventSource('/api');
-                    eventSource.addEventListener('connect', function(event) {
-                        displayMessage(event.data, null);
-                    });
-                    eventSource.addEventListener('message', function(event) {
-                        displayMessage(event.data, null);
-                    });
-                    eventSource.onerror = function(event) {
-                        displayMessage('EventSource failed: ' + event, null);
-                    };
+    $('#sendButton').click(function() {
+        sendMessage();
+        $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
+    });
 
-                    // DB에서 기존 알림 가져오기
-                    $.ajax({
-                        url: '/api/notifications',
-                        type: 'GET',
-                        success: function(notifications) {
-                            const messagesDiv = document.getElementById('notify');
-                            messagesDiv.innerHTML = ''; // 기존 알림 지우기
-                            notifications.forEach(notification => {
-                                displayMessage(notification.message, notification.id);
-                            });
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Failed to load notifications:', error);
-                        }
-                    });
-                }
-            });
+    $('#userInput').keypress(function(event) {
+        if (event.which === 13) {
+            sendMessage();
+            $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
+        }
+    });
+});
 
-            function displayMessage(message, id) {
-                const messagesDiv = document.getElementById('notify');
-                const cardElement = document.createElement('div');
-                cardElement.className = 'card mb-3';
-                cardElement.innerHTML = `
-                    <div class="card-body d-flex align-items-center">
-                        <p class="card-text mb-0 flex-grow-1">${message}</p>
-                        <button type="button" class="close ml-auto" aria-label="Close"
-                        onclick="deleteNotification(${id}, this)">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                `;
-                messagesDiv.appendChild(cardElement);
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            }
-        });
-
-    </script>
+function deleteNotification(id, button) {
+    $.ajax({
+        url: `/api/notifications/${id}`,
+        type: 'DELETE',
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader(header, token);
+        },
+        success: function() {
+            button.closest('.card').remove();
+        },
+        error: function(xhr, status, error) {
+            console.error('Failed to delete notification:', error);
+        }
+    });
+}
+</script>
 
 
 </div>
