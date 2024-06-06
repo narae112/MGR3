@@ -32,6 +32,13 @@ public class NotificationService {
 //            sseEmitter.send(SseEmitter.event()
 //                    .name("connect")
 //                    .data("연결성공"));
+        //수정을
+
+
+        //테스트
+
+
+        //ㅇㅇ
 //        } catch (IOException e) {
 //            System.out.println("연결 에러= " + e.getMessage());
 //        }
