@@ -10,9 +10,6 @@ import java.time.LocalDateTime;
 @Entity
 @Setter @Getter
 public class Attraction {
-
-    // 240606 테스트입니다
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
