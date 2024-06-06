@@ -59,4 +59,13 @@ public class OrderService {
         orderRepository.save(order);
     }
 
+    public void changeReservationTicketStatus(Long id) {
+        Optional<Order> order = orderRepository.findById(id);
+        List<OrderTicket> orderTickets = order.get().getOrderTickets();
+        for(OrderTicket orderTicket : orderTickets) {
+            ReservationTicket reservationTicket = reservationTicketRepository.findById(orderTicket.getReservationTicket().getId()).orElseThrow(EntityNotFoundException::new);
+            reservationTicket.setReservationStatus(ReservationStatus.PAYED);
+        }
+    }
+
 }

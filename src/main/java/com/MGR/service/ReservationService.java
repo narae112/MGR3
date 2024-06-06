@@ -1,5 +1,6 @@
 package com.MGR.service;
 
+import com.MGR.constant.ReservationStatus;
 import com.MGR.dto.OrderDto;
 import com.MGR.dto.ReservationDtlDto;
 import com.MGR.dto.ReservationOrderDto;
@@ -61,8 +62,8 @@ public class ReservationService {
 
         // 예약하려는 티켓이 이미 예약한 티켓 리스트에 있는지 확인한다
         for(ReservationTicket savedReservationTicket : savedReservationTickets) {
-            // 이미 예약한 티켓 리스트에 있고 방문날짜가 동일하면
-            if(savedReservationTicket != null && savedReservationTicket.getVisitDate().equals(reservationTicketDto.getVisitDate())) {
+            // 이미 예약한 티켓 리스트에 있고 방문날짜가 동일하고 예약 상태가 RESERVE 이면
+            if(savedReservationTicket != null && savedReservationTicket.getVisitDate().equals(reservationTicketDto.getVisitDate()) && savedReservationTicket.getReservationStatus().equals(ReservationStatus.RESERVE)) {
                 savedReservationTicket.addCount(reservationTicketDto.getAdultCount(), reservationTicketDto.getChildCount()); // 수량만 증가
 
                 return savedReservationTicket.getId(); // 예약 티켓 아이디 반환
@@ -157,12 +158,6 @@ public class ReservationService {
         }
 
         Long orderId = orderService.orders(orderDtoList, email);
-
-//        for(ReservationOrderDto reservationOrderDto : reservationOrderDtoList) {
-//            ReservationTicket reservationTicket = reservationTicketRepository.findById(reservationOrderDto.getReservationTicketId())
-//                    .orElseThrow(EventLoopException::new);
-//            reservationTicketRepository.delete(reservationTicket);
-//        }
 
         return orderId;
     }

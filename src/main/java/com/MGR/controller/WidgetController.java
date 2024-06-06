@@ -113,12 +113,8 @@ public class WidgetController {
         orderService.changeStatus(id);
 
         // 결제 완료한 예약 티켓 상태 변경
-        Order order = orderRepository.findById(id).orElseThrow();
-        List<OrderTicket> orderTickets = order.getOrderTickets();
-        for(OrderTicket orderTicket : orderTickets) {
-            ReservationTicket reservationTicket = reservationTicketRepository.findById(orderTicket.getReservationTicket().getId()).orElseThrow();
-            reservationTicket.updateStatus();
-        }
+        orderService.changeReservationTicketStatus(id);
+
 
         return "/success";
     }

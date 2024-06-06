@@ -297,11 +297,11 @@
                     <th:block th:if="${reservationTicket.reservationStatus == T(com.MGR.constant.ReservationStatus).CANCEL}">
                         <span>취소 완료</span>
                     </th:block>
-                    <th:block th:if="${reservationTicket.reservationStatus == T(com.MGR.constant.ReservationStatus).PAYED}">
-                        <span>결제 완료</span>
-                        <button type="button" class="btn btn-outline-secondary" th:value="${reservationTicket.reservationTicketId}"
-                                onclick="cancelOrder(this.value)">결제 취소</button>
-                    </th:block>
+<!--                    <th:block th:if="${reservationTicket.reservationStatus == T(com.MGR.constant.ReservationStatus).PAYED}">-->
+<!--                        <span>결제 완료</span>-->
+<!--                        <button type="button" class="btn btn-outline-secondary" th:value="${reservationTicket.reservationTicketId}"-->
+<!--                                onclick="cancelOrder(this.value)">결제 취소</button>-->
+<!--                    </th:block>-->
                 </td>
                 <td class="text-center align-middle">
                     <span th:id="'totalPrice_' + ${reservationTicket.reservationTicketId}"

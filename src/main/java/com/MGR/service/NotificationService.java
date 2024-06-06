@@ -65,8 +65,8 @@ public class NotificationService {
             if (sseEmitterReceiver != null) {
                 try {
                     sseEmitterReceiver.send(SseEmitter.event()
-                            .name("message")
-                            .data(board.getTitle()));
+                            .name("message") // message라는 이름을 가지고
+                            .data(board.getTitle())); // 내용은 이거
                 } catch (Exception e) {
                     sseEmitters.remove(member.getId());
                 }

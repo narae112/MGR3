@@ -39,12 +39,19 @@ public class OrderController {
 
 //        List<Order> orders = orderRepository.findOrders(email);
         List<String> orderNumList = new ArrayList<>(); //결제 후처리
+
         Order order = orderRepository.findById(orderId).get();
+
         List<OrderTicket> orderTicketList = orderRepository.findById(orderId).get().getOrderTickets();
+
         List<OrderTicketDto> orderTickets = new ArrayList<>();
+
         int totalPrice = orderRepository.findById(orderId).get().getAllTotalPrice();
+
         String orderNum = order.getOrderNum();
+
         System.out.println("orderNum1 = " + orderNum);
+
         for (OrderTicket orderTicket : orderTicketList) {
             orderNumList.add(orderNum);
             System.out.println("orderNum2 = " + orderNum);
@@ -52,6 +59,8 @@ public class OrderController {
             orderTickets.add(dto);
         }
         System.out.println(orderNumList.size());
+        System.out.println("totalPrice = " + totalPrice);
+
 //        List<OrderTicketDto> orderTicketList = new ArrayList<>();
 //        int totalPrice = 0; //합계 금액 구하려고
 //        List<String> orderNumLIst = new ArrayList<>(); //결제 후처리
@@ -67,12 +76,7 @@ public class OrderController {
 //            }
 //        }
 
-        
-        System.out.println("totalPrice = " + totalPrice);
-//
-        model.addAttribute("orderTickets", orderTickets);
-        model.addAttribute("totalPrice", totalPrice);
-        model.addAttribute("orderNumList", orderNumList);
+
 
         // 로그인한 멤버가 가진 쿠폰
         List<MemberCoupon> memberCouponList = memberCouponRepository.findAllByMemberId(member.getId());
@@ -84,18 +88,15 @@ public class OrderController {
             System.out.println("memberCouponDto = " + memberCouponDto.getName());
         }
 
+        model.addAttribute("orderTickets", orderTickets);
+        model.addAttribute("totalPrice", totalPrice);
+        model.addAttribute("orderNumList", orderNumList);
+        model.addAttribute("memberCouponList", memberCouponDtos); // 쿠폰 리스트
+
         System.out.println("orderNumList = " + orderNumList);
         System.out.println("totalPrice = " + totalPrice);
 
-
-        model.addAttribute("orderTickets", orderTicketList); // OrderTicketDto 객체 담긴 리스트
-        model.addAttribute("totalPrice", totalPrice); // 전체 가격
-        model.addAttribute("orderNumList", orderNumList); // 주문 번호 리스트
-        model.addAttribute("memberCouponList", memberCouponDtos); // 쿠폰 리스트
-
         return "/checkout";
-
-
     }
 
 
