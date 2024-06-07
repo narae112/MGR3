@@ -49,7 +49,10 @@ public class TicketController {
         if (bindingResult.hasErrors()) {
             return "ticket/ticketForm";
         }
-
+        if(ticketImgFileList.get(0).isEmpty() && ticketFormDto.getId() == null) {
+            model.addAttribute("errorMessage", "상품 이미지는 필수 입력 값 입니다.");
+            return "ticket/ticketForm";
+        }
         try {
             ticketService.saveTicket(ticketFormDto, ticketImgFileList);
         } catch (DuplicateTicketNameException e) {
@@ -70,7 +73,7 @@ public class TicketController {
         } catch (EntityNotFoundException e) {
             redirectAttributes.addFlashAttribute("errorMessage", "존재하지 않는 티켓입니다.");
             model.addAttribute("ticketFormDto", new TicketFormDto());
-            return "ticket/ticketForm";
+            return "redirect:/admin/tickets";
         }
         return "ticket/ticketForm";
     }

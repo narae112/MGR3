@@ -47,7 +47,7 @@ public class TicketService {
     }
     
     public Long saveTicket(TicketFormDto ticketFormDto, List<MultipartFile> ticketImgFileList) throws Exception {
-        boolean isDuplicate = isDuplicateTicket(ticketFormDto);
+        boolean isDuplicate =isTicketNameDuplicated (ticketFormDto.getName());
         if (isDuplicate) {
             throw new DuplicateTicketNameException("중복된 티켓 정보가 존재합니다.");
         }
@@ -73,16 +73,8 @@ public class TicketService {
     }
 
 
-    private boolean isDuplicateTicket(TicketFormDto ticketFormDto) {
-        // TicketFormDto를 Ticket 엔티티로 변환
-        Ticket ticket = ticketFormDto.createTicket();
-
-        // TicketRepository를 사용하여 중복 여부 확인
-        Optional<Ticket> ticketOptional = ticketRepository.findByNameAndAdultPriceAndChildPriceAndMemoAndStartDateAndEndDateAndLocationCategory(
-                ticket.getName(), ticket.getAdultPrice(), ticket.getChildPrice(), ticket.getMemo(),
-                ticket.getStartDate(), ticket.getEndDate(), ticket.getLocationCategory()
-        );
-        return ticketOptional.isPresent();
+    public boolean isTicketNameDuplicated(String name) {
+        return ticketRepository.existsByName(name);
     }
     //티켓 데이터를 읽어오는 함수
     @Transactional(readOnly = true)
@@ -103,7 +95,7 @@ public class TicketService {
 
 
     public Long updateTicket(TicketFormDto ticketFormDto, List<MultipartFile> ticketImgFileList) throws Exception {
-        boolean isDuplicate = isDuplicateTicket(ticketFormDto);
+        boolean isDuplicate =isTicketNameDuplicated (ticketFormDto.getName());
         if (isDuplicate) {
             throw new DuplicateTicketNameException("중복된 티켓 정보가 존재합니다.");
         }

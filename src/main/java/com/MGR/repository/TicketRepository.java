@@ -24,7 +24,5 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> ,
             String name, int adultPrice, int childPrice, String memo,
             LocalDate startDate, LocalDate endDate, LocationCategory locationCategory
     );
-//    Optional<Ticket> findByPriceAndLocationCategoryAndMemoAndTicketCategory(
-//            int price, LocationCategory locationCategory, String memo, TicketCategory ticketCategory
-//    );
+    boolean existsByName(String name);
 }
