@@ -2,6 +2,7 @@ package com.MGR.service;
 
 import com.MGR.entity.*;
 import com.MGR.repository.NotificationRepository;
+import com.MGR.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,13 +11,14 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
-
+    private final OrderRepository orderRepository;
     private final MemberService memberService;
     private final NotificationRepository notificationRepository;
     public final Map<Long, SseEmitter> sseEmitters = new ConcurrentHashMap<>();
@@ -178,29 +180,31 @@ public class NotificationService {
 
     // 결제 완료 알림
     @Transactional
-    public void notifyOrder(Long RTOrderId, String orderId, Member member) {
-        SseEmitter sseEmitter = sseEmitters.get(member.getId());
+    public void notifyOrder(Long id) {
+        Optional<Order> order = orderRepository.findById(id);
+        Optional<Member> member = memberService.findById(order.get().getMember().getId());
+        SseEmitter sseEmitter = sseEmitters.get(member.get().getId());
 
-        String data = "주문 번호 : " + orderId;
+        String data = "주문 번호 : " + id;
         if (sseEmitter != null) {
             try {
                 sseEmitter.send(SseEmitter.event()
                         .name("message")
                         .data(data));
 
-                int notificationCount = countNotificationsForMember(member.getId());
+                int notificationCount = countNotificationsForMember(member.get().getId());
                 System.out.println("notificationCount 알림수량 = " + notificationCount);
                 sseEmitter.send(SseEmitter.event()
                         .name("notificationCount")
                         .data(notificationCount));
 
             } catch (Exception e) {
-                sseEmitters.remove(member.getId());
+                sseEmitters.remove(member.get().getId());
             }
 
             // 알림 객체 생성 및 저장
             Notification notification =
-                    new Notification(member.getId(), data, "결제", RTOrderId);
+                    new Notification(member.get().getId(), data, "결제", id);
             notificationRepository.save(notification);
         }
     }

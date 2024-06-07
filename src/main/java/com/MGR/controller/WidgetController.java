@@ -43,10 +43,10 @@ public class WidgetController {
     private final NotificationService notificationService;
 
     @RequestMapping(value = "/confirm")
-    public ResponseEntity<JSONObject> confirmPayment(@RequestBody String jsonBody, @AuthenticationPrincipal Member member) throws Exception {
+    public ResponseEntity<JSONObject> confirmPayment(@RequestBody String jsonBody) throws Exception {
 
         JSONParser parser = new JSONParser();
-        Long RTOrderId;
+        String RTOrderId;
         String orderId;
         String amount;
         String paymentKey;
@@ -55,7 +55,7 @@ public class WidgetController {
             // 클라이언트에서 받은 JSON 요청 바디입니다.
             JSONObject requestData = (JSONObject) parser.parse(jsonBody);
             paymentKey = (String) requestData.get("paymentKey");
-            RTOrderId = (Long) requestData.get("RTOrderId");
+            RTOrderId = (String) requestData.get("RTOrderId");
             orderId = (String) requestData.get("orderId");
             amount = (String) requestData.get("amount");
             couponId = (String)requestData.get("couponId");
@@ -104,9 +104,6 @@ public class WidgetController {
         JSONObject jsonObject = (JSONObject) parser.parse(reader);
         responseStream.close();
 
-        // 결제 완료 알림
-        notificationService.notifyOrder(RTOrderId, orderId, member);
-
         return ResponseEntity.status(code).body(jsonObject);
     }
 
@@ -128,7 +125,12 @@ public class WidgetController {
         orderService.changeReservationTicketStatus(id);
 
         // 사용한 쿠폰 사용처리
-        orderService.changeCouponStatus(couponId);
+        if(couponId != 0) {
+            orderService.changeCouponStatus(couponId);
+        }
+
+        // 결제 완료 알림
+        notificationService.notifyOrder(id);
 
         return "/success";
     }
