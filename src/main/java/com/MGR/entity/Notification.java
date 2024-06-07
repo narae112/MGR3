@@ -28,7 +28,7 @@ public class Notification {
 
     private Long boardId;
 
-    private Long paymentId;
+    private Long orderId;
 
     private Long reviewId;
 
@@ -46,7 +46,7 @@ public class Notification {
                 this.couponId = id;
                 break;
             case "결제":
-                this.paymentId = id;
+                this.orderId = id;
                 break;
             case "리뷰":
                 this.reviewId = id;

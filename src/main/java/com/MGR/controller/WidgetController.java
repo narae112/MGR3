@@ -1,5 +1,6 @@
 package com.MGR.controller;
 
+import com.MGR.entity.Member;
 import com.MGR.entity.Order;
 import com.MGR.entity.OrderTicket;
 import com.MGR.entity.ReservationTicket;
@@ -7,6 +8,7 @@ import com.MGR.repository.OrderRepository;
 import com.MGR.repository.OrderTicketRepository;
 import com.MGR.repository.ReservationTicketRepository;
 import com.MGR.security.PrincipalDetails;
+import com.MGR.service.NotificationService;
 import com.MGR.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -38,11 +40,13 @@ public class WidgetController {
     private final OrderRepository orderRepository;
     private final OrderTicketRepository orderTicketRepository;
     private final ReservationTicketRepository reservationTicketRepository;
+    private final NotificationService notificationService;
 
     @RequestMapping(value = "/confirm")
-    public ResponseEntity<JSONObject> confirmPayment(@RequestBody String jsonBody) throws Exception {
+    public ResponseEntity<JSONObject> confirmPayment(@RequestBody String jsonBody, @AuthenticationPrincipal Member member) throws Exception {
 
         JSONParser parser = new JSONParser();
+        Long RTOrderId;
         String orderId;
         String amount;
         String paymentKey;
@@ -51,6 +55,7 @@ public class WidgetController {
             // 클라이언트에서 받은 JSON 요청 바디입니다.
             JSONObject requestData = (JSONObject) parser.parse(jsonBody);
             paymentKey = (String) requestData.get("paymentKey");
+            RTOrderId = (Long) requestData.get("RTOrderId");
             orderId = (String) requestData.get("orderId");
             amount = (String) requestData.get("amount");
             couponId = (String)requestData.get("couponId");
@@ -58,6 +63,7 @@ public class WidgetController {
             throw new RuntimeException(e);
         };
         JSONObject obj = new JSONObject();
+        obj.put("RTOrderId", RTOrderId);
         obj.put("orderId", orderId);
         obj.put("amount", amount);
         obj.put("paymentKey", paymentKey);
@@ -97,6 +103,9 @@ public class WidgetController {
         Reader reader = new InputStreamReader(responseStream, StandardCharsets.UTF_8);
         JSONObject jsonObject = (JSONObject) parser.parse(reader);
         responseStream.close();
+
+        // 결제 완료 알림
+        notificationService.notifyOrder(RTOrderId, orderId, member);
 
         return ResponseEntity.status(code).body(jsonObject);
     }

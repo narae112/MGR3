@@ -176,6 +176,36 @@ public class NotificationService {
         }
     }
 
+    // 결제 완료 알림
+    @Transactional
+    public void notifyOrder(Long RTOrderId, String orderId, Member member) {
+        SseEmitter sseEmitter = sseEmitters.get(member.getId());
+
+        String data = "주문 번호 : " + orderId;
+        if (sseEmitter != null) {
+            try {
+                sseEmitter.send(SseEmitter.event()
+                        .name("message")
+                        .data(data));
+
+                int notificationCount = countNotificationsForMember(member.getId());
+                System.out.println("notificationCount 알림수량 = " + notificationCount);
+                sseEmitter.send(SseEmitter.event()
+                        .name("notificationCount")
+                        .data(notificationCount));
+
+            } catch (Exception e) {
+                sseEmitters.remove(member.getId());
+            }
+
+            // 알림 객체 생성 및 저장
+            Notification notification =
+                    new Notification(member.getId(), data, "결제", RTOrderId);
+            notificationRepository.save(notification);
+        }
+    }
+
+
     public List<Notification> findByMemberId(Long userId) {
         System.out.println("2= " + notificationRepository.findByMemberIdOrderByCreatedDateDesc(userId));
         return notificationRepository.findByMemberIdOrderByCreatedDateDesc(userId);
