@@ -76,6 +76,9 @@ public class TicketService {
     public boolean isTicketNameDuplicated(String name) {
         return ticketRepository.existsByName(name);
     }
+    public boolean isExistedTicketNameDuplicated(String name, Long excludeId) {
+        return ticketRepository.existsByNameAndIdNot(name, excludeId);
+    }
     //티켓 데이터를 읽어오는 함수
     @Transactional(readOnly = true)
     public TicketFormDto getTicketDtl(Long ticketId){
@@ -95,28 +98,23 @@ public class TicketService {
 
 
     public Long updateTicket(TicketFormDto ticketFormDto, List<MultipartFile> ticketImgFileList) throws Exception {
-        boolean isDuplicate =isTicketNameDuplicated (ticketFormDto.getName());
+        boolean isDuplicate =isExistedTicketNameDuplicated(ticketFormDto.getName(), ticketFormDto.getId());
         if (isDuplicate) {
             throw new DuplicateTicketNameException("중복된 티켓 정보가 존재합니다.");
         }
 
         // 업데이트할 티켓을 가져옵니다.
-        Ticket ticketToUpdate = ticketRepository.findById(ticketFormDto.getId())
+        Ticket ticket = ticketRepository.findById(ticketFormDto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("티켓을 찾을 수 없습니다. ID: " + ticketFormDto.getId()));
-
-        // 티켓 정보 업데이트
-        ticketToUpdate.updateTicket(ticketFormDto);
-        ticketRepository.save(ticketToUpdate);
-
+        ticket.updateTicket(ticketFormDto);
         // 이미지 업데이트
         List<Long> ticketImgIds = ticketFormDto.getTicketImgIds();
-        for (int i = 0; i < ticketImgIds.size(); i++) {
-            Long imgId = ticketImgIds.get(i);
-            MultipartFile imgFile = ticketImgFileList.get(i);
-            imageService.updateTicketImage(imgId, imgFile);
+
+        if (!ticketImgFileList.isEmpty()) {
+            imageService.updateTicketImage(ticketImgIds.get(0), ticketImgFileList.get(0));
         }
 
-        return ticketToUpdate.getId();
+        return ticket.getId();
     }
 
 
