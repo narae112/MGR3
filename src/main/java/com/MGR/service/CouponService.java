@@ -37,6 +37,21 @@ public class CouponService {
     private final MemberService memberService;
     private final MemberCouponRepository memberCouponRepository;
 
+     @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
+    public void sendBirthdayCoupons() {
+        LocalDate currentDate = LocalDate.now();
+        List<Member> membersWithBirthdayToday = memberService.findMembersWithBirthdayToday();
+        List<Coupon> birthdayCoupons = couponRepository.findByCouponType(CouponType.BIRTH);
+
+        for (Member member : membersWithBirthdayToday) {
+            for (Coupon coupon : birthdayCoupons) {
+                MemberCoupon memberCoupon = MemberCoupon.memberGetCoupon(member, coupon);
+                memberCouponRepository.save(memberCoupon);
+                notificationService.notifyCoupon(coupon, memberCoupon, member);
+            }
+        }
+    }
+    
      @Transactional
     @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
     public void deleteExpiredCoupons() {
