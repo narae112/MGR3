@@ -2134,6 +2134,9 @@ ol {
     border-radius: 8px;
     margin-top: -20px;
   }
+  .box-head .box-mgr h3 {
+     font-size: 16px !important;
+  }
 }
 
 .count-down .box-content {
@@ -2159,7 +2162,7 @@ ol {
 
 @media (max-width: 767px) {
   .count-down .box-content {
-    padding: 20px 20px;
+    padding: 30px 10px 10px;
     border-radius: 4px;
   }
 }
