@@ -8,6 +8,7 @@ import java.time.LocalDate;
 
 @Getter @Setter
 public class MemberCouponDto {
+    private Long id; // 쿠폰 아이디
     private String name; // 쿠폰 이름
 //    private Integer discountAmount; //할인 금액
     private Integer discountRate; //할인률
@@ -16,6 +17,7 @@ public class MemberCouponDto {
     private boolean used; // 사용 여부
 
     public MemberCouponDto(MemberCoupon memberCoupon) {
+        this.id = memberCoupon.getId();
         this.name = memberCoupon.getCoupon().getName();
 //        this.discountAmount = memberCoupon.getCoupon().getDiscountAmount();
         this.discountRate = memberCoupon.getCoupon().getDiscountRate();

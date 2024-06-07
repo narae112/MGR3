@@ -46,12 +46,14 @@ public class WidgetController {
         String orderId;
         String amount;
         String paymentKey;
+        String couponId;
         try {
             // 클라이언트에서 받은 JSON 요청 바디입니다.
             JSONObject requestData = (JSONObject) parser.parse(jsonBody);
             paymentKey = (String) requestData.get("paymentKey");
             orderId = (String) requestData.get("orderId");
             amount = (String) requestData.get("amount");
+            couponId = (String)requestData.get("couponId");
         } catch (ParseException e) {
             throw new RuntimeException(e);
         };
@@ -59,6 +61,7 @@ public class WidgetController {
         obj.put("orderId", orderId);
         obj.put("amount", amount);
         obj.put("paymentKey", paymentKey);
+        obj.put("couponId", couponId);
 
         // TODO: 개발자센터에 로그인해서 내 결제위젯 연동 키 > 시크릿 키를 입력하세요. 시크릿 키는 외부에 공개되면 안돼요.
         // @docs https://docs.tosspayments.com/reference/using-api/api-keys
@@ -105,9 +108,9 @@ public class WidgetController {
      * @return
      * @throws Exception
      */
-    @GetMapping("/success/{RTOrderId}")
+    @GetMapping("/success/{RTOrderId}/cp/{couponId}")
     public String paymentRequest(HttpServletRequest request,
-                                 @PathVariable("RTOrderId") Long id, @AuthenticationPrincipal PrincipalDetails member,
+                                 @PathVariable("RTOrderId") Long id, @PathVariable("couponId") Long couponId,
                                  Model model) throws Exception {
 
         orderService.changeStatus(id);
@@ -115,6 +118,8 @@ public class WidgetController {
         // 결제 완료한 예약 티켓 상태 변경
         orderService.changeReservationTicketStatus(id);
 
+        // 사용한 쿠폰 사용처리
+        orderService.changeCouponStatus(couponId);
 
         return "/success";
     }

@@ -77,15 +77,16 @@ public class OrderController {
 //        }
 
 
-
         // 로그인한 멤버가 가진 쿠폰
         List<MemberCoupon> memberCouponList = memberCouponRepository.findAllByMemberId(member.getId());
         List<MemberCouponDto> memberCouponDtos = new ArrayList<>();
 
         for(MemberCoupon memberCoupon : memberCouponList) {
-            MemberCouponDto memberCouponDto = new MemberCouponDto(memberCoupon);
-            memberCouponDtos.add(memberCouponDto);
-            System.out.println("memberCouponDto = " + memberCouponDto.getName());
+            if(!memberCoupon.isUsed()) {
+                MemberCouponDto memberCouponDto = new MemberCouponDto(memberCoupon);
+                memberCouponDtos.add(memberCouponDto);
+                System.out.println("memberCouponDto = " + memberCouponDto.getName());
+            }
         }
 
         model.addAttribute("orderTickets", orderTickets);
