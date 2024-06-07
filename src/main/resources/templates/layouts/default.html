@@ -21,14 +21,12 @@
     <link rel="stylesheet" th:href="@{/css/main.css}">
     <link rel="stylesheet" th:href="@{/css/mrg.css}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css"/>
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" />
+
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script th:src="@{/js/bootstrap.min.js}"></script>
     <script th:src="@{/js/count-up.min.js}"></script>
     <script th:src="@{/js/glightbox.min.js}"></script>
     <script th:src="@{/js/main.js}"></script>
-    <script th:src="@{/js/tiny-slider.js}"></script>
     <script th:src="@{/js/wow.min.js}"></script>
     <script th:src="@{/js/zoombox.min.js}"></script>
 
@@ -41,10 +39,10 @@
             display: flex;
             justify-content: center;
         }
+
     </style>
 
     <th:block layout:fragment="script"></th:block>
-
     <th:block layout:fragment="css"></th:block>
 
 </head>
@@ -58,7 +56,7 @@
 
 <div th:replace="~{layouts/footer::footer}"></div>
 
-<script type="text/javascript" th:inline="javascript">
+<script>
     var token = $("meta[name='_csrf']").attr('content');
     var header = $("meta[name='_csrf_header']").attr('content');
 
@@ -69,7 +67,8 @@ $(document).ready(function() {
         url: '/api/notifications/count',
         type: 'GET',
         success: function(data) {
-            $('#notificationCount').text(data);
+<!--            $('#notificationCount').text(data);-->
+            $('#notificationCount').text(Number(data));
         },
         error: function(xhr, status, error) {
             console.error('Failed to fetch notification count:', error);
