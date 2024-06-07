@@ -33,7 +33,19 @@
     <script th:src="@{/js/wow.min.js}"></script>
     <script th:src="@{/js/zoombox.min.js}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .icon-badge-container.mgr {
+            position: relative !important;
+            display: inline-block !important;
+        }
 
+        .badge.mgr {
+            position: absolute !important;
+            top: 0 !important;
+            right: 0 !important;
+            transform: translate(50%, -50%) !important;
+        }
+    </style>
     <th:block layout:fragment="script"></th:block>
     <th:block layout:fragment="css"></th:block>
 
