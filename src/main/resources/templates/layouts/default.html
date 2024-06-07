@@ -29,6 +29,7 @@
     <script th:src="@{/js/main.js}"></script>
     <script th:src="@{/js/wow.min.js}"></script>
     <script th:src="@{/js/zoombox.min.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <style>
         .pagination li {
@@ -56,7 +57,7 @@
 
 <div th:replace="~{layouts/footer::footer}"></div>
 
-<script>
+<script type="text/javascript" th:inline="javascript">
     var token = $("meta[name='_csrf']").attr('content');
     var header = $("meta[name='_csrf_header']").attr('content');
 
