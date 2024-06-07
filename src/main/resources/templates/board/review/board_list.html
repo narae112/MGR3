@@ -40,12 +40,23 @@
                             </h5>
                                 <h6 class="card-subtitle mb-2 text-muted" th:text="${reviewBoard.author.nickname}"></h6>
                                 <!-- 이미지 표시 -->
+<!--                            <div class="mb-3" style="height: 300px; overflow: hidden;">-->
+<!--                                <img th:if="${#strings.length(reviewBoard.getFirstImageUrl()) > 0}"-->
+<!--                                     th:src="${reviewBoard.getFirstImageUrl()}"-->
+<!--                                     class="card-img-top img-fluid rounded"-->
+<!--                                     style="width: 100%; height: auto; object-fit: cover;">-->
+<!--                                <img th:if="${#strings.length(reviewBoard.getFirstImageUrl()) == 0}"-->
+<!--                                     th:src="@{/img/unicorn.png}"-->
+<!--                                     class="card-img-top img-fluid rounded"-->
+<!--                                     style="width: 100%; height: auto; object-fit: cover;">-->
+<!--                             이 코드 저번까진 됐는데 갑자기 안됨 ㅜㅜ 뭐가 문제지........-->
+<!--                            </div>-->
                             <div class="mb-3" style="height: 300px; overflow: hidden;">
-                                <img th:if="${#strings.length(reviewBoard.getFirstImageUrl()) > 0}"
+                                <img th:if="${reviewBoard.getFirstImageUrl() != null and #strings.length(reviewBoard.getFirstImageUrl()) > 0}"
                                      th:src="${reviewBoard.getFirstImageUrl()}"
                                      class="card-img-top img-fluid rounded"
                                      style="width: 100%; height: auto; object-fit: cover;">
-                                <img th:if="${#strings.length(reviewBoard.getFirstImageUrl()) == 0}"
+                                <img th:if="${reviewBoard.getFirstImageUrl() == null or #strings.length(reviewBoard.getFirstImageUrl()) == 0}"
                                      th:src="@{/img/unicorn.png}"
                                      class="card-img-top img-fluid rounded"
                                      style="width: 100%; height: auto; object-fit: cover;">
