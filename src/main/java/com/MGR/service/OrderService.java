@@ -4,6 +4,7 @@ import com.MGR.constant.ReservationStatus;
 import com.MGR.dto.OrderDto;
 import com.MGR.entity.*;
 import com.MGR.repository.*;
+import com.MGR.security.PrincipalDetails;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ public class OrderService {
     private final TicketRepository ticketRepository;
     private final OrderTicketRepository orderTicketRepository;
     private final ReservationTicketRepository reservationTicketRepository;
+    private final MemberCouponRepository memberCouponRepository;
 
     // 이용자가 결제 요청한 정보 저장
     public Long orders(List<OrderDto> orderDtoList, String email) {
@@ -66,6 +68,11 @@ public class OrderService {
             ReservationTicket reservationTicket = reservationTicketRepository.findById(orderTicket.getReservationTicket().getId()).orElseThrow(EntityNotFoundException::new);
             reservationTicket.setReservationStatus(ReservationStatus.PAYED);
         }
+    }
+
+    public void changeCouponStatus(Long couponId) {
+        Optional<MemberCoupon> memberCoupon = memberCouponRepository.findById(couponId);
+        memberCoupon.get().setUsed(true);
     }
 
 }

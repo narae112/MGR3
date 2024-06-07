@@ -23,7 +23,7 @@ public class InventoryService {
         // 현재 날짜를 가져옴
         LocalDate currentDate = LocalDate.now();
         // 한 달 후 날짜 계산
-        LocalDate oneMonthLater = currentDate.plusMonths(1);
+        LocalDate oneMonthLater = currentDate.plusMonths(3);
 
         // 데이터베이스에서 모든 티켓을 가져옴
         List<Ticket> allTickets = ticketRepository.findAll();

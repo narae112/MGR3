@@ -25,7 +25,7 @@
                 결제 성공
             </h2>
 
-            <p id="paymentKey"></p>
+<!--            <p id="paymentKey"></p>-->
             <p id="orderId"></p>
             <p id="amount"></p>
         </div>
@@ -44,6 +44,7 @@
             paymentKey: urlParams.get("paymentKey"),
             orderId: urlParams.get("orderId"),
             amount: urlParams.get("amount"),
+            couponId : urlParams.get("couponId"),
           };
 
           const response = await fetch("/confirm", {
