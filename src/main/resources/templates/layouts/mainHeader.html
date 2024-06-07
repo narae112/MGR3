@@ -9,6 +9,20 @@
     <meta name="author" content="" />
     <title>MERRY GO RIDE.｡.:*☆</title>
 
+        <style>
+        .icon-badge-container {
+            position: relative !important;
+            display: inline-block !important;
+        }
+
+        .badge {
+            position: absolute !important;
+            top: 0 !important;
+            right: 0 !important;
+            transform: translate(50%, -50%) !important;
+        }
+        </style>
+
 </head>
 <div th:fragment="mainHeader">
 <!-- Start Header Area -->
@@ -127,17 +141,42 @@
                                 </li>
                             </ul>
                         </div> <!-- navbar collapse -->
+<!--                        알림 시작-->
                         <div class="button">
-                            <a href="#.html" class="btn">Get Tickets<i class="lni lni-ticket"></i></a>
+                            <span data-toggle="modal" data-target="#notificationModal" id="notificationButton">
+                                <div class="icon-badge-container" sec:authorize="isAuthenticated()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-bell-fill text-warning" viewBox="0 0 16 16">
+                                        <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2m.995-14.901a1 1 0 1 0-1.99 0A5 5 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901"/>
+                                    </svg>
+                                    <span class="badge rounded-pill bg-danger" id="notificationCount"></span>
+                                </div>
+                            </span>
                         </div>
                     </nav>
                     <!-- End Navbar -->
+<!--                        알림 끝-->
+
                 </div>
             </div>
         </div> <!-- row -->
     </div> <!-- container -->
 </header>
 <!-- End Header Area -->
+    <div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="notificationModalLabel">알림</h5>
+                    <button type="button" class="btn btn-danger close" style="margin-left: auto;" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="notify" style="height: 300px; overflow-y: scroll; padding: 10px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 </html>
