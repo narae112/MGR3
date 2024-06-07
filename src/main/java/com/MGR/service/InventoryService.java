@@ -4,6 +4,7 @@ import com.MGR.entity.Inventory;
 import com.MGR.entity.Ticket;
 import com.MGR.repository.InventoryRepository;
 import com.MGR.repository.TicketRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -40,4 +41,5 @@ public class InventoryService {
             }
         }
     }
+
 }
