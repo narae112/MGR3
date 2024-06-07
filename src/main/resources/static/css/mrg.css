@@ -66,15 +66,3 @@
   z-index: 50 !important;
 }
 
-
-.icon-badge-container {
-    position: relative !important;
-    display: inline-block !important;
-}
-
-.badge {
-    position: absolute !important;
-    top: 0 !important;
-    right: 0 !important;
-    transform: translate(50%, -50%) !important;
-}
