@@ -54,7 +54,7 @@ public class ReservationTicket {
         return reservationTicket;
     }
 
-    public void addCount(int adultCount, int childCount) {
+    public void addCount(Integer adultCount, Integer childCount) {
         this.adultCount += adultCount;
         this.childCount += childCount;
     }
@@ -63,15 +63,15 @@ public class ReservationTicket {
         return adultCount + childCount;
     }
 
-    public void updateAdultCount(int adultCount) {
+    public void updateAdultCount(Integer adultCount) {
         this.adultCount = adultCount;
     }
 
-    public void updateChildCount(int childCount) {
+    public void updateChildCount(Integer childCount) {
         this.childCount = childCount;
     }
 
-    public void updateAllCount(int adultCount, int childCount) {
+    public void updateAllCount(Integer adultCount, Integer childCount) {
         this.adultCount = adultCount;
         this.childCount = childCount;
     }

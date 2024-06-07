@@ -70,15 +70,13 @@ public class ReservationController {
 
     // 티켓 수량 수정
     @PatchMapping("/reservationTicket/{reservationTicketId}")
-    public @ResponseBody ResponseEntity updateReserveTicket(@PathVariable("reservationTicketId") Long reservationTicketId, int adultCount, int childCount, @AuthenticationPrincipal PrincipalDetails member) {
-    //        if (adultCount == null || adultCount < 1 || childCount == null || childCount < 0) {
-//            // 조건을 만족하지 않으면 요청을 처리하지 않고 BadRequest
-//            asdsdasadsadsadsadsadsadsadsad
-//            를 반환sdffds
+    public @ResponseBody ResponseEntity updateReserveTicket(@PathVariable("reservationTicketId") Long reservationTicketId, Integer adultCount, Integer childCount, @AuthenticationPrincipal PrincipalDetails member) {
+        //        if (adultCount == null || adultCount < 1 || childCount == null || childCount < 0) {
+//            // 조건을 만족하지 않으면 요청을 처리하지 않고 BadRequest를 반환
 //            return new ResponseEntity<String>("입력 값이 올바르지 않습니다", HttpStatus.BAD_REQUEST);
 //        }
-            
-            if(!reservationService.validateReserveTicket(reservationTicketId, member.getUsername())) {
+
+        if(!reservationService.validateReserveTicket(reservationTicketId, member.getUsername())) {
             return new ResponseEntity<String>("수정 권한이 없습니다", HttpStatus.FORBIDDEN);
         }
         reservationService.updateReservationTicketCount(reservationTicketId, adultCount, childCount);

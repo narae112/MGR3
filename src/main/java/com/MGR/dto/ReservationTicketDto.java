@@ -20,11 +20,11 @@ public class ReservationTicketDto {
 
     @Min(value = 1, message = "성인 인원 수를 입력해주세요")
     @Max(value = 99, message = "최대 주문 수량은 99개입니다")
-    private int adultCount;
+    private Integer adultCount;
 
     @Min(value = 0)
     @Max(value = 99, message = "최대 주문 수량은 99개입니다")
-    private int childCount;
+    private Integer childCount;
 
     private ReservationStatus reservationStatus;
 

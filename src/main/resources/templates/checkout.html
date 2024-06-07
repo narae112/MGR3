@@ -39,7 +39,7 @@
     <!-- 쿠폰 체크박스 -->
     <label for="couponSelect">사용 가능 쿠폰 : </label>
     <select name="couponSelect" id="couponSelect" onchange="getSelectedCoupon()">
-      <option value="0" selected>선택 안 함</option>
+      <option value="0" th:data-discount-rate="0" selected>선택 안 함</option>
       <option th:each="coupon : ${memberCouponList}" th:value="${coupon.id}" th:data-discount-rate="${coupon.discountRate}" th:text="${coupon.name + ' - ' + coupon.discountRate + '% 할인'}"></option>
     </select>
     <div></div>

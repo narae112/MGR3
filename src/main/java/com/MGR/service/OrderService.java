@@ -71,8 +71,9 @@ public class OrderService {
     }
 
     public void changeCouponStatus(Long couponId) {
-        Optional<MemberCoupon> memberCoupon = memberCouponRepository.findById(couponId);
-        memberCoupon.get().setUsed(true);
+        MemberCoupon memberCoupon = memberCouponRepository.findById(couponId).orElseThrow(EntityNotFoundException::new);
+        memberCoupon.setUsed(true);
+
     }
 
 }

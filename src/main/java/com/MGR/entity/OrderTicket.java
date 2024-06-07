@@ -31,11 +31,11 @@ public class OrderTicket {
     @Column
     private int adultPrice; // 성인 티켓 가격
     private int childPrice; // 아동 티켓 가격
-    private int adultCount; // 성인 주문 수량
-    private int childCount; // 아동 주문 수량
+    private Integer adultCount; // 성인 주문 수량
+    private Integer childCount;
     private LocalDate visitDate;
 
-//    public static OrderTicket createOrderTicket(Ticket ticket, ReservationTicket reservationTicket, int adultCount, int childCount, LocalDate visitDate) {
+    //    public static OrderTicket createOrderTicket(Ticket ticket, ReservationTicket reservationTicket, int adultCount, int childCount, LocalDate visitDate) {
 //
 //        OrderTicket orderTicket = new OrderTicket();
 //
@@ -56,8 +56,8 @@ public class OrderTicket {
 //    } // 아동 티켓 토탈 가격
 //
 //    public int getTotalPrice() { return ((adultPrice * adultCount) + (childPrice * childCount)); } // 전체(성인 + 아동) 주문 가격
-public OrderTicket() {
-}
+    public OrderTicket() {
+    }
 
     // 생성자 추가
     public OrderTicket(Ticket ticket, ReservationTicket reservationTicket, int adultCount, int childCount, LocalDate visitDate) {

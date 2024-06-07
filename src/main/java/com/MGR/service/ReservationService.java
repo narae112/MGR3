@@ -94,31 +94,43 @@ public class ReservationService {
     }
 
     // 티켓 수량 수정
-    public void updateReservationTicketCount(Long reservationTicketId, int adultCount, int childCount) {
+    public void updateReservationTicketCount(Long reservationTicketId, Integer adultCount, Integer childCount) {
+        // adultCount가 null이면 1로 설정
+        if (adultCount == null) {
+            adultCount = 1;
+        }
+        // childCount가 null이면 0으로 설정
+        if (childCount == null) {
+            childCount = 0;
+        }
+
+        int adultCountInt = adultCount;
+        int childCountInt = childCount;
+
         ReservationTicket reservationTicket = reservationTicketRepository.findById(reservationTicketId)
                 .orElseThrow(EntityNotFoundException::new);
 
         Inventory inventory = inventoryRepository.findByTicketIdAndDate(reservationTicket.getTicket().getId(), LocalDate.parse(reservationTicket.getVisitDate()));
         // 인벤토리 데이터베이스에서 해당 티켓 찾기
 
-        int allReserveCount = adultCount + childCount;
+        int allReserveCount = adultCountInt + childCountInt;
         // 성인티켓 수량 + 아동티켓 수량
 
-        if(reservationTicket.getAllCount() < allReserveCount) { // 수정된 전체 수량이 원래 예약한 전체 수량보다 커지면
+        if (reservationTicket.getAllCount() < allReserveCount) { // 수정된 전체 수량이 원래 예약한 전체 수량보다 커지면
             int result = allReserveCount - reservationTicket.getAllCount(); // 추가한 갯수만큼
             inventory.removeQuantity(result); // 재고에서 빼준다
-        } else if(reservationTicket.getAllCount() > allReserveCount) { // 수정된 전체 수량이 원래 예약한 전체 수량보다 적어지면
+        } else if (reservationTicket.getAllCount() > allReserveCount) { // 수정된 전체 수량이 원래 예약한 전체 수량보다 적어지면
             int result = reservationTicket.getAllCount() - allReserveCount; // 뺀 갯수만큼
             inventory.addQuantity(result); // 재고에 더해준다
         }
 
-        if(reservationTicket.getAdultCount() != adultCount && reservationTicket.getChildCount() == childCount) { // 수량의 변동이 어른티켓만 있으면
-            reservationTicket.updateAdultCount(adultCount);
-        } else if(reservationTicket.getAdultCount() == adultCount && reservationTicket.getChildCount() != childCount) { // 수량의 변동이 아동티켓만 있으면
-            reservationTicket.updateChildCount(childCount);
-        } // else if(reservationTicket.getAdultCount() != adultCount && reservationTicket.getChildCount() != childCount) { // 수량의 변동이 양쪽 다 있으면
-//            reservationTicket.updateAllCount(adultCount, childCount);
-//        }
+        if (reservationTicket.getAdultCount() != adultCountInt && reservationTicket.getChildCount() == childCountInt) { // 수량의 변동이 어른티켓만 있으면
+            reservationTicket.updateAdultCount(adultCountInt);
+        } else if (reservationTicket.getAdultCount() == adultCountInt && reservationTicket.getChildCount() != childCountInt) { // 수량의 변동이 아동티켓만 있으면
+            reservationTicket.updateChildCount(childCountInt);
+        } else if (reservationTicket.getAdultCount() != adultCountInt && reservationTicket.getChildCount() != childCountInt) { // 수량의 변동이 양쪽 다 있으면
+            reservationTicket.updateAllCount(adultCountInt, childCountInt);
+        }
 
         reservationTicketRepository.save(reservationTicket); // 데이터베이스에 수정된 내용 저장
     }
