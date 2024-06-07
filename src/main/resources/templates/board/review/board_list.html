@@ -21,7 +21,7 @@
                     <option value="votes" th:selected="${sort == 'votes'}">추천순</option>
                     <option value="views" th:selected="${sort == 'views'}">조회순</option>
                 </select>
-                <input type="text" class="form-control" placeholder="검색어" name="kw" th:value="${kw}">
+                <input type="text" class="form-control" placeholder="검색어 (최소 2글자 이상)" name="kw" th:value="${kw}">
                 <button class="btn btn-outline-secondary" type="submit">검색</button>
             </div>
         </form>

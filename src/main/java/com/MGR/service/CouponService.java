@@ -37,6 +37,21 @@ public class CouponService {
     private final MemberService memberService;
     private final MemberCouponRepository memberCouponRepository;
 
+     @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
+    public void sendBirthdayCoupons() {
+        LocalDate currentDate = LocalDate.now();
+        List<Member> membersWithBirthdayToday = memberService.findMembersWithBirthdayToday();
+        List<Coupon> birthdayCoupons = couponRepository.findByCouponType(CouponType.BIRTH);
+
+        for (Member member : membersWithBirthdayToday) {
+            for (Coupon coupon : birthdayCoupons) {
+                MemberCoupon memberCoupon = MemberCoupon.memberGetCoupon(member, coupon);
+                memberCouponRepository.save(memberCoupon);
+                notificationService.notifyCoupon(coupon, memberCoupon, member);
+            }
+        }
+    }
+    
      @Transactional
     @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
     public void deleteExpiredCoupons() {
@@ -79,13 +94,14 @@ public class CouponService {
 
         // 사용자에게 쿠폰 할당 및 알림
         List<Member> memberList;
-        if (coupon.getCouponType() == CouponType.BIRTH) {
-            memberList = memberService.findMembersWithBirthdayToday();
-        } else if(coupon.getCouponType() == CouponType.ALL){
-            memberList = memberService.findByAllUser();
-        }else{
-            throw new IllegalArgumentException("Coupon type is null or invalid.");
-        }
+        memberList = memberService.findByAllUser();
+//        if (coupon.getCouponType() == CouponType.BIRTH) {
+//            memberList = memberService.findMembersWithBirthdayToday();
+//        } else if(coupon.getCouponType() == CouponType.ALL){
+//
+//        }else{
+//            throw new IllegalArgumentException("Coupon type is null or invalid.");
+//        }
         if (memberList == null) {
             // 적절한 예외 처리 또는 기본값 설정
             throw new IllegalStateException("Member list is null.");

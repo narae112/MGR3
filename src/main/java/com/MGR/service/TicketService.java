@@ -5,9 +5,11 @@ import com.MGR.dto.MainTicketDto;
 import com.MGR.dto.TicketFormDto;
 import com.MGR.dto.TicketSearchDto;
 import com.MGR.entity.Image;
+import com.MGR.entity.Inventory;
 import com.MGR.entity.Ticket;
 import com.MGR.exception.DuplicateTicketNameException;
 import com.MGR.repository.ImageRepository;
+import com.MGR.repository.InventoryRepository;
 import com.MGR.repository.TicketRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +32,7 @@ public class TicketService {
     private final TicketRepository ticketRepository;
     private final ImageRepository imageRepository;
     private final ImageService imageService;
-
+    private  final InventoryRepository inventoryRepository;
 @Transactional
     @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
     public void deleteExpiredCoupons() {
@@ -127,13 +129,19 @@ public class TicketService {
 
 
     //삭제
-public void deleteTicket(Long ticketId) {
-    // 티켓에 연결된 이미지를 먼저 삭제
-    imageService.deleteImagesByTicketId(ticketId);
+    public void deleteTicket(Long ticketId) {
+        // 티켓에 연결된 이미지를 먼저 삭제
+        imageService.deleteImagesByTicketId(ticketId);
 
-    // 티켓 삭제
-    ticketRepository.deleteById(ticketId);
-}
+        // 티켓을 삭제하기 전에 해당 티켓과 관련된 모든 인벤토리 레코드를 삭제
+        List<Inventory> inventories = inventoryRepository.findAllByTicketId(ticketId);
+        if (!inventories.isEmpty()) {
+            inventoryRepository.deleteAll(inventories);
+        }
+
+        // 티켓 삭제
+        ticketRepository.deleteById(ticketId);
+    }
 
 
 
