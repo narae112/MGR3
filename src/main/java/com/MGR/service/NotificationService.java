@@ -184,8 +184,9 @@ public class NotificationService {
         Optional<Order> order = orderRepository.findById(id);
         Optional<Member> member = memberService.findById(order.get().getMember().getId());
         SseEmitter sseEmitter = sseEmitters.get(member.get().getId());
+        String orderNum = order.get().getOrderNum();
 
-        String data = "주문 번호 : " + id;
+        String data = "주문 번호 : " + orderNum;
         if (sseEmitter != null) {
             try {
                 sseEmitter.send(SseEmitter.event()
