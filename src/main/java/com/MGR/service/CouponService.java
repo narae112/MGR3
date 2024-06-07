@@ -94,13 +94,14 @@ public class CouponService {
 
         // 사용자에게 쿠폰 할당 및 알림
         List<Member> memberList;
-        if (coupon.getCouponType() == CouponType.BIRTH) {
-            memberList = memberService.findMembersWithBirthdayToday();
-        } else if(coupon.getCouponType() == CouponType.ALL){
-            memberList = memberService.findByAllUser();
-        }else{
-            throw new IllegalArgumentException("Coupon type is null or invalid.");
-        }
+        memberList = memberService.findByAllUser();
+//        if (coupon.getCouponType() == CouponType.BIRTH) {
+//            memberList = memberService.findMembersWithBirthdayToday();
+//        } else if(coupon.getCouponType() == CouponType.ALL){
+//
+//        }else{
+//            throw new IllegalArgumentException("Coupon type is null or invalid.");
+//        }
         if (memberList == null) {
             // 적절한 예외 처리 또는 기본값 설정
             throw new IllegalStateException("Member list is null.");
