@@ -75,5 +75,8 @@ public class OrderService {
         memberCoupon.setUsed(true);
 
     }
-
+    // 주문번호로 주문을 조회하는 메서드
+    public Order findOrderByOrderNum(String orderNum) {
+        return orderRepository.findByOrderNum(orderNum);
+    }
 }
