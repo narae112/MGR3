@@ -64,24 +64,13 @@ dependencies {
 	implementation platform('org.springframework.boot:spring-boot-dependencies:3.1.11')
 	implementation 'com.fasterxml.jackson.core:jackson-databind'
 
-
-	//git jasypt
-	//implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
-
 	//jwt
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
 	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-//	implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
-	//websocket
-//	implementation 'org.springframework.boot:spring-boot-starter-websocket'
-
-	// Infinispan dependencies
-//	implementation 'org.infinispan:infinispan-core:13.0.8.Final'
-//	implementation 'org.infinispan:infinispan-commons:13.0.8.Final'
-//	implementation 'org.infinispan:infinispan-marshaller-protostuff:13.0.8.Final'
-//	implementation 'org.jboss.marshalling:jboss-marshalling-osgi:2.0.12.Final'
+	//Oauth2
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 
 	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 }

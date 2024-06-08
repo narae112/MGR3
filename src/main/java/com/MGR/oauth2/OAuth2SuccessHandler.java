@@ -1,19 +1,16 @@
 package com.MGR.oauth2;
 
 import com.MGR.entity.Member;
-import com.MGR.repository.MemberRepository;
-import com.MGR.security.JwtUtil;
+import com.MGR.security.JwtProvider;
 import com.MGR.security.PrincipalDetails;
 import com.MGR.service.MemberService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -21,7 +18,7 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
-    private final JwtUtil jwtUtil;
+    private final JwtProvider jwtProvider;
     private final MemberService memberService;
 
     @Override
@@ -30,7 +27,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
         System.out.println("oauth2 인증 성공= " + principal.getAttributes());
 
-        String jwt = jwtUtil.createJwt(principal.getMember().getOauth2Id(), principal.getMember().getId());
+        String jwt = jwtProvider.createToken(principal.getMember().getOauth2Id(), principal.getMember().getId());
         //jwt 토큰 생성
         System.out.println("OAuth2 jwt 토큰= " + jwt);
 

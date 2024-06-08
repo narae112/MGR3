@@ -3,15 +3,18 @@ package com.MGR.entity;
 import com.MGR.dto.MemberFormDto;
 import com.MGR.constant.Role;
 import com.MGR.repository.MemberRepository;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+
+import java.util.*;
 
 
 @Entity
@@ -95,5 +98,4 @@ public class Member {
 
         return member;
     }
-
 }

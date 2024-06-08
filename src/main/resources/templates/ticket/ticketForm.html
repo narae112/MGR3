@@ -97,7 +97,7 @@
     <div class="row justify-content-center">
         <div class="col-md-6">
             <form role="form" method="post" enctype="multipart/form-data" th:object="${ticketFormDto}" class="needs-validation" novalidate>
-                <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+<!--                <input type="hidden" name="_csrf" th:value="${_csrf.token}">-->
                 <h3 class="mb-5 text-center">티켓 등록</h3>
                 <input type="hidden" th:field="*{id}">
 
@@ -182,7 +182,7 @@
                         <a th:href="@{/admin/ticket/delete/{ticketId}(ticketId=${ticketFormDto.id})}" class="btn btn-danger" onclick="return confirm('정말로 삭제하시겠습니까?')">삭제</a>
                     </div>
                 </div>
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+<!--                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">-->
             </form>
         </div>
     </div>

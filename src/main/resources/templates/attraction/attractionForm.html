@@ -59,8 +59,6 @@
         <button th:unless="${#strings.isEmpty(attractionDto.id)}"
                 th:formaction="@{'/attraction/update/' + ${attractionDto.id}}"
                 class="btn btn-primary" type="submit" id="attraction-edit">수정완료</button>
-
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
     </form>
 </div>
 </html>

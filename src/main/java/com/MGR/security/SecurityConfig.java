@@ -10,14 +10,16 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-//import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
 
 @Configuration
@@ -27,17 +29,19 @@ public class SecurityConfig {
 
     private final PrincipalDetailsService principalDetailsService;
     private final OAuth2MemberService oAuth2MemberService;
-    private final JwtUtil jwtUtil;
-
+    private final JwtProvider jwtProvider;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-                httpSecurity.csrf(csrf -> csrf
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, AuthenticationManager authenticationManager) throws Exception {
+//                httpSecurity.csrf(csrf -> csrf
+//                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
 
         httpSecurity
-//                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement((session) -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/**").permitAll()
                         .requestMatchers("/gemini/**").permitAll()
@@ -55,12 +59,14 @@ public class SecurityConfig {
                         .loginProcessingUrl("/login") // 로그인 요청 받는 url
                         .defaultSuccessUrl("/") // 로그인 성공 후 이동할 url
                         .failureUrl("/login/error")
-                        )
+                        .successHandler(oAuth2SuccessHandler)
+                )
 
                 .logout((logout) -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                         .logoutSuccessUrl("/")
-                        .invalidateHttpSession(true)) // 세션 삭제
+                        .invalidateHttpSession(true) // 세션 삭제
+                        .deleteCookies("JSESSIONID", "at")) // 쿠키도 삭제
 
                 .oauth2Login((oauth2login) -> oauth2login//oauth2 관련 설정
                         .loginPage("/loginForm") //로그인이 필요한데 로그인을 하지 않았다면 이동할 uri 설정
@@ -68,15 +74,24 @@ public class SecurityConfig {
                                 .userService(oAuth2MemberService))
                         .successHandler(oAuth2SuccessHandler)
                 )
-                .apply(new MyCustomDsl());//로그인 완료 후 회원 정보 받기
+                .addFilterBefore(new JwtAuthenticationFilter(authenticationManager, jwtProvider),
+                        UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthorizationFilter(authenticationManager, jwtProvider), BasicAuthenticationFilter.class);
 
 //        httpSecurity //JWT(토큰 기반)를 이용하기 때문에 session 필요 없음
 //                .sessionManagement((session) -> session
 //                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        httpSecurity.userDetailsService(principalDetailsService);
+//        httpSecurity.userDetailsService(principalDetailsService);
 
         return httpSecurity.build();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        AuthenticationManagerBuilder authBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+        authBuilder.userDetailsService(principalDetailsService);
+        return authBuilder.build();
     }
 
     public class MyCustomDsl extends AbstractHttpConfigurer<MyCustomDsl, HttpSecurity> {
@@ -84,7 +99,7 @@ public class SecurityConfig {
         public void configure(HttpSecurity http) throws Exception {
             final AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
             http
-                    .addFilter(new JwtAuthenticationFilter(authenticationManager, jwtUtil));
+                    .addFilter(new JwtAuthenticationFilter(authenticationManager, jwtProvider));
         }
     }
 
