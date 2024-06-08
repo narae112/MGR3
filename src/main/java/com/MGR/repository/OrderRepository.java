@@ -14,5 +14,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "order by o.orderDate desc"
     )
     List<Order> findOrders(@Param("email") String email); // 해당 멤버의 오더들
-
+    Order findByOrderNum(String orderNum);
 }
