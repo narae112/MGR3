@@ -49,7 +49,10 @@ public class TicketController {
         if (bindingResult.hasErrors()) {
             return "ticket/ticketForm";
         }
-
+        if(ticketImgFileList.get(0).isEmpty() && ticketFormDto.getId() == null) {
+            model.addAttribute("errorMessage", "상품 이미지는 필수 입력 값 입니다.");
+            return "ticket/ticketForm";
+        }
         try {
             ticketService.saveTicket(ticketFormDto, ticketImgFileList);
         } catch (DuplicateTicketNameException e) {
@@ -70,32 +73,45 @@ public class TicketController {
         } catch (EntityNotFoundException e) {
             redirectAttributes.addFlashAttribute("errorMessage", "존재하지 않는 티켓입니다.");
             model.addAttribute("ticketFormDto", new TicketFormDto());
-            return "ticket/ticketForm";
+            return "redirect:/admin/tickets";
         }
         return "ticket/ticketForm";
     }
 
     @PostMapping(value = "/admin/ticket/{ticketId}")
     public String ticketUpdate(@Valid TicketFormDto ticketFormDto, BindingResult bindingResult,
-                               Model model, @RequestParam("ticketImgFile") List<MultipartFile> ticketImgFileList
-    ) {
-        if(ticketImgFileList.get(0).isEmpty() && ticketFormDto.getId() == null) {
-            model.addAttribute("errorMessage", "상품 이미지는 필수 입력 값 입니다.");
+                               Model model, @RequestParam("ticketImgFile") List<MultipartFile> ticketImgFileList) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("errorMessage", "입력한 값들을 확인해주세요.");
             return "ticket/ticketForm";
         }
-        if (ticketFormDto.getStartDate() == null || ticketFormDto.getEndDate() == null) {
-            model.addAttribute("errorMessage", "날짜는 필수 입력값입니다.");
+        // 상품 이미지가 없는 경우 처리
+        if (ticketImgFileList.get(0).isEmpty() && ticketFormDto.getId() == null) {
+            model.addAttribute("errorMessage", "상품 이미지는 필수 입력 값 입니다.");
             return "ticket/ticketForm";
         }
 
         try {
             ticketService.updateTicket(ticketFormDto, ticketImgFileList);
+        } catch (DuplicateTicketNameException e) {
+            System.out.println("Duplicate ticket name error: " + e.getMessage());
+            model.addAttribute("errorMessage", "중복된 티켓 이름이 존재합니다.");
+            return "ticket/ticketForm";
+        } catch (EntityNotFoundException e) {
+            System.out.println("Ticket not found error: " + e.getMessage());
+            model.addAttribute("errorMessage", "티켓을 찾을 수 없습니다. ID: " + ticketFormDto.getId());
+            return "ticket/ticketForm";
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid argument error: " + e.getMessage());
+            model.addAttribute("errorMessage", "이미지 ID 목록과 파일 목록의 크기가 다릅니다.");
+            return "ticket/ticketForm";
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "티켓 수정 중 오류가 발생했습니다.");
+            System.out.println("Error occurred during ticket update: " + e.getMessage());
+            model.addAttribute("errorMessage", "티켓 수정 중 오류가 발생했습니다. 상세 오류: " + e.getMessage());
             return "ticket/ticketForm";
         }
-
-        return "redirect:/tickets"; // 성공 시 메인 페이지로 리다이렉트
+        // 폼 하단에 경고를 추가하지 않고, 정상적으로 처리되면 리다이렉트하여 다른 페이지로 이동합니다.
+        return "redirect:/tickets";
     }
 
     @GetMapping(value = {"/admin/tickets", "/admin/tickets/{page}"})

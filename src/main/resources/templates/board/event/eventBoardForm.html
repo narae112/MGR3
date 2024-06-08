@@ -27,46 +27,6 @@
         var token = $("meta[name='_csrf']").attr('content');
         var header = $("meta[name='_csrf_header']").attr('content');
 
-<!--        var eventBoardId = [[${eventBoardFormDto.id}]];-->
-
-<!--        function eventBoardEdit(){-->
-
-<!--            var url = "/board/eventBoard/edit/" + eventBoardId;-->
-<!--            var data = {-->
-<!--                id: eventBoardId,-->
-<!--                nickname: $('#nickname').val(),-->
-<!--                title: $('#title').val(),-->
-<!--                content: $('#content').val(),-->
-<!--                count: $('#count').val(),-->
-<!--                startDate: $('#startDate').val(),-->
-<!--                endDate: $('#endDate').val(),-->
-<!--                createDate: $('#createDate').val(),-->
-<!--                type: $('#type').val(),-->
-<!--                modifiedDate: new Date()-->
-<!--            };-->
-
-<!--            console.log(eventBoardId)-->
-<!--            console.log(url)-->
-
-<!--             $.ajax({-->
-<!--                    url: url,-->
-<!--                    type: 'PATCH',-->
-<!--                    contentType: 'application/json',-->
-<!--                    data: JSON.stringify(data),-->
-<!--                    success: function(result) {-->
-<!--                        alert(result);-->
-
-<!--                    },-->
-<!--                    beforeSend: function(xhr) {-->
-<!--                        xhr.setRequestHeader(header, token);-->
-<!--                    },-->
-<!--                    error: function(xhr, status, error) {-->
-<!--                        var errorMessage = xhr.status + ': ' + xhr.statusText;-->
-<!--                        alert("수정에 실패했습니다 " + errorMessage);-->
-<!--                    }-->
-<!--                });-->
-<!--        }-->
-
  $(document).ready(function() {
     // 오늘 날짜를 가져오는 함수
     function getTodayDate() {
@@ -102,8 +62,6 @@
             <form th:action="@{/board/eventBoard/create}" method="POST"
                   th:object="${eventBoardFormDto}" enctype="multipart/form-data">
                 <h3 class="mb-5 text-center">이벤트 등록</h3>
-                <input type="hidden" id="eventBoardId" name="id" class="form-control"
-                       th:field="*{id}">
 
                 <div class="form-group mb-3">
                     <label th:for="type" class="mb-1">게시글 타입</label>

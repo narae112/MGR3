@@ -1,6 +1,6 @@
 package com.MGR.controller;
 
-import com.MGR.constant.ReservationStatus;
+import com.MGR.entity.Member;
 import com.MGR.entity.Order;
 import com.MGR.entity.OrderTicket;
 import com.MGR.entity.ReservationTicket;
@@ -8,6 +8,7 @@ import com.MGR.repository.OrderRepository;
 import com.MGR.repository.OrderTicketRepository;
 import com.MGR.repository.ReservationTicketRepository;
 import com.MGR.security.PrincipalDetails;
+import com.MGR.service.NotificationService;
 import com.MGR.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,6 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
@@ -40,27 +40,34 @@ public class WidgetController {
     private final OrderRepository orderRepository;
     private final OrderTicketRepository orderTicketRepository;
     private final ReservationTicketRepository reservationTicketRepository;
+    private final NotificationService notificationService;
 
     @RequestMapping(value = "/confirm")
     public ResponseEntity<JSONObject> confirmPayment(@RequestBody String jsonBody) throws Exception {
 
         JSONParser parser = new JSONParser();
+        String RTOrderId;
         String orderId;
         String amount;
         String paymentKey;
+        String couponId;
         try {
             // 클라이언트에서 받은 JSON 요청 바디입니다.
             JSONObject requestData = (JSONObject) parser.parse(jsonBody);
             paymentKey = (String) requestData.get("paymentKey");
+            RTOrderId = (String) requestData.get("RTOrderId");
             orderId = (String) requestData.get("orderId");
             amount = (String) requestData.get("amount");
+            couponId = (String)requestData.get("couponId");
         } catch (ParseException e) {
             throw new RuntimeException(e);
         };
         JSONObject obj = new JSONObject();
+        obj.put("RTOrderId", RTOrderId);
         obj.put("orderId", orderId);
         obj.put("amount", amount);
         obj.put("paymentKey", paymentKey);
+        obj.put("couponId", couponId);
 
         // TODO: 개발자센터에 로그인해서 내 결제위젯 연동 키 > 시크릿 키를 입력하세요. 시크릿 키는 외부에 공개되면 안돼요.
         // @docs https://docs.tosspayments.com/reference/using-api/api-keys
@@ -107,20 +114,23 @@ public class WidgetController {
      * @return
      * @throws Exception
      */
-    @GetMapping("/success/{RTOrderId}")
+    @GetMapping("/success/{RTOrderId}/cp/{couponId}")
     public String paymentRequest(HttpServletRequest request,
-                                 @PathVariable("RTOrderId") Long id, @AuthenticationPrincipal PrincipalDetails member,
+                                 @PathVariable("RTOrderId") Long id, @PathVariable("couponId") Long couponId,
                                  Model model) throws Exception {
 
         orderService.changeStatus(id);
 
-        // 결제 완료한 예약 티켓은 디비에서 삭제
-        Order order = orderRepository.findById(id).get();
-        List<OrderTicket> orderTickets = order.getOrderTickets();
-        for(OrderTicket orderTicket : orderTickets) {
-            ReservationTicket reservationTicket = reservationTicketRepository.findById(orderTicket.getReservationTicketId()).orElseThrow();
-            reservationTicketRepository.delete(reservationTicket);
+        // 결제 완료한 예약 티켓 상태 변경
+        orderService.changeReservationTicketStatus(id);
+
+        // 사용한 쿠폰 사용처리
+        if(couponId != 0) {
+            orderService.changeCouponStatus(couponId);
         }
+
+        // 결제 완료 알림
+        notificationService.notifyOrder(id);
 
         return "/success";
     }

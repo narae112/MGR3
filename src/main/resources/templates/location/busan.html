@@ -29,12 +29,12 @@
             margin: 10px auto;
         }
 
-        .button {
+        .button.mgr {
             padding-top: 10px;
             width: 100%;
             text-align: center;
         }
-        .container {
+        .container.mgr {
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
@@ -117,8 +117,10 @@
 <body>
 <div layout:fragment="content">
     <h2 class="title">오시는 길</h2>
-    <div id="map1"></div> <!-- 수정된 부분 -->
-    <div id="map2"></div> <!-- 수정된 부분 -->
+    <div class="container mgr">
+        <div id="map1"></div> <!-- 수정된 부분 -->
+        <div id="map2"></div> <!-- 수정된 부분 -->
+    </div>
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=91a33b69084e7e19defca68fb0f0f32a"></script>
     <script>
         // 첫 번째 지도 설정
@@ -215,10 +217,10 @@ kakao.maps.event.addListener(marker7, 'click', function() {
 });
 
     </script>
-    <div class="button">
+    <div class="button mgr">
         <a href="https://kko.to/4t4ZIuRv3k" title="카카오지도 새창열기" target="_blank" class="btn btn-primary btn-lg mt-3">카카오지도 보러가기</a>
     </div>
-    <div class="container">
+    <div class="container mgr">
         <div class="section subway">
             <h3>지하철<br> 이용시</h3>
             <ul>

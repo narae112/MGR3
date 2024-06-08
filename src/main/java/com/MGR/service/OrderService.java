@@ -4,6 +4,7 @@ import com.MGR.constant.ReservationStatus;
 import com.MGR.dto.OrderDto;
 import com.MGR.entity.*;
 import com.MGR.repository.*;
+import com.MGR.security.PrincipalDetails;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ public class OrderService {
     private final TicketRepository ticketRepository;
     private final OrderTicketRepository orderTicketRepository;
     private final ReservationTicketRepository reservationTicketRepository;
+    private final MemberCouponRepository memberCouponRepository;
 
     // 이용자가 결제 요청한 정보 저장
     public Long orders(List<OrderDto> orderDtoList, String email) {
@@ -34,7 +36,9 @@ public class OrderService {
             Ticket ticket = ticketRepository.findById(orderDto.getTicketId())
                     .orElseThrow(EntityNotFoundException::new);
             // orderDto 객체에 대해 해당하는 티켓 아이디를 사용하여 데이터베이스에서 티켓 정보를 가지고 옴
-            OrderTicket orderTicket = OrderTicket.createOrderTicket(ticket, orderDto.getReservationTicketId(),
+            ReservationTicket reservationTicket = reservationTicketRepository.findById(orderDto.getReservationTicketId())
+                    .orElseThrow(EntityNotFoundException::new);
+            OrderTicket orderTicket = OrderTicket.createOrderTicket(ticket, reservationTicket,
                                                                     orderDto.getAdultCount(), orderDto.getChildCount(), orderDto.getVisitDate());
             // createOrderTicket : 검색된 티켓을 사용하여 orderDto 에서 지정된 수량을 사용, orderTicket 객체 생성
 
@@ -57,4 +61,22 @@ public class OrderService {
         orderRepository.save(order);
     }
 
+    public void changeReservationTicketStatus(Long id) {
+        Optional<Order> order = orderRepository.findById(id);
+        List<OrderTicket> orderTickets = order.get().getOrderTickets();
+        for(OrderTicket orderTicket : orderTickets) {
+            ReservationTicket reservationTicket = reservationTicketRepository.findById(orderTicket.getReservationTicket().getId()).orElseThrow(EntityNotFoundException::new);
+            reservationTicket.setReservationStatus(ReservationStatus.PAYED);
+        }
+    }
+
+    public void changeCouponStatus(Long couponId) {
+        MemberCoupon memberCoupon = memberCouponRepository.findById(couponId).orElseThrow(EntityNotFoundException::new);
+        memberCoupon.setUsed(true);
+
+    }
+    // 주문번호로 주문을 조회하는 메서드
+    public Order findOrderByOrderNum(String orderNum) {
+        return orderRepository.findByOrderNum(orderNum);
+    }
 }

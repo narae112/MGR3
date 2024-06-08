@@ -6,17 +6,18 @@ import com.MGR.entity.Order;
 import com.MGR.entity.OrderTicket;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDate;
 
-@Getter @Setter
+@Getter @Setter @ToString
 public class OrderTicketDto {
     private Long orderId;
     private LocationCategory locationCategory; // 지점
     private String name; // 티켓 이름
     private LocalDate visitDate; // 방문예정일
-    private int adultCount; // 성인 인원
-    private int childCount; // 아동 인원
+    private Integer adultCount; // 성인 인원
+    private Integer childCount; // 아동 인원
     private int adultPrice; // 성인 금액
     private int childPrice; // 아동 금액
     private int adultTotalPrice; // 성인 전체 금액

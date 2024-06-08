@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -15,18 +16,29 @@ import java.util.Optional;
 // login 요청이 오면 자동으로 UserDetails Service 타입으로 IOC 되어 있는 loadUserByUsername 함수 실행됨
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PrincipalDetailsService implements UserDetailsService {
+
     private final MemberRepository memberRepository;
 
+//    @Override
+//    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+//
+//        Optional<Member> member = memberRepository.findByEmail(email);
+//        if (member.isPresent()) {
+//            System.out.println("member = " + member.get());
+//            return new PrincipalDetails(member.get());
+//        }
+//        return null;
+//    }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        Optional<Member> member = memberRepository.findByEmail(email);
-        if (member.isPresent()) {
-            System.out.println("member = " + member.get());
-            return new PrincipalDetails(member.get());
-        }
-        return null;
+        Optional<Member> memberOptional = memberRepository.findByEmail(email);
+        Member member = memberOptional.orElseThrow(() -> new UsernameNotFoundException(email));
+
+//        return new CustomUserDetails(member);
+        return new PrincipalDetails(member);
     }
 }

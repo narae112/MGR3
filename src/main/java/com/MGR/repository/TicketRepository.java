@@ -20,11 +20,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> ,
     @Query(value="select * from ticket i where i.memo like " +
         "%:memo% order by i.price desc", nativeQuery = true)
     List<Ticket> findByMemoByNative(@Param("memo") String memo);
-    Optional<Ticket> findByNameAndAdultPriceAndChildPriceAndMemoAndStartDateAndEndDateAndLocationCategory(
-            String name, int adultPrice, int childPrice, String memo,
-            LocalDate startDate, LocalDate endDate, LocationCategory locationCategory
-    );
-//    Optional<Ticket> findByPriceAndLocationCategoryAndMemoAndTicketCategory(
-//            int price, LocationCategory locationCategory, String memo, TicketCategory ticketCategory
-//    );
+    boolean existsByName(String name);
+    boolean existsByNameAndIdNot(String name, Long id);
 }
