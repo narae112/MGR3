@@ -75,16 +75,24 @@ public class ReviewBoardController {
     }
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/orderCheck")
-    public String orderCheck(OrderCheckForm orderCheckForm) {
+    public String orderCheck(OrderCheckForm orderCheckForm, @AuthenticationPrincipal PrincipalDetails member, Model model) {
+        if (member == null) {
+            model.addAttribute("error", "로그인이 필요한 서비스입니다.");
+            return "member/loginForm";
+        }
         return "board/review/orderCheck_form";
     }
 
-
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/orderCheck")
-    public String orderCheck(@RequestParam("orderNum") String orderNum, RedirectAttributes redirectAttributes, Model model) {
+    public String orderCheck(@RequestParam("orderNum") String orderNum, RedirectAttributes redirectAttributes, Model model,
+                             @AuthenticationPrincipal PrincipalDetails member) {
         // 주문번호를 기준으로 주문을 조회합니다.
         Order order = orderService.findOrderByOrderNum(orderNum);
-
+        if (member == null) {
+            model.addAttribute("error", "로그인이 필요한 서비스입니다.");
+            return "member/loginForm";
+        }
         // 주문번호에 해당하는 주문이 없는 경우
         if (order == null) {
             model.addAttribute("error", "주문을 찾을 수 없습니다.");
@@ -97,7 +105,11 @@ public class ReviewBoardController {
     }
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
-    public String reviewCreate(ReviewBoardForm reviewBoardForm) {
+    public String reviewCreate(ReviewBoardForm reviewBoardForm, @AuthenticationPrincipal PrincipalDetails member, Model model) {
+        if (member == null) {
+            model.addAttribute("error", "로그인이 필요한 서비스입니다.");
+            return "member/loginForm";
+        }
         return "board/review/board_form";
     }
 
