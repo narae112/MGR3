@@ -75,6 +75,7 @@
 
 $(document).ready(function() {
 
+
 <!--     알림 수 가져오기-->
     $.ajax({
         url: '/api/notifications/count',
@@ -82,6 +83,7 @@ $(document).ready(function() {
         success: function(data) {
 <!--            $('#notificationCount').text(data);-->
             $('#notificationCount').text(Number(data));
+            let notificationsLoaded = false;
         },
         error: function(xhr, status, error) {
             console.error('Failed to fetch notification count:', error);
@@ -90,6 +92,8 @@ $(document).ready(function() {
 
 <!--     EventSource 초기화-->
     let eventSource = new EventSource('/api/notifications/subscribe');
+    let notificationsLoaded = false;
+
     eventSource.addEventListener('connect', function(event) {
         displayMessage(event.data, null);
     });
@@ -130,23 +134,25 @@ $(document).ready(function() {
 
 <!--    // 알림 모달 버튼 클릭 이벤트-->
     $('#notificationButton').click(function() {
+       if (!notificationsLoaded) {
 <!--        // DB에서 기존 알림 가져오기-->
-        $.ajax({
-            url: '/api/notifications',
-            type: 'GET',
-            success: function(notifications) {
-                const messagesDiv = document.getElementById('notify');
-                messagesDiv.innerHTML = ''; // 기존 알림 지우기
-                notifications.reverse().forEach(notification => {
-                    displayMessage(notification.message, notification.id);
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error('Failed to load notifications:', error);
-            }
-        });
+            $.ajax({
+                url: '/api/notifications',
+                type: 'GET',
+                success: function(notifications) {
+                    const messagesDiv = document.getElementById('notify');
+                    messagesDiv.innerHTML = ''; // 기존 알림 지우기
+                    notifications.reverse().forEach(notification => {
+                        displayMessage(notification.message, notification.id);
+                    });
+                    notificationsLoaded = true; // 알림 로드 상태 업데이트
+                },
+                error: function(xhr, status, error) {
+                    console.error('Failed to load notifications:', error);
+                }
+            });
+        }
     });
-
 });
 
     function deleteNotification(id, button) {
