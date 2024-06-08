@@ -29,11 +29,11 @@
            // 이미지 파일 선택 이벤트 핸들러 등록
            bindDomEvent();
 
-           // 오류 메시지 처리
-           var errorMessage = /*[[${errorMessage}]]*/ '';
-           if (errorMessage != null && errorMessage !== '') {
-               showAlert(errorMessage);
-           }
+<!--           // 오류 메시지 처리-->
+<!--           var errorMessage = /*[[${errorMessage}]]*/ '';-->
+<!--           if (errorMessage != null && errorMessage !== '') {-->
+<!--               showAlert(errorMessage);-->
+<!--           }-->
 
            // 오늘 날짜 설정 및 종료일 최소값 설정
            setTodayDate();
@@ -172,14 +172,12 @@
 
                 <div class="form-group mb-3">
                     <div th:if="${#lists.isEmpty(ticketFormDto.ticketImgDtoList)}">
-                        <div class="form-group" th:each="num: ${#numbers.sequence(1,1)}">
                             <div class="custom-file img-div form-group mb-3">
                                 <input type="file" class="custom-file-input form-control" name="ticketImgFile">
                                 <label class="custom-file-label" th:text="티켓이미지"></label>
                             </div>
                         </div>
                     </div>
-                </div>
                 <div th:if = "${not #lists.isEmpty(ticketFormDto.ticketImgDtoList)}">
                     <div class="form-group" th:each="ticketImgDto, status: ${ticketFormDto.ticketImgDtoList}">
                         <div class="form-group mb-3">

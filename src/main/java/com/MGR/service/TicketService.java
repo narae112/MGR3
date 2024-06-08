@@ -1,16 +1,13 @@
 package com.MGR.service;
 
+import com.MGR.constant.ReservationStatus;
 import com.MGR.dto.ImageDto;
 import com.MGR.dto.MainTicketDto;
 import com.MGR.dto.TicketFormDto;
 import com.MGR.dto.TicketSearchDto;
-import com.MGR.entity.Image;
-import com.MGR.entity.Inventory;
-import com.MGR.entity.Ticket;
+import com.MGR.entity.*;
 import com.MGR.exception.DuplicateTicketNameException;
-import com.MGR.repository.ImageRepository;
-import com.MGR.repository.InventoryRepository;
-import com.MGR.repository.TicketRepository;
+import com.MGR.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -33,6 +30,8 @@ public class TicketService {
     private final ImageRepository imageRepository;
     private final ImageService imageService;
     private  final InventoryRepository inventoryRepository;
+    private final ReservationTicketRepository reservationTicketRepository;
+    private final OrderTicketRepository orderTicketRepository;
 @Transactional
     @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
     public void deleteExpiredCoupons() {
@@ -96,44 +95,76 @@ public class TicketService {
         return ticketFormDto;
     }
 
+    @Transactional
 
     public Long updateTicket(TicketFormDto ticketFormDto, List<MultipartFile> ticketImgFileList) throws Exception {
-        boolean isDuplicate =isExistedTicketNameDuplicated(ticketFormDto.getName(), ticketFormDto.getId());
-        if (isDuplicate) {
-            throw new DuplicateTicketNameException("중복된 티켓 정보가 존재합니다.");
-        }
+//        boolean isDuplicate = isDuplicateTicket(ticketFormDto);
+//        if (isDuplicate) {
+//            throw new DuplicateTicketNameException("중복된 티켓 정보가 존재합니다.");
+//        }
 
         // 업데이트할 티켓을 가져옵니다.
-        Ticket ticket = ticketRepository.findById(ticketFormDto.getId())
+        Ticket ticketToUpdate = ticketRepository.findById(ticketFormDto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("티켓을 찾을 수 없습니다. ID: " + ticketFormDto.getId()));
-        ticket.updateTicket(ticketFormDto);
+
+        // 티켓 정보 업데이트
+        ticketToUpdate.updateTicket(ticketFormDto);
+        ticketRepository.save(ticketToUpdate);
+
         // 이미지 업데이트
         List<Long> ticketImgIds = ticketFormDto.getTicketImgIds();
-
-        if (!ticketImgFileList.isEmpty()) {
-            imageService.updateTicketImage(ticketImgIds.get(0), ticketImgFileList.get(0));
+        for (int i = 0; i < ticketImgIds.size(); i++) {
+            Long imgId = ticketImgIds.get(i);
+            MultipartFile imgFile = ticketImgFileList.get(i);
+            imageService.updateTicketImage(imgId, imgFile);
         }
 
-        return ticket.getId();
+        return ticketToUpdate.getId();
     }
 
-
-    //삭제
+    @Transactional
     public void deleteTicket(Long ticketId) {
-        // 티켓에 연결된 이미지를 먼저 삭제
-        imageService.deleteImagesByTicketId(ticketId);
+        try {
+            // ticketId로 모든 관련 예약 티켓을 가져옴
+            List<ReservationTicket> reservationTickets = reservationTicketRepository.findAllByTicketId(ticketId);
 
-        // 티켓을 삭제하기 전에 해당 티켓과 관련된 모든 인벤토리 레코드를 삭제
-        List<Inventory> inventories = inventoryRepository.findAllByTicketId(ticketId);
-        if (!inventories.isEmpty()) {
-            inventoryRepository.deleteAll(inventories);
+            // reservationTickets가 비어 있거나, 모든 티켓의 상태가 RESERVE가 아닌 경우
+            boolean canDelete = reservationTickets.isEmpty() || reservationTickets.stream()
+                    .noneMatch(ticket -> ticket.getReservationStatus() == ReservationStatus.RESERVE);
+
+            if (canDelete) {
+                // 티켓에 연결된 이미지 삭제
+                imageService.deleteImagesByTicketId(ticketId);
+
+                // 티켓과 관련된 모든 인벤토리 레코드 삭제
+                List<Inventory> inventories = inventoryRepository.findAllByTicketId(ticketId);
+                if (!inventories.isEmpty()) {
+                    inventoryRepository.deleteAll(inventories);
+                }
+
+                // ORDER_TICKET에서 티켓과 관련된 모든 레코드 삭제
+                List<OrderTicket> orderTickets = orderTicketRepository.findAllByTicketId(ticketId);
+                if (!orderTickets.isEmpty()) {
+                    orderTicketRepository.deleteAll(orderTickets);
+                }
+
+                // ReservationTicket 삭제
+                if (!reservationTickets.isEmpty()) {
+                    reservationTicketRepository.deleteAll(reservationTickets);
+                }
+
+                // 티켓 삭제
+                ticketRepository.deleteById(ticketId);
+            } else {
+                throw new IllegalStateException("상태가 'RESERVE'인 티켓이 있는 경우 티켓을 삭제할 수 없습니다.");
+            }
+        } catch (Exception e) {
+            // 예외 메시지 출력
+            System.out.println("Exception occurred: " + e.getMessage());
+            e.printStackTrace();
+            throw e;  // 예외를 다시 던져서 트랜잭션 롤백을 유발
         }
-
-        // 티켓 삭제
-        ticketRepository.deleteById(ticketId);
     }
-
-
 
     @Transactional(readOnly = true)
     public Page<Ticket> getAdminTicketPage(TicketSearchDto ticketSearchDto, Pageable pageable){
