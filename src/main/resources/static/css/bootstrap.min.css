@@ -2299,7 +2299,7 @@ progress {
     -webkit-margin-end: .75rem;
     margin-inline-end: .75rem;
     color: #212529;
-    background-color: #e9ecef;
+    /*background-color: #e9ecef;*/
     pointer-events: none;
     border-color: inherit;
     border-style: solid;

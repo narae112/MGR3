@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @Entity
 @Setter @Getter
 public class Attraction {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

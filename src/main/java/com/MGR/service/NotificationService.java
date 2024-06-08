@@ -1,8 +1,8 @@
 package com.MGR.service;
 
-import com.MGR.controller.NotificationController;
 import com.MGR.entity.*;
 import com.MGR.repository.NotificationRepository;
+import com.MGR.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,13 +11,14 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
-
+    private final OrderRepository orderRepository;
     private final MemberService memberService;
     private final NotificationRepository notificationRepository;
     public final Map<Long, SseEmitter> sseEmitters = new ConcurrentHashMap<>();
@@ -25,7 +26,7 @@ public class NotificationService {
 
     // 메시지 알림
     public SseEmitter subscribe(Long memberId) {
-    //Test
+
         // 1. 현재 클라이언트를 위한 sseEmitter 객체 생성
         SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
 
@@ -56,8 +57,6 @@ public class NotificationService {
         List<Member> memberList = memberService.findByAllUser();
 
         for (Member member : memberList) {
-            SseEmitter sseEmitter = sseEmitters.get(member.getId());
-//            subscribe(member.getId()); //객체 생성해서 멤버 아이디 넣어줌
 
             // SseEmitter 객체 가져오기
             SseEmitter sseEmitterReceiver = sseEmitters.get(member.getId());
@@ -95,25 +94,25 @@ public class NotificationService {
                 coupon.getName() + " 쿠폰 코드 : "
                 + memberCoupon.getCouponCode();
 
-            SseEmitter sseEmitter = sseEmitters.get(member.getId());
-            if (sseEmitter != null) {
-                try {
-                    sseEmitter.send(SseEmitter.event() //sseEmitter 객체에 메세지 담아서 보내기
-                            .name("message")
-                            .data(data));
+        SseEmitter sseEmitter = sseEmitters.get(member.getId());
+        if (sseEmitter != null) {
+            try {
+                sseEmitter.send(SseEmitter.event() //sseEmitter 객체에 메세지 담아서 보내기
+                        .name("message")
+                        .data(data));
 
-                    int notificationCount = countNotificationsForMember(member.getId());
-                    System.out.println("notificationCount 알림수량 = " + notificationCount);
-                    sseEmitter.send(SseEmitter.event()
-                            .name("notificationCount")
-                            .data(notificationCount));
+                int notificationCount = countNotificationsForMember(member.getId());
+                System.out.println("notificationCount 알림수량 = " + notificationCount);
+                sseEmitter.send(SseEmitter.event()
+                        .name("notificationCount")
+                        .data(notificationCount));
 
-                } catch (Exception e) {
-                    sseEmitters.remove(member.getId());
-                }
-                Notification notification = new Notification(member.getId(), data, "쿠폰", coupon.getId());
-                notificationRepository.save(notification); // 보낸 메세지 저장
+            } catch (Exception e) {
+                sseEmitters.remove(member.getId());
             }
+            Notification notification = new Notification(member.getId(), data, "쿠폰", coupon.getId());
+            notificationRepository.save(notification); // 보낸 메세지 저장
+        }
 
     }
 
@@ -178,6 +177,39 @@ public class NotificationService {
             notificationRepository.save(notification); // 보낸 메세지 저장
         }
     }
+
+    // 결제 완료 알림
+    @Transactional
+    public void notifyOrder(Long id) {
+        Optional<Order> order = orderRepository.findById(id);
+        Optional<Member> member = memberService.findById(order.get().getMember().getId());
+        SseEmitter sseEmitter = sseEmitters.get(member.get().getId());
+        String orderNum = order.get().getOrderNum();
+
+        String data = "주문 번호 : " + orderNum;
+        if (sseEmitter != null) {
+            try {
+                sseEmitter.send(SseEmitter.event()
+                        .name("message")
+                        .data(data));
+
+                int notificationCount = countNotificationsForMember(member.get().getId());
+                System.out.println("notificationCount 알림수량 = " + notificationCount);
+                sseEmitter.send(SseEmitter.event()
+                        .name("notificationCount")
+                        .data(notificationCount));
+
+            } catch (Exception e) {
+                sseEmitters.remove(member.get().getId());
+            }
+
+            // 알림 객체 생성 및 저장
+            Notification notification =
+                    new Notification(member.get().getId(), data, "결제", id);
+            notificationRepository.save(notification);
+        }
+    }
+
 
     public List<Notification> findByMemberId(Long userId) {
         System.out.println("2= " + notificationRepository.findByMemberIdOrderByCreatedDateDesc(userId));

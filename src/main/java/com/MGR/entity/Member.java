@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 
 @Entity
 @Setter @Getter @ToString
@@ -48,6 +50,9 @@ public class Member {
     private String provider; //공급자
     private String providerId; //공급 아이디
 
+        @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<MemberCoupon> memberCoupons = new HashSet<>();
+    
     @Builder
     public Member(String oauth2Id, String name, String nickname, String password, String email, String role, String provider, String providerId) {
         this.oauth2Id=oauth2Id;

@@ -4,6 +4,7 @@ import com.MGR.entity.Member;
 import com.MGR.oauth2.OAuth2SuccessHandler;
 import com.MGR.repository.MemberRepository;
 import com.MGR.service.OAuth2MemberService;
+import com.MGR.service.PrincipalDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +25,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final CustomUserDetailsService customUserDetailsService;
+    private final PrincipalDetailsService principalDetailsService;
     private final OAuth2MemberService oAuth2MemberService;
     private final JwtUtil jwtUtil;
 
@@ -73,7 +74,7 @@ public class SecurityConfig {
 //                .sessionManagement((session) -> session
 //                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        httpSecurity.userDetailsService(customUserDetailsService);
+        httpSecurity.userDetailsService(principalDetailsService);
 
         return httpSecurity.build();
     }

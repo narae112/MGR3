@@ -4,6 +4,7 @@ import com.MGR.entity.Inventory;
 import com.MGR.entity.Ticket;
 import com.MGR.repository.InventoryRepository;
 import com.MGR.repository.TicketRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -17,13 +18,13 @@ public class InventoryService {
     private final InventoryRepository inventoryRepository;
     private final TicketRepository ticketRepository;
 
-    @Scheduled(cron = "0 */3 * * * *") // 매 3분마다 실행
+    @Scheduled(fixedRate = 30000)
 //    @Scheduled(cron = "0 0 0 1 * ?") // 매월 1일 자정에 실행
     public void resetInventory() {
         // 현재 날짜를 가져옴
         LocalDate currentDate = LocalDate.now();
         // 한 달 후 날짜 계산
-        LocalDate oneMonthLater = currentDate.plusMonths(1);
+        LocalDate oneMonthLater = currentDate.plusMonths(3);
 
         // 데이터베이스에서 모든 티켓을 가져옴
         List<Ticket> allTickets = ticketRepository.findAll();
@@ -40,4 +41,5 @@ public class InventoryService {
             }
         }
     }
+
 }

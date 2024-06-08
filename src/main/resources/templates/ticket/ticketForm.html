@@ -2,7 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
-
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
 <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -23,31 +25,58 @@
 </div>
 <th:block layout:fragment="script">
     <script th:inline="javascript">
-        $(document).ready(function(){
-            var errorMessage = /*[[${errorMessage}]]*/ '';
-            if(errorMessage != null && errorMessage !== ''){
-                $('#errorMessage').text(errorMessage);
-                $('#errorModal').modal('show');
-            }
+        $(document).ready(function() {
+           // 이미지 파일 선택 이벤트 핸들러 등록
+           bindDomEvent();
 
-            bindDomEvent();
-        });
+           // 오류 메시지 처리
+           var errorMessage = /*[[${errorMessage}]]*/ '';
+           if (errorMessage != null && errorMessage !== '') {
+               showAlert(errorMessage);
+           }
 
-        function bindDomEvent() {
-            $(".custom-file-input").on("change", function() {
-                var fileName = $(this).val().split("\\").pop();
-                var fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+           // 오늘 날짜 설정 및 종료일 최소값 설정
+           setTodayDate();
+       });
 
-                if (fileExt != "jpg" && fileExt != "jpeg" && fileExt != "gif" && fileExt != "png" && fileExt != "bmp") {
-                    alert("이미지 파일만 등록이 가능합니다.");
-                    return;
-                }
+       // 이미지 파일 선택 이벤트 핸들러
+       function bindDomEvent() {
+           $(".custom-file-input").on("change", function() {
+               var fileName = $(this).val().split("\\").pop();
+               if (fileName === '') {
+                   alert("파일을 선택해주세요."); // 파일을 선택하지 않았을 때 알림 창 표시
+                   return;
+               }
 
-                $(this).siblings(".custom-file-label").html(fileName);
-            });
-        }
+               // 파일 확장자를 가져옵니다.
+               var fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
 
-               $(document).ready(function() {
+               // 이미지 파일 확장자인지 확인합니다.
+               if (fileExt != "jpg" && fileExt != "jpeg" && fileExt != "gif" && fileExt != "png" && fileExt != "bmp") {
+                   // 이미지 파일이 아니면 오류를 표시합니다.
+                   alert("이미지 파일만 등록이 가능합니다.");
+                   // 파일 선택 초기화
+                   $(this).val('');
+                   return;
+               }
+
+               $(this).siblings(".custom-file-label").html(fileName);
+           });
+       }
+
+       // 오늘 날짜 설정 및 종료일 최소값 설정
+       function setTodayDate() {
+           var today = getTodayDate();
+           $('#startDate').val(today);
+           $('#startDate').attr("min", today);
+           $('#endDate').attr("min", today);
+
+           $('#startDate').on('change', function() {
+               var startDate = $(this).val();
+               $('#endDate').attr("min", startDate);
+           });
+       }
+
        // 오늘 날짜를 가져오는 함수
        function getTodayDate() {
            var today = new Date();
@@ -57,20 +86,13 @@
            return yyyy + '-' + mm + '-' + dd;
        }
 
-       // 시작일(input id="startDate")의 값을 오늘 날짜로 설정
-       $('#startDate').val(getTodayDate());
-       $('#startDate').attr("min",getTodayDate());
+       // 오류 메시지를 표시하는 함수
+       function showAlert(errorMessage) {
+           alert(errorMessage);
+       }
 
-       var startDate = $('#startDate').val();
-       $('#endDate').attr("min",startDate);
-
-       $('#startDate').on('change', function() {
-           var startDate = $(this).val();
-           $('#endDate').attr("min", startDate);
-       });
-
-    });
-     function checkEndDate() {
+       // 종료일 유효성 검사 함수
+       function checkEndDate() {
            var startDate = document.getElementById("startDate").value;
            var endDate = document.getElementById("endDate").value;
 
@@ -82,6 +104,9 @@
     </script>
 </th:block>
 <div layout:fragment="content" class="container my-5">
+<!--    <div th:if="${errorMessage}" class="alert alert-danger" role="alert">-->
+<!--        <span th:text="${errorMessage}"></span>-->
+<!--    </div>-->
     <div class="row justify-content-center">
         <div class="col-md-6">
             <form role="form" method="post" enctype="multipart/form-data" th:object="${ticketFormDto}" class="needs-validation" novalidate>
@@ -146,17 +171,19 @@
                 </div>
 
                 <div class="form-group mb-3">
-                    <label for="ticketImgFile" class="mb-1"> 상품 이미지</label>
                     <div th:if="${#lists.isEmpty(ticketFormDto.ticketImgDtoList)}">
-                        <div class="form-group mb-3">
-                            <input type="file" class="form-control" name="ticketImgFile" id="ticketImgFile" required>
-                            <div class="invalid-feedback">이미지를 선택해주세요.</div>
+                            <div class="custom-file img-div form-group mb-3">
+                                <input type="file" class="custom-file-input form-control" name="ticketImgFile">
+                                <label class="custom-file-label" th:text="티켓이미지"></label>
+                            </div>
                         </div>
                     </div>
-                    <div th:if="${not #lists.isEmpty(ticketFormDto.ticketImgDtoList)}">
+                <div th:if = "${not #lists.isEmpty(ticketFormDto.ticketImgDtoList)}">
+                    <div class="form-group" th:each="ticketImgDto, status: ${ticketFormDto.ticketImgDtoList}">
                         <div class="form-group mb-3">
-                            <input type="file" class="form-control" name="ticketImgFile" id="ticketImgFile" required>
-                            <div class="invalid-feedback">이미지를 선택해주세요.</div>
+                            <input type="file" class="custom-file-input form-control" name="ticketImgFile">
+                            <input type="hidden" name="ticketImgIds" th:value="${ticketImgDto.id}">
+                            <label class="custom-file-label" th:text="${not #strings.isEmpty(ticketImgDto.imgOriName)} ? ${ticketImgDto.imgOriName} : '상품이미지' + ${status.index+1}"></label>
                         </div>
                     </div>
                 </div>

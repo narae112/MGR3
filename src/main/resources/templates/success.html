@@ -25,7 +25,7 @@
                 결제 성공
             </h2>
 
-            <p id="paymentKey"></p>
+<!--            <p id="paymentKey"></p>-->
             <p id="orderId"></p>
             <p id="amount"></p>
         </div>
@@ -44,6 +44,7 @@
             paymentKey: urlParams.get("paymentKey"),
             orderId: urlParams.get("orderId"),
             amount: urlParams.get("amount"),
+            couponId : urlParams.get("couponId"),
           };
 
           const response = await fetch("/confirm", {
@@ -68,14 +69,15 @@
         }
         confirm();
 
-        const paymentKeyElement = document.getElementById("paymentKey");
         const orderIdElement = document.getElementById("orderId");
         const amountElement = document.getElementById("amount");
 
         orderIdElement.textContent = "주문번호: " + urlParams.get("orderId");
-        amountElement.textContent = "결제 금액: " + urlParams.get("amount");
-        paymentKeyElement.textContent =
-          "paymentKey: " + urlParams.get("paymentKey");
+
+        const amount = parseInt(urlParams.get("amount"));
+        const formattedAmount = amount.toLocaleString(); // 천 단위로 구분하여 쉼표가 들어간 문자열로 변환
+
+        amountElement.textContent = "결제 금액: " + formattedAmount + "원";
     </script>
 
 </div>

@@ -24,6 +24,9 @@ public class NotificationController {
     // 메시지 알림
     @GetMapping(value = "/api/notifications/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribe(@AuthenticationPrincipal PrincipalDetails member) {
+        if(member == null){
+            return null;
+        }
         Long userId = member.getId();
         return notificationService.subscribe(userId);
     }

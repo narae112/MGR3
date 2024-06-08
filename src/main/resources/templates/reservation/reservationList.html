@@ -9,54 +9,120 @@
     <script th:inline="javascript">
         $(function(){
             $("input[name=reserveChkBox]").change(function(){
-                getOrderTotalPrice();
-            });
-        });
+             getOrderTotalPrice();
+         });
+     });
 
-        function getOrderTotalPrice(){
-            var orderTotalPrice = 0;
-            $("input[name=reserveChkBox]:checked").each(function(){
-                var reservationTicketId = $(this).val();
-                var adultCount = $("#adultCount_" + reservationTicketId).val();
-                var childCount = $("#childCount_" + reservationTicketId).val();
-                var adultPrice = $("#adultPrice_" + reservationTicketId).data("price");
-                var childPrice = $("#childPrice_" + reservationTicketId).data("price");
-                orderTotalPrice += (adultCount * adultPrice) + (childCount * childPrice);
-            });
-            $("#orderTotalPrice").html(orderTotalPrice + '원');
+     function getOrderTotalPrice() {
+    var orderTotalPrice = 0;
+
+    $("input[name=reserveChkBox]:checked").each(function() {
+        var reservationTicketId = $(this).val();
+        var adultCountElement = $("#adultCount_" + reservationTicketId);
+        var childCountElement = $("#childCount_" + reservationTicketId);
+
+        var adultCount = adultCountElement.val() ? parseInt(adultCountElement.val()) : 0;
+        var childCount = childCountElement.val() ? parseInt(childCountElement.val()) : 0;
+        var adultPrice = $("#adultPrice_" + reservationTicketId).data("price");
+        var childPrice = $("#childPrice_" + reservationTicketId).data("price");
+
+        orderTotalPrice += (adultCount * adultPrice) + (childCount * childPrice);
+    });
+
+    $("#orderTotalPrice").html(orderTotalPrice + '원');
+}
+
+ function changeAdultCount(obj){
+    var reservationTicketId = obj.id.split('_')[1];
+    var adultCount = obj.value;
+    if (adultCount < 1) {
+            obj.value = 1; // adultCount가 1보다 작으면 값을 1로 설정
+            return; // adultCount가 1보다 작으면 더 이상 처리하지 않고 함수 종료
+        }else {
+        adultCount = parseInt(adultCount); // null이 아닌 경우에만 정수로 변환
+    }
+    var adultPrice = $("#adultPrice_" + reservationTicketId).data("price");
+    var adultTotalPrice = adultPrice * adultCount;
+    var childCount = $("#childCount_" + reservationTicketId).val();
+    var childPrice = $("#childPrice_" + reservationTicketId).data("price");
+    var childTotalPrice = childPrice * childCount;
+
+    var totalPrice = adultTotalPrice + childTotalPrice;
+
+    $("#totalPrice_" + reservationTicketId).html(totalPrice + '원');
+
+    getOrderTotalPrice();
+    updateReservationTicketCount(reservationTicketId, adultCount, childCount);
+}
+
+function changeChildCount(obj){
+    var reservationTicketId = obj.id.split('_')[1];
+    var adultCount = $("#adultCount_" + reservationTicketId).val();
+    var adultPrice = $("#adultPrice_" + reservationTicketId).data("price");
+    var adultTotalPrice = adultPrice * adultCount;
+    var childCount = obj.value;
+    if (childCount < 0) {
+            obj.value = 0; // childCount가 0보다 작으면 값을 0으로 설정
+            return; // childCount가 0보다 작으면 더 이상 처리하지 않고 함수 종료
         }
+    var childPrice = $("#childPrice_" + reservationTicketId).data("price");
+    var childTotalPrice = childPrice * childCount;
+    var totalPrice = adultTotalPrice + childTotalPrice;
 
-         function changeAdultCount(obj){
-            var reservationTicketId = obj.id.split('_')[1];
-            var adultCount = obj.value;
-            var adultPrice = $("#adultPrice_" + reservationTicketId).data("price");
-            var adultTotalPrice = adultPrice * adultPrice;
-            var childCount = $("#childCount_" + reservationTicketId).val();
-            var childPrice = $("#childPrice_" + reservationTicketId).data("price");
-            var childTotalPrice = childPrice * childCount;
+    $("#totalPrice_" + reservationTicketId).html(totalPrice + '원');
 
-            var totalPrice = adultTotalPrice + childTotalPrice;
+    getOrderTotalPrice();
+    updateReservationTicketCount(reservationTicketId, adultCount, childCount);
+}
 
-            $("#totalPrice_" + reservationTicketId).html(totalPrice + '원');
-
-            getOrderTotalPrice();
-            updateReservationTicketCount(reservationTicketId, adultCount, childCount);
+         function checkAll(){
+             if($("#checkAll").prop("checked")){
+                 $("input[name=reserveChkBox]").prop("checked", true);
+             } else{
+                 $("input[name=reserveChkBox]").prop("checked", false);
+             }
+             getOrderTotalPrice();
          }
 
-         function changeChildCount(obj){
-            var reservationTicketId = obj.id.split('_')[1];
-            var adultCount = $("#adultCount_" + reservationTicketId).val();
-            var adultPrice = $("#adultPrice_" + reservationTicketId).data("price");
-            var adultTotalPrice = adultPrice * adultPrice;
-            var childCount = obj.value;
-            var childPrice = $("#childPrice_" + reservationTicketId).data("price");
-            var childTotalPrice = childPrice * childCount;
-            var totalPrice = adultTotalPrice + childTotalPrice;
 
-            $("#totalPrice_" + reservationTicketId).html(totalPrice + '원');
 
-            getOrderTotalPrice();
-            updateReservationTicketCount(reservationTicketId, adultCount, childCount);
+         function updateReservationTicketCount(reservationTicketId, adultCount, childCount) {
+             var token = $("meta[name='_csrf']").attr("content");
+             var header = $("meta[name='_csrf_header']").attr("content");
+
+             var url = "/member/reservationTicket/" + reservationTicketId;
+             var paramData = {
+                 reservationTicketId: reservationTicketId,
+                 adultCount: adultCount,
+                 childCount: childCount
+             };
+
+             var param = JSON.stringify(paramData);
+
+             $.ajax({
+                 url: url,
+                 type: "PATCH",
+                 contentType: "application/json",
+                 data: param,
+                 beforeSend: function(xhr) {
+                     /* 데이터를 전송하기 전에 헤더에 csrf값을 설정 */
+                     xhr.setRequestHeader(header, token);
+                 },
+                 dataType: "json",
+                 cache: false,
+                 success: function(result, status) {
+                     console.log("티켓 수량이 변경되었습니다");
+                 },
+                 error: function(jqXHR, status, error) {
+
+                     if (jqXHR.status == '401') {
+                         alert('로그인 후 이용해 주세요');
+                         location.href = '/member/login';
+                     } else {
+                         alert(jqXHR.responseText);
+                     }
+                 }
+             });
          }
 
         function checkAll(){
@@ -176,7 +242,7 @@
                 dataType : "json",
                 cache   : false,
                 success  : function(result, status){
-                    location.href='/member/orders';
+                    location.href='/member/orders/' + result;
                 },
                 error : function(jqXHR, status, error){
 
@@ -297,11 +363,11 @@
                     <th:block th:if="${reservationTicket.reservationStatus == T(com.MGR.constant.ReservationStatus).CANCEL}">
                         <span>취소 완료</span>
                     </th:block>
-                    <th:block th:if="${reservationTicket.reservationStatus == T(com.MGR.constant.ReservationStatus).PAYED}">
-                        <span>결제 완료</span>
-                        <button type="button" class="btn btn-outline-secondary" th:value="${reservationTicket.reservationTicketId}"
-                                onclick="cancelOrder(this.value)">결제 취소</button>
-                    </th:block>
+<!--                    <th:block th:if="${reservationTicket.reservationStatus == T(com.MGR.constant.ReservationStatus).PAYED}">-->
+<!--                        <span>결제 완료</span>-->
+<!--                        <button type="button" class="btn btn-outline-secondary" th:value="${reservationTicket.reservationTicketId}"-->
+<!--                                onclick="cancelOrder(this.value)">결제 취소</button>-->
+<!--                    </th:block>-->
                 </td>
                 <td class="text-center align-middle">
                     <span th:id="'totalPrice_' + ${reservationTicket.reservationTicketId}"
