@@ -2,6 +2,7 @@ package com.MGR.security;
 
 import com.MGR.dto.MemberFormDto;
 import com.MGR.entity.Member;
+import com.MGR.service.MemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -19,6 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -32,12 +34,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         System.out.println("attemptAuthentication 시작");
         Member member = new Member();
+
         try {
             // URL 인코딩된 폼 데이터 읽기
             String email = request.getParameter("email");
             System.out.println("email = " + email);
             String password = request.getParameter("password");
             System.out.println("password = " + password);
+
             member.setEmail(email);
             member.setPassword(password);
 
@@ -47,10 +51,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             System.out.println("json 읽어오는 중 에러 = " + e.getMessage());
         }
 
-        if (member.getEmail() == null || member.getPassword() == null) {
-            System.out.println("Member 객체의 이메일 또는 비밀번호가 null 입니다.");
-            throw new AuthenticationException("Member 객체의 이메일 또는 비밀번호가 null 입니다.") {};
-        }
 
         //토큰 생성
         UsernamePasswordAuthenticationToken token =
@@ -90,5 +90,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.sendRedirect("/");
     }
 
-
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+        getFailureHandler().onAuthenticationFailure(request, response, failed);
+    }
 }

@@ -47,7 +47,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         cookie.setMaxAge(24 * 60 * 60); // 1일 동안 유효
         response.addCookie(cookie);
 
-
         // 인증 객체 생성 및 SecurityContext에 설정
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);

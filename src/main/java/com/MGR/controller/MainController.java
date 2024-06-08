@@ -9,6 +9,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 
@@ -27,12 +28,6 @@ public class MainController {
     @GetMapping("/login")
     public String memberLogin(){
         return "/member/loginForm";
-    }
-
-    @GetMapping("/socialLogin") //소셜 로그인 시 비밀번호 변경하는 폼으로 이동
-    public String socialLogin(Model model) {
-
-        return "index";
     }
 
     @GetMapping("/login/error")
