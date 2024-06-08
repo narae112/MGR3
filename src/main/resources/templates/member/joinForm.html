@@ -58,9 +58,6 @@
                 url:'/member/emailCheck', //controller 에서 요청 받을 주소
                 type:'POST',
                 data:{email:email},
-                beforeSend : function(xhr){
-                    xhr.setRequestHeader(header, token);
-                },
                 success:function(result){
                 //controller 에서 넘어온 result 값이 1이면 중복
                 console.log("result= " + result)
@@ -84,9 +81,6 @@
                 url:'/member/nicknameCheck',
                 type:'POST',
                 data:{nickname:nickname},
-                beforeSend : function(xhr){
-                    xhr.setRequestHeader(header, token);
-                },
                 success:function(result){
                     if(result === 0){
                         $('.nickname_ok').css("display","inline-block");
@@ -117,9 +111,6 @@
                 data: {
                     password: password,
                     password2: password2
-                },
-                beforeSend : function(xhr){
-                    xhr.setRequestHeader(header, token);
                 },
                 success: function(result) {
                     if (result === 0) {

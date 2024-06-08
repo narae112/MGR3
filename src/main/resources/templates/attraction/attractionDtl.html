@@ -35,11 +35,6 @@
                             window.location.href = "/attraction/attractionList";
                         }
                     },
-                    // Ajax 요청이 서버로 전송되기 전에 호출되는 함수
-                    beforeSend: function(xhr) {
-                        // 요청 헤더에 header와 token을 추가
-                        xhr.setRequestHeader(header, token);
-                    },
                     error: function(xhr, status, error) {
                         var errorMessage = xhr.status + ': ' + xhr.statusText;
                         alert("삭제 중 에러가 발생했습니다");
