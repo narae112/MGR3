@@ -65,9 +65,6 @@
             }
         });
 
-        var token = $("meta[name='_csrf']").attr('content');
-        var header = $("meta[name='_csrf_header']").attr('content');
-
         function verifyPassword() {
             var password = $('#verifyPassword').val();
 
@@ -76,10 +73,7 @@
                 type: 'GET',
                 data: {
                     verifyPassword: password
-                },
-                beforeSend: function(xhr) {
-                    xhr.setRequestHeader(header, token);
-                },
+                }
                 success: function(result) {
                     if (result === 0) {
                         alert("비밀번호 인증이 완료되었습니다");
@@ -107,9 +101,6 @@
                 url: '/member/nicknameCheck',
                 type: 'POST',
                 data: { nickname: nickname },
-                beforeSend: function(xhr) {
-                    xhr.setRequestHeader(header, token);
-                },
                 success: function(result) {
                     if (result === 0) {
                         $('.nickname_ok').css("display", "inline-block");
@@ -147,9 +138,6 @@
                 data: {
                     password: password,
                     password2: password2
-                },
-                beforeSend: function(xhr) {
-                    xhr.setRequestHeader(header, token);
                 },
                 success: function(result) {
                     if (result === 0) {
@@ -230,7 +218,6 @@
         <button th:formaction="@{'/member/editPassword/' + ${memberInfo.id}}"
                 class="btn btn-primary" type="submit" id="member-info-password">비밀번호 변경</button>
         <button class="btn btn-secondary empty-password-btn" type="button">비밀번호 변경</button>
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
     </form>
 </div>
 </html>

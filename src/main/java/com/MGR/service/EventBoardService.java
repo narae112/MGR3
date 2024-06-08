@@ -1,18 +1,14 @@
 package com.MGR.service;
 
 import com.MGR.dto.EventBoardFormDto;
-import com.MGR.dto.ImageDto;
 import com.MGR.entity.EventBoard;
 import com.MGR.entity.Image;
 import com.MGR.entity.Member;
-import com.MGR.entity.Ticket;
 import com.MGR.repository.EventBoardRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,7 +18,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
