@@ -65,9 +65,6 @@
             }
         });
 
-        var token = $("meta[name='_csrf']").attr('content');
-        var header = $("meta[name='_csrf_header']").attr('content');
-
         function verifyPassword() {
             var password = $('#verifyPassword').val();
 
@@ -230,7 +227,6 @@
         <button th:formaction="@{'/member/editPassword/' + ${memberInfo.id}}"
                 class="btn btn-primary" type="submit" id="member-info-password">비밀번호 변경</button>
         <button class="btn btn-secondary empty-password-btn" type="button">비밀번호 변경</button>
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
     </form>
 </div>
 </html>

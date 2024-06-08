@@ -6,6 +6,7 @@ import com.MGR.exception.DataNotFoundException;
 import com.MGR.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -88,4 +89,6 @@ public class MemberService{
          String todayStr = LocalDate.now().format(formatter);
         return memberRepository.findByBirth(todayStr);
     }
+
+
 }

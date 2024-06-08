@@ -1,5 +1,6 @@
 package com.MGR.service;
 
+import com.MGR.oauth2.*;
 import com.MGR.security.PrincipalDetails;
 import com.MGR.entity.Member;
 import com.MGR.repository.MemberRepository;
@@ -7,9 +8,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
 import java.util.Optional;
 
 // 시큐리티 설정에서 loginProcessingUrl("/login");
@@ -21,24 +27,14 @@ public class PrincipalDetailsService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
 
-//    @Override
-//    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-//
-//        Optional<Member> member = memberRepository.findByEmail(email);
-//        if (member.isPresent()) {
-//            System.out.println("member = " + member.get());
-//            return new PrincipalDetails(member.get());
-//        }
-//        return null;
-//    }
-
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-
+        System.out.println("loadUserByUsername 시작, email = " + email);
         Optional<Member> memberOptional = memberRepository.findByEmail(email);
         Member member = memberOptional.orElseThrow(() -> new UsernameNotFoundException(email));
 
 //        return new CustomUserDetails(member);
         return new PrincipalDetails(member);
     }
+
 }

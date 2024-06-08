@@ -2,8 +2,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
 <head>
-    <meta name="_csrf" th:content="${_csrf.token}"/>
-    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
 </head>
 <th:block layout:fragment="script">
     <script th:inline="javascript">
@@ -87,8 +86,6 @@ function changeChildCount(obj){
 
 
          function updateReservationTicketCount(reservationTicketId, adultCount, childCount) {
-             var token = $("meta[name='_csrf']").attr("content");
-             var header = $("meta[name='_csrf_header']").attr("content");
 
              var url = "/member/reservationTicket/" + reservationTicketId;
              var paramData = {
@@ -135,8 +132,6 @@ function changeChildCount(obj){
         }
 
         function updateReservationTicketCount(reservationTicketId, adultCount, childCount) {
-            var token = $("meta[name='_csrf']").attr("content");
-            var header = $("meta[name='_csrf_header']").attr("content");
 
             var url = "/member/reservationTicket/" + reservationTicketId;
             var paramData = {
@@ -174,8 +169,6 @@ function changeChildCount(obj){
         }
 
         function cancelReservation(reservationTicketId) {
-            var token = $("meta[name='_csrf']").attr("content");
-            var header = $("meta[name='_csrf_header']").attr("content");
 
             var url = "/member/reservationTicket/" + reservationTicketId + "/cancel";
             var paramData = {
@@ -211,9 +204,6 @@ function changeChildCount(obj){
         }
 
         function orders() {
-
-            var token = $("meta[name='_csrf']").attr("content");
-            var header = $("meta[name='_csrf_header']").attr("content");
 
             var url = "/member/reservation/orders";
 
