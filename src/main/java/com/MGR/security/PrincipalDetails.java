@@ -38,6 +38,11 @@ public class PrincipalDetails implements OAuth2User , UserDetails {
     }
 
     @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    @Override
     public String getPassword() {
         return member.getPassword();
     }

@@ -30,7 +30,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     //로그인을 시도할 때 실행
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        ObjectMapper objectMapper = new ObjectMapper();
+        System.out.println("attemptAuthentication 시작");
         Member member = new Member();
         try {
             // URL 인코딩된 폼 데이터 읽기
@@ -43,7 +43,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
             System.out.println("member 로그인 정보 = " + member);
 
-//            member = objectMapper.readValue(request.getInputStream(), Member.class); //request 로 들어온 JSON 형식을 Member 로 가져옴
         } catch (Exception e) {
             System.out.println("json 읽어오는 중 에러 = " + e.getMessage());
         }
@@ -76,7 +75,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         PrincipalDetails principal = (PrincipalDetails) authResult.getPrincipal();
         Member member = principal.getMember();
-        String jwt = jwtProvider.createToken(member.getEmail(), member.getId());
+        String jwt = jwtProvider.createToken(member.getEmail(), member.getId(), false);
         response.setHeader("Authorization", "Bearer " + jwt);
 
         // JWT를 쿠키에 설정
@@ -90,4 +89,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         response.sendRedirect("/");
     }
+
+
 }

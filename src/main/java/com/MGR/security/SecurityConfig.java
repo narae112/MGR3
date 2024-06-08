@@ -3,6 +3,8 @@ package com.MGR.security;
 import com.MGR.entity.Member;
 import com.MGR.oauth2.OAuth2SuccessHandler;
 import com.MGR.repository.MemberRepository;
+//import com.MGR.service.OAuth2MemberService;
+import com.MGR.service.MemberService;
 import com.MGR.service.OAuth2MemberService;
 import com.MGR.service.PrincipalDetailsService;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configurers.userdetails.DaoAuthenticationConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -31,6 +34,7 @@ public class SecurityConfig {
     private final OAuth2MemberService oAuth2MemberService;
     private final JwtProvider jwtProvider;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final MemberService memberService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, AuthenticationManager authenticationManager) throws Exception {
@@ -59,7 +63,6 @@ public class SecurityConfig {
                         .loginProcessingUrl("/login") // 로그인 요청 받는 url
                         .defaultSuccessUrl("/") // 로그인 성공 후 이동할 url
                         .failureUrl("/login/error")
-                        .successHandler(oAuth2SuccessHandler)
                 )
 
                 .logout((logout) -> logout
@@ -68,29 +71,26 @@ public class SecurityConfig {
                         .invalidateHttpSession(true) // 세션 삭제
                         .deleteCookies("JSESSIONID", "at")) // 쿠키도 삭제
 
+
                 .oauth2Login((oauth2login) -> oauth2login//oauth2 관련 설정
                         .loginPage("/loginForm") //로그인이 필요한데 로그인을 하지 않았다면 이동할 uri 설정
+                        .successHandler(oAuth2SuccessHandler)
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(oAuth2MemberService))
-                        .successHandler(oAuth2SuccessHandler)
                 )
+
                 .addFilterBefore(new JwtAuthenticationFilter(authenticationManager, jwtProvider),
                         UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JwtAuthorizationFilter(authenticationManager, jwtProvider), BasicAuthenticationFilter.class);
-
-//        httpSecurity //JWT(토큰 기반)를 이용하기 때문에 session 필요 없음
-//                .sessionManagement((session) -> session
-//                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-//        httpSecurity.userDetailsService(principalDetailsService);
+                .addFilterBefore(new JwtAuthorizationFilter(authenticationManager, jwtProvider),
+                        JwtAuthenticationFilter.class);
 
         return httpSecurity.build();
     }
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder authBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-        authBuilder.userDetailsService(principalDetailsService);
+            AuthenticationManagerBuilder authBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+            authBuilder.userDetailsService(principalDetailsService);
         return authBuilder.build();
     }
 

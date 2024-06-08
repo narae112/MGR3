@@ -12,7 +12,7 @@ public class NaverMemberInfo implements OAuth2MemberInfo{
 
     @Override
     public String getProviderId() {
-        return (String) attributes.get("id");
+        return (String) attributes.get("email");
     }
 
     @Override
