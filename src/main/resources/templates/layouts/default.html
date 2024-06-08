@@ -153,9 +153,6 @@ $(document).ready(function() {
         $.ajax({
             url: `/api/notifications/${id}`,
             type: 'DELETE',
-            beforeSend: function(xhr) {
-                xhr.setRequestHeader(header, token);
-            },
             success: function() {
                 button.closest('.card').remove();
             },
