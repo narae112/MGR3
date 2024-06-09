@@ -89,18 +89,15 @@ function changeChildCount(obj){
 
              var url = "/member/reservationTicket/" + reservationTicketId;
              var paramData = {
-                 reservationTicketId: reservationTicketId,
                  adultCount: adultCount,
                  childCount: childCount
              };
-
-             var param = JSON.stringify(paramData);
 
              $.ajax({
                  url: url,
                  type: "PATCH",
                  contentType: "application/json",
-                 data: param,
+                 data: JSON.stringify(paramData),
                  dataType: "json",
                  cache: false,
                  success: function(result, status) {

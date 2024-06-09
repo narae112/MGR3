@@ -123,13 +123,15 @@ public class ReservationService {
             inventory.addQuantity(result); // 재고에 더해준다
         }
 
-        if (reservationTicket.getAdultCount() != adultCountInt && reservationTicket.getChildCount() == childCountInt) { // 수량의 변동이 어른티켓만 있으면
-            reservationTicket.updateAdultCount(adultCountInt);
-        } else if (reservationTicket.getAdultCount() == adultCountInt && reservationTicket.getChildCount() != childCountInt) { // 수량의 변동이 아동티켓만 있으면
-            reservationTicket.updateChildCount(childCountInt);
-        } else if (reservationTicket.getAdultCount() != adultCountInt && reservationTicket.getChildCount() != childCountInt) { // 수량의 변동이 양쪽 다 있으면
-            reservationTicket.updateAllCount(adultCountInt, childCountInt);
-        }
+//        if (reservationTicket.getAdultCount() != adultCountInt && reservationTicket.getChildCount() == childCountInt) { // 수량의 변동이 어른티켓만 있으면
+//            reservationTicket.updateAdultCount(adultCountInt);
+//        } else if (reservationTicket.getAdultCount() == adultCountInt && reservationTicket.getChildCount() != childCountInt) { // 수량의 변동이 아동티켓만 있으면
+//            reservationTicket.updateChildCount(childCountInt);
+//        } else if (reservationTicket.getAdultCount() != adultCountInt && reservationTicket.getChildCount() != childCountInt) { // 수량의 변동이 양쪽 다 있으면
+//            reservationTicket.updateAllCount(adultCountInt, childCountInt);
+//        }
+        reservationTicket.setAdultCount(adultCount);
+        reservationTicket.setChildCount(childCount);
 
         reservationTicketRepository.save(reservationTicket); // 데이터베이스에 수정된 내용 저장
     }
