@@ -1,6 +1,5 @@
 package com.MGR.controller;
 
-import com.MGR.entity.Notification;
 import com.MGR.security.PrincipalDetails;
 import com.MGR.service.NotificationService;
 import lombok.RequiredArgsConstructor;
@@ -12,9 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.net.URI;
-import java.util.Map;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @RequiredArgsConstructor
@@ -56,18 +52,7 @@ public class NotificationController {
 
         Long memberId = member.getId();
         int notificationCount = notificationService.countNotificationsForMember(memberId);
-        System.out.println("알림수량 = " + notificationCount);
 
         return new ResponseEntity<>(notificationCount, HttpStatus.OK);
     }
-
-//    @GetMapping("/api/notifications/subscribe")
-//    public SseEmitter subscribe(@AuthenticationPrincipal PrincipalDetails member) {
-//        return notificationService.subscribe(member.getId());
-//    }
-//
-//    @PostMapping("/api/notifications/send")
-//    public void sendNotification(@AuthenticationPrincipal PrincipalDetails member, @RequestBody String message) {
-//        notificationService.sendNotification(member.getId(), message);
-//    }
 }

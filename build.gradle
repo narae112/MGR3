@@ -2,7 +2,6 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.1.11'
 	id 'io.spring.dependency-management' version '1.1.4'
-
 }
 
 group = 'com'
@@ -27,13 +26,13 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
-	//Thymeleaf, Thymeleaf Layout
+	// Thymeleaf, Thymeleaf Layout
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.2.0'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 
 	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
@@ -45,31 +44,30 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
-	annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
-	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
-	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+	annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta'
+	annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
 
-	//google mail
+	// Google Mail
 	implementation 'org.springframework.boot:spring-boot-starter-mail:3.1.2'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
-	//img
+	// Image handling
 	implementation 'org.commonmark:commonmark:0.18.0'
 
-	//recaptcha
+	// reCAPTCHA
 	implementation 'net.tanesha.recaptcha4j:recaptcha4j:0.0.7'
 	implementation 'org.glassfish:javax.json:1.1'
 	implementation platform('org.springframework.boot:spring-boot-dependencies:3.1.11')
 	implementation 'com.fasterxml.jackson.core:jackson-databind'
 
-	//jwt
+	// JWT
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
 	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
-	//Oauth2
+	// OAuth2
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 
 	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
@@ -82,7 +80,6 @@ tasks.named('bootBuildImage') {
 tasks.named('test') {
 	useJUnitPlatform()
 }
-
 
 def querydslDir = "$buildDir/generated/querydsl"
 
