@@ -93,10 +93,6 @@ public class TicketController {
 
         try {
             ticketService.updateTicket(ticketFormDto, ticketImgFileList);
-        } catch (DuplicateTicketNameException e) {
-            System.out.println("Duplicate ticket name error: " + e.getMessage());
-            model.addAttribute("errorMessage", "중복된 티켓 이름이 존재합니다.");
-            return "ticket/ticketForm";
         } catch (EntityNotFoundException e) {
             System.out.println("Ticket not found error: " + e.getMessage());
             model.addAttribute("errorMessage", "티켓을 찾을 수 없습니다. ID: " + ticketFormDto.getId());

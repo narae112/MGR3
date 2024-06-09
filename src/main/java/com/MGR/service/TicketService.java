@@ -47,9 +47,9 @@ public class TicketService {
     
     public Long saveTicket(TicketFormDto ticketFormDto, List<MultipartFile> ticketImgFileList) throws Exception {
         boolean isDuplicate =isTicketNameDuplicated (ticketFormDto.getName());
-        if (isDuplicate) {
-            throw new DuplicateTicketNameException("중복된 티켓 정보가 존재합니다.");
-        }
+//        if (isDuplicate) {
+//            throw new DuplicateTicketNameException("중복된 티켓 정보가 존재합니다.");
+//        }
 
         // 티켓 저장
         Ticket ticket = ticketFormDto.createTicket();

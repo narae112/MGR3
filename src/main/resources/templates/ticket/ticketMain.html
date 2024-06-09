@@ -143,6 +143,7 @@
                         <div class="card-body text-center bg-light">
                             <h4 class="card-title" th:text="${ticket.name}"></h4>
                             <p class="card-text" th:text="${ticket.memo}"></p>
+                            <p class="card-text" th:text="${ticket.locationCategory.displayName}+'점'"></p>
                         </div>
                     </div>
                 </a>
