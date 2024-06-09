@@ -72,7 +72,7 @@
                 cache   : false,
                 success  : function(result, status){
                     alert("티켓이 예약되었습니다 \n결제 후 사용이 가능합니다");
-                    location.href='/';
+                    location.href='/member/reservations';
                 },
                 error : function(jqXHR, status, error){
 
@@ -129,9 +129,9 @@
                 flex-direction: column;
                 justify-content: center;
             }
-            .repImg {
+             .repImg {
                 height: 100%;
-                object-fit: cover;
+                object-fit: contain; /* 이미지가 공간에 꽉 차지 않고 원본 비율을 유지하며 모두 표시됩니다. */
             }
             .wd50 {
                 height: auto;
@@ -191,7 +191,7 @@
     <input type="hidden" id="startDate" th:value="${ticket.startDate}">
     <input type="hidden" id="endDate" th:value="${ticket.endDate}">
     <input type="hidden" id="visitDate" th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"> <!-- 선택된 날짜를 저장할 히든 필드 -->
-
+    <h3 class="mb-5 text-center">티켓 예매하기</h3>
     <div class="d-flex mt-4" style="height: 100%;">
         <div class="repImgDiv flex-shrink-0 me-3" style="width: 50%;"> <!-- 티켓이미지 -->
             <img th:src="${ticket.ticketImgDtoList[0].imgUrl}" class="rounded repImg" th:alt="${ticket.name}">

@@ -55,9 +55,6 @@ public class TicketController {
         }
         try {
             ticketService.saveTicket(ticketFormDto, ticketImgFileList);
-        } catch (DuplicateTicketNameException e) {
-            model.addAttribute("errorMessage", e.getMessage());
-            return "ticket/ticketForm";
         } catch (Exception e) {
             model.addAttribute("errorMessage", "티켓 등록 중 에러가 발생하였습니다.");
             return "redirect:/admin/ticket/new"; // 폼을 다시 보여주기 위해 리다이렉트
