@@ -15,9 +15,6 @@
 <th:block layout:fragment="script">
     <script th:inline="javascript">
 
-        var token = $("meta[name='_csrf']").attr('content');
-        var header = $("meta[name='_csrf_header']").attr('content');
-
         var attractionId = [[${attraction.id}]];
 
         function attractionDelete() {
@@ -37,11 +34,6 @@
                         if (result === "놀이기구가 삭제되었습니다") {
                             window.location.href = "/attraction/attractionList";
                         }
-                    },
-                    // Ajax 요청이 서버로 전송되기 전에 호출되는 함수
-                    beforeSend: function(xhr) {
-                        // 요청 헤더에 header와 token을 추가
-                        xhr.setRequestHeader(header, token);
                     },
                     error: function(xhr, status, error) {
                         var errorMessage = xhr.status + ': ' + xhr.statusText;

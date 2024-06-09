@@ -19,4 +19,6 @@ public class AttractionDto {
     @Max(value = 31, message = "운휴 일자는 31 이하여야 합니다")
     private int closureDay;
 
+
+
 }

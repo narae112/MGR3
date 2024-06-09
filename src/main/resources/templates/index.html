@@ -116,7 +116,7 @@
                         <div class="review-img" style="height: 400px; overflow: hidden;">
                             <a th:href="@{/review/board/detail/{id}(id=${review.id})}">
                                 <!-- 이미지 URL을 reviewImgDtoList의 첫 번째 이미지에서 가져옵니다. -->
-                                <img th:src="${review.imageUrl.length() > 0 ? review.imageUrl : '/img/unicorn.png'}" alt="Review Image" style="width: 100%; height: auto; object-fit: cover;">
+<!--                                <img th:src="${review.imageUrl.length() > 0 ? review.imageUrl : '/img/unicorn.png'}" alt="Review Image" style="width: 100%; height: auto; object-fit: cover;">-->
                             </a>
                         </div>
                         <!-- Review Content -->
@@ -156,9 +156,6 @@
         </div>
     </section>
     <!-- 섹션 나누는 이미지 끝 -->
-
-    <button class="btn btn-primary" type="button" onClick="location.href='member/admin/test'">로그인인증테스트</button>
-
     <div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -183,8 +180,7 @@
     </div>
 
     <script type="text/javascript" th:inline="javascript">
-    var token = $("meta[name='_csrf']").attr('content');
-    var header = $("meta[name='_csrf_header']").attr('content');
+
 
 $(document).ready(function() {
 <!--    // 슬라이드 초기화-->

@@ -117,7 +117,8 @@ public class TicketRepositoryCustomImpl implements TicketRepositoryCustom {
                                 ticket.memo,
                                 ticketImg.imgUrl,
                                 ticket.startDate,
-                                ticket.endDate
+                                ticket.endDate,
+                                ticket.locationCategory
 
                         )
                 )

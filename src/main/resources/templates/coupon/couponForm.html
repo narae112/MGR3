@@ -25,80 +25,81 @@
 <th:block layout:fragment="script">
     <script th:inline="javascript">
         $(document).ready(function() {
-
-           $('form').submit(function() {
-                    // 폼 내의 모든 input 요소를 readonly로 변경
-                    $(this).find('input, select, textarea').prop('readonly', true);
-                });
-
+            // 이미지 파일 선택 이벤트 핸들러 등록
             bindDomEvent();
 
-         var errorMessage = /*[[${errorMessage}]]*/ '';
-         if (errorMessage != null && errorMessage !== '') {
-             // errorMessage를 alert로 표시
-             alert(errorMessage);
-             // 모달 띄우기는 제거
-         }
+            // 오류 메시지 처리
+            var errorMessage = /*[[${errorMessage}]]*/ '';
+            if (errorMessage != null && errorMessage !== '') {
+                showAlert(errorMessage);
+            }
 
+            // 오늘 날짜 설정 및 종료일 최소값 설정
+            setTodayDate();
+        });
 
-     });
+        // 이미지 파일 선택 이벤트 핸들러
+        function bindDomEvent() {
+            $(".custom-file-input").on("change", function() {
+                var fileName = $(this).val().split("\\").pop();
+                if (fileName === '') {
+                    alert("파일을 선택해주세요."); // 파일을 선택하지 않았을 때 알림 창 표시
+                    return;
+                }
 
-          // 이미지 파일 선택 이벤트 핸들러
-       function bindDomEvent() {
-           $(".custom-file-input").on("change", function() {
-               var fileName = $(this).val().split("\\").pop();
-               if (fileName === '') {
-                   alert("파일을 선택해주세요."); // 파일을 선택하지 않았을 때 알림 창 표시
-                   return;
-               }
+                // 파일 확장자를 가져옵니다.
+                var fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
 
-               // 파일 확장자를 가져옵니다.
-               var fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+                // 이미지 파일 확장자인지 확인합니다.
+                if (fileExt != "jpg" && fileExt != "jpeg" && fileExt != "gif" && fileExt != "png" && fileExt != "bmp") {
+                    // 이미지 파일이 아니면 오류를 표시합니다.
+                    alert("이미지 파일만 등록이 가능합니다.");
+                    // 파일 선택 초기화
+                    $(this).val('');
+                    return;
+                }
 
-               // 이미지 파일 확장자인지 확인합니다.
-               if (fileExt != "jpg" && fileExt != "jpeg" && fileExt != "gif" && fileExt != "png" && fileExt != "bmp") {
-                   // 이미지 파일이 아니면 오류를 표시합니다.
-                   alert("이미지 파일만 등록이 가능합니다.");
-                   // 파일 선택 초기화
-                   $(this).val('');
-                   return;
-               }
+                $(this).siblings(".custom-file-label").html(fileName);
+            });
+        }
 
-               $(this).siblings(".custom-file-label").html(fileName);
-           });
+        // 오늘 날짜 설정 및 종료일 최소값 설정
+        function setTodayDate() {
+            var today = getTodayDate();
+            $('#startDate').val(today);
+            $('#startDate').attr("min", today);
+            $('#endDate').attr("min", today);
 
-        $(document).ready(function() {
-       // 오늘 날짜를 가져오는 함수
-       function getTodayDate() {
-           var today = new Date();
-           var dd = String(today.getDate()).padStart(2, '0');
-           var mm = String(today.getMonth() + 1).padStart(2, '0'); // 1월은 0부터 시작하므로 +1
-           var yyyy = today.getFullYear();
-           return yyyy + '-' + mm + '-' + dd;
-       }
+            $('#startDate').on('change', function() {
+                var startDate = $(this).val();
+                $('#endDate').attr("min", startDate);
+            });
+        }
 
-       // 시작일(input id="startDate")의 값을 오늘 날짜로 설정
-       $('#startDate').val(getTodayDate());
-       $('#startDate').attr("min",getTodayDate());
+        // 오늘 날짜를 가져오는 함수
+        function getTodayDate() {
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0'); // 1월은 0부터 시작하므로 +1
+            var yyyy = today.getFullYear();
+            return yyyy + '-' + mm + '-' + dd;
+        }
 
-       var startDate = $('#startDate').val();
-       $('#endDate').attr("min",startDate);
+        // 오류 메시지를 표시하는 함수
+        function showAlert(errorMessage) {
+            alert(errorMessage);
+        }
 
-       $('#startDate').on('change', function() {
-           var startDate = $(this).val();
-           $('#endDate').attr("min", startDate);
-       });
+        // 종료일 유효성 검사 함수
+        function checkEndDate() {
+            var startDate = document.getElementById("startDate").value;
+            var endDate = document.getElementById("endDate").value;
 
-    });
-     function checkEndDate() {
-           var startDate = document.getElementById("startDate").value;
-           var endDate = document.getElementById("endDate").value;
-
-           if (endDate < startDate) {
-               alert("종료 날짜는 시작 날짜 이후여야 합니다.");
-               document.getElementById("endDate").value = startDate;
-           }
-       }
+            if (endDate < startDate) {
+                alert("종료 날짜는 시작 날짜 이후여야 합니다.");
+                document.getElementById("endDate").value = startDate;
+            }
+        }
     </script>
 </th:block>
 <th:block layout:fragment="css">
@@ -116,7 +117,7 @@
     <div class="row justify-content-center">
         <div class="col-md-6">
             <form role="form" method="post" enctype="multipart/form-data" th:object="${couponFormDto}" class="needs-validation" novalidate>
-                <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+
                 <h3 class="mb-5 text-center">쿠폰 등록</h3>
                 <input type="hidden" th:field="*{id}"><!-- 쿠폰 id -->
                 <div class="form-group">
@@ -129,28 +130,28 @@
                     <!-- 할인 유형 -->
                     <div>
                         <!-- 할인 유형 선택 -->
-                        <div class="form-group col-mb-3">
-                            <label for="discountType" class="mb-1"> 할인 유형</label>
-                            <select id="discountType" name="discountType" th:field="*{discountType}" class="form-control" onchange="toggleDiscountFields()">
-                                <option value="PERCENT">할인율(%)</option>
-                                <option value="AMOUNT">할인액(원)</option>
-                            </select>
-                        </div>
+<!--                        <div class="form-group col-mb-3">-->
+<!--                            <label for="discountType" class="mb-1"> 할인 유형</label>-->
+<!--                            <select id="discountType" name="discountType" th:field="*{discountType}" class="form-control" onchange="toggleDiscountFields()">-->
+<!--                                <option value="PERCENT">할인율(%)</option>-->
+<!--                                <option value="AMOUNT">할인액(원)</option>-->
+<!--                            </select>-->
+<!--                        </div>-->
 
                         <!-- 할인율 입력 필드 -->
                         <div class="form-group mb-3">
-                        <div id="discountRateField" class="mb-1" th:style="${couponFormDto.discountType == 'PERCENT' ? '' : 'display: none;'}">
+                        <div id="discountRateField" class="mb-1">
                             <label for="discountRate" class="mb-1">할인율(%):</label>
                             <input type="number" id="discountRate" name="discountRate" th:field="*{discountRate}" class="form-control" min="0" max="100">
                         </div>
                         </div>
                         <!-- 할인액 입력 필드 -->
-                        <div class="form-group mb-3">
-                        <div id="discountAmountField" class="mb-1" th:style="${couponFormDto.discountType == 'AMOUNT' ? '' : 'display: none;'}">
-                            <label for="discountAmount" class="mb-1">할인액(원):</label>
-                            <input type="number" id="discountAmount" name="discountAmount" th:field="*{discountAmount}" class="form-control" min="0">
-                        </div>
-                        </div>
+<!--                        <div class="form-group mb-3">-->
+<!--                        <div id="discountAmountField" class="mb-1" th:style="${couponFormDto.discountType == 'AMOUNT' ? '' : 'display: none;'}">-->
+<!--                            <label for="discountAmount" class="mb-1">할인액(원):</label>-->
+<!--                            <input type="number" id="discountAmount" name="discountAmount" th:field="*{discountAmount}" class="form-control" min="0">-->
+<!--                        </div>-->
+<!--                        </div>-->
                         <!-- 대상 -->
 <!--                        <div class="form-group mb-3">-->
 <!--                            <label for="couponType" class="mb-1">적용 대상:</label>-->
@@ -215,7 +216,6 @@
                 <!--                &lt;!&ndash;                삭제 버튼&ndash;&gt;-->
                 <!--                <a th:href="@{/admin/coupon/delete/{couponId}(couponId=${couponFormDto.id})}" class="btn btn-danger" onclick="return confirm('쿠폰을 삭제하시겠습니까?')">삭제</a>-->
 
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
             </div>
         </div>
     </form>

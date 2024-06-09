@@ -3,6 +3,7 @@ package com.MGR.controller;
 import com.MGR.dto.ReservationDtlDto;
 import com.MGR.dto.ReservationOrderDto;
 import com.MGR.dto.ReservationTicketDto;
+import com.MGR.entity.ReservationTicket;
 import com.MGR.security.PrincipalDetails;
 import com.MGR.service.ReservationService;
 import jakarta.validation.Valid;
@@ -63,25 +64,33 @@ public class ReservationController {
 
         model.addAttribute("reservationTickets", reservationDtlList);
         model.addAttribute("page", pageable.getPageNumber());
-        model.addAttribute("maxPage", 5);
+        model.addAttribute("maxPage", 4);
 
         return "reservation/reservationList";
     }
 
     // 티켓 수량 수정
     @PatchMapping("/reservationTicket/{reservationTicketId}")
-    public @ResponseBody ResponseEntity updateReserveTicket(@PathVariable("reservationTicketId") Long reservationTicketId, Integer adultCount, Integer childCount, @AuthenticationPrincipal PrincipalDetails member) {
-        //        if (adultCount == null || adultCount < 1 || childCount == null || childCount < 0) {
-//            // 조건을 만족하지 않으면 요청을 처리하지 않고 BadRequest를 반환
-//            return new ResponseEntity<String>("입력 값이 올바르지 않습니다", HttpStatus.BAD_REQUEST);
-//        }
+    public @ResponseBody ResponseEntity<?> updateReserveTicket(@PathVariable("reservationTicketId") Long reservationTicketId,
+                                                               @RequestBody ReservationTicket updateRequest,
+                                                            @AuthenticationPrincipal PrincipalDetails member) {
+        System.out.println("reservationTicketId = " + reservationTicketId);
+        System.out.println("adultCount = " + updateRequest.getAdultCount());
+        System.out.println("childCount = " + updateRequest.getChildCount());
+
+        Integer adultCount = updateRequest.getAdultCount();
+        Integer childCount = updateRequest.getChildCount();
+        if (adultCount == null || adultCount < 1 || childCount == null || childCount < 0) {
+            // 조건을 만족하지 않으면 요청을 처리하지 않고 BadRequest를 반환
+            return new ResponseEntity<String>("입력 값이 올바르지 않습니다", HttpStatus.BAD_REQUEST);
+        }
 
         if(!reservationService.validateReserveTicket(reservationTicketId, member.getUsername())) {
             return new ResponseEntity<String>("수정 권한이 없습니다", HttpStatus.FORBIDDEN);
         }
         reservationService.updateReservationTicketCount(reservationTicketId, adultCount, childCount);
 
-        return new ResponseEntity<Long>(reservationTicketId, HttpStatus.OK);
+        return new ResponseEntity<>(reservationTicketId, HttpStatus.OK);
     }
 
     // 예약 취소

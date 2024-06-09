@@ -5,10 +5,6 @@
     <meta charset="UTF-8">
     <title>MERRY GO RIDE.｡.:*☆</title>
 
-    <meta name="_csrf" th:content="${_csrf.token}"/>
-    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-<!--    <meta name="jwtToken" content="">-->
-
     <!-- 파비콘(브라우저탭 아이콘) -->
     <link rel="icon" th:href="@{/img/unicorn.png}">
 
@@ -70,8 +66,6 @@
 <div th:replace="~{layouts/footer::footer}"></div>
 
 <script type="text/javascript" th:inline="javascript">
-    var token = $("meta[name='_csrf']").attr('content');
-    var header = $("meta[name='_csrf_header']").attr('content');
 
 $(document).ready(function() {
 
@@ -109,8 +103,13 @@ $(document).ready(function() {
     });
 
     function updateNotificationCount(count) {
-        console.log(count+1);
-        $('#notificationCount').text(count+1);
+        var numericCount = parseInt(count, 10); // count를 숫자로 변환
+        if (isNaN(numericCount)) {
+            numericCount = 0; // count가 숫자로 변환되지 않으면 0으로 설정
+        }
+        numericCount += 1; // 숫자로 변환된 count에 1을 더함
+        console.log(numericCount);
+        $('#notificationCount').text(numericCount); // 연산 결과를 다시 설정
     }
 
     function displayMessage(message, id) {
@@ -159,9 +158,6 @@ $(document).ready(function() {
         $.ajax({
             url: `/api/notifications/${id}`,
             type: 'DELETE',
-            beforeSend: function(xhr) {
-                xhr.setRequestHeader(header, token);
-            },
             success: function() {
                 button.closest('.card').remove();
             },

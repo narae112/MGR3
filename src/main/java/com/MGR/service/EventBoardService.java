@@ -1,18 +1,14 @@
 package com.MGR.service;
 
 import com.MGR.dto.EventBoardFormDto;
-import com.MGR.dto.ImageDto;
 import com.MGR.entity.EventBoard;
 import com.MGR.entity.Image;
 import com.MGR.entity.Member;
-import com.MGR.entity.Ticket;
 import com.MGR.repository.EventBoardRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,7 +18,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -71,15 +66,6 @@ public class EventBoardService {
         notificationService.notifyBoard(board);
     }
 
-    public void saveBoard(EventBoard board) {
-        eventBoardRepository.save(board);
-        notificationService.notifyBoard(board);
-    }
-
-    public List<EventBoard> findAll() {
-        return  eventBoardRepository.findAll();
-    }
-
     public Page<EventBoard> getBoardList(int page) {
 
         List<Sort.Order> sorts = new ArrayList<>();
@@ -91,12 +77,13 @@ public class EventBoardService {
 
         // 오늘 날짜를 구함
         LocalDate today = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE;
 
         // `endDate`가 오늘 날짜를 지나지 않은 것을 오름차순으로 정렬하고, 오늘 날짜 이전인 것을 마지막에 위치하도록 정렬
         List<EventBoard> sortedBoards = boards.stream()
                 .sorted((b1, b2) -> {
-                    LocalDate endDate1 = LocalDate.parse(b1.getEndDate(), DateTimeFormatter.ISO_DATE);
-                    LocalDate endDate2 = LocalDate.parse(b2.getEndDate(), DateTimeFormatter.ISO_DATE);
+                    LocalDate endDate1 = LocalDate.parse(b1.getEndDate(), formatter);
+                    LocalDate endDate2 = LocalDate.parse(b2.getEndDate(), formatter);
                     boolean isEndDate1Past = endDate1.isBefore(today);
                     boolean isEndDate2Past = endDate2.isBefore(today);
 
@@ -107,12 +94,22 @@ public class EventBoardService {
                     } else if (!isEndDate1Past && !isEndDate2Past) {
                         return endDate1.compareTo(endDate2);
                     } else {
-                        return 0; // 둘 다 과거이면 순서를 변경하지 않음
+                        return endDate2.compareTo(endDate1);
+                        // 둘 다 과거이면 내림차순
                     }
                 })
                 .collect(Collectors.toList());
 
         return new PageImpl<>(sortedBoards, pageable, boards.getTotalElements());
+    }
+
+    public void saveBoard(EventBoard board) {
+        eventBoardRepository.save(board);
+        notificationService.notifyBoard(board);
+    }
+
+    public List<EventBoard> findAll() {
+        return  eventBoardRepository.findAll();
     }
 
     public Optional<EventBoard> findById(Long id) {

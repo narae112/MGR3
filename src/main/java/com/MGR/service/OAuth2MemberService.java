@@ -33,16 +33,21 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         System.out.println("registrationId = " + registrationId);
 
-        if (registrationId.equals("google")) {
-            memberInfo = new GoogleMemberInfo(oAuth2User.getAttributes());
-        } else if (registrationId.equals("naver")) {
-            memberInfo = new NaverMemberInfo((Map)oAuth2User.getAttributes().get("response"));
-        } else if (registrationId.equals("github")) {
-            memberInfo = new GithubMemberInfo(oAuth2User.getAttributes());
-        } else if (registrationId.equals("kakao")) {
-            memberInfo = new KakaoMemberInfo(oAuth2User.getAttributes());
-        } else {
-            System.out.println("로그인 실패");
+        switch (registrationId) {
+            case "google":
+                memberInfo = new GoogleMemberInfo(oAuth2User.getAttributes());
+                break;
+            case "naver":
+                memberInfo = new NaverMemberInfo((Map) oAuth2User.getAttributes().get("response"));
+                break;
+            case "github":
+                memberInfo = new GithubMemberInfo(oAuth2User.getAttributes());
+                break;
+            case "kakao":
+                memberInfo = new KakaoMemberInfo(oAuth2User.getAttributes());
+                break;
+            default:
+                throw new OAuth2AuthenticationException("OAuth2 로그인 실패 = " + registrationId);
         }
         String provider = memberInfo.getProvider();
         String providerId = memberInfo.getProviderId();
@@ -72,7 +77,7 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
             System.out.println("찾았다");
             member=findMember.get();
         }
-        return new PrincipalDetails(member, oAuth2User.getAttributes());
+        return new PrincipalDetails(member);
     }
 
 }

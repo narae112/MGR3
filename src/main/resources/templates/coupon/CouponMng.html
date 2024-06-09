@@ -41,7 +41,8 @@
                 <td>쿠폰아이디</td>
                 <td>쿠폰이름</td>
                 <td>등록일</td>
-<!--                <td>적용대상</td>-->
+        <td>쿠폰 이용 시작 날짜</td>
+        <td>쿠폰 이용 종료 날짜</td>
                 <td>등록자</td>
             </tr>
             </thead>
@@ -53,6 +54,8 @@
                 </td>
                 <td th:text="${coupon.regTime}"></td>
 <!--                <td th:text="${coupon.couponType?.displayName}"></td>-->
+                <td th:text="${coupon.startDate}"></td>
+                <td th:text="${coupon.endDate}"></td>
                 <td th:text="${coupon.createdBy}"></td>
             </tr>
             </tbody>

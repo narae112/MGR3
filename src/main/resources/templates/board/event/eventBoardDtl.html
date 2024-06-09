@@ -86,8 +86,7 @@
 <!-- js -->
 <th:block layout:fragment="script">
     <script th:inline="javascript">
-        var token = $("meta[name='_csrf']").attr('content');
-        var header = $("meta[name='_csrf_header']").attr('content');
+
         var eventBoardId = /*[[${eventBoard.id}]]*/ ''; // Thymeleaf 문법으로 변수 할당
 
         function eventDelete() {
@@ -106,11 +105,6 @@
                         if (result === "게시글이 삭제되었습니다") {
                             window.location.href = "/board/events";
                         }
-                    },
-                    // Ajax 요청이 서버로 전송되기 전에 호출되는 함수
-                    beforeSend: function(xhr) {
-                        // 요청 헤더에 header와 token을 추가
-                        xhr.setRequestHeader(header, token);
                     },
                     error: function(xhr, status, error) {
                         var errorMessage = xhr.status + ': ' + xhr.statusText;

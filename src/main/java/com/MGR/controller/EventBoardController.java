@@ -49,10 +49,11 @@ public class EventBoardController {
 
     @PostMapping("/eventBoard/create")
     public String eventBoardCreate(@Valid EventBoardFormDto BoardFormDto,
-                                   Errors errors, Model model,
+                                   BindingResult result, Model model,
                                    @AuthenticationPrincipal PrincipalDetails member,
                                    @RequestParam("eventImgFile") List<MultipartFile> imgFileList){
-        if(errors.hasErrors()) {
+        if(result.hasErrors()) {
+            model.addAttribute("BoardFormDto", BoardFormDto);
             return "board/event/eventBoardForm";
         }
         try {
