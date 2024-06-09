@@ -15,6 +15,7 @@ import com.MGR.service.MemberService;
 import com.MGR.service.OrderService;
 import com.MGR.service.ReviewBoardService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +33,9 @@ import com.MGR.config.VerifyRecaptcha;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -251,13 +254,15 @@ public class ReviewBoardController {
 
         return "redirect:/review/board/list";
     }
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/vote/{id}")
-    public String reviewVote(@AuthenticationPrincipal PrincipalDetails member,
-                             @PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+    @PostMapping("/vote/{id}")
+    @ResponseBody
+    public Map<String, Object> reviewVote(@AuthenticationPrincipal PrincipalDetails member,
+                                          @PathVariable("id") Long id) {
+        Map<String, Object> response = new HashMap<>();
+
         if (member == null) {
-            redirectAttributes.addFlashAttribute("error", "로그인이 필요한 서비스입니다.");
-            return "member/loginForm";
+            response.put("error", "로그인이 필요한 서비스입니다.");
+            return response;
         }
 
         try {
@@ -266,19 +271,19 @@ public class ReviewBoardController {
             if (reviewBoard.getVoter().contains(siteUser)) {
                 // 이미 투표한 경우에는 투표 취소
                 this.reviewBoardService.cancelVote(reviewBoard, siteUser);
-                redirectAttributes.addFlashAttribute("success", "추천이 취소되었습니다.");
+                response.put("message", "추천이 취소되었습니다.");
+                response.put("recommended", false);
             } else {
                 this.reviewBoardService.vote(reviewBoard, siteUser);
-                redirectAttributes.addFlashAttribute("success", "추천가 완료되었습니다.");
+                response.put("message", "추천이 완료되었습니다.");
+                response.put("recommended", true);
             }
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "오류가 발생했습니다. 다시 시도해주세요.");
+            response.put("error", "오류가 발생했습니다. 다시 시도해주세요.");
         }
 
-        return String.format("redirect:/review/board/detail/%s", id);
+        return response;
     }
-
-
 
 
 
