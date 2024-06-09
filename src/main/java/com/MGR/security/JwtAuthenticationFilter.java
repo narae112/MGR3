@@ -40,14 +40,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try {
             // URL 인코딩된 폼 데이터 읽기
             String email = request.getParameter("email");
-            System.out.println("email = " + email);
             String password = request.getParameter("password");
-            System.out.println("password = " + password);
+
+            System.out.println("URL 인코딩된 폼 데이터 email = " + email);
 
             member.setEmail(email);
             member.setPassword(password);
-
-            System.out.println("member 로그인 정보 = " + member);
 
         } catch (BadCredentialsException e) {
             System.out.println("로그인 정보 에러 = " + e.getMessage());
