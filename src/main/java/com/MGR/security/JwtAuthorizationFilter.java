@@ -23,7 +23,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     public JwtAuthorizationFilter(AuthenticationManager authenticationManager,
                                   JwtProvider jwtProvider) {
         super(authenticationManager);
-        System.out.println("JwtAuthorizationFilter 시작 = " + jwtProvider);
         this.jwtProvider = jwtProvider;
     }
 
@@ -31,10 +30,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         try {
             String token = getJwtFromRequest(request);
-            System.out.println("doFilterInternal token = " + token);
 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            System.out.println("request = " + request.getAuthType());
 
             if (token != null && jwtProvider.validateToken(token)) {
                 Authentication auth = jwtProvider.getAuthentication(token);
