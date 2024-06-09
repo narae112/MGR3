@@ -352,6 +352,22 @@ function changeChildCount(obj){
             </tbody>
         </table>
 
+        <!-- Paging -->
+        <div class="Page text-center">
+            <ul class="pagination page-reservation">
+                <li th:class="${page == 0} ? 'page-item disabled' : 'page-item'">
+                    <a th:href="@{/member/reservations/{page}(page=${page - 1})}" class="page-link">이전</a>
+                </li>
+                <li class="page-item active">
+                    <span class="page-link" th:text="${page + 1}">1</span>
+                </li>
+                <li th:class="${page == maxPage - 1} ? 'page-item disabled' : 'page-item'">
+                    <a th:href="@{/member/reservations/{page}(page=${page + 1})}" class="page-link">다음</a>
+                </li>
+            </ul>
+        </div>
+
+
         <h2 class="text-center">
             총 결제 금액 : <span id="orderTotalPrice" class="text-danger">0원</span><!-- 체크된 예약 티켓 항목 전체 금액 -->
         </h2>

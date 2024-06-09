@@ -66,3 +66,7 @@
   z-index: 50 !important;
 }
 
+.page-reservation {
+ text-align: center !important;
+ margin : 40px 0 !important;
+}
