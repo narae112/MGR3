@@ -73,6 +73,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 
 	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+//	sql
+	implementation 'mysql:mysql-connector-java:8.0.28'
 }
 
 tasks.named('bootBuildImage') {
