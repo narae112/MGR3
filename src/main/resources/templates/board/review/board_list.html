@@ -31,47 +31,34 @@
     <div class="col-6">
         <a th:href="@{/review/board/orderCheck}" class="btn btn-primary">리뷰 등록하기</a>
             </div>
-            <div class="row">
-                <div th:each="reviewBoard : ${paging}" class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body d-flex flex-column justify-content-between"> <!-- 카드 바디를 열기 전에 d-flex flex-column justify-content-between 클래스 추가 -->
-                            <h5 class="card-title">
-                                <a th:href="@{|/review/board/detail/${reviewBoard.id}|}" th:text="${reviewBoard.subject}"></a>
-                            </h5>
-                                <h6 class="card-subtitle mb-2 text-muted" th:text="${reviewBoard.author.nickname}"></h6>
-                                <!-- 이미지 표시 -->
-<!--                            <div class="mb-3" style="height: 300px; overflow: hidden;">-->
-<!--                                <img th:if="${#strings.length(reviewBoard.getFirstImageUrl()) > 0}"-->
-<!--                                     th:src="${reviewBoard.getFirstImageUrl()}"-->
-<!--                                     class="card-img-top img-fluid rounded"-->
-<!--                                     style="width: 100%; height: auto; object-fit: cover;">-->
-<!--                                <img th:if="${#strings.length(reviewBoard.getFirstImageUrl()) == 0}"-->
-<!--                                     th:src="@{/img/unicorn.png}"-->
-<!--                                     class="card-img-top img-fluid rounded"-->
-<!--                                     style="width: 100%; height: auto; object-fit: cover;">-->
-<!--                             이 코드 저번까진 됐는데 갑자기 안됨 ㅜㅜ 뭐가 문제지........-->
-<!--                            </div>-->
-                            <div class="mb-3" style="height: 300px; overflow: hidden;">
-                                <img th:if="${reviewBoard.getFirstImageUrl() != null and #strings.length(reviewBoard.getFirstImageUrl()) > 0}"
-                                     th:src="${reviewBoard.getFirstImageUrl()}"
-                                     class="card-img-top img-fluid rounded"
-                                     style="width: 100%; height: auto; object-fit: cover;">
-                                <img th:if="${reviewBoard.getFirstImageUrl() == null or #strings.length(reviewBoard.getFirstImageUrl()) == 0}"
-                                     th:src="@{/img/unicorn.png}"
-                                     class="card-img-top img-fluid rounded"
-                                     style="width: 100%; height: auto; object-fit: cover;">
-                            </div>
+    <div class="row">
+        <div th:each="reviewBoard : ${paging}" class="col-md-4 mb-4">
+            <a th:href="@{|/review/board/detail/${reviewBoard.id}|}" class="card h-100 card-link">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <h5 class="card-title" th:text="${reviewBoard.subject}"></h5>
+                    <h6 class="card-subtitle mb-2 text-muted" th:text="${reviewBoard.author.nickname}"></h6>
 
-
-                            <!-- 기타 정보 표시 -->
-                                <p class="card-text">
-                                    조회수: <span th:text="${reviewBoard.count}"></span><br>
-                                    등록일: <span th:text="${#temporals.format(reviewBoard.createDate, 'yyyy-MM-dd HH:mm')}"></span>
-                                </p>
-                        </div>
+                    <!-- 이미지 표시 -->
+                    <div class="mb-3" style="height: 300px; overflow: hidden;">
+                        <img th:if="${reviewBoard.getFirstImageUrl() != null and #strings.length(reviewBoard.getFirstImageUrl()) > 0}"
+                             th:src="${reviewBoard.getFirstImageUrl()}"
+                             class="card-img-top img-fluid rounded"
+                             style="width: 100%; height: auto; object-fit: cover;">
+                        <img th:if="${reviewBoard.getFirstImageUrl() == null or #strings.length(reviewBoard.getFirstImageUrl()) == 0}"
+                             th:src="@{/img/unicorn.png}"
+                             class="card-img-top img-fluid rounded"
+                             style="width: 100%; height: auto; object-fit: cover;">
                     </div>
+
+                    <!-- 기타 정보 표시 -->
+                    <p class="card-text" style="color: black;" >
+                        조회수: <span th:text="${reviewBoard.count}"></span><br>
+                        등록일: <span th:text="${#temporals.format(reviewBoard.createDate, 'yyyy-MM-dd HH:mm')}"></span>
+                    </p>
                 </div>
-            </div>
+            </a>
+        </div>
+    </div>
 
     <!-- 페이징처리 시작 -->
     <div th:if="${!paging.empty}" class="pagination-container justify-content-center">

@@ -167,7 +167,7 @@ public class ReviewBoardService {
 //        return reviewBoardRepository.findAllByKeyword(keyword, pageable);
 //    }
 public Page<ReviewBoard> getList(int page, String keyword, String sort) {
-    Pageable pageable = PageRequest.of(page, 10);
+    Pageable pageable = PageRequest.of(page, 6);
 
     if (keyword != null && !keyword.isEmpty()) {
         switch (sort) {
