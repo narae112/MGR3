@@ -24,9 +24,9 @@ public class OrderTicket {
     @JoinColumn(name = "reservation_ticket_id")
     private ReservationTicket reservationTicket;
 
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="order_id")
-    private Order order;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "orders_id")
+    private Orders orders;
 
     @Column
     private int adultPrice; // 성인 티켓 가격

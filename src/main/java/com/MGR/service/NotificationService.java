@@ -181,7 +181,7 @@ public class NotificationService {
     // 결제 완료 알림
     @Transactional
     public void notifyOrder(Long id) {
-        Optional<Order> order = orderRepository.findById(id);
+        Optional<Orders> order = orderRepository.findById(id);
         Optional<Member> member = memberService.findById(order.get().getMember().getId());
         SseEmitter sseEmitter = sseEmitters.get(member.get().getId());
         String orderNum = order.get().getOrderNum();

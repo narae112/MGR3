@@ -17,9 +17,8 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> ,
         QuerydslPredicateExecutor<Ticket>, TicketRepositoryCustom{
     List<Ticket> findByEndDateBefore(LocalDate currentDate);
 
-    @Query(value="select * from ticket i where i.memo like " +
-        "%:memo% order by i.price desc", nativeQuery = true)
-    List<Ticket> findByMemoByNative(@Param("memo") String memo);
+//    @Query(value = "SELECT * FROM table_name WHERE column_name LIKE %?1% ORDER BY price DESC", nativeQuery = true)
+//    List<Ticket> findByMemoContainingOrderByPriceDesc(String memo);
     boolean existsByName(String name);
     boolean existsByNameAndIdNot(String name, Long id);
 }

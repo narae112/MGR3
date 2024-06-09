@@ -1,13 +1,8 @@
 package com.MGR.controller;
 
-import com.MGR.entity.Member;
-import com.MGR.entity.Order;
-import com.MGR.entity.OrderTicket;
-import com.MGR.entity.ReservationTicket;
 import com.MGR.repository.OrderRepository;
 import com.MGR.repository.OrderTicketRepository;
 import com.MGR.repository.ReservationTicketRepository;
-import com.MGR.security.PrincipalDetails;
 import com.MGR.service.NotificationService;
 import com.MGR.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,7 +12,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +22,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor

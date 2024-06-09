@@ -6,16 +6,14 @@ import com.MGR.dto.OrderCheckForm;
 import com.MGR.dto.ReviewBoardForm;
 import com.MGR.dto.ReviewCommentForm;
 import com.MGR.entity.Member;
-import com.MGR.entity.Order;
+import com.MGR.entity.Orders;
 import com.MGR.entity.ReviewBoard;
-import com.MGR.repository.ReviewBoardRepository;
 import com.MGR.security.PrincipalDetails;
 import com.MGR.service.FileService;
 import com.MGR.service.MemberService;
 import com.MGR.service.OrderService;
 import com.MGR.service.ReviewBoardService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -91,13 +89,13 @@ public class ReviewBoardController {
     public String orderCheck(@RequestParam("orderNum") String orderNum, RedirectAttributes redirectAttributes, Model model,
                              @AuthenticationPrincipal PrincipalDetails member) {
         // 주문번호를 기준으로 주문을 조회합니다.
-        Order order = orderService.findOrderByOrderNum(orderNum);
+        Orders orders = orderService.findOrderByOrderNum(orderNum);
         if (member == null) {
             model.addAttribute("error", "로그인이 필요한 서비스입니다.");
             return "member/loginForm";
         }
         // 주문번호에 해당하는 주문이 없는 경우
-        if (order == null) {
+        if (orders == null) {
             model.addAttribute("error", "주문을 찾을 수 없습니다.");
             model.addAttribute("orderCheckForm", new OrderCheckForm()); // orderCheckForm 객체를 모델에 추가
             return "board/review/orderCheck_form"; // 에러 페이지로 이동하거나 적절한 처리를 합니다.

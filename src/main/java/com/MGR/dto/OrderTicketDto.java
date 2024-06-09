@@ -1,8 +1,6 @@
 package com.MGR.dto;
 
 import com.MGR.constant.LocationCategory;
-import com.MGR.constant.TicketCategory;
-import com.MGR.entity.Order;
 import com.MGR.entity.OrderTicket;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,7 +25,7 @@ public class OrderTicketDto {
 
     // 생성 메서드
     public OrderTicketDto(OrderTicket orderTicket) {
-        this.orderId = orderTicket.getOrder().getId();
+        this.orderId = orderTicket.getOrders().getId();
         this.locationCategory = orderTicket.getTicket().getLocationCategory();
         this.name = orderTicket.getTicket().getName();
         this.visitDate = orderTicket.getVisitDate();

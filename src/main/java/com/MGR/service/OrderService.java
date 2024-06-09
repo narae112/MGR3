@@ -4,7 +4,6 @@ import com.MGR.constant.ReservationStatus;
 import com.MGR.dto.OrderDto;
 import com.MGR.entity.*;
 import com.MGR.repository.*;
-import com.MGR.security.PrincipalDetails;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -47,22 +46,22 @@ public class OrderService {
             orderTicketList.add(orderTicket);
             // 생성된 orderTicket 을 주문 목록에 더함
         }
-        Order order = Order.createOder(member.orElseThrow(), orderTicketList);
+        Orders orders = Orders.createOder(member.orElseThrow(), orderTicketList);
         // 모든 주문 항목이 처리되면 회원과 주문 아이템 목록을 사용하여 Order 객체 생성
-        orderRepository.save(order);
+        orderRepository.save(orders);
         // 생성된 주문 저장
-        return order.getId();
+        return orders.getId();
         // 저장된 주문 아이디 반환
     }
 
     public void changeStatus(Long id) {
-        Order order = orderRepository.findById(id).get();
-        order.setReservationStatus(ReservationStatus.PAYED);
-        orderRepository.save(order);
+        Orders orders = orderRepository.findById(id).get();
+        orders.setReservationStatus(ReservationStatus.PAYED);
+        orderRepository.save(orders);
     }
 
     public void changeReservationTicketStatus(Long id) {
-        Optional<Order> order = orderRepository.findById(id);
+        Optional<Orders> order = orderRepository.findById(id);
         List<OrderTicket> orderTickets = order.get().getOrderTickets();
         for(OrderTicket orderTicket : orderTickets) {
             ReservationTicket reservationTicket = reservationTicketRepository.findById(orderTicket.getReservationTicket().getId()).orElseThrow(EntityNotFoundException::new);
@@ -76,7 +75,7 @@ public class OrderService {
 
     }
     // 주문번호로 주문을 조회하는 메서드
-    public Order findOrderByOrderNum(String orderNum) {
+    public Orders findOrderByOrderNum(String orderNum) {
         return orderRepository.findByOrderNum(orderNum);
     }
 }

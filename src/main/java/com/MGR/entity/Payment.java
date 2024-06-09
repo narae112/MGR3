@@ -18,8 +18,8 @@ public class Payment {
     @Column(columnDefinition = "DATETIME")
     private LocalDateTime paymentDate;
 
-    @Enumerated(EnumType.STRING)
-    private PaymentType paymentType;
+//    @Enumerated(EnumType.STRING)
+//    private PaymentType paymentType;
 
     @Column
     private int paymentAmount;
