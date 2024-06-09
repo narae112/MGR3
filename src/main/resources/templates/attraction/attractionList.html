@@ -42,7 +42,7 @@
                        th:href="@{|/attraction/${attractionList.id}|}"
                     >이름</a>
                 </td>
-                <td th:text="${#strings.length(attractionList.information) > 20 ? #strings.substring(attractionList.information, 0, 20) + '...' : attractionList.information}">상세설명</td>
+                <td th:text="${#strings.length(attractionList.information) > 50 ? #strings.substring(attractionList.information, 0, 50) + '...' : attractionList.information}">상세설명</td>
                 <td th:text="'매월 ' + ${attractionList.closureDay} + ' 일'">운휴일</td>
             </tr>
             </tbody>
@@ -63,10 +63,10 @@
             </li>
             <li class="page-item" th:each="i : ${#numbers.sequence(0, paging.totalPages - 1)}"
                 th:classappend="${paging.number == i} ? 'active'">
-                <a class="page-link" th:href="@{|/attractionList/${i}|}" th:text="${i + 1}">1</a>
+                <a class="page-link" th:href="@{|/attraction/attractionList/${i}|}" th:text="${i + 1}">1</a>
             </li>
             <li class="page-item" th:classappend="${paging.last} ? 'disabled'">
-                <a class="page-link" th:href="@{|/attractionList/${paging.number + 1}|}" aria-label="Next">
+                <a class="page-link" th:href="@{|/attraction/attractionList/${paging.number + 1}|}" aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>

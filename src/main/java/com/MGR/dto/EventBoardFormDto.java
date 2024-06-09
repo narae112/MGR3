@@ -29,8 +29,10 @@ public class EventBoardFormDto {
     @Size(max = 299, message = "내용을 300자 미만으로 입력해주세요")
     private String content;
 
+    @NotEmpty(message = "시작 날짜를 입력해주세요")
     private String startDate;
 
+    @NotEmpty(message = "종료 날짜를 입력해주세요")
     private String endDate;
 
     private ImageDto eventImgDtoList;
