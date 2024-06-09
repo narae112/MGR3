@@ -130,7 +130,7 @@ public class WidgetController {
         }
 
         // 결제 완료 알림
-        notificationService.notifyOrder(id);
+        notificationService.notifyOrder(id, couponId);
 
         return "/success";
     }
