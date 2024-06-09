@@ -14,14 +14,23 @@
 <!-- js -->
 <th:block layout:fragment="script">
     <script th:inline="javascript">
-
+        function validateForm() {
+            var imgFileInput = document.querySelector('input[name="imgFile"]');
+            var errorMessage = document.getElementById('img-error-message');
+            if (imgFileInput && !imgFileInput.files.length) {
+                alert("이미지 파일을 첨부해 주세요.");
+                return false;
+            }
+            errorMessage.style.display = 'none';
+            return true;
+        }
     </script>
 </th:block>
 
 <div layout:fragment="content">
 
     <form th:action="@{/attraction/create}" method="POST"
-          th:object="${attractionDto}" enctype="multipart/form-data">
+          th:object="${attractionDto}" enctype="multipart/form-data" onsubmit="return validateForm();">
         <input type="hidden" id="attractionId" name="id" class="form-control"
                th:field="*{id}">
 

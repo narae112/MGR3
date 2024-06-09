@@ -23,30 +23,53 @@
 <!-- js -->
 <th:block layout:fragment="script">
     <script th:inline="javascript">
+     $(document).ready(function() {
+        // 오늘 날짜를 가져오는 함수
+        function getTodayDate() {
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0'); // 1월은 0부터 시작하므로 +1
+            var yyyy = today.getFullYear();
+            return yyyy + '-' + mm + '-' + dd;
+        }
 
- $(document).ready(function() {
-    // 오늘 날짜를 가져오는 함수
-    function getTodayDate() {
-        var today = new Date();
-        var dd = String(today.getDate()).padStart(2, '0');
-        var mm = String(today.getMonth() + 1).padStart(2, '0'); // 1월은 0부터 시작하므로 +1
-        var yyyy = today.getFullYear();
-        return yyyy + '-' + mm + '-' + dd;
-    }
+        // 시작일(input id="startDate")의 값을 오늘 날짜로 설정
+        $('#startDate').val(getTodayDate());
+        $('#startDate').attr("min",getTodayDate());
 
-    // 시작일(input id="startDate")의 값을 오늘 날짜로 설정
-    $('#startDate').val(getTodayDate());
-    $('#startDate').attr("min",getTodayDate());
+        var startDate = $('#startDate').val();
+        $('#endDate').attr("min",startDate);
 
-    var startDate = $('#startDate').val();
-    $('#endDate').attr("min",startDate);
-
-    $('#startDate').on('change', function() {
-        var startDate = $(this).val();
-        $('#endDate').attr("min", startDate);
+        $('#startDate').on('change', function() {
+            var startDate = $(this).val();
+            $('#endDate').attr("min", startDate);
+        });
     });
 
-});
+    function validateForm() {
+        var title = document.getElementById('title').value;
+        var content = document.getElementById('content').value;
+        var startDate = document.getElementById('startDate').value;
+        var endDate = document.getElementById('endDate').value;
+
+        if (!title) {
+            alert('제목을 입력하세요');
+            return false;
+        }
+        if (!content) {
+            alert('내용을 입력하세요');
+            return false;
+        }
+        if (!startDate) {
+            alert('게시 시작 일자를 입력하세요');
+            return false;
+        }
+        if (!endDate) {
+            alert('게시 종료 일자를 입력하세요');
+            return false;
+        }
+        return true;
+    }
 
 
     </script>
@@ -57,7 +80,7 @@
     <div class="row justify-content-center">
         <div class="col-md-6">
             <form th:action="@{/board/eventBoard/create}" method="POST"
-                  th:object="${eventBoardFormDto}" enctype="multipart/form-data">
+                  th:object="${eventBoardFormDto}" enctype="multipart/form-data" onsubmit="return validateForm();">
                 <h3 class="mb-5 text-center">이벤트 등록</h3>
 
                 <div class="form-group mb-3">
@@ -116,13 +139,16 @@
                 </div>
                 <!--        이미지 등록 끝-->
 
-                <button th:if="${#strings.isEmpty(eventBoardFormDto.id)}"
-                        th:formaction="@{'/board/eventBoard/create'}"
-                        class="btn btn-primary" type="submit" id="eventBoard-create">등록</button>
+                <div>
 
-                <button th:unless="${#strings.isEmpty(eventBoardFormDto.id)}"
-                        th:formaction="@{'/board/eventBoard/update/' + ${eventBoardFormDto.id}}"
-                        class="btn btn-primary" type="submit" id="eventBoard-edit">수정완료</button>
+                    <button th:if="${#strings.isEmpty(eventBoardFormDto.id)}"
+                            th:formaction="@{'/board/eventBoard/create'}"
+                            class="btn btn-primary" type="submit" id="eventBoard-create">등록</button>
+
+                    <button th:unless="${#strings.isEmpty(eventBoardFormDto.id)}"
+                            th:formaction="@{'/board/eventBoard/update/' + ${eventBoardFormDto.id}}"
+                            class="btn btn-primary" type="submit" id="eventBoard-edit">수정완료</button>
+                </div>
             </form>
         </div>
     </div>
