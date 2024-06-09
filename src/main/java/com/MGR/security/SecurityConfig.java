@@ -5,6 +5,7 @@ import com.MGR.oauth2.OAuth2SuccessHandler;
 import com.MGR.repository.MemberRepository;
 import com.MGR.service.OAuth2MemberService;
 import com.MGR.service.PrincipalDetailsService;
+import com.MGR.service.RedisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -30,6 +31,7 @@ public class SecurityConfig {
     private final JwtProvider jwtProvider;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+    private final RedisService redisService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, AuthenticationManager authenticationManager) throws Exception {
@@ -72,7 +74,8 @@ public class SecurityConfig {
                                 .userService(oAuth2MemberService))
                 )
 
-                .addFilterBefore(new JwtAuthenticationFilter(authenticationManager, jwtProvider, customAuthenticationFailureHandler),
+                .addFilterBefore(new JwtAuthenticationFilter(authenticationManager, jwtProvider,
+                                customAuthenticationFailureHandler, redisService),
                         UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtAuthorizationFilter(authenticationManager, jwtProvider),
                         JwtAuthenticationFilter.class);

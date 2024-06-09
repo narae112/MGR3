@@ -6,6 +6,7 @@ import com.MGR.service.PrincipalDetailsService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,8 +23,10 @@ import java.util.Date;
 public class JwtProvider {
     @Value("${jwt.secretKey}")
     private String secretKey;
-    @Value("${jwt.expiredTime}")
-    private Long expiredTime;
+    @Value("${jwt.accessTokenExpiredTime}")
+    private Long accessTokenExpiredTime;
+    @Value("${jwt.refreshTokenExpiredTime}")
+    private Long refreshTokenExpiredTime;
 
     private final PrincipalDetailsService principalDetailsService;
     private final MemberService memberService;
@@ -50,29 +53,42 @@ public class JwtProvider {
                 .parseClaimsJws(token)
                 .getBody();
         Long id = claims.get("id", Long.class);
-        System.out.println("getAuthentication id = " + id);
 
         String email = memberService.findById(id).get().getEmail();
-        System.out.println("getAuthentication email = " + email);
 
        UserDetails userDetails = principalDetailsService.loadUserByUsername(email);
 
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
-    public String createToken(String email, Long id, boolean isOauth2) {
+    public String createRefreshToken(String email, Long id) {
         Claims claims = Jwts.claims();
         claims.put("email", email);
         claims.put("id", id);
-        claims.setSubject(isOauth2 ? "oauth2_" + email : email); // 주체 설정
+        System.out.println("createRefreshToken claims 발행 확인 = " + claims);
+
+        String token = Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiredTime))
+                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .compact();
+        return token;
+    }
+
+    public String createToken(String email, Long id) {
+        Claims claims = Jwts.claims();
+        claims.put("email", email);
+        claims.put("id", id);
         System.out.println("createToken claims 발행 확인 = " + claims);
 
         String token = Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expiredTime))
+                .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiredTime))
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
+
         return token;
     }
 }

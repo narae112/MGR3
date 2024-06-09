@@ -25,7 +25,7 @@ public class NotificationService {
     private final MemberService memberService;
     private final NotificationRepository notificationRepository;
     public final Map<Long, SseEmitter> sseEmitters = new ConcurrentHashMap<>();
-    // 1. 모든 Emitters를 저장하는 ConcurrentHashMap
+    // 1. 모든 Emitters 를 저장하는 ConcurrentHashMap
 
     // 메시지 알림
     public SseEmitter subscribe(Long memberId) {
