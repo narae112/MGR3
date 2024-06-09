@@ -63,7 +63,7 @@ public class ReservationController {
 
         model.addAttribute("reservationTickets", reservationDtlList);
         model.addAttribute("page", pageable.getPageNumber());
-        model.addAttribute("maxPage", 5);
+        model.addAttribute("maxPage", 4);
 
         return "reservation/reservationList";
     }
