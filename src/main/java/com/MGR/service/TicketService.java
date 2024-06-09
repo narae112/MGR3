@@ -6,7 +6,6 @@ import com.MGR.dto.MainTicketDto;
 import com.MGR.dto.TicketFormDto;
 import com.MGR.dto.TicketSearchDto;
 import com.MGR.entity.*;
-import com.MGR.exception.DuplicateTicketNameException;
 import com.MGR.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -46,11 +45,6 @@ public class TicketService {
     }
     
     public Long saveTicket(TicketFormDto ticketFormDto, List<MultipartFile> ticketImgFileList) throws Exception {
-        boolean isDuplicate =isTicketNameDuplicated (ticketFormDto.getName());
-        if (isDuplicate) {
-            throw new DuplicateTicketNameException("중복된 티켓 정보가 존재합니다.");
-        }
-
         // 티켓 저장
         Ticket ticket = ticketFormDto.createTicket();
         ticketRepository.save(ticket);
@@ -72,12 +66,12 @@ public class TicketService {
     }
 
 
-    public boolean isTicketNameDuplicated(String name) {
-        return ticketRepository.existsByName(name);
-    }
-    public boolean isExistedTicketNameDuplicated(String name, Long excludeId) {
-        return ticketRepository.existsByNameAndIdNot(name, excludeId);
-    }
+//    public boolean isTicketNameDuplicated(String name) {
+//        return ticketRepository.existsByName(name);
+//    }
+//    public boolean isExistedTicketNameDuplicated(String name, Long excludeId) {
+//        return ticketRepository.existsByNameAndIdNot(name, excludeId);
+//    }
     //티켓 데이터를 읽어오는 함수
     @Transactional(readOnly = true)
     public TicketFormDto getTicketDtl(Long ticketId){

@@ -55,9 +55,6 @@ public class TicketController {
         }
         try {
             ticketService.saveTicket(ticketFormDto, ticketImgFileList);
-        } catch (DuplicateTicketNameException e) {
-            model.addAttribute("errorMessage", e.getMessage());
-            return "ticket/ticketForm";
         } catch (Exception e) {
             model.addAttribute("errorMessage", "티켓 등록 중 에러가 발생하였습니다.");
             return "redirect:/admin/ticket/new"; // 폼을 다시 보여주기 위해 리다이렉트
@@ -93,10 +90,6 @@ public class TicketController {
 
         try {
             ticketService.updateTicket(ticketFormDto, ticketImgFileList);
-        } catch (DuplicateTicketNameException e) {
-            System.out.println("Duplicate ticket name error: " + e.getMessage());
-            model.addAttribute("errorMessage", "중복된 티켓 이름이 존재합니다.");
-            return "ticket/ticketForm";
         } catch (EntityNotFoundException e) {
             System.out.println("Ticket not found error: " + e.getMessage());
             model.addAttribute("errorMessage", "티켓을 찾을 수 없습니다. ID: " + ticketFormDto.getId());

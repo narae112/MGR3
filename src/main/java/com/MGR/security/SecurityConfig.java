@@ -3,33 +3,22 @@ package com.MGR.security;
 import com.MGR.entity.Member;
 import com.MGR.oauth2.OAuth2SuccessHandler;
 import com.MGR.repository.MemberRepository;
-//import com.MGR.service.OAuth2MemberService;
-import com.MGR.service.MemberService;
 import com.MGR.service.OAuth2MemberService;
 import com.MGR.service.PrincipalDetailsService;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configurers.userdetails.DaoAuthenticationConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
-import java.io.IOException;
-
 
 @Configuration
 @EnableWebSecurity
@@ -41,7 +30,6 @@ public class SecurityConfig {
     private final JwtProvider jwtProvider;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
-    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, AuthenticationManager authenticationManager) throws Exception {
@@ -84,21 +72,10 @@ public class SecurityConfig {
                                 .userService(oAuth2MemberService))
                 )
 
-                .addFilterBefore(new JwtAuthenticationFilter(authenticationManager, jwtProvider),
+                .addFilterBefore(new JwtAuthenticationFilter(authenticationManager, jwtProvider, customAuthenticationFailureHandler),
                         UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtAuthorizationFilter(authenticationManager, jwtProvider),
-                        JwtAuthenticationFilter.class)
-
-                .exceptionHandling(exceptionHandling -> exceptionHandling
-                        .accessDeniedHandler(jwtAccessDeniedHandler)
-                        .authenticationEntryPoint((request, response, authException) -> {
-                            if (request.getRequestURI().startsWith("/login")) {
-                                response.sendRedirect("/login/error");
-                            } else {
-                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
-                            }
-                        })
-        );
+                        JwtAuthenticationFilter.class);
 
         return httpSecurity.build();
     }
@@ -108,15 +85,6 @@ public class SecurityConfig {
             AuthenticationManagerBuilder authBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
             authBuilder.userDetailsService(principalDetailsService);
         return authBuilder.build();
-    }
-
-    public class MyCustomDsl extends AbstractHttpConfigurer<MyCustomDsl, HttpSecurity> {
-        @Override
-        public void configure(HttpSecurity http) throws Exception {
-            final AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
-            http
-                    .addFilter(new JwtAuthenticationFilter(authenticationManager, jwtProvider));
-        }
     }
 
     @Bean

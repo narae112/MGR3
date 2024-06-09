@@ -6,14 +6,12 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import java.io.IOException;
@@ -45,6 +43,10 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             } else {
                 System.out.println("유효하지 않은 JWT 토큰");
             }
+        } catch (BadCredentialsException e){
+            // 인증 실패 시 login/error URL로 리다이렉트
+            response.sendRedirect("/login/error");
+            return;
         } catch (Exception e) {
             // 예외 발생 시 SecurityContext를 클리어하고 예외를 던져서 기본 예외 처리기가 작동하도록 함
             SecurityContextHolder.clearContext();

@@ -33,7 +33,7 @@ public class Ticket extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private LocationCategory locationCategory;
 
-    @Column(nullable = false, length = 50, unique = true)
+    @Column(length = 50)
     private String name;
 
     @Column(name="adultPrice", nullable = false)

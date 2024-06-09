@@ -39,16 +39,17 @@
                     <h6 class="card-subtitle mb-2 text-muted" th:text="${reviewBoard.author.nickname}"></h6>
 
                     <!-- 이미지 표시 -->
-                    <div class="mb-3" style="height: 300px; overflow: hidden;">
+                    <div class="mb-3" style="height: 300px; overflow: hidden; display: flex; justify-content: center; align-items: center;">
                         <img th:if="${reviewBoard.getFirstImageUrl() != null and #strings.length(reviewBoard.getFirstImageUrl()) > 0}"
                              th:src="${reviewBoard.getFirstImageUrl()}"
                              class="card-img-top img-fluid rounded"
-                             style="width: 100%; height: auto; object-fit: cover;">
+                             style="max-width: 100%; max-height: 100%; object-fit: contain;">
                         <img th:if="${reviewBoard.getFirstImageUrl() == null or #strings.length(reviewBoard.getFirstImageUrl()) == 0}"
                              th:src="@{/img/unicorn.png}"
                              class="card-img-top img-fluid rounded"
-                             style="width: 100%; height: auto; object-fit: cover;">
+                             style="max-width: 100%; max-height: 100%; object-fit: contain;">
                     </div>
+
 
                     <!-- 기타 정보 표시 -->
                     <p class="card-text" style="color: black;" >

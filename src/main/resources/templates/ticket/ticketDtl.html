@@ -79,41 +79,27 @@
         }
 
         $(document).ready(function() {
-    // 오늘 날짜를 가져오는 함수
-    function getTodayDate() {
-        var today = new Date();
-        var dd = String(today.getDate()).padStart(2, '0');
-        var mm = String(today.getMonth() + 1).padStart(2, '0'); // 1월은 0부터 시작하므로 +1
-        var yyyy = today.getFullYear();
-        return yyyy + '-' + mm + '-' + dd;
-    }
+            // 오늘 날짜를 가져오는 함수
+            function getTodayDate() {
+                var today = new Date();
+                var dd = String(today.getDate()).padStart(2, '0');
+                var mm = String(today.getMonth() + 1).padStart(2, '0'); // 1월은 0부터 시작하므로 +1
+                var yyyy = today.getFullYear();
+                return yyyy + '-' + mm + '-' + dd;
+            }
 
-    // 시작일(input id="startDate")의 값을 오늘 날짜로 설정
-    $('#startDate').val(getTodayDate());
-    $('#startDate').attr("min", getTodayDate());
+            // 시작일(input id="startDate")의 값을 오늘 날짜로 설정
+            $('#startDate').val(getTodayDate());
+            $('#startDate').attr("min", getTodayDate());
 
-    // 종료일(input id="endDate")의 값을 티켓의 종료일로 설정
-    $('#endDate').val(/* 종료일 값 */);
-    $('#endDate').attr("min", getTodayDate());
+            var startDate = $('#startDate').val();
+            $('#endDate').attr("min", startDate);
 
-    // datepicker 설정
-    $("#datepicker").datepicker({
-        dateFormat: "yy-mm-dd",
-        minDate: new Date($('#startDate').val()),
-        maxDate: new Date($('#endDate').val()),
-        onSelect: function(dateText) {
-            $("#visitDate").val(dateText);
-        }
-    });
-
-    $('#startDate').on('change', function() {
-        var startDate = $(this).val();
-        $('#endDate').attr("min", startDate);
-    });
-
-    // 오늘 이전 날짜를 선택하지 못하도록 설정
-    $('#datepicker').datepicker("option", "minDate", 0);
-});
+            $('#startDate').on('change', function() {
+                var startDate = $(this).val();
+                $('#endDate').attr("min", startDate);
+            });
+        });
     </script>
 </th:block>
 <!-- css -->
@@ -135,9 +121,9 @@
                 flex-direction: column;
                 justify-content: center;
             }
-            .repImg {
+             .repImg {
                 height: 100%;
-                object-fit: cover;
+                object-fit: contain; /* 이미지가 공간에 꽉 차지 않고 원본 비율을 유지하며 모두 표시됩니다. */
             }
             .wd50 {
                 height: auto;
@@ -196,8 +182,8 @@
     <input type="hidden" id="ticketId" th:value="${ticket.id}"> <!-- ticketId 히든으로 넣어놓기 -->
     <input type="hidden" id="startDate" th:value="${ticket.startDate}">
     <input type="hidden" id="endDate" th:value="${ticket.endDate}">
-    <input type="hidden" id="visitDate"> <!-- 선택된 날짜를 저장할 히든 필드 -->
-
+    <input type="hidden" id="visitDate" th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"> <!-- 선택된 날짜를 저장할 히든 필드 -->
+    <h3 class="mb-5 text-center">티켓 예매하기</h3>
     <div class="d-flex mt-4" style="height: 100%;">
         <div class="repImgDiv flex-shrink-0 me-3" style="width: 50%;"> <!-- 티켓이미지 -->
             <img th:src="${ticket.ticketImgDtoList[0].imgUrl}" class="rounded repImg" th:alt="${ticket.name}">

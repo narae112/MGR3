@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
+    private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
 
     //로그인을 시도할 때 실행
     @Override
@@ -47,6 +49,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
             System.out.println("member 로그인 정보 = " + member);
 
+        } catch (BadCredentialsException e) {
+            System.out.println("로그인 정보 에러 = " + e.getMessage());
         } catch (Exception e) {
             System.out.println("json 읽어오는 중 에러 = " + e.getMessage());
         }
@@ -64,7 +68,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             return authenticate;
         } catch (AuthenticationException e) {
             log.error("인증 실패: {}", e.getMessage(), e);
-            throw e;
+            try {
+                // 실패 처리
+                customAuthenticationFailureHandler.onAuthenticationFailure(request, response, e);
+            } catch (IOException | ServletException ex) {
+                log.error("Authentication failure handler 처리 중 에러: {}", ex.getMessage(), ex);
+            }
+            return null;
         }
 
     }
