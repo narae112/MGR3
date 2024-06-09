@@ -15,42 +15,44 @@
 <!-- 모달 창 -->
 <div id="payment-modal" class="modal">
   <div class="modal-content">
+
     <!-- 모달 내용 -->
-    <p>티켓 결제 하기</p>
-    <!-- 주문서 내용 -->
-    <div th:each="orderTicket : ${orderTickets}">
-      <span th:text="'방문예정일 : ' + ${orderTicket.visitDate}"></span>
-      <span th:text="'[' + ${orderTicket.locationCategory.displayName} + '점] ' + ${orderTicket.name}"></span>
-      <!-- [지점] 티켓 이름 -->
-      <span th:text="'성인 티켓 : ' + ${orderTicket.adultCount} + '장 [' + ${(orderTicket.adultPrice) * (orderTicket.adultCount)} + '원], ' + '아동 티켓 : ' + ${orderTicket.childCount} + '장 [' + ${(orderTicket.childPrice) * (orderTicket.childCount)} + '원]'"></span>
-      <hr/>
-    </div>
-    <!-- 주문서 정보 -->
-    <div>
-      총 주문건수: <span th:text="${#lists.size(orderTickets)}"></span> 건
-    </div>
-    <div>
-      총 결제금액: <span th:text="${totalPrice}"></span> 원
-    </div>
     <!-- 결제 UI -->
     <div id="payment-method"></div>
     <!-- 이용약관 UI -->
     <div id="agreement"></div>
+    <div style="padding: 0 30px 20px;">
+      <p>티켓 결제 내역</p>
+      <!-- 주문서 내용 -->
+      <div th:each="orderTicket : ${orderTickets}">
+        <span th:text="'방문예정일 : ' + ${orderTicket.visitDate}"></span><br/>
+        <span th:text="'[' + ${orderTicket.locationCategory.displayName} + '점] ' + ${orderTicket.name}"></span>
+        <!-- [지점] 티켓 이름 -->
+        <span th:text="'성인 티켓 : ' + ${orderTicket.adultCount} + '장 ' + ${(orderTicket.adultPrice) * (orderTicket.adultCount)} + '원 | ' + '아동 티켓 : ' + ${orderTicket.childCount} + '장 ' + ${(orderTicket.childPrice) * (orderTicket.childCount)} + '원'"></span>
+        <hr/>
+      </div>
+      <!-- 주문서 정보 -->
+      <div>
+        총 주문건수: <span th:text="${#lists.size(orderTickets)}"></span> 건
+      </div>
+      <div>
+        총 결제금액: <span th:text="${totalPrice}"></span> 원
+      </div>
+    </div>
     <!-- 쿠폰 체크박스 -->
-    <label for="couponSelect">사용 가능 쿠폰 : </label>
-    <select name="couponSelect" id="couponSelect" onchange="getSelectedCoupon()">
+    <label for="couponSelect" style="padding-left: 30px;">사용 가능 쿠폰 </label>
+    <select name="couponSelect" id="couponSelect" onchange="getSelectedCoupon()" style="height: 30px;">
       <option value="0" th:data-discount-rate="0" selected>선택 안 함</option>
       <option th:each="coupon : ${memberCouponList}" th:value="${coupon.id}" th:data-discount-rate="${coupon.discountRate}" th:text="${coupon.name + ' - ' + coupon.discountRate + '% 할인'}"></option>
     </select>
-    <div></div>
-    <div>
-      총 주문금액: <span id="totalPrice" th:text="${totalPrice}"></span> 원
-    </div>
-    <div>
+<!--    <div style="text-align: center; font-size: 18px;">-->
+<!--      총 주문금액: <span id="totalPrice" th:text="${totalPrice}"></span> 원-->
+<!--    </div>-->
+    <div style="padding: 10px 0 0 30px; font-size: 18px;">
       할인 적용 후 금액: <span id="discountedPrice"></span>
     </div>
     <!-- 결제하기 버튼 -->
-    <button class="button" id="payment-button" style="margin-top: 30px" disabled>결제하기</button>
+    <button class="button" id="payment-button" style="display: block; margin: 30px auto 0;" disabled>결제하기</button>
   </div>
 </div>
 
