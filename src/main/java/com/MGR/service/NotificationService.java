@@ -1,6 +1,7 @@
 package com.MGR.service;
 
 import com.MGR.entity.*;
+import com.MGR.repository.CouponRepository;
 import com.MGR.repository.NotificationRepository;
 import com.MGR.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -19,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class NotificationService {
     private final OrderRepository orderRepository;
+    private final CouponRepository couponRepository;
     private final MemberService memberService;
     private final NotificationRepository notificationRepository;
     public final Map<Long, SseEmitter> sseEmitters = new ConcurrentHashMap<>();
@@ -180,13 +183,25 @@ public class NotificationService {
 
     // 결제 완료 알림
     @Transactional
-    public void notifyOrder(Long id) {
+    public void notifyOrder(Long id, Long couponId) {
         Optional<Order> order = orderRepository.findById(id);
         Optional<Member> member = memberService.findById(order.get().getMember().getId());
         SseEmitter sseEmitter = sseEmitters.get(member.get().getId());
         String orderNum = order.get().getOrderNum();
 
-        String data = "주문 번호 : " + orderNum;
+        List<OrderTicket> orderTickets = order.get().getOrderTickets();
+        int totalPrice = 0;
+        for(OrderTicket orderTicket : orderTickets){
+            totalPrice += orderTicket.getTotalPrice();
+        }
+
+        Optional<Coupon> coupon = couponRepository.findById(couponId);
+        int discountRate = coupon.get().getDiscountRate();
+
+        int amount = totalPrice - (totalPrice * discountRate / 100);
+        String formattedAmount = NumberFormat.getInstance().format(amount);
+
+        String data = "주문 번호 : " + orderNum + "<br/>결제 금액 : " + formattedAmount + "원";
         if (sseEmitter != null) {
             try {
                 sseEmitter.send(SseEmitter.event()
