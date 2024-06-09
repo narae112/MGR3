@@ -46,7 +46,7 @@ public class CouponController {
             return "coupon/couponForm";
         }
         if (couponFormDto.getDiscountAmount() == null && couponFormDto.getDiscountRate() == null) {
-            model.addAttribute("errorMessage", "할인액 또는 할인율을 입력해주세요");
+            model.addAttribute("errorMessage", "할인액을 입력해주세요");
             return "coupon/couponForm";
         }
         try {

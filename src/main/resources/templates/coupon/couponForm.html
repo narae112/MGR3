@@ -130,28 +130,28 @@
                     <!-- 할인 유형 -->
                     <div>
                         <!-- 할인 유형 선택 -->
-                        <div class="form-group col-mb-3">
-                            <label for="discountType" class="mb-1"> 할인 유형</label>
-                            <select id="discountType" name="discountType" th:field="*{discountType}" class="form-control" onchange="toggleDiscountFields()">
-                                <option value="PERCENT">할인율(%)</option>
-                                <option value="AMOUNT">할인액(원)</option>
-                            </select>
-                        </div>
+<!--                        <div class="form-group col-mb-3">-->
+<!--                            <label for="discountType" class="mb-1"> 할인 유형</label>-->
+<!--                            <select id="discountType" name="discountType" th:field="*{discountType}" class="form-control" onchange="toggleDiscountFields()">-->
+<!--                                <option value="PERCENT">할인율(%)</option>-->
+<!--                                <option value="AMOUNT">할인액(원)</option>-->
+<!--                            </select>-->
+<!--                        </div>-->
 
                         <!-- 할인율 입력 필드 -->
                         <div class="form-group mb-3">
-                        <div id="discountRateField" class="mb-1" th:style="${couponFormDto.discountType == 'PERCENT' ? '' : 'display: none;'}">
+                        <div id="discountRateField" class="mb-1">
                             <label for="discountRate" class="mb-1">할인율(%):</label>
                             <input type="number" id="discountRate" name="discountRate" th:field="*{discountRate}" class="form-control" min="0" max="100">
                         </div>
                         </div>
                         <!-- 할인액 입력 필드 -->
-                        <div class="form-group mb-3">
-                        <div id="discountAmountField" class="mb-1" th:style="${couponFormDto.discountType == 'AMOUNT' ? '' : 'display: none;'}">
-                            <label for="discountAmount" class="mb-1">할인액(원):</label>
-                            <input type="number" id="discountAmount" name="discountAmount" th:field="*{discountAmount}" class="form-control" min="0">
-                        </div>
-                        </div>
+<!--                        <div class="form-group mb-3">-->
+<!--                        <div id="discountAmountField" class="mb-1" th:style="${couponFormDto.discountType == 'AMOUNT' ? '' : 'display: none;'}">-->
+<!--                            <label for="discountAmount" class="mb-1">할인액(원):</label>-->
+<!--                            <input type="number" id="discountAmount" name="discountAmount" th:field="*{discountAmount}" class="form-control" min="0">-->
+<!--                        </div>-->
+<!--                        </div>-->
                         <!-- 대상 -->
 <!--                        <div class="form-group mb-3">-->
 <!--                            <label for="couponType" class="mb-1">적용 대상:</label>-->
