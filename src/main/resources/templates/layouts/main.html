@@ -97,8 +97,13 @@ $(document).ready(function() {
     });
 
     function updateNotificationCount(count) {
-        console.log(count+1);
-        $('#notificationCount').text(count+1);
+        var numericCount = parseInt(count, 10); // count를 숫자로 변환
+        if (isNaN(numericCount)) {
+            numericCount = 0; // count가 숫자로 변환되지 않으면 0으로 설정
+        }
+        numericCount += 1; // 숫자로 변환된 count에 1을 더함
+        console.log(numericCount);
+        $('#notificationCount').text(numericCount); // 연산 결과를 다시 설정
     }
 
     function displayMessage(message, id) {
