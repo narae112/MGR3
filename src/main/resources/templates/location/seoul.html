@@ -6,7 +6,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>오시는 길</title>
     <style>
         li {
             list-style: none;
@@ -118,14 +117,29 @@
         th {
             background-color: #f2f2f2;
         }
+        .map-container {
+    width: calc(50% - 30px); /* 두 지도를 나란히 배치하기 위해 20px 여백을 뺀 너비로 설정 */
+    max-width: 500px; /* 각 지도의 최대 너비 설정 */
+    height: 400px; /* 지도의 높이 설정 */
+    margin: 10px; /* 여백 설정 */
+    box-sizing: border-box; /* 여백 포함해서 너비 설정 */
+    display: inline-block; /* 요소를 인라인 블록 요소로 설정하여 나란히 배치 */
+}
     </style>
 </head>
 <body>
 <div layout:fragment="content">
-    <h2 class="title">오시는 길</h2>
+    <h2 class="title">서울점</h2>
+    <a href="/location" class="btn btn-primary btn-lg mt-3">부산점 보러가기</a>
     <div class="container mgr">
-        <div id="map1"></div> <!-- 수정된 부분 -->
-        <div id="map2"></div> <!-- 수정된 부분 -->
+        <div class="map-container">
+            <div id="map1"></div>
+            <h4 style="text-align: center;">위치</h4>
+        </div>
+        <div class="map-container">
+            <div id="map2"></div>
+            <h4 style="text-align: center;">근처 맛집</h4>
+        </div>
     </div>
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=91a33b69084e7e19defca68fb0f0f32a"></script>
     <script>
@@ -221,7 +235,7 @@
         // 추가 마커들도 위와 같은 방법으로 설정하면 됩니다.
     </script>
     <div class="button mgr">
-        <a href="https://kko.to/92UskdgEOE" title="카카오지도 새창열기" target="_blank" class="btn btn-primary btn-lg mt-3">카카오지도 보러가기</a>
+        <a href="https://kko.to/92UskdgEOE"  class="btn btn-primary btn-lg mt-5">카카오지도 보러가기</a>
     </div>
     <div class="container mgr">
         <div class="section subway">

@@ -84,8 +84,7 @@ public class ReservationService {
         Optional<Member> member = memberRepository.findByEmail(email);
         Reservation reservation = reservationRepository.findByMemberId(member.get().getId());
 
-        List<ReservationDtlDto> reservationDtlDtos = new ArrayList<>();
-        reservationDtlDtos = reservationTicketRepository.findReservations(reservation.getId(), pageable);
+        List<ReservationDtlDto> reservationDtlDtos = reservationTicketRepository.findReservations(reservation.getId(), pageable);
         // 주문 목록 조회
         Long totalCount = reservationTicketRepository.countReservation(reservation.getId());
         // 총 주문 갯수
