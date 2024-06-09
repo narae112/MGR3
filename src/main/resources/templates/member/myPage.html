@@ -25,17 +25,22 @@
         <table class="table">
             <thead>
             <tr>
-                <th>쿠폰 Id</th>
+                <th>쿠폰 이름</th>
                 <th>쿠폰 코드</th>
                 <th>할인</th>
                 <th>만료일</th>
+                <th>사용여부</th>
             </thead>
             <tbody>
             <tr th:each="memberCoupon : ${memberCouponList}">
-                <td th:text="${memberCoupon.id}"></td>
+                <td th:text="${memberCoupon.coupon.name}"></td>
                 <td th:text="${memberCoupon.couponCode}"></td>
                 <td th:text="${memberCoupon.coupon.discountRate} + '%'"></td>
                 <td th:text="${#temporals.format(memberCoupon.coupon.endDate, 'yyyy-MM-dd')}"></td>
+                <td>
+                    <span th:if="${memberCoupon.used}" th:text="'사용완료'"></span>
+                    <span th:if="${!memberCoupon.used}" th:text="'미사용'"></span>
+                </td>
             </tr>
             </tbody>
         </table>
