@@ -2,16 +2,16 @@ package com.MGR.controller;
 
 import com.MGR.dto.EventBoardFormDto;
 import com.MGR.dto.MemberFormDto;
-import com.MGR.entity.Coupon;
-import com.MGR.entity.Member;
-import com.MGR.entity.MemberCoupon;
+import com.MGR.entity.*;
 import com.MGR.repository.MemberCouponRepository;
 //import com.MGR.security.CustomUserDetails;
+import com.MGR.repository.MemberCouponService;
 import com.MGR.security.PrincipalDetails;
 import com.MGR.service.CouponService;
 import com.MGR.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -21,9 +21,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 @RequestMapping("/member")
@@ -32,8 +30,8 @@ public class MemberController {
 
     private final MemberService memberService;
     private final PasswordEncoder passwordEncoder;
-    private final MemberCouponRepository memberCouponRepository;
     private final CouponService couponService;
+    private final MemberCouponService memberCouponService;
 
     @PostMapping("/create")
     public String createMember(@Valid MemberFormDto memberFormDto,
@@ -150,27 +148,29 @@ public class MemberController {
         //회원정보 변경 전 비밀번호 인증
     }
 
-    @GetMapping("/myPage")
-    public String myPage(Model model, @AuthenticationPrincipal PrincipalDetails member){
+    @GetMapping({"/myCoupon", "/myCoupon/{page}"})
+    public String myCoupon(Model model, @AuthenticationPrincipal PrincipalDetails member,
+                         @PathVariable(value = "page", required = false) Integer page){
+        if (page == null) {
+            page = 0; // 페이지 값이 없을 경우 기본값을 0으로 설정
+        }
+        Long id = member.getId(); // 현재 인증 되어있는 사용자의 id로
 
-        Long memberId = member.getId(); // 현재 인증 되어있는 사용자의 id로
-
-        List<MemberCoupon> memberCouponList = memberCouponRepository.findAllByMemberId(memberId);//member coupon 을 전부 찾아서
-        model.addAttribute("memberCouponList", memberCouponList); // 반환
+        Page<MemberCoupon> paging = memberCouponService.getCouponList(page, id); // 반환
+        model.addAttribute("paging", paging);
 
         List<Coupon> couponList = new ArrayList<>();
-        for (MemberCoupon memberCoupon : memberCouponList) {
+
+        for (MemberCoupon memberCoupon : paging) {
             Coupon coupon = couponService.findById(memberCoupon.getCoupon().getId());
             memberCoupon.setCoupon(coupon); // MemberCoupon 객체에 Coupon 객체 설정
             couponList.add(coupon);
-            // member coupon 쿠폰의 id로 coupon 찾아서
         }
 
         model.addAttribute("couponList", couponList); // 반환
 
-        return "member/myPage";
+        return "member/myCoupon";
     }
-
 }
 
 

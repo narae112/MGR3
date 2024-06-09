@@ -25,6 +25,7 @@ public class MemberCoupon {
     @Column
     private String couponCode;
     // 쿠폰 코드
+
     private boolean used; // 사용 여부
 
     public static MemberCoupon memberGetCoupon(Member member, Coupon coupon){

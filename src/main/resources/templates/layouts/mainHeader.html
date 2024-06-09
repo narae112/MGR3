@@ -69,7 +69,7 @@
                                             <a class="nav-link" sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/admin/coupons}">쿠폰 관리</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_USER')" th:href="@{/member/myPage}">쿠폰내역</a>
+                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_USER')" th:href="@{/member/myCoupon}">쿠폰내역</a>
                                         </li>
                                     </ul>
                                 </li>
@@ -114,7 +114,7 @@
                                             <a class="nav-link" th:href="@{/attraction/schedule}">운휴</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/attraction/attractionList}">놀이기구 관리</a>
+                                            <a class="nav-link" th:href="@{/attraction/attractionList}">어트랙션 소개</a>
                                         </li>
                                     </ul>
                                 </li>
