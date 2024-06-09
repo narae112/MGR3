@@ -33,7 +33,11 @@ public class AttractionController {
     private final ImageService imageService;
 
     @GetMapping({"/attractionList", "/attractionList/{page}"})
-    public String attractionList(Model model, @RequestParam(value = "page", defaultValue = "0") int page){
+    public String attractionList(Model model, @PathVariable(value = "page", required = false) Integer page){
+        if (page == null) {
+            page = 0; // 페이지 값이 없을 경우 기본값을 0으로 설정
+        }
+
         Page<Attraction> paging = attractionService.getAttractionList(page);
         model.addAttribute("paging", paging);
 
