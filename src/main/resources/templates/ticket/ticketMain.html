@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.w3.org/1999/xhtml"
       layout:decorate="~{layouts/default}">
 
 <!-- CSS 스타일 시트 -->
@@ -127,7 +127,11 @@
     <div th:if="${not #strings.isEmpty(ticketSearchDto.searchQuery)}" class="center my-3">
         <p class="h3 font-weight-bold" th:text="${ticketSearchDto.searchQuery} + ' 검색 결과'"></p>
     </div>
-
+    <div class="mt-3">
+        <button class="btn btn-primary"
+                onClick="location.href='/admin/ticket/new'"
+                sec:authorize="hasRole('ADMIN')">티켓 등록하기</button>
+    </div>
     <!-- 티켓 목록 -->
     <div class="row my-5">
         <th:block th:each="ticket, status: ${tickets.getContent()}">
@@ -171,5 +175,6 @@
             </li>
         </ul>
     </div>
+</div>
 </div>
 </html>
