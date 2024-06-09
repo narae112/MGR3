@@ -36,22 +36,17 @@ public class OrderController {
                                   @PathVariable("orderId") Long orderId, Model model) {
 
 //        String email = member.getUsername();
-
 //        List<Order> orders = orderRepository.findOrders(email);
-        List<String> orderNumList = new ArrayList<>(); //결제 후처리
 
         Order order = orderRepository.findById(orderId).get();
-
         List<OrderTicket> orderTicketList = orderRepository.findById(orderId).get().getOrderTickets();
-
         List<OrderTicketDto> orderTickets = new ArrayList<>();
-
         int totalPrice = orderRepository.findById(orderId).get().getAllTotalPrice();
-
         String orderNum = order.getOrderNum();
 
         System.out.println("orderNum1 = " + orderNum);
 
+        List<String> orderNumList = new ArrayList<>(); //결제 후처리
         for (OrderTicket orderTicket : orderTicketList) {
             orderNumList.add(orderNum);
             System.out.println("orderNum2 = " + orderNum);
@@ -60,22 +55,6 @@ public class OrderController {
         }
         System.out.println(orderNumList.size());
         System.out.println("totalPrice = " + totalPrice);
-
-//        List<OrderTicketDto> orderTicketList = new ArrayList<>();
-//        int totalPrice = 0; //합계 금액 구하려고
-//        List<String> orderNumLIst = new ArrayList<>(); //결제 후처리
-//        for (Order order : orders) {
-//            totalPrice += order.getTotalPrice();
-//            orderNumLIst.add(order.getOrderNum());
-//            if (order.getReservationStatus() == ReservationStatus.RESERVE) {
-//                List<OrderTicket> orderTickets = order.getOrderTickets();
-//                for (OrderTicket orderTicket : orderTickets) {
-//                    OrderTicketDto orderTicketDto = new OrderTicketDto(orderTicket);
-//                    orderTicketList.add(orderTicketDto);
-//                }
-//            }
-//        }
-
 
         // 로그인한 멤버가 가진 쿠폰
         List<MemberCoupon> memberCouponList = memberCouponRepository.findAllByMemberId(member.getId());
@@ -99,6 +78,4 @@ public class OrderController {
 
         return "/checkout";
     }
-
-
 }
