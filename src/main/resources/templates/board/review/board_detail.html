@@ -4,20 +4,58 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
 <head>
+    <meta name="_csrf" content="${_csrf.token}"/>
+    <meta name="_csrf_header" content="${_csrf.headerName}"/>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.5.8/swiper-bundle.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <script layout:fragment="script" type='text/javascript' src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.5.8/swiper-bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script type='text/javascript'>
-        var swiper = new Swiper('.swiper-container', {
-        slidesPerView: 'auto',
-        spaceBetween: 10,
-        pagination: {
-            el: '.swiper-pagination',
-            clickable: true,
-        },
-    });
+        $(document).ready(function() {
+                  var swiper = new Swiper('.swiper-container', {
+                slidesPerView: 'auto',
+                spaceBetween: 10,
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+            });
+
+            function recommendQuestion(event) {
+                event.preventDefault(); // 기본 동작인 링크 이동을 방지합니다.
+                const uri = event.target.getAttribute('data-uri'); // 버튼의 data-uri 속성 값 가져오기
+                const token = $("meta[name='_csrf']").attr("content");
+                const header = $("meta[name='_csrf_header']").attr("content");
+
+                $.ajax({
+                    url: uri,
+                    type: 'POST',
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader(header, token);
+                    },
+                    success: function(data) {
+                        if (data.error) {
+                            alert(data.error);
+                        } else {
+                            alert(data.message);
+                            // 버튼 텍스트 변경
+                            if (data.recommended) {
+                                $(event.currentTarget).text("추천 취소");
+                            } else {
+                                $(event.currentTarget).text("추천");
+                            }
+                        }
+                    },
+                    error: function() {
+                        alert("오류가 발생했습니다. 다시 시도해주세요.");
+                    }
+                });
+            }
+
+            $('a.recommend').on('click', recommendQuestion);
+        });
     </script>
     <style>
         /* 카드 및 댓글 스타일링 */
@@ -31,7 +69,6 @@
         .comment-card {
             background-color: #f8f9fa;
         }
-
 
         .btn-outline-secondary {
             color: #6c757d;
@@ -47,8 +84,9 @@
         .answer-form {
             margin-top: 20px;
         }
-  /* 이미지 갤러리 스타일링 */
-        .image-container {
+
+        /* 이미지 갤러리 스타일링 */
+           .image-container {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
@@ -140,7 +178,6 @@
                                             <i class="fas fa-plus-circle"></i>
                                         </a>
                                     </div>
-                                    </div>
                                 </div>
                                 <div class="swiper-pagination"></div>
                             </div>
@@ -168,8 +205,8 @@
                     </div>
                 </div>
             </div>
-        <div class="row justify-content-center">
-            <div class="col-md-8">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
                     <h5 class="border-bottom my-3 py-2" th:text="|${#lists.size(reviewBoard.commentList)}개의 댓글이 있습니다.|"></h5>
                     <div class="card my-3" th:each="comment : ${reviewBoard.commentList}">
                         <a th:id="|comment_${comment.id}|"></a>
@@ -199,16 +236,16 @@
                             </div>
                         </div>
                     </div>
-                        <form th:action="@{|/review/comment/create/${reviewBoard.id}|}" th:object="${reviewCommentForm}" method="post" class="my-3">
-                            <div th:replace="board/review/form_errors :: formErrorsFragment"></div>
-                            <textarea th:field="*{content}" class="form-control" rows="5"></textarea>
-                            <input type="submit" value="답변 등록" class="btn btn-primary my-2">
-                        </form>
-                    </div>
+                    <form th:action="@{|/review/comment/create/${reviewBoard.id}|}" th:object="${reviewCommentForm}" method="post" class="my-3">
+                        <div th:replace="board/review/form_errors :: formErrorsFragment"></div>
+                        <textarea th:field="*{content}" class="form-control" rows="5"></textarea>
+                        <input type="submit" value="답변 등록" class="btn btn-primary my-2">
+                    </form>
+                </div>
             </div>
-         </div>
         </div>
     </div>
+</div>
 </div>
 <script layout:fragment="script" type='text/javascript'>
     function deleteQuestion(event) {
@@ -226,18 +263,6 @@
             location.href = uri; // URI로 이동
         }
     }
-
-    function recommendQuestion(event) {
-    event.preventDefault(); // 기본 동작인 링크 이동을 방지합니다.
-    const uri = event.target.getAttribute('data-uri'); // 버튼의 data-uri 속성 값 가져오기
-    if (confirm("추천하시겠습니까?")) {
-        location.href = uri; // URI로 이동
-    } else {
-        if (confirm("추천을 취소하시겠습니까?")) {
-            location.href = uri; // URI로 이동
-        }
-    }
-}
 </script>
 </body>
 </html>
