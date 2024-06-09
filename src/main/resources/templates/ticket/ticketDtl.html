@@ -87,27 +87,41 @@
         }
 
         $(document).ready(function() {
-            // 오늘 날짜를 가져오는 함수
-            function getTodayDate() {
-                var today = new Date();
-                var dd = String(today.getDate()).padStart(2, '0');
-                var mm = String(today.getMonth() + 1).padStart(2, '0'); // 1월은 0부터 시작하므로 +1
-                var yyyy = today.getFullYear();
-                return yyyy + '-' + mm + '-' + dd;
-            }
+    // 오늘 날짜를 가져오는 함수
+    function getTodayDate() {
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); // 1월은 0부터 시작하므로 +1
+        var yyyy = today.getFullYear();
+        return yyyy + '-' + mm + '-' + dd;
+    }
 
-            // 시작일(input id="startDate")의 값을 오늘 날짜로 설정
-            $('#startDate').val(getTodayDate());
-            $('#startDate').attr("min", getTodayDate());
+    // 시작일(input id="startDate")의 값을 오늘 날짜로 설정
+    $('#startDate').val(getTodayDate());
+    $('#startDate').attr("min", getTodayDate());
 
-            var startDate = $('#startDate').val();
-            $('#endDate').attr("min", startDate);
+    // 종료일(input id="endDate")의 값을 티켓의 종료일로 설정
+    $('#endDate').val(/* 종료일 값 */);
+    $('#endDate').attr("min", getTodayDate());
 
-            $('#startDate').on('change', function() {
-                var startDate = $(this).val();
-                $('#endDate').attr("min", startDate);
-            });
-        });
+    // datepicker 설정
+    $("#datepicker").datepicker({
+        dateFormat: "yy-mm-dd",
+        minDate: new Date($('#startDate').val()),
+        maxDate: new Date($('#endDate').val()),
+        onSelect: function(dateText) {
+            $("#visitDate").val(dateText);
+        }
+    });
+
+    $('#startDate').on('change', function() {
+        var startDate = $(this).val();
+        $('#endDate').attr("min", startDate);
+    });
+
+    // 오늘 이전 날짜를 선택하지 못하도록 설정
+    $('#datepicker').datepicker("option", "minDate", 0);
+});
     </script>
 </th:block>
 <!-- css -->
