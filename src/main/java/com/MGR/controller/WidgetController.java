@@ -132,12 +132,12 @@ public class WidgetController {
         // 결제 완료 알림
         notificationService.notifyOrder(id, couponId);
 
-        return "/success";
+        return "success";
     }
 
     @RequestMapping(value = "/checkout", method = RequestMethod.GET)
     public String index(HttpServletRequest request, Model model) throws Exception {
-        return "/checkout";
+        return "checkout";
     }
 
     /**

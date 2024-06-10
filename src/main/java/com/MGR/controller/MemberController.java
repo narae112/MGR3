@@ -59,7 +59,7 @@ public class MemberController {
         System.out.println("memberInfo: " + memberInfo); // 로깅 추가
         model.addAttribute("memberInfo", memberInfo);
 
-        return "/member/editForm";
+        return "member/editForm";
     }
 
     @GetMapping("/changePasswordForm")
@@ -69,7 +69,7 @@ public class MemberController {
         System.out.println("memberInfo: " + memberInfo); // 로깅 추가
         model.addAttribute("memberInfo", memberInfo);
 
-        return "/member/changePasswordForm";
+        return "member/changePasswordForm";
     }
 
     @PostMapping("/editNickname/{id}")

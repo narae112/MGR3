@@ -27,19 +27,19 @@ public class MainController {
 
     @GetMapping("/login")
     public String memberLogin(){
-        return "/member/loginForm";
+        return "member/loginForm";
     }
 
     @GetMapping("/login/error")
     public String memberLoginError(Model model){
         model.addAttribute("loginError", "이메일 주소나 비밀번호가 일치하지 않습니다");
-        return "/member/loginForm";
+        return "member/loginForm";
     }
 
     @GetMapping("/join")
     public String memberJoin(Model model){
         model.addAttribute("memberFormDto", new MemberFormDto());
-        return "/member/joinForm";
+        return "member/joinForm";
     }
 
 }

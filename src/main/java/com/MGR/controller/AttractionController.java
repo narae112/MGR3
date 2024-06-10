@@ -48,7 +48,7 @@ public class AttractionController {
         }
         model.addAttribute("imageUrls", imageUrls);
 
-        return "/attraction/attractionList";
+        return "attraction/attractionList";
     }
 
     @GetMapping("/new")
@@ -56,7 +56,7 @@ public class AttractionController {
         //게시글 입력 폼
         model.addAttribute("attractionDto",new Attraction());
 
-        return "/attraction/attractionForm";
+        return "attraction/attractionForm";
     }
 
     @PostMapping("/create")
@@ -74,7 +74,7 @@ public class AttractionController {
         }
 
         if(result.hasErrors()) {
-            return "/attraction/attractionList";
+            return "attraction/attractionList";
         }
 
         try {
@@ -82,7 +82,7 @@ public class AttractionController {
             return "redirect:/attraction/" + attraction.getId();
         } catch (IllegalStateException e){
             model.addAttribute("errorMessage","어트랙션 등록 중 오류가 발생했습니다");
-            return "/attraction/attractionList";
+            return "attraction/attractionList";
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

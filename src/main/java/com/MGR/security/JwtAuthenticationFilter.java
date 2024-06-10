@@ -86,7 +86,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         accessTokenCookie.setHttpOnly(true);
         accessTokenCookie.setSecure(true); // HTTPS 사용 시에만 설정
         accessTokenCookie.setPath("/");
-        accessTokenCookie.setMaxAge(5 * 60);
+//        accessTokenCookie.setMaxAge(5 * 60); //시간 안맞아서 일단 수정
+        accessTokenCookie.setMaxAge(24 * 60 * 60);
         response.addCookie(accessTokenCookie);
 
         // Refresh Token 생성 및 쿠키에 설정
@@ -95,7 +96,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setSecure(true); // HTTPS 사용 시에만 설정
         refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge(12 * 60 * 60); // 12시간 동안 유효
+        refreshTokenCookie.setMaxAge(24 * 60 * 60); // 24시간 동안 유효
         response.addCookie(refreshTokenCookie);
 
         // Redis 에 RefreshToken 저장
