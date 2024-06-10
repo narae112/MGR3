@@ -56,7 +56,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setSecure(true); // HTTPS 사용 시에만 설정
         refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge(12 * 60 * 60); // 12시간 동안 유효
+        refreshTokenCookie.setMaxAge(24 * 60 * 60); // 24시간 동안 유효
         response.addCookie(refreshTokenCookie);
 
         // Redis에 RefreshToken 저장

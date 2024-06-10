@@ -76,6 +76,6 @@ public class OrderController {
         System.out.println("orderNumList = " + orderNumList);
         System.out.println("totalPrice = " + totalPrice);
 
-        return "/checkout";
+        return "checkout";
     }
 }
