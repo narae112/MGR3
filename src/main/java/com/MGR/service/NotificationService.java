@@ -4,6 +4,8 @@ import com.MGR.entity.*;
 import com.MGR.repository.CouponRepository;
 import com.MGR.repository.NotificationRepository;
 import com.MGR.repository.OrderRepository;
+import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -195,8 +197,10 @@ public class NotificationService {
             totalPrice += orderTicket.getTotalPrice();
         }
 
-        Optional<Coupon> coupon = couponRepository.findById(couponId);
-        int discountRate = coupon.get().getDiscountRate();
+        Coupon coupon = couponRepository.findById(couponId)
+                .orElseThrow(EntityNotFoundException::new);
+
+        int discountRate = coupon.getDiscountRate();
 
         int amount = totalPrice - (totalPrice * discountRate / 100);
         String formattedAmount = NumberFormat.getInstance().format(amount);
