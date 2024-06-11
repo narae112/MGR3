@@ -105,7 +105,7 @@ public class EventBoardController {
         EventBoard eventBoard = eventBoardService.findById(id).orElseThrow();
         int count = eventBoard.viewCount();
         eventBoard.setCount(count);
-        eventBoardService.saveBoard(eventBoard);
+        eventBoardService.saveBoardCount(eventBoard);
         model.addAttribute("eventBoard",eventBoard);
 
         Image findImage = imageService.findByEvent(eventBoard);
