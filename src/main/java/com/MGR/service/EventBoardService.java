@@ -103,9 +103,8 @@ public class EventBoardService {
         return new PageImpl<>(sortedBoards, pageable, boards.getTotalElements());
     }
 
-    public void saveBoard(EventBoard board) {
+    public void saveBoardCount(EventBoard board) {
         eventBoardRepository.save(board);
-        notificationService.notifyBoard(board);
     }
 
     public List<EventBoard> findAll() {
