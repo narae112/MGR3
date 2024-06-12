@@ -73,10 +73,14 @@ public class OrderService {
     public void changeCouponStatus(Long couponId) {
         MemberCoupon memberCoupon = memberCouponRepository.findById(couponId).orElseThrow(EntityNotFoundException::new);
         memberCoupon.setUsed(true);
-
     }
     // 주문번호로 주문을 조회하는 메서드
     public Order findOrderByOrderNum(String orderNum) {
         return orderRepository.findByOrderNum(orderNum);
     }
+
+    public Integer countByMemberId(Long id) {
+        return orderRepository.countByMemberId(id);
+    }
+
 }

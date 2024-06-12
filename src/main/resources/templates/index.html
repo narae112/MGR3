@@ -20,9 +20,7 @@
                             <i class="lni lni-map-marker"></i> MGR 오는길
                         </h5>
                         <h2 class="wow fadeInUp" data-wow-delay=".4s">Merry Go Ride 2024</h2>
-                        <p class="wow fadeInUp" data-wow-delay=".6s">Lorem ipsum dolor sit amet, consectetur adipisicing
-                            elit. deleniti voluptatum! Natus
-                            beatae laborum veniam distinctio.</p>
+                        <p class="wow fadeInUp" data-wow-delay=".6s">Welcome to MGR. This website was created by three students learning web development.</p>
                         <div class="button wow fadeInUp" data-wow-delay=".8s">
                             <a th:href="@{/tickets}" class="btn ">Buy Ticket Now</a>
                         </div>
@@ -102,8 +100,8 @@
                 <div class="col-12">
                     <div class="section-title">
                         <h3 class="wow zoomIn" data-wow-delay=".2s">Review</h3>
-                        <h2 class="wow fadeInUp" data-wow-delay=".4s">MGR Best Review</h2>
-                        <p class="wow fadeInUp" data-wow-delay=".6s">There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form.</p>
+                        <h2 class="wow fadeInUp" data-wow-delay=".4s">Customer-Favorite MGR Best Reviews</h2>
+                        <p class="wow fadeInUp" data-wow-delay=".6s">Discover the top reviews chosen by you! Read the cherished stories of unforgettable moments experienced at MGR Amusement Park.</p>
                     </div>
                 </div>
             </div>
@@ -116,7 +114,9 @@
                         <div class="review-img" style="height: 400px; overflow: hidden;">
                             <a th:href="@{/review/board/detail/{id}(id=${review.id})}">
                                 <!-- 이미지 URL을 reviewImgDtoList의 첫 번째 이미지에서 가져옵니다. -->
+
                                <img th:src="${review.imageUrl != null and  review.imageUrl.length() > 0 ? review.imageUrl : '/img/unicorn.png'}" alt="Review Image" style="width: 100%; height: auto; object-fit: contain;">
+
                             </a>
                         </div>
                         <!-- Review Content -->
@@ -145,10 +145,9 @@
                     <div class="inner-content">
                         <div class="text">
                             <!-- <h5 class="wow zoomIn" data-wow-delay=".2s">Free Lite Version</h5> -->
-                            <h2 class="wow fadeInUp" data-wow-delay=".4s">Currently you are using free LiteVersion of EventGrids
+                            <h2 class="wow fadeInUp" data-wow-delay=".4s">A new event at MGR is starting soon
                             </h2>
-                            <p class="wow fadeInUp" data-wow-delay=".6s">Please, purchase full version of the template
-                                to get all pages, features and commercial license.</p>
+                            <p class="wow fadeInUp" data-wow-delay=".6s">Join us at MGR Amusement Park to create a special day just for you</p>
                         </div>
                     </div>
                 </div>
