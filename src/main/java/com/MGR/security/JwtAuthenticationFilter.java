@@ -36,11 +36,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             // URL 인코딩된 폼 데이터 읽기
             String email = request.getParameter("email");
             String password = request.getParameter("password");
+            System.out.println("받은 email: " + email);
+            System.out.println("받은 암호화된 password: " + password);
+            // 암호화된 비밀번호 복호화
+            String decryptedPassword = AESUtil.decrypt(password);
 
             System.out.println("URL 인코딩된 폼 데이터 email = " + email);
+            System.out.println("복호화된 password = " + decryptedPassword);
 
             member.setEmail(email);
-            member.setPassword(password);
+            member.setPassword(decryptedPassword);
 
         } catch (BadCredentialsException e) {
             System.out.println("로그인 정보 에러 = " + e.getMessage());
