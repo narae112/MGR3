@@ -133,14 +133,14 @@
                 sec:authorize="hasRole('ADMIN')">티켓 등록하기</button>
     </div>
     <!-- 티켓 목록 -->
-    <div class="row my-5" style="width:100%">
-        <th:block th:each="ticket, status: ${tickets.getContent()}">
+    <div class="row my-5" >
+        <th:block th:each="ticket, status: ${tickets.getContent()}" class="col-md-4 mb-4">
             <!-- 티켓 카드 영역 -->
-            <div class="col-md-4" style="width:33%">
-                <a th:href="@{'/ticket/' + ${ticket.id}}" class="text-dark">
-                    <div class="card h-100" style="width:400px">
-                        <img th:src="${ticket.imgUrl}" class="card-img-top" th:alt="${ticket.id}" style="margin: 0; object-fit: contain; width: 100%; height: 400px;">
-                        <div class="card-body text-center bg-light">
+            <div class="col-md-4">
+                <a th:href="@{'/ticket/' + ${ticket.id}}" class="text-dark card h-100 card-link">
+                    <div class="card-body d-flex flex-column justify-content-between" >
+                        <img th:src="${ticket.imgUrl}" class="card-img-top" th:alt="${ticket.id}" style="height: 400px; overflow: hidden; display: flex; justify-content: center; align-items: center;">
+                        <div class="card-body text-center bg-light ">
                             <h4 class="card-title" th:text="${ticket.name}"></h4>
                             <p class="card-text" th:text="${ticket.memo}"></p>
                             <p class="card-text" th:text="${ticket.locationCategory.displayName}+'점'"></p>
