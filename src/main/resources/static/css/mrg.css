@@ -59,7 +59,7 @@
   width : 180px !important;
   height : auto !important;
   position : fixed !important;
-  bottom : 100px !important;
+  bottom : 150px !important;
   right : 50px !important;
   border : none !important;
   background-color : transparent !important;
@@ -69,4 +69,77 @@
 .page-reservation {
  text-align: center !important;
  margin : 40px 0 !important;
+}
+
+.inner-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-top: none !important;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.info-row h3 {
+    margin: 0 0 5px 0;
+}
+
+.company-info {
+    width: 50%;
+    text-align: left;
+}
+
+.git-link {
+    width: 50%;
+    text-align: right;
+}
+
+.copyright-text {
+    margin-top: 20px;
+    text-align: center;
+    width: 100%;
+    padding: 30px 0 0;
+    border-top: 1px solid #e6e6e6;
+}
+
+.git-btn img {
+        vertical-align: middle;
+        margin-right: 15px;
+}
+
+.git-btn {
+    background-color: #000;
+    border-radius: 5px;
+    padding: 10px 15px;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+    text-align: center;
+    margin: 15px 0 5px 0;
+}
+
+.git-btn > a {
+    text-align: center;
+    color: #fff !important;
+    font-weight: bold;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.git-btn:hover {
+    background-color: #ddd;
+}
+
+.git-btn:hover a p{
+    background-color: #fff;
+}
+
+.git-btn img {
+    width: 30px;
+    height: 30px;
 }
