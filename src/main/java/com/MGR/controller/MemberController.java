@@ -9,6 +9,7 @@ import com.MGR.repository.MemberCouponService;
 import com.MGR.security.PrincipalDetails;
 import com.MGR.service.CouponService;
 import com.MGR.service.MemberService;
+import com.MGR.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -32,6 +33,7 @@ public class MemberController {
     private final PasswordEncoder passwordEncoder;
     private final CouponService couponService;
     private final MemberCouponService memberCouponService;
+    private final OrderService orderService;
 
     @PostMapping("/create")
     public String createMember(@Valid MemberFormDto memberFormDto,
@@ -170,6 +172,28 @@ public class MemberController {
         model.addAttribute("couponList", couponList); // 반환
 
         return "member/myCoupon";
+    }
+
+    @GetMapping({"/memberList", "/memberList/{page}"})
+    public String memberList(Model model,
+                           @PathVariable(value = "page", required = false) Integer page){
+
+        if (page == null) {
+            page = 0; // 페이지 값이 없을 경우 기본값을 0으로 설정
+        }
+
+        Page<Member> paging = memberService.getAllMembers(page);
+        model.addAttribute("paging", paging);
+
+        List<Integer> orderCountList = new ArrayList<>();
+
+        for (Member member : paging) {
+            orderCountList.add(orderService.countByMemberId(member.getId()));
+        }
+
+        model.addAttribute("orderCountList", orderCountList); // 반환
+
+        return "member/memberList";
     }
 }
 
