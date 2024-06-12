@@ -70,3 +70,111 @@
  text-align: center !important;
  margin : 40px 0 !important;
 }
+
+/* 리뷰 */
+.single-blog-grid {
+  margin-top: 30px;
+  border-radius: 8px;
+  background-color: #fff;
+  -webkit-box-shadow: 0px 0px 10px #00000013;
+  box-shadow: 0px 0px 10px #00000013;
+  border-radius: 7px;
+  padding: 12px;
+}
+
+.single-blog-grid .blog-img {
+  overflow: hidden;
+  border-radius: 4px;
+  position: relative;
+}
+
+.single-blog-grid .blog-img .date {
+  font-size: 20px;
+  font-weight: 600;
+  color: #fff;
+  background-color: #F20487;
+  padding: 10px 17px;
+  border-radius: 4px;
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  text-align: center;
+}
+
+.single-blog-grid .blog-img .date .day {
+  font-weight: 500;
+  display: block;
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.single-blog-grid .blog-img a {
+  width: 100%;
+}
+
+.single-blog-grid .blog-img img {
+  width: 100%;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+}
+
+.single-blog-grid:hover .blog-img img {
+  -webkit-transform: scale(1.1);
+          transform: scale(1.1);
+}
+
+.single-blog-grid .blog-content {
+  padding: 30px 20px 18px 20px;
+}
+
+.single-blog-grid .blog-content .category {
+  font-size: 14px;
+  color: #3813c2;
+  display: inline-block;
+  font-weight: 500;
+}
+
+.single-blog-grid .blog-content .category:hover {
+  color: #F20487;
+}
+
+.single-blog-grid .blog-content h4 {
+  display: block;
+  margin-top: 7px;
+  line-height: 26px;
+}
+
+.single-blog-grid .blog-content h4 a {
+  font-size: 19px;
+  color: #101130;
+  display: inline-block;
+}
+
+.single-blog-grid .blog-content h4 a:hover {
+  color: #3813c2;
+}
+
+.single-blog-grid .blog-content p {
+  display: block;
+  margin-top: 20px;
+}
+
+.single-blog-grid .blog-content .more-btn {
+  display: inline-block;
+  margin-top: 20px;
+  color: #888;
+  font-weight: 500;
+}
+
+.single-blog-grid .blog-content .more-btn:hover {
+  color: #3813c2;
+  letter-spacing: 1px;
+}
+
+.single-blog-grid .blog-content .more-btn i {
+  font-size: 20px;
+  display: inline-block;
+  margin-left: 5px;
+  position: relative;
+  top: 3px;
+}
