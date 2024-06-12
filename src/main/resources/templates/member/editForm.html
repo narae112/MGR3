@@ -199,6 +199,11 @@
             <input type="text" id="email" name="email" class="form-control"
                    th:value="${memberInfo.email}" readonly>
         </div>
+        <div th:if="${memberInfo.birth}">
+            <label for="birth">생일</label>
+            <input type="text" id="birth" name="birth" class="form-control"
+                   th:value="${memberInfo.birth}" readonly>
+        </div>
         <div>
             <label for="nickname">닉네임</label>
             <div class="input-group">
