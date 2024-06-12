@@ -2,6 +2,7 @@ package com.MGR.service;
 
 import com.MGR.entity.*;
 import com.MGR.repository.CouponRepository;
+import com.MGR.repository.MemberCouponRepository;
 import com.MGR.repository.NotificationRepository;
 import com.MGR.repository.OrderRepository;
 import jakarta.persistence.EntityExistsException;
@@ -23,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class NotificationService {
     private final OrderRepository orderRepository;
-    private final CouponRepository couponRepository;
+    private final MemberCouponRepository memberCouponRepository;
     private final MemberService memberService;
     private final NotificationRepository notificationRepository;
     public final Map<Long, SseEmitter> sseEmitters = new ConcurrentHashMap<>();
@@ -199,11 +200,14 @@ public class NotificationService {
 
         int discountRate = 0; // 기본 할인율을 0으로 설정
 
+        System.out.println("couponId = " + couponId);
+
         // 쿠폰 아이디가 0이 아닌 경우에만 쿠폰을 조회하여 할인율을 가져옴
         if (couponId != 0) {
-            Coupon coupon = couponRepository.findById(couponId)
+            MemberCoupon memberCoupon = memberCouponRepository.findById(couponId)
                     .orElseThrow(EntityNotFoundException::new);
-            discountRate = coupon.getDiscountRate();
+
+            discountRate = memberCoupon.getCoupon().getDiscountRate();
         }
 
         int amount = totalPrice - (totalPrice * discountRate / 100);
