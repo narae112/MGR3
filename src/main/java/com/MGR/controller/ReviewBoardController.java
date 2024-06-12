@@ -269,10 +269,8 @@ public class ReviewBoardController {
             if (reviewBoard.getVoter().contains(siteUser)) {
                 // 이미 투표한 경우에는 투표 취소
                 this.reviewBoardService.cancelVote(reviewBoard, siteUser);
-                redirectAttributes.addFlashAttribute("success", "추천이 취소되었습니다.");
             } else {
                 this.reviewBoardService.vote(reviewBoard, siteUser);
-                redirectAttributes.addFlashAttribute("success", "추천가 완료되었습니다.");
             }
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "오류가 발생했습니다. 다시 시도해주세요.");
