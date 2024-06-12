@@ -1218,8 +1218,8 @@ ol {
   font-size: 14px;
   color: #fff !important;
   position: fixed;
-  bottom: 30px;
-  right: 30px;
+  bottom: 80px !important;
+  right: 70px !important;
   z-index: 9;
   cursor: pointer;
   -webkit-transition: all .3s ease-out 0s;
