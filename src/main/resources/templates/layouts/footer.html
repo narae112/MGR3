@@ -1,7 +1,8 @@
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:with="lang=${#locale.language}" th:lang="${lang}">
 
 <footer th:fragment="footer" class="footer">
-
 <!-- Start Footer Area -->
     <!-- Start Footer Top -->
     <!-- 원래 푸터가 있었음 -->
@@ -11,15 +12,31 @@
     <div class="copyright">
         <div class="container">
             <div class="inner-content">
-                <div class="row">
-                    <div class="col-12">
-                        <p>여기에 우리 로고하고 깃 연결되는 링크 넣고싶음</p>
-                        <p class="copyright-text">Copyright © Merry Go Ride. All rights reserved.</p>
+                <div class="info-row">
+                    <div class="company-info">
+                        <h3>MGR</h3>
+                        <p> 팀장 : 박나래 | 제작기간 : 총 5주</p>
+                        <p> 팀원 : 손혜원, 최영인</p>
                     </div>
+                    <div class="footer-logo">
+                        <img src="/img/footerLogo.png" style="width: 300px;" alt="푸터로고">
+                    </div>
+                    <div class="git-link">
+                        <div class="button git-btn" data-wow-delay=".8s">
+                            <a href="https://github.com/dashboard">
+                                <img src="/img/github-mark-white.png" style="width: 30px;" alt="깃 연결 링크">
+                                 Git Hub</a>
+                        </div>
+                        <p>Email : merrygoride2024@gmail.com</p>
+                    </div>
+                </div>
+                <div class="copyright-text">
+                    <p>Copyright © Merry Go Ride. All rights reserved.</p>
                 </div>
             </div>
         </div>
     </div>
+
 
     <a href="#" class="scroll-top">
         <i class="lni lni-chevron-up"></i>

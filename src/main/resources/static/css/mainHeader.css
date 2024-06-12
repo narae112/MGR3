@@ -1069,7 +1069,7 @@ ol {
   margin-left: 0;
 }
 
-/* One Click Scrool Top Button*/
+/* One Click Scroll Top Button*/
 .scroll-top {
   width: 45px;
   height: 45px;
@@ -1087,8 +1087,8 @@ ol {
   font-size: 14px;
   color: #fff !important;
   position: fixed;
-  bottom: 50px;
-  right: 50px;
+  bottom: 80px !important;
+  right: 70px !important;
   z-index: 9;
   cursor: pointer;
   -webkit-transition: all .3s ease-out 0s;

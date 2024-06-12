@@ -18,7 +18,7 @@ public class InventoryService {
     private final InventoryRepository inventoryRepository;
     private final TicketRepository ticketRepository;
 
-    @Scheduled(fixedRate = 30000)
+//    @Scheduled(fixedRate = 30000)
 //    @Scheduled(cron = "0 0 0 1 * ?") // 매월 1일 자정에 실행
     public void resetInventory() {
         // 현재 날짜를 가져옴

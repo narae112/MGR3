@@ -68,11 +68,11 @@
                 },
                 error : function(jqXHR, status, error){
 
-                    if(jqXHR.status == '401'){
+                    if(jqXHR.status == '403'){
                         alert('로그인 후 이용해주세요');
                         location.href='/member/login';
                     } else{
-                        alert('로그인 후 이용해주세요');
+                        alert("오류 = " + jqXHR.status);
                           location.href='/member/login';
                     }
                 }
