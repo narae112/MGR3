@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -84,12 +85,15 @@ public class ReservationService {
         Optional<Member> member = memberRepository.findByEmail(email);
         Reservation reservation = reservationRepository.findByMemberId(member.get().getId());
 
-        List<ReservationDtlDto> reservationDtlDtos = reservationTicketRepository.findReservations(reservation.getId(), pageable);
+        Page<ReservationTicket> reservationTickets = reservationTicketRepository.findByReservationId(reservation.getId(), pageable);
+        List<ReservationDtlDto> dtos = reservationTickets.stream()
+                .map(ReservationDtlDto::new)
+                .toList();
         // 주문 목록 조회
         Long totalCount = reservationTicketRepository.countReservation(reservation.getId());
-        // 총 주문 갯수
 
-        return new PageImpl<ReservationDtlDto>(reservationDtlDtos, pageable, totalCount);
+
+        return new PageImpl<>(dtos, pageable, totalCount);
     }
 
     // 티켓 수량 수정

@@ -265,3 +265,7 @@
   position: relative;
   top: 3px;
 }
+
+.wow.zoomIn {
+    cursor:pointer;
+}
