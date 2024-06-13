@@ -27,6 +27,7 @@
 
 <!--            <p id="paymentKey"></p>-->
             <p id="orderId"></p>
+            <p id="orderName"></p>
             <p id="amount"></p>
         </div>
     </div>
@@ -69,8 +70,11 @@
 
         const orderIdElement = document.getElementById("orderId");
         const amountElement = document.getElementById("amount");
+        const orderNameElement = document.getElementById("orderName");
 
         orderIdElement.textContent = "주문번호: " + urlParams.get("orderId");
+
+        orderNameElement.textContent = "주문 내역: " + decodeURIComponent(urlParams.get("orderName"));
 
         const amount = parseInt(urlParams.get("amount"));
         const formattedAmount = amount.toLocaleString(); // 천 단위로 구분하여 쉼표가 들어간 문자열로 변환

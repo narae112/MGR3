@@ -161,7 +161,7 @@ function getSelectedCoupon() {
       orderId: orderNum,
       orderName: product + "외 " + (orderQuantity-1) + " 건",
       couponId: couponId, // 쿠폰 ID 추가,
-      successUrl: window.location.origin + "/success/" + RTOrderId + /cp/ + couponId,
+      successUrl: window.location.origin + "/success/" + RTOrderId + "/cp/" + couponId + "?orderName=" + encodeURIComponent(product + "외 " + (orderQuantity-1) + " 건"),
       failUrl: window.location.origin + "/fail",
     });
   });
