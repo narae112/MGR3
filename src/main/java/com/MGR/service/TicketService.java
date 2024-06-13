@@ -62,6 +62,21 @@ public class TicketService {
             imageService.saveTicketImage(ticketImage, ticketImgFileList.get(i));
         }
 
+        //재고 생성
+
+        // 시작일(startDate)부터 종료일(endDate)까지의 기간을 계산하여 재고 생성
+        LocalDate currentDate = ticket.getStartDate();
+        LocalDate endDate = ticket.getEndDate();
+
+        while (!currentDate.isAfter(endDate)) {
+            // 재고 생성
+            Inventory inventory = Inventory.createInventory(ticket, 100, currentDate);
+            inventoryRepository.save(inventory);
+
+            // 다음 날짜로 이동
+            currentDate = currentDate.plusDays(1);
+        }
+
         return ticket.getId();
     }
 
@@ -111,6 +126,35 @@ public class TicketService {
             Long imgId = ticketImgIds.get(i);
             MultipartFile imgFile = ticketImgFileList.get(i);
             imageService.updateTicketImage(imgId, imgFile);
+        }
+
+        // 재고 업데이트
+
+        // 기존 티켓의 endDate
+        LocalDate oldEndDate = ticketToUpdate.getEndDate();
+        // 업데이트된 티켓의 endDate
+        LocalDate newEndDate = ticketFormDto.getEndDate();
+
+        // endDate를 변경한 경우
+        if (!oldEndDate.equals(newEndDate)) {
+            // endDate가 앞당겨진 경우, 기존 endDate 이후의 재고 삭제
+            if (newEndDate.isBefore(oldEndDate)) {
+                // endDate 이후의 재고 삭제
+                inventoryRepository.deleteByTicketAndDateAfter(ticketToUpdate, newEndDate);
+            }
+            // endDate가 뒤로 늘어난 경우, 새로운 endDate 이후의 재고 추가
+            else {
+                // 시작일(startDate)부터 새로운 endDate까지의 기간을 계산하여 재고 생성
+                LocalDate currentDate = oldEndDate.plusDays(1); // 기존 endDate 다음 날부터 시작
+                while (!currentDate.isAfter(newEndDate)) {
+                    // 재고 생성
+                    Inventory inventory = Inventory.createInventory(ticketToUpdate, 100, currentDate);
+                    inventoryRepository.save(inventory);
+
+                    // 다음 날짜로 이동
+                    currentDate = currentDate.plusDays(1);
+                }
+            }
         }
 
         return ticketToUpdate.getId();
