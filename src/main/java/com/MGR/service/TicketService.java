@@ -106,16 +106,20 @@ public class TicketService {
 
     @Transactional
 
-    public Long updateTicket(TicketFormDto ticketFormDto, List<MultipartFile> ticketImgFileList) throws Exception {
-//        boolean isDuplicate = isDuplicateTicket(ticketFormDto);
-//        if (isDuplicate) {
-//            throw new DuplicateTicketNameException("중복된 티켓 정보가 존재합니다.");
-//        }
-
+    public Ticket updateTicket(Long id, TicketFormDto ticketFormDto, List<MultipartFile> ticketImgFileList) throws Exception {
+       Ticket ticket = ticketRepository.findById(id).orElseThrow();
+       ticket.setName(ticketFormDto.getName());
+        ticket.setAdultPrice(ticketFormDto.getAdultPrice());
+        ticket.setChildPrice(ticketFormDto.getChildPrice());
+        ticket.setLocationCategory(ticketFormDto.getLocationCategory());
+        ticket.setMemo(ticketFormDto.getMemo());
+        ticket.setStartDate(ticketFormDto.getStartDate());
+        ticket.setEndDate(ticketFormDto.getEndDate());
+        ticketRepository.save(ticket);
         // 업데이트할 티켓을 가져옵니다.
-        Ticket ticketToUpdate = ticketRepository.findById(ticketFormDto.getId())
-                .orElseThrow(() -> new EntityNotFoundException("티켓을 찾을 수 없습니다. ID: " + ticketFormDto.getId()));
+        Image findImage = imageService.findByTicket(ticket);
 
+        MultipartFile imgFile = ticketImgFileList.get(0);
         // 재고 업데이트
         // 기존 티켓의 endDate
         LocalDate oldEndDate = ticketToUpdate.getEndDate();
@@ -126,13 +130,7 @@ public class TicketService {
         ticketToUpdate.updateTicket(ticketFormDto);
         ticketRepository.save(ticketToUpdate);
 
-        // 이미지 업데이트
-        List<Long> ticketImgIds = ticketFormDto.getTicketImgIds();
-        for (int i = 0; i < ticketImgIds.size(); i++) {
-            Long imgId = ticketImgIds.get(i);
-            MultipartFile imgFile = ticketImgFileList.get(i);
-            imageService.updateTicketImage(imgId, imgFile);
-        }
+        imageService.saveTicketImage(findImage, imgFile);
 
         // 재고
         // endDate를 변경한 경우
@@ -156,8 +154,7 @@ public class TicketService {
                 }
             }
         }
-
-        return ticketToUpdate.getId();
+        return ticket;
     }
 
     @Transactional

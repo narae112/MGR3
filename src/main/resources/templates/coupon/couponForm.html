@@ -24,81 +24,116 @@
 </div>
 <th:block layout:fragment="script">
     <script th:inline="javascript">
-        $(document).ready(function() {
-            // 이미지 파일 선택 이벤트 핸들러 등록
-            bindDomEvent();
+        function redirectToTicketsPage() {
+    location.replace('/admin/coupons');
+}
+       $(document).ready(function() {
+           // 이미지 파일 선택 이벤트 핸들러 등록
+           bindDomEvent();
 
-            // 오류 메시지 처리
-            var errorMessage = /*[[${errorMessage}]]*/ '';
-            if (errorMessage != null && errorMessage !== '') {
-                showAlert(errorMessage);
-            }
+           // 오류 메시지 처리
+           var errorMessage = /*[[${errorMessage}]]*/ '';
+           if (errorMessage != null && errorMessage !== '') {
+               showAlert(errorMessage);
+           }
 
-            // 오늘 날짜 설정 및 종료일 최소값 설정
-            setTodayDate();
-        });
+           // 오늘 날짜 설정 및 종료일 최소값 설정
+           setTodayDate();
+        $('form').submit(function(event) {
+                // 폼 제출 기본 동작 방지
+                event.preventDefault();
 
-        // 이미지 파일 선택 이벤트 핸들러
-        function bindDomEvent() {
-            $(".custom-file-input").on("change", function() {
-                var fileName = $(this).val().split("\\").pop();
-                if (fileName === '') {
-                    alert("파일을 선택해주세요."); // 파일을 선택하지 않았을 때 알림 창 표시
-                    return;
-                }
+                // 폼 데이터 전송
+                // 여기서 필요한 경우 Ajax를 사용하여 서버로 데이터를 전송할 수 있습니다.
 
-                // 파일 확장자를 가져옵니다.
-                var fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
-
-                // 이미지 파일 확장자인지 확인합니다.
-                if (fileExt != "jpg" && fileExt != "jpeg" && fileExt != "gif" && fileExt != "png" && fileExt != "bmp") {
-                    // 이미지 파일이 아니면 오류를 표시합니다.
-                    alert("이미지 파일만 등록이 가능합니다.");
-                    // 파일 선택 초기화
-                    $(this).val('');
-                    return;
-                }
-
-                $(this).siblings(".custom-file-label").html(fileName);
+                // 페이지 이동
+                saveCouponAndRedirect();
             });
-        }
+    });
 
-        // 오늘 날짜 설정 및 종료일 최소값 설정
-        function setTodayDate() {
-            var today = getTodayDate();
-            $('#startDate').val(today);
-            $('#startDate').attr("min", today);
-            $('#endDate').attr("min", today);
+       // 이미지 파일 선택 이벤트 핸들러
+       function bindDomEvent() {
+           $(".custom-file-input").on("change", function() {
+               var fileName = $(this).val().split("\\").pop();
+               if (fileName === '') {
+                   alert("파일을 선택해주세요."); // 파일을 선택하지 않았을 때 알림 창 표시
+                   return;
+               }
 
-            $('#startDate').on('change', function() {
-                var startDate = $(this).val();
-                $('#endDate').attr("min", startDate);
+               // 파일 확장자를 가져옵니다.
+               var fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+
+               // 이미지 파일 확장자인지 확인합니다.
+               if (fileExt != "jpg" && fileExt != "jpeg" && fileExt != "gif" && fileExt != "png" && fileExt != "bmp") {
+                   // 이미지 파일이 아니면 오류를 표시합니다.
+                   alert("이미지 파일만 등록이 가능합니다.");
+                   // 파일 선택 초기화
+                   $(this).val('');
+                   return;
+               }
+
+               $(this).siblings(".custom-file-label").html(fileName);
+           });
+       }
+
+       // 오늘 날짜 설정 및 종료일 최소값 설정
+       function setTodayDate() {
+           var today = getTodayDate();
+           $('#startDate').val(today);
+           $('#startDate').attr("min", today);
+           $('#endDate').attr("min", today);
+
+           $('#startDate').on('change', function() {
+               var startDate = $(this).val();
+               $('#endDate').attr("min", startDate);
+           });
+       }
+
+       // 오늘 날짜를 가져오는 함수
+       function getTodayDate() {
+           var today = new Date();
+           var dd = String(today.getDate()).padStart(2, '0');
+           var mm = String(today.getMonth() + 1).padStart(2, '0'); // 1월은 0부터 시작하므로 +1
+           var yyyy = today.getFullYear();
+           return yyyy + '-' + mm + '-' + dd;
+       }
+
+       // 오류 메시지를 표시하는 함수
+       function showAlert(errorMessage) {
+           alert(errorMessage);
+       }
+
+       // 종료일 유효성 검사 함수
+       function checkEndDate() {
+           var startDate = document.getElementById("startDate").value;
+           var endDate = document.getElementById("endDate").value;
+
+           if (endDate < startDate) {
+               alert("종료 날짜는 시작 날짜 이후여야 합니다.");
+               document.getElementById("endDate").value = startDate;
+           }
+       }
+          function saveCouponAndRedirect() {
+            // 폼 데이터를 FormData 객체로 생성
+            var formData = new FormData($('form')[0]);
+
+            // Ajax를 사용하여 폼 데이터를 서버로 전송
+            $.ajax({
+                type: 'POST',
+                url: '/admin/coupon/new', // 저장 로직이 처리되는 URL
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    // 저장이 성공하면 페이지를 이동합니다.
+                    redirectToTicketsPage();
+                },
+                error: function(xhr, status, error) {
+                    // 저장 중 에러가 발생하면 에러 메시지를 표시합니다.
+                    var errorMessage = xhr.responseText;
+                    showAlert(errorMessage);
+                }
             });
-        }
-
-        // 오늘 날짜를 가져오는 함수
-        function getTodayDate() {
-            var today = new Date();
-            var dd = String(today.getDate()).padStart(2, '0');
-            var mm = String(today.getMonth() + 1).padStart(2, '0'); // 1월은 0부터 시작하므로 +1
-            var yyyy = today.getFullYear();
-            return yyyy + '-' + mm + '-' + dd;
-        }
-
-        // 오류 메시지를 표시하는 함수
-        function showAlert(errorMessage) {
-            alert(errorMessage);
-        }
-
-        // 종료일 유효성 검사 함수
-        function checkEndDate() {
-            var startDate = document.getElementById("startDate").value;
-            var endDate = document.getElementById("endDate").value;
-
-            if (endDate < startDate) {
-                alert("종료 날짜는 시작 날짜 이후여야 합니다.");
-                document.getElementById("endDate").value = startDate;
-            }
         }
     </script>
 </th:block>

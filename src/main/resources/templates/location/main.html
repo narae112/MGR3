@@ -156,79 +156,97 @@
         });
         infowindow1.open(map1, marker1);
 
-        // 두 번째 지도 설정
-       // 두 번째 지도 설정
-var mapContainer2 = document.getElementById('map2');
-var mapOption2 = {
-    center: new kakao.maps.LatLng(35.196139288167934, 129.21339048352203), // 밥집의 좌표로 지도 중심 설정
-    level: 3
-};
-var map2 = new kakao.maps.Map(mapContainer2, mapOption2);
-var infowindow2 = new kakao.maps.InfoWindow({ zIndex: 1 });
+        var mapContainer2 = document.getElementById('map2');
+        var mapOption2 = {
+            center: new kakao.maps.LatLng(35.196139288167934, 129.21339048352203), // 마커의 좌표로 지도 중심 설정
+            level: 3
+        };
+        var map2 = new kakao.maps.Map(mapContainer2, mapOption2);
 
-// 밥집의 위치를 마커로 표시
-var marker2 = new kakao.maps.Marker({
-    map: map2,
-    position: new kakao.maps.LatLng(35.196939011464316, 129.21341657863988)
-});
+        // 마커2 생성
+        var marker2 = new kakao.maps.Marker({
+            position: map2.getCenter(),
+            map: map2
+        });
 
-// 마커를 클릭하면 인포윈도우를 표시
-kakao.maps.event.addListener(marker2, 'click', function() {
-    infowindow2.setContent('<div style="padding:5px;font-size:12px;">할매순대국 부산점</div>');
-    infowindow2.open(map2, marker2);
-});
+        // 인포윈도우2 생성
+        var infowindow2 = new kakao.maps.InfoWindow({
+            content: '<div style="padding:5px;">할매순대국 부산점</div>'
+        });
 
-        // 밥집의 위치를 마커로 표시
-var marker3 = new kakao.maps.Marker({
-    map: map2,
-    position: new kakao.maps.LatLng(35.19606531645605, 129.21329626244628)
-});
+        // 인포윈도우2 표시
+        infowindow2.open(map2, marker2);
 
-// 마커를 클릭하면 인포윈도우를 표시
-kakao.maps.event.addListener(marker3, 'click', function() {
-    infowindow2.setContent('<div style="padding:5px;font-size:12px;">BBQ 롯데월드어드벤처 부산점</div>');
-    infowindow2.open(map2, marker3);
-});
+<!--        // 밥집의 위치를 마커로 표시-->
+<!--        // 마커3 생성-->
+<!--        var marker3 = new kakao.maps.Marker({-->
+<!--            position: new kakao.maps.LatLng(35.19606531645605, 129.21329626244628),-->
+<!--            map: map2-->
+<!--        });-->
+
+<!--        // 인포윈도우3 생성-->
+<!--        var infowindow3 = new kakao.maps.InfoWindow({-->
+<!--            content: '<div style="padding:5px;font-size:12px;">BBQ 롯데월드어드벤처 부산점</div>'-->
+<!--        });-->
+
+<!--        // 인포윈도우3 표시-->
+<!--        infowindow3.open(map2, marker3);-->
+
+        // 마커4 생성
         var marker4 = new kakao.maps.Marker({
-    map: map2,
-    position: new kakao.maps.LatLng(35.19629811802532, 129.21591420709456)
-});
+            position: new kakao.maps.LatLng(35.19629811802532, 129.21591420709456),
+            map: map2
+        });
 
-// 마커를 클릭하면 인포윈도우를 표시
-kakao.maps.event.addListener(marker4, 'click', function() {
-    infowindow2.setContent('<div style="padding:5px;font-size:12px;">롯데월드어드벤처 부산점 파이러츠바</div>');
-    infowindow2.open(map2, marker4);
-});
-        var marker5 = new kakao.maps.Marker({
-    map: map2,
-    position: new kakao.maps.LatLng(35.19765573500107, 129.21214172193703 )
-});
+        // 인포윈도우4 생성
+        var infowindow4 = new kakao.maps.InfoWindow({
+            content: '<div style="padding:5px;font-size:12px;">롯데월드어드벤처 부산점 파이러츠바</div>'
+        });
 
-// 마커를 클릭하면 인포윈도우를 표시
-kakao.maps.event.addListener(marker5, 'click', function() {
-    infowindow2.setContent('<div style="padding:5px;font-size:12px;">샤론테라스 디트로네</div>');
-    infowindow2.open(map2, marker5);
-});
-            var marker6 = new kakao.maps.Marker({
-    map: map2,
-    position: new kakao.maps.LatLng(35.196664975271176, 129.21544114786963)
-});
+        // 인포윈도우4 표시
+        infowindow4.open(map2, marker4);
 
-// 마커를 클릭하면 인포윈도우를 표시
-kakao.maps.event.addListener(marker6, 'click', function() {
-    infowindow2.setContent('<div style="padding:5px;font-size:12px;">춘리마라탕</div>');
-    infowindow2.open(map2, marker6);
-});
-            var marker7 = new kakao.maps.Marker({
-    map: map2,
-    position: new kakao.maps.LatLng( 35.19655586040046, 129.21426355183044)
-});
+<!--        // 마커5 생성-->
+<!--        var marker5 = new kakao.maps.Marker({-->
+<!--            position: new kakao.maps.LatLng(35.19765573500107, 129.21214172193703),-->
+<!--            map: map2-->
+<!--        });-->
 
-// 마커를 클릭하면 인포윈도우를 표시
-kakao.maps.event.addListener(marker7, 'click', function() {
-    infowindow2.setContent('<div style="padding:5px;font-size:12px;">피자헛 부산점</div>');
-    infowindow2.open(map2, marker7);
-});
+<!--        // 인포윈도우5 생성-->
+<!--        var infowindow5 = new kakao.maps.InfoWindow({-->
+<!--            content: '<div style="padding:5px;font-size:12px;">샤론테라스 디트로네</div>'-->
+<!--        });-->
+
+<!--        // 인포윈도우5 표시-->
+<!--        infowindow5.open(map2, marker5);-->
+
+<!--        // 마커6 생성-->
+<!--        var marker6 = new kakao.maps.Marker({-->
+<!--            position: new kakao.maps.LatLng(35.196664975271176, 129.21544114786963),-->
+<!--            map: map2-->
+<!--        });-->
+
+<!--        // 인포윈도우6 생성-->
+<!--        var infowindow6 = new kakao.maps.InfoWindow({-->
+<!--            content: '<div style="padding:5px;font-size:12px;">춘리마라탕</div>'-->
+<!--        });-->
+
+<!--        // 인포윈도우6 표시-->
+<!--        infowindow6.open(map2, marker6);-->
+
+        // 마커7 생성
+        var marker7 = new kakao.maps.Marker({
+            position: new kakao.maps.LatLng(35.19655586040046, 129.21426355183044),
+            map: map2
+        });
+
+        // 인포윈도우7 생성
+        var infowindow7 = new kakao.maps.InfoWindow({
+            content: '<div style="padding:5px;font-size:12px;">피자헛 부산점</div>'
+        });
+
+        // 인포윈도우7 표시
+        infowindow7.open(map2, marker7);
 
     </script>
     <div class="button mgr">
