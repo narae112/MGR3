@@ -36,15 +36,6 @@ public class NotificationService {
         // 1. 현재 클라이언트를 위한 sseEmitter 객체 생성
         SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
 
-        // 2. 연결 확인 메세지
-        try {
-            sseEmitter.send(SseEmitter.event()
-                    .name("connect")
-                    .data("연결성공"));
-        } catch (IOException e) {
-            System.out.println("연결 에러= " + e.getMessage());
-        }
-
         // 3. 저장
         sseEmitters.put(memberId, sseEmitter);
 
@@ -128,8 +119,8 @@ public class NotificationService {
         Member member = board.getAuthor();
 
         //알림메세지 생성
-        String data = "다른 사용자가 다음 리뷰에 추천을 표시했습니다. [" +
-                board.getSubject() + "]";
+        String data = "다른 사용자가 다음 리뷰에 좋아요를 표시했습니다. [" +
+                board.getSubject() + "] - 리뷰 페이지로 이동하려면 클릭하세요.";
         System.out.println("data = " + data);
         SseEmitter sseEmitter = sseEmitters.get(member.getId());
         System.out.println("sseEmitter = " + sseEmitter);
@@ -160,7 +151,7 @@ public class NotificationService {
 
         //알림메세지 생성
         String data = "다른 사용자가 다음 리뷰에 댓글을 등록했습니다. [" +
-                board.getSubject() + "]";
+                board.getSubject() + "] - 리뷰 페이지로 이동하려면 클릭하세요.";
         System.out.println("data = " + data);
         SseEmitter sseEmitter = sseEmitters.get(member.getId());
         System.out.println("sseEmitter = " + sseEmitter);

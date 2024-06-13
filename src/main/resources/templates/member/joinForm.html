@@ -39,6 +39,23 @@
     .validationError{
         color: red;
     }
+    .email-group {
+        display: flex;
+        align-items: center;
+    }
+    .email-group input {
+        margin-right: 10px;
+    }
+    .email-group button {
+        white-space: nowrap;
+    }
+    .button-group {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin-top: 20px;
+    }
     </style>
 </th:block>
 
@@ -146,6 +163,21 @@
             });
         }
 
+       function goBack() {
+            window.history.back();
+        }
+
+        function setMaxBirthDate() {
+            var today = new Date();
+            var maxDate = new Date(today.getFullYear() - 7, today.getMonth(), today.getDate());
+            var maxDateString = maxDate.toISOString().split('T')[0];
+            document.getElementById('birth').setAttribute('max', maxDateString);
+        }
+
+        window.onload = function() {
+            setMaxBirthDate();
+        };
+
     </script>
 </th:block>
 
@@ -154,7 +186,10 @@
     <form action="/member/create" role="form" th:object="${memberFormDto}" method="POST">
         <div class="mb-3">
             <label th:for="email">이메일</label>
-            <input th:field="*{email}" id="email" class="form-control" type="email" onblur="checkEmail()"/>
+            <div class="email-group">
+                <input th:field="*{email}" id="email" class="form-control" type="email" onblur="checkEmail()"/>
+                <button class="btn btn-primary" type="button" id="code-button" onclick="sendEmail()">인증 코드 발송</button>
+            </div>
             <span class="email_already">이미 사용중인 이메일 입니다</span>
             <span class="validationError" th:if="${#fields.hasErrors('email')}"
                   th:errors="*{email}"></span>
@@ -201,11 +236,13 @@
             <input class="form-control" type="text" id="code" th:field="*{code}"/>
             <span class="validationError" th:if="${#fields.hasErrors('code')}"
                   th:errors="*{code}"></span>
-            <button class="btn btn-primary" type="button" id="code-button" onclick="sendEmail()">인증 메일 발송</button>
             <input type="hidden" name="authCode" th:value="*{authCode}">
         </div>
 
-        <button class="btn btn-primary" type="submit" id="member-create">가입</button>
+        <div class="button-group">
+            <button class="btn btn-primary" type="submit" id="member-create">가입</button>
+            <button class="btn btn-primary" type="button" onclick="goBack()">취소</button>
+        </div>
     </form>
 </div>
 </html>
