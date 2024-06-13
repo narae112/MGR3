@@ -25,6 +25,13 @@
             object-fit: cover; /* 이미지를 컨테이너에 맞추되, 비율을 유지하며 잘라냄 */
             margin: 20px 10px;
         }
+        .carousel-item-schedule img.placeholder-image {
+            width: 300px; /* 고정된 가로 크기 */
+            height: 200px; /* 고정된 세로 크기 */
+            object-fit: contain; /* 이미지를 컨테이너에 맞추되, 비율을 유지하며 잘라냄 */
+            margin: 20px 10px;
+        }
+
         .date-navigation {
             display: flex;
             justify-content: center;
@@ -80,7 +87,11 @@
     </div>
 
     <div class="carousel-schedule">
-        <div th:each="attraction : ${attractionList}" class="carousel-item-schedule">
+        <div th:if="${#lists.isEmpty(attractionList)}" class="carousel-item-schedule">
+            <img th:src="@{/img/logo/placeholder.png}" alt="로고" class="placeholder-image">
+            <h3>모든 어트랙션을 이용 할 수 있습니다.</h3>
+        </div>
+        <div th:each="attraction : ${attractionList}" class="carousel-item-schedule" th:unless="${#lists.isEmpty(attractionList)}">
             <img th:src="${imageUrls[attraction.id]}" alt="이미지">
             <h3 th:text="${attraction.name}">이름</h3>
         </div>
