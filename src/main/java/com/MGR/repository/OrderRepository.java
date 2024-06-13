@@ -15,4 +15,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     )
     List<Order> findOrders(@Param("email") String email); // 해당 멤버의 오더들
     Order findByOrderNum(String orderNum);
+
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.member.id = :memberId")
+    int countByMemberId(@Param("memberId") Long memberId);
 }

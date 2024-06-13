@@ -5,6 +5,7 @@ import com.MGR.entity.Member;
 import com.MGR.exception.DataNotFoundException;
 import com.MGR.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -75,6 +78,38 @@ public class MemberService{
 
     public List<Member> findByAllMembers() {
         return memberRepository.findAll();
+    }
+
+//    public Page<Member> getAllMembers(Integer page) {
+//        List<Member> memberList = memberRepository.findAll();
+//
+//        List<Member> sortedList = memberList.stream()
+//                .sorted(Comparator.comparing(Member::getId))
+//                .toList();
+//
+//        List<Sort.Order> sorts = new ArrayList<>();
+//        sorts.add(Sort.Order.desc("id"));
+//        Pageable pageable = PageRequest.of(page, 5, Sort.by(sorts));
+//
+//        int start = (int) pageable.getOffset();
+//        int end = Math.min((start + pageable.getPageSize()), sortedList.size());
+//
+//        List<Member> pagedList = new ArrayList<>();
+//        if (start <= end) {
+//            pagedList = sortedList.subList(start, end);
+//        }
+//
+//        return new PageImpl<>(pagedList, pageable, sortedList.size());
+//    }
+
+//    public Page<Member> getAllMembers(Integer page) {
+//        Pageable pageable = PageRequest.of(page, 5, Sort.by(Sort.Order.desc("id")));
+//        return memberRepository.findAll(pageable);
+//    }
+
+    public Page<Member> getAllMembers(Integer page) {
+        Pageable pageable = PageRequest.of(page, 5, Sort.by(Sort.Order.desc("id")));
+        return memberRepository.findByRole("ROLE_USER", pageable);
     }
 
     public List<Member> findByAllUser() {

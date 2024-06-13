@@ -93,13 +93,13 @@
   let couponId = 0;
   let couponDiscountRate = 0;
 
-  function getSelectedCoupon() {
-    couponId = parseInt(couponSelect.value);
-    couponDiscountRate = parseInt(couponSelect.options[couponSelect.selectedIndex].getAttribute("data-discount-rate"));
+function getSelectedCoupon() {
+    couponId = parseInt(couponSelect.value || 0); // 선택하지 않았을 때 기본값으로 0 설정
+    couponDiscountRate = parseInt(couponSelect.options[couponSelect.selectedIndex].getAttribute("data-discount-rate") || 0); // 선택하지 않았을 때 기본값으로 0 설정
     console.log("Selected Coupon Id: " + couponId);
     console.log("Selected Coupon Discount Rate: " + couponDiscountRate);
     updatePrice();
-  }
+}
 
   const generateRandomString = () => window.btoa(Math.random()).slice(0, 20);
 
@@ -136,6 +136,7 @@
   paymentMethodWidget.on("ready", function () {
     button.disabled = false;
     couponSelect.disabled = false;
+    updatePrice(); // 페이지 로드 시 할인 적용 후 금액의 기본값 설정
   });
 
   // ------  결제 금액 업데이트 ------
