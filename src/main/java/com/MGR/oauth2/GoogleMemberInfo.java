@@ -34,4 +34,10 @@ public class GoogleMemberInfo implements OAuth2MemberInfo{
     public String getNickname() {
         return (String) attributes.get("given_name");
     }
+
+
+    @Override
+    public String getProfileImgUrl(){
+        return (String) attributes.get("avatar_url").toString();
+    }
 }

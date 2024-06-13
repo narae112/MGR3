@@ -5,13 +5,20 @@ import com.MGR.oauth2.*;
 import com.MGR.repository.MemberRepository;
 import com.MGR.security.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -49,14 +56,21 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
             default:
                 throw new OAuth2AuthenticationException("OAuth2 로그인 실패 = " + registrationId);
         }
+
         String provider = memberInfo.getProvider();
         String providerId = memberInfo.getProviderId();
         String oauth2Id = provider + "_" + providerId; //중복이 발생하지 않도록 provider 와 providerId를 조합
         String username = memberInfo.getName();
+        String profileImgUrl = memberInfo.getProfileImgUrl();
         String email = memberInfo.getEmail();
         String nickname = memberInfo.getNickname();
         String role = "ROLE_USER"; //일반 유저
         System.out.println(oAuth2User.getAttributes());
+
+        if (registrationId.equals("github") && (email == null || email.isEmpty())) {
+            String accessToken = userRequest.getAccessToken().getTokenValue();
+            email = getGithubEmail(accessToken);
+        }
 
         Optional<Member> findMember = memberRepository.findByEmail(email);
         Member member=null;
@@ -80,4 +94,42 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
         return new PrincipalDetails(member);
     }
 
+    private String getGithubEmail(String accessToken) {
+        System.out.println("getGithubEmail 시작");
+        String email = null;
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            String url = "https://api.github.com/user/emails";
+//            String url = "https://mgrland.shop/login/oauth2/code/github?code=";
+
+            HttpHeaders headers = new HttpHeaders();
+
+            headers.set("Authorization", "token " + accessToken);
+            headers.set("Accept", "application/vnd.github.v3+json");
+            System.out.println("ㅇㅇㅇㅇAccess Token: " + accessToken);
+
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+            ResponseEntity<List<Map<String, Object>>> response =
+                    restTemplate.exchange(url, HttpMethod.GET, entity,
+                            new ParameterizedTypeReference<>() {});
+
+            System.out.println("ㅇㅇㅇㅇㅇㅇResponse Status: " + response.getStatusCode()); // 응답 상태 로그 출력
+            System.out.println("Response Body: " + response.getBody()); // 응답 바디 로그 출력
+
+            List<Map<String, Object>> emails = response.getBody();
+
+            if (emails != null) {
+                for (Map<String, Object> emailMap : emails) {
+                    if ((boolean) emailMap.get("primary")) {
+                        email = (String) emailMap.get("email");
+                        break;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("예외처리 = " + e);
+        }
+        return email;
+    }
 }
