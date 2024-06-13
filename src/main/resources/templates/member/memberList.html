@@ -7,8 +7,17 @@
 <!-- css -->
 <th:block layout:fragment="css">
     <style>
-
-
+        .profile-img {
+             width: 25px;
+             height: 25px;
+             border-radius: 50%;
+             object-fit: cover;
+         }
+        .image-cell {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
     </style>
 </th:block>
 
@@ -31,6 +40,7 @@
             <th>생일</th>
             <th>결제건수</th>
             <th>제재여부</th>
+            <th>프로필사진</th>
         </tr>
         </thead>
         <tbody>
@@ -41,6 +51,10 @@
             <td th:text="${member.birth != null ? member.birth : '미등록'}"></td>
             <td th:text="${orderCountList[iterStat.index] != null ? orderCountList[iterStat.index] : '미사용'}"></td>
             <td th:text="${member.isSuspended != null ? (member.isSuspended ? '제재됨' : '정상') : '정상'}"></td>
+            <td class="image-cell">
+                <img th:src="${member.profileImgUrl != null ? member.profileImgUrl : 'default-image-url'}"
+                     alt="Profile Image" class="profile-img"/>
+            </td>
         </tr>
         </tbody>
     </table>
