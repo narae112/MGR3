@@ -118,7 +118,7 @@ public class CouponController {
                                @PathVariable("page") Optional<Integer> page, Model model){
         // 페이지 매개변수 처리
         int pageNumber = page.orElse(0); // 페이지 매개변수가 없는 경우 0으로 초기화
-        Pageable pageable = PageRequest.of(pageNumber, 3);
+        Pageable pageable = PageRequest.of(pageNumber, 5);
 
         // 쿠폰 페이지 가져오기
         Page<Coupon> coupons = couponService.getAdminCouponPage(couponSearchDto, pageable);
