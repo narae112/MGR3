@@ -36,6 +36,7 @@
                 <thead>
                 <tr>
                     <th>등록일</th>
+                    <th>구분</th>
                     <th>작성자</th>
                     <th>제목</th>
                     <th>이벤트 시작일</th>
@@ -47,6 +48,7 @@
 
                 <tr th:each="boardList, loop : ${paging}">
                     <td th:text="${#temporals.format(boardList.createDate, 'MM-dd')}">등록일</td>
+                    <td th:text="${boardList.type}">타입</td>
                     <td th:if="${boardList.member != null}" th:text="${boardList.member.nickname}">작성자</td>
                     <!--                    <td><a th:text="${boardList.title}" th:href="@{|/board/event/${boardList.id}|}">제목</a></td>-->
                     <!--                    <td><a th:text="${boardList.title}" th:href="@{|/board/event/${boardList.id}|}">제목</a>-->
