@@ -4,6 +4,14 @@
        xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="~{layouts/main}">
 
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        function navigateToLocation() {
+            window.location.href = '/location';
+        }
+    </script>
+</th:block>
+
 <div layout:fragment="content">
 
     <!-- Start Hero Area -->
@@ -16,8 +24,8 @@
             <div class="row align-items-center">
                 <div class="col-lg-6 offset-lg-3 col-md-12 col-12">
                     <div class="hero-content">
-                        <h5 th:onclick="@{/location}" class="wow zoomIn" data-wow-delay=".2s">
-                            <i class="lni lni-map-marker"></i> MGR 오는길
+                        <h5 class="wow zoomIn" data-wow-delay=".2s">
+                            <span th:onclick="navigateToLocation()"><i class="lni lni-map-marker"></i> MGR 오는길</span>
                         </h5>
                         <h2 class="wow fadeInUp" data-wow-delay=".4s">Merry Go Ride 2024</h2>
                         <p class="wow fadeInUp" data-wow-delay=".6s">Welcome to MGR. This website was created by three students learning web development.</p>
