@@ -116,6 +116,12 @@ public class TicketService {
         Ticket ticketToUpdate = ticketRepository.findById(ticketFormDto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("티켓을 찾을 수 없습니다. ID: " + ticketFormDto.getId()));
 
+        // 재고 업데이트
+        // 기존 티켓의 endDate
+        LocalDate oldEndDate = ticketToUpdate.getEndDate();
+        // 업데이트된 티켓의 endDate
+        LocalDate newEndDate = ticketFormDto.getEndDate();
+
         // 티켓 정보 업데이트
         ticketToUpdate.updateTicket(ticketFormDto);
         ticketRepository.save(ticketToUpdate);
@@ -128,13 +134,7 @@ public class TicketService {
             imageService.updateTicketImage(imgId, imgFile);
         }
 
-        // 재고 업데이트
-
-        // 기존 티켓의 endDate
-        LocalDate oldEndDate = ticketToUpdate.getEndDate();
-        // 업데이트된 티켓의 endDate
-        LocalDate newEndDate = ticketFormDto.getEndDate();
-
+        // 재고
         // endDate를 변경한 경우
         if (!oldEndDate.equals(newEndDate)) {
             // endDate가 앞당겨진 경우, 기존 endDate 이후의 재고 삭제
