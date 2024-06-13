@@ -50,8 +50,12 @@ public class NotificationService {
     // 이벤트 등록 알림
     @Transactional
     public void notifyBoard(EventBoard board) {
-        // role = ROLE_USER 만 조회
-        List<Member> memberList = memberService.findByAllUser();
+
+        List<Member> memberList = memberService.findAll();
+
+        //알림메세지 생성
+        String data = "[" + board.getType() + "] 가 등록되었습니다> " +
+                board.getTitle();
 
         for (Member member : memberList) {
 
@@ -62,7 +66,7 @@ public class NotificationService {
                 try {
                     sseEmitterReceiver.send(SseEmitter.event()
                             .name("message")
-                            .data(board.getTitle()));
+                            .data(data));
 
                     int notificationCount = countNotificationsForMember(member.getId());
                     System.out.println("notificationCount 알림수량 = " + notificationCount);
@@ -76,7 +80,7 @@ public class NotificationService {
 
                 // 알림 객체 생성 및 저장
                 Notification notification =
-                        new Notification(member.getId(), board.getTitle(), "이벤트", board.getId());
+                        new Notification(member.getId(), data, "이벤트", board.getId());
                 notificationRepository.save(notification);
             }
         }
