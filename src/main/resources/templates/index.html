@@ -109,16 +109,16 @@
                 <!-- Thymeleaf를 통해 서버에서 전달된 추천 수가 많은 리뷰를 동적으로 렌더링합니다. -->
                 <div th:each="review : ${topRatedReviews}" class="col-lg-4 col-md-6 col-12 wow fadeInUp" data-wow-delay=".4s">
                     <!-- Single Review -->
-                    <div class="card-img-top img-fluid rounded">
+                    <div class="single-blog-grid">
                         <!-- Review Image -->
-                        <div class="review-img" style="height: 400px; overflow: hidden;">
+                        <div class="blog-img review-img">
                             <a th:href="@{/review/board/detail/{id}(id=${review.id})}">
                                 <!-- 이미지 URL을 reviewImgDtoList의 첫 번째 이미지에서 가져옵니다. -->
-                              <img th:src="${review.imageUrl != null and  review.imageUrl.length() > 0 ? review.imageUrl : '/img/unicorn.png'}" alt="Review Image" style="width: 100%; height: auto; object-fit: contain;">
+                              <img th:src="${review.imageUrl != null and  review.imageUrl.length() > 0 ? review.imageUrl : '/img/unicorn.png'}" alt="Review Image">
                             </a>
                         </div>
                         <!-- Review Content -->
-                        <div class="review-content">
+                        <div class="blog-content review-content">
                             <!-- 리뷰 제목 -->
                             <h4 class="title" th:text="${review.subject}">Review Title</h4>
                             <!-- 작성자 정보 -->
