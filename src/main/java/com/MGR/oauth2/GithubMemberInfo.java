@@ -37,7 +37,6 @@ public class GithubMemberInfo implements OAuth2MemberInfo{
 
     @Override
     public String getProfileImgUrl(){
-        return (String) attributes.get("avatar_url").toString();
+        return (String) attributes.get("avatar_url");
     }
-
 }

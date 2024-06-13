@@ -41,7 +41,7 @@ public class KakaoMemberInfo implements OAuth2MemberInfo{
 
     @Override
     public String getProfileImgUrl(){
-        return profileAttributes.get("profile_image").toString();
+        return profileAttributes.get("profile_image_url").toString();
     }
 
 }

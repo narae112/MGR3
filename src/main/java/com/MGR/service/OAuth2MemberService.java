@@ -32,10 +32,9 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        OAuth2MemberInfo memberInfo = null;
-        System.out.println(oAuth2User.getAttributes());
+        System.out.println("oAuth2User = " + oAuth2User.getAttributes());
 
-        System.out.println(userRequest.getClientRegistration().getRegistrationId());
+        OAuth2MemberInfo memberInfo = null;
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         System.out.println("registrationId = " + registrationId);
@@ -65,7 +64,6 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
         String email = memberInfo.getEmail();
         String nickname = memberInfo.getNickname();
         String role = "ROLE_USER"; //일반 유저
-        System.out.println(oAuth2User.getAttributes());
 
         if (registrationId.equals("github") && (email == null || email.isEmpty())) {
             String accessToken = userRequest.getAccessToken().getTokenValue();
@@ -82,6 +80,7 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
                     .email(email)
                     .password(encoder.encode("2024"))
                     .role(role)
+                    .profileImgUrl(profileImgUrl)
                     .provider(provider)
                     .providerId(providerId).build();
             System.out.println(member.toString());
@@ -100,7 +99,6 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
         try {
             RestTemplate restTemplate = new RestTemplate();
             String url = "https://api.github.com/user/emails";
-//            String url = "https://mgrland.shop/login/oauth2/code/github?code=";
 
             HttpHeaders headers = new HttpHeaders();
 
@@ -113,8 +111,8 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
                     restTemplate.exchange(url, HttpMethod.GET, entity,
                             new ParameterizedTypeReference<>() {});
 
-            System.out.println("ㅇㅇㅇㅇㅇㅇResponse Status: " + response.getStatusCode()); // 응답 상태 로그 출력
-            System.out.println("Response Body: " + response.getBody()); // 응답 바디 로그 출력
+            System.out.println("ㅇㅇㅇㅇㅇㅇResponse Status: " + response.getStatusCode());
+            System.out.println("Response Body: " + response.getBody());
 
             List<Map<String, Object>> emails = response.getBody();
 
