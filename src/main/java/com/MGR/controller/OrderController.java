@@ -84,15 +84,8 @@ public class OrderController {
     }
 
     // 결제 내역
-    @GetMapping(value = {"/orders", "/orders/{page}"})
-    public String reservationList(@PathVariable("page") Optional<Integer> page, @AuthenticationPrincipal PrincipalDetails member, Model model) {
-        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5);
-        Page<ReservationDtlDto> reservationDtlList = reservationService.getReservationList(member.getUsername(), pageable);
-
-        model.addAttribute("reservationTickets", reservationDtlList);
-        model.addAttribute("page", pageable.getPageNumber());
-        model.addAttribute("maxPage", 5);
-
-        return "reservation/reservationList";
-    }
+//    @GetMapping(value = {"/orders", "/orders/{page}"})
+//    public String reservationList(@PathVariable("page") Optional<Integer> page, @AuthenticationPrincipal PrincipalDetails member, Model model) {
+//
+//    }
 }
