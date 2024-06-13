@@ -62,6 +62,21 @@ public class TicketService {
             imageService.saveTicketImage(ticketImage, ticketImgFileList.get(i));
         }
 
+        //재고 생성
+
+        // 시작일(startDate)부터 종료일(endDate)까지의 기간을 계산하여 재고 생성
+        LocalDate currentDate = ticket.getStartDate();
+        LocalDate endDate = ticket.getEndDate();
+
+        while (!currentDate.isAfter(endDate)) {
+            // 재고 생성
+            Inventory inventory = Inventory.createInventory(ticket, 100, currentDate);
+            inventoryRepository.save(inventory);
+
+            // 다음 날짜로 이동
+            currentDate = currentDate.plusDays(1);
+        }
+
         return ticket.getId();
     }
 
@@ -92,16 +107,45 @@ public class TicketService {
     @Transactional
 
     public Ticket updateTicket(Long id, TicketFormDto ticketFormDto, List<MultipartFile> ticketImgFileList) throws Exception {
-       Ticket ticket = ticketRepository.findById(id).orElseThrow();
-       ticket.setName(ticketFormDto.getName());
+        Ticket ticket = ticketRepository.findById(id).orElseThrow();
+        // 업데이트할 티켓을 가져옵니다.
+
+        // endDate를 변경한 경우
+        LocalDate oldEndDate = ticket.getEndDate();
+        LocalDate newEndDate = ticketFormDto.getEndDate();
+
+        // endDate가 변경된 경우에만 재고 업데이트
+        if (!oldEndDate.equals(newEndDate)) {
+            // endDate가 앞당겨진 경우, 기존 endDate 이후의 재고 삭제
+            if (newEndDate.isBefore(oldEndDate)) {
+                // endDate 이후의 재고 삭제
+                inventoryRepository.deleteByTicketAndDateAfter(ticket, newEndDate);
+            }
+            // endDate가 뒤로 늘어난 경우, 새로운 endDate 이후의 재고 추가
+            else {
+                // 시작일(startDate)부터 새로운 endDate까지의 기간을 계산하여 재고 생성
+                LocalDate currentDate = oldEndDate.plusDays(1); // 기존 endDate 다음 날부터 시작
+                while (!currentDate.isAfter(newEndDate)) {
+                    // 재고 생성
+                    Inventory inventory = Inventory.createInventory(ticket, 100, currentDate);
+                    inventoryRepository.save(inventory);
+
+                    // 다음 날짜로 이동
+                    currentDate = currentDate.plusDays(1);
+                }
+            }
+        }
+
+        ticket.setName(ticketFormDto.getName());
         ticket.setAdultPrice(ticketFormDto.getAdultPrice());
         ticket.setChildPrice(ticketFormDto.getChildPrice());
         ticket.setLocationCategory(ticketFormDto.getLocationCategory());
         ticket.setMemo(ticketFormDto.getMemo());
         ticket.setStartDate(ticketFormDto.getStartDate());
         ticket.setEndDate(ticketFormDto.getEndDate());
+
         ticketRepository.save(ticket);
-        // 업데이트할 티켓을 가져옵니다.
+
         Image findImage = imageService.findByTicket(ticket);
 
         MultipartFile imgFile = ticketImgFileList.get(0);
@@ -109,7 +153,6 @@ public class TicketService {
         imageService.saveTicketImage(findImage, imgFile);
 
         return ticket;
-
     }
 
     @Transactional

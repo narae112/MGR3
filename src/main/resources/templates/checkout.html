@@ -28,7 +28,7 @@
         <span th:text="'방문예정일 : ' + ${orderTicket.visitDate}"></span><br/>
         <span th:text="'[' + ${orderTicket.locationCategory.displayName} + '점] ' + ${orderTicket.name}"></span>
         <!-- [지점] 티켓 이름 -->
-        <span th:text="'성인 티켓 : ' + ${orderTicket.adultCount} + '장 ' + ${(orderTicket.adultPrice) * (orderTicket.adultCount)} + '원 | ' + '아동 티켓 : ' + ${orderTicket.childCount} + '장 ' + ${(orderTicket.childPrice) * (orderTicket.childCount)} + '원'"></span>
+        <span th:text="'성인 티켓 : ' + ${orderTicket.adultCount} + '장 ' + ${#numbers.formatInteger((orderTicket.adultPrice) * (orderTicket.adultCount), 0, 'COMMA')} + '원 | ' + '아동 티켓 : ' + ${orderTicket.childCount} + '장 ' + ${#numbers.formatInteger((orderTicket.childPrice) * (orderTicket.childCount), 0, 'COMMA')} + '원'"></span>
         <hr/>
       </div>
       <!-- 주문서 정보 -->
@@ -36,7 +36,7 @@
         총 주문건수: <span th:text="${#lists.size(orderTickets)}"></span> 건
       </div>
       <div>
-        총 결제금액: <span th:text="${totalPrice}"></span> 원
+        총 결제금액: <span th:text="${#numbers.formatInteger(totalPrice, 0, 'COMMA')}"></span> 원
       </div>
     </div>
     <!-- 쿠폰 체크박스 -->
@@ -142,9 +142,15 @@ function getSelectedCoupon() {
   // ------  결제 금액 업데이트 ------
   function updatePrice() {
     const discountedAmount = amount - (amount * couponDiscountRate / 100);
+    const formattedDiscountedAmount = numberWithCommas(discountedAmount); // 콤마(,) 추가
     const discountedPriceElement = document.getElementById("discountedPrice");
-    discountedPriceElement.textContent = discountedAmount + " 원";
+    discountedPriceElement.textContent = formattedDiscountedAmount + " 원";
     paymentMethodWidget.updateAmount(discountedAmount);
+  }
+
+  // 콤마(,)를 추가하는 함수
+  function numberWithCommas(x) {
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
   // ------ '결제하기' 버튼 누르면 결제창 띄우기 ------
