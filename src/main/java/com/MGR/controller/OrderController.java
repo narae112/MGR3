@@ -4,6 +4,7 @@ import com.MGR.constant.ReservationStatus;
 import com.MGR.dto.MemberCouponDto;
 import com.MGR.dto.OrderDto;
 import com.MGR.dto.OrderTicketDto;
+import com.MGR.dto.ReservationDtlDto;
 import com.MGR.entity.MemberCoupon;
 import com.MGR.entity.Order;
 import com.MGR.entity.OrderTicket;
@@ -11,6 +12,9 @@ import com.MGR.repository.MemberCouponRepository;
 import com.MGR.repository.OrderRepository;
 import com.MGR.security.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -77,5 +81,18 @@ public class OrderController {
         System.out.println("totalPrice = " + totalPrice);
 
         return "checkout";
+    }
+
+    // 결제 내역
+    @GetMapping(value = {"/orders", "/orders/{page}"})
+    public String reservationList(@PathVariable("page") Optional<Integer> page, @AuthenticationPrincipal PrincipalDetails member, Model model) {
+        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5);
+        Page<ReservationDtlDto> reservationDtlList = reservationService.getReservationList(member.getUsername(), pageable);
+
+        model.addAttribute("reservationTickets", reservationDtlList);
+        model.addAttribute("page", pageable.getPageNumber());
+        model.addAttribute("maxPage", 5);
+
+        return "reservation/reservationList";
     }
 }
