@@ -1,9 +1,6 @@
 package com.MGR.service;
 
-import com.MGR.entity.Attraction;
-import com.MGR.entity.EventBoard;
-import com.MGR.entity.Image;
-import com.MGR.entity.Member;
+import com.MGR.entity.*;
 import com.MGR.repository.ImageRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -150,5 +147,8 @@ public class ImageService {
 
     public Image findByAttraction(Attraction attraction) {
         return imageRepository.findByAttraction(attraction);
+    }
+    public Image findByTicket(Ticket ticket){
+        return imageRepository.findByTicket(ticket);
     }
 }

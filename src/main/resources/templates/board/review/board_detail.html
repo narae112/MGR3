@@ -146,6 +146,7 @@
                     </div>
                     <hr>
                     <div class="my-3">
+                        <a th:href="@{/review/board/list}" class="btn btn-sm btn-outline-secondary">목록으로</a>
                         <a href="#" class="recommend btn btn-sm btn-outline-secondary"
                            th:href="@{|/review/board/vote/${reviewBoard.id}|}"
                            th:attr="data-uri=@{|/review/board/vote/${reviewBoard.id}|}">
@@ -162,6 +163,7 @@
                            th:if="${reviewBoard.author != null and #authentication.getPrincipal().getName() == reviewBoard.author.name}"
                            th:text="삭제" onclick="deleteQuestion(event)">
                         </a>
+
                     </div>
                 </div>
             </div>

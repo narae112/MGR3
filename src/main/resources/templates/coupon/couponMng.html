@@ -4,18 +4,18 @@
       layout:decorate="~{layouts/default}">
 <head>
     <!-- Bootstrap CSS 추가 -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+<!--    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">-->
     <style>
         .pagination {
-            display: flex;
-            justify-content: center;
-        }
-        .page-item {
-            margin: 0;
-        }
-        .pagination-search-separator {
-            margin-top: 20px; /* 페이지네이션과 검색 폼 사이에 여백 추가 */
-        }
+          display: flex;
+          justify-content: center;
+      }
+      .page-item {
+          margin: 0;
+      }
+      .pagination-search-separator {
+          margin-top: 20px; /* 페이지네이션과 검색 폼 사이에 여백 추가 */
+      }
     </style>
     <!-- 페이지 이동 함수 -->
     <th:block layout:fragment="script">
@@ -34,6 +34,7 @@
 </head>
 <body>
 <div layout:fragment="content">
+    <h3 class="mb-5 text-center"><strong>쿠폰 관리</strong></h3>
     <form th:action="@{'/admin/coupons/' + ${coupons.number}}" role="form" method="get" th:object="${coupons}">
         <table class="table">
             <thead>
@@ -41,8 +42,8 @@
                 <td>쿠폰아이디</td>
                 <td>쿠폰이름</td>
                 <td>등록일</td>
-        <td>쿠폰 이용 시작 날짜</td>
-        <td>쿠폰 이용 종료 날짜</td>
+                <td>쿠폰 이용 시작 날짜</td>
+                <td>쿠폰 이용 종료 날짜</td>
                 <td>등록자</td>
             </tr>
             </thead>
@@ -53,7 +54,7 @@
                     <a th:href="'/admin/coupon/'+${coupon.id}" th:text="${coupon.name}"></a>
                 </td>
                 <td th:text="${coupon.regTime}"></td>
-<!--                <td th:text="${coupon.couponType?.displayName}"></td>-->
+                <!--                <td th:text="${coupon.couponType?.displayName}"></td>-->
                 <td th:text="${coupon.startDate}"></td>
                 <td th:text="${coupon.endDate}"></td>
                 <td th:text="${coupon.createdBy}"></td>
@@ -62,7 +63,7 @@
         </table>
         <!-- 현재페이지 -->
         <div class="d-flex justify-content-center my-3" th:if="${!coupons.isEmpty()}">
-            <ul class="pagination justify-content-center">
+            <ul class="pagination justify-content-center management">
                 <!-- 이전 버튼 -->
                 <li class="page-item" th:classappend="${pageNumber == 0} ? 'disabled'">
                     <a class="page-link" th:href="@{/admin/coupons/__${pageNumber - 1}__}"> <!-- 이전 페이지로 이동 -->

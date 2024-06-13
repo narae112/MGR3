@@ -1,9 +1,6 @@
 package com.MGR.repository;
 
-import com.MGR.entity.Attraction;
-import com.MGR.entity.EventBoard;
-import com.MGR.entity.Image;
-import com.MGR.entity.Member;
+import com.MGR.entity.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -28,4 +25,7 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
     Image findByEventBoard(EventBoard eventBoard);
 
     Image findByAttraction(Attraction attraction);
+
+    Image findByTicket(Ticket ticket);
+
 }
