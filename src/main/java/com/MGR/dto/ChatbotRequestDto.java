@@ -9,7 +9,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ChatRequestDto { //챗봇한테 요청하는 dto
+public class ChatbotRequestDto { //챗봇한테 요청하는 dto
     private List<Content> contents; //채팅 요청의 내용을 담고 있는 리스트
     private GenerationConfig generationConfig; //텍스트 생성 설정을 담고 있는 객체
 
@@ -31,7 +31,7 @@ public class ChatRequestDto { //챗봇한테 요청하는 dto
         private double temperature; // 텍스트 생성의 다양성 조절
     }
 
-    public ChatRequestDto(String prompt) { //설정 초기화
+    public ChatbotRequestDto(String prompt) { //설정 초기화
         this.contents = new ArrayList<>();
         Content content = new Content();
         Parts parts = new Parts();

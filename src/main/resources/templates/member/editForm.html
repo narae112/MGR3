@@ -62,6 +62,38 @@
         .password-group button {
             white-space: nowrap;
         }
+        .profile-img {
+             width: 100px;
+             height: 100px;
+             border-radius: 50%;
+             object-fit: contain;
+         }
+        .image-cell {
+        position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer; /* 클릭 가능하도록 커서 변경 */
+        }
+        .file-input {
+            display: none; /* 파일 입력 요소 숨김 */
+        }
+        .image-cell i {
+            position: absolute;
+            bottom: 5px;
+            right: 35%;
+            color: #fff; /* 아이콘 색상 설정 */
+            transform: rotate(90deg); /* 아이콘 90도 회전 */
+            background-color:#0D6EFD;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem; /* 아이콘 텍스트 크기 설정 */
+        }
     </style>
 </th:block>
 
@@ -77,14 +109,6 @@
             document.getElementById('member-edit').addEventListener('click', function(event) {
                 event.preventDefault();
                 verifyPassword();
-            });
-
-            document.getElementById('prevButton').addEventListener('click', function() {
-                changeDate(0);
-            });
-
-            document.getElementById('nextButton').addEventListener('click', function() {
-                changeDate(2);
             });
 
             function verifyPassword() {
@@ -113,6 +137,33 @@
                     }
                 });
             }
+
+        document.querySelector('.image-cell').addEventListener('click', function() {
+                document.getElementById('file-input').click();
+            });
+
+            document.getElementById('file-input').addEventListener('change', function(event) {
+                var formData = new FormData();
+                formData.append('file', event.target.files[0]);
+
+                fetch('/member/uploadProfileImage', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.querySelector('.profile-img').src = data.imageUrl;
+                        alert('프로필 이미지가 성공적으로 업데이트되었습니다.');
+                    } else {
+                        alert('프로필 이미지 업데이트 실패: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    alert('프로필 이미지 업데이트 중 오류 발생: ' + error.message);
+                });
+            });
+
         });
                 var prevNickname = "";
             function checkNickname() {
@@ -198,14 +249,20 @@
 
     <div class="mb-3 verifyPassword text-center">
         <p class="mb-2">비밀번호 인증이 필요합니다</p>
-        <div class="password-group w-50 mx-auto">
+        <form class="password-group w-50 mx-auto">
+            <label for="verifyPassword"></label>
             <input class="form-control" type="password" id="verifyPassword" />
             <button class="btn btn-primary" type="submit" id="member-edit" onClick="verifyPassword()">확인</button>
-        </div>
+        </form>
     </div>
 
     <div class="d-flex justify-content-center">
         <form th:action="@{/member/edit}" th:object="${memberInfo}" class="edit-form" role="form" method="POST">
+            <div class="image-cell mb-2">
+                <img th:if="${memberInfo.profileImgUrl != null}" th:src="@{${memberInfo.profileImgUrl}}" alt="Profile Image" class="profile-img"/>
+                <img th:unless="${memberInfo.profileImgUrl != null}" th:src="@{/img/login/profile.png}" alt="Profile Image" class="profile-img"/>
+                <i class="lni lni-pencil" onclick="document.getElementById('file-input').click();"></i>
+            </div>
             <div>
                 <label for="email">이메일</label>
                 <input type="text" id="email" name="email" class="form-control"
@@ -247,6 +304,11 @@
                         class="btn btn-primary" type="submit" id="member-info-password">비밀번호 변경</button>
                 <button class="btn btn-secondary empty-password-btn" type="button">비밀번호 변경</button>
             </div>
+
+            <form id="profileUploadForm" th:action="@{/member/uploadProfileImage}" method="post" enctype="multipart/form-data" style="display: none;">
+                <input type="file" name="file" id="file-input" class="file-input" accept="image/*" onchange="document.getElementById('profileUploadForm').submit();"/>
+            </form>
+
         </form>
     </div>
 </div>

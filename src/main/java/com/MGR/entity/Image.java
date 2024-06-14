@@ -39,6 +39,9 @@ public class Image extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     private Attraction attraction;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member member;
+
     public void updateImg(String imgOriName, String imgName, String imgUrl){
         this.imgOriName = imgOriName;
         this.imgName = imgName;

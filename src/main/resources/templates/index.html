@@ -39,7 +39,7 @@
     </section>
     <!-- End Hero Area -->
 
-    <button type="button" class="chatbot" data-toggle="modal" data-target="#chatModal">
+    <button type="button" class="chatbot" data-toggle="modal" data-target="#chatbotModal">
         <img th:src="@{/img/chatbot_icon.png}">
     </button>
 
@@ -161,17 +161,17 @@
         </div>
     </section>
     <!-- 섹션 나누는 이미지 끝 -->
-    <div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
+    <div class="modal fade" id="chatbotModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="chatModalLabel">MGR 챗봇</h5>
+                    <h5 class="modal-title" id="chatbotModalLabel">MGR 챗봇</h5>
                     <button type="button" class="btn btn-danger close" style="margin-left: auto;" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div id="chatWindow" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
+                    <div id="chatbotWindow" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
                     </div>
                     <div class="input-group mt-3">
                         <input type="text" id="userInput" class="form-control" placeholder="메세지를 입력하세요">
@@ -213,20 +213,20 @@ $(document).ready(function() {
     function sendMessage() {
         var userMessage = $('#userInput').val();
         if (userMessage.trim() !== "") {
-            $('#chatWindow').append('<div class="text-right"><strong>User :</strong> ' + userMessage + '</div>');
+            $('#chatbotWindow').append('<div class="text-right"><strong>User :</strong> ' + userMessage + '</div>');
             $('#userInput').val('');
 
             $.ajax({
-                url: '/gemini/chat',
+                url: '/gemini/chatbot',
                 type: 'GET',
                 data: { message: userMessage },
                 success: function(response) {
-                    $('#chatWindow').append('<div class="text-left"><strong>ChatMRG :</strong> ' + response + '</div>');
-                    $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
+                    $('#chatbotWindow').append('<div class="text-left"><strong>ChatMRG :</strong> ' + response + '</div>');
+                    $('#chatbotWindow').scrollTop($('#chatbotWindow')[0].scrollHeight);
                 },
                 error: function(xhr, status, error) {
-                    $('#chatWindow').append('<div class="text-left text-danger"><strong>Error:</strong> ' + xhr.responseText + '</div>');
-                    $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
+                    $('#chatbotWindow').append('<div class="text-left text-danger"><strong>Error:</strong> ' + xhr.responseText + '</div>');
+                    $('#chatbotWindow').scrollTop($('#chatbotWindow')[0].scrollHeight);
                 }
             });
         }
@@ -234,13 +234,13 @@ $(document).ready(function() {
 
     $('#sendButton').click(function() {
         sendMessage();
-        $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
+        $('#chatbotWindow').scrollTop($('#chatbotWindow')[0].scrollHeight);
     });
 
     $('#userInput').keypress(function(event) {
         if (event.which === 13) {
             sendMessage();
-            $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
+            $('#chatbotWindow').scrollTop($('#chatbotWindow')[0].scrollHeight);
         }
     });
 });

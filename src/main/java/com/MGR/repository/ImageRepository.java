@@ -4,7 +4,6 @@ import com.MGR.entity.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ImageRepository extends JpaRepository<Image, Long> {
     List<Image> findByTicketIdOrderByIdAsc(Long ticketId);
@@ -28,4 +27,5 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
 
     Image findByTicket(Ticket ticket);
 
+    Image findByMember(Member member);
 }

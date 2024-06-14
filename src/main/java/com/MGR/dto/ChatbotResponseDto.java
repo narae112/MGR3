@@ -8,7 +8,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChatResponseDto { //챗봇의 응답을 받아오는 dto
+public class ChatbotResponseDto { //챗봇의 응답을 받아오는 dto
 
     private List<Candidate> candidates; //응답 후보 리스트
     private PromptFeedback promptFeedback;
