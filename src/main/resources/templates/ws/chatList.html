@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+
+<!-- css -->
+<th:block layout:fragment="css">
+    <style>
+        .chat-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 400px;
+            overflow-y: scroll;
+        }
+        .message-input {
+            margin-top: 10px;
+        }
+    </style>
+</th:block>
+
+<!-- js -->
+<th:block layout:fragment="script">
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <script th:inline="javascript">
+        var stompClient = null;
+        var roomId = null;
+
+        function connectToRoom(id) {
+            if (stompClient !== null) {
+                stompClient.disconnect();
+            }
+            var socket = new SockJS('/ws');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, function (frame) {
+                console.log('Connected: ' + frame);
+                stompClient.subscribe('/room/' + id, function (chatMessage) {
+                    showMessage(JSON.parse(chatMessage.body));
+                });
+            });
+            roomId = id;
+        }
+
+        function sendMessage() {
+            var message = $('#messageInput').val();
+            if (message && stompClient) {
+                var chatMessage = {
+                    roomId: roomId,
+                    sender: 'User',
+                    senderEmail: 'admin@mgr.com',
+                    message: message
+                };
+                console.log('Sending message:', chatMessage);
+                stompClient.send('/send/' + roomId, {}, JSON.stringify(chatMessage));
+                $('#messageInput').val('');
+            }
+        }
+
+        function showMessage(message) {
+            $('#chatBox').append('<div><strong>' + message.sender + ':</strong> ' + message.message + '</div>');
+            $('#chatBox').scrollTop($('#chatBox')[0].scrollHeight);
+        }
+
+        $(document).ready(function () {
+            console.log('Document is ready');
+            $('#chatRooms').on('click', 'li', function () {
+                var id = $(this).data('room-id');
+                console.log('Connecting to room:', id);
+                connectToRoom(id);
+                $('#chatBox').empty();
+            });
+
+            $('#sendButton').click(function () {
+                sendMessage();
+            });
+
+            $('#messageInput').keypress(function (event) {
+                if (event.which === 13) {
+                    sendMessage();
+                }
+            });
+        });
+    </script>
+</th:block>
+
+<div layout:fragment="content">
+    <h3 class="mb-5 text-center">채팅 목록</h3>
+    <hr class="my-4">
+    <div class="row">
+        <div class="col-md-4">
+            <a href="/ws/createRoom" class="btn btn-success mb-3">Create Room</a>
+            <ul class="list-group" id="chatRooms">
+                <li class="list-group-item" th:each="room : ${roomList}" th:text="${room.name}" th:data-room-id="${room.id}"></li>
+            </ul>
+        </div>
+        <div class="col-md-8">
+            <div id="chatBox" class="chat-box"></div>
+            <div class="message-input">
+                <input type="text" id="messageInput" class="form-control" placeholder="Enter message">
+                <button id="sendButton" class="btn btn-primary mt-2">전송</button>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

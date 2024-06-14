@@ -32,8 +32,8 @@ dependencies {
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.2.0'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 
-    runtimeOnly 'com.mysql:mysql-connector-j'
-//	runtimeOnly 'com.h2database:h2'
+//    runtimeOnly 'com.mysql:mysql-connector-j'
+	runtimeOnly 'com.h2database:h2'
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -79,6 +79,12 @@ dependencies {
 	// redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.data:spring-data-redis'
+
+	//wepSocket
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'org.webjars:stomp-websocket:2.3.4'
+	implementation 'org.webjars:sockjs-client:1.5.1'
+
 }
 
 tasks.named('bootBuildImage') {
