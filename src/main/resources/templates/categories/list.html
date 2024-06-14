@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>List Categories</title>
+</head>
+<body>
+<h3>Categories List</h3>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Attraction Types</th>
+        <th>After Types</th>
+        <th>Personalities</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="category : ${categories}">
+        <td th:text="${category.id}"></td>
+        <td>
+            <ul>
+                <li th:each="attraction : ${category.attractionTypeCategories}" th:text="${attraction.name}"></li>
+            </ul>
+        </td>
+        <td>
+            <ul>
+                <li th:each="after : ${category.afterTypeCategories}" th:text="${after.name}"></li>
+            </ul>
+        </td>
+        <td>
+            <ul>
+                <li th:each="personality : ${category.personalityCategories}" th:text="${personality.name}"></li>
+            </ul>
+        </td>
+        <td>
+            <a th:href="@{/admin/categories/edit/{id}(id=${category.id})}">Edit</a>
+            <a th:href="@{/admin/categories/delete/{id}(id=${category.id})}">Delete</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<a href="/admin/categories/add">Add New Category</a>
+</body>
+</html>

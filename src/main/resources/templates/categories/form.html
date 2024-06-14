@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:if="${category.id == null}">Add Category</title>
+    <title th:if="${category.id != null}">Edit Category</title>
+</head>
+<body>
+<h3 th:if="${category.id == null}">Add New Category</h3>
+<h3 th:if="${category.id != null}">Edit Category</h3>
+
+<form th:if="${category.id == null}" action="/admin/categories/add" th:object="${category}" method="post">
+    <input type="hidden" th:if="${category.id != null}" th:name="_method" th:value="put" />
+    <input type="hidden" th:if="${category.id != null}" th:name="id" th:value="${category.id}" />
+
+
+    <h4>Attraction Type Categories:</h4>
+    <div th:each="attractionType, attrStatus : *{category.attractionTypeCategories}">
+        <label th:for="'attractionType_' + ${attrStatus.index}">Attraction Type:</label>
+        <input type="text" th:id="'attractionType_' + ${attrStatus.index}" th:field="*{attractionTypeCategories[__${attrStatus.index}__].name}">
+    </div>
+
+    <h4>After Type Categories:</h4>
+    <div th:each="afterType, attrStatus : *{category.afterTypeCategories}">
+        <label th:for="'afterType_' + ${attrStatus.index}">After Type:</label>
+        <input type="text" th:id="'afterType_' + ${attrStatus.index}" th:field="*{afterTypeCategories[__${attrStatus.index}__].name}">
+    </div>
+
+    <h4>Personality Categories:</h4>
+    <div th:each="personality, attrStatus : *{category.personalityCategories}">
+        <label th:for="'personality_' + ${attrStatus.index}">Personality:</label>
+        <input type="text" th:id="'personality_' + ${attrStatus.index}" th:field="*{personalityCategories[__${attrStatus.index}__].name}">
+    </div>
+
+    <button type="submit">Submit</button>
+</form>
+</body>
+</html>
