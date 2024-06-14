@@ -203,22 +203,6 @@ public class MemberController {
         return "member/memberList";
     }
 
-//    @PostMapping("/uploadProfileImage")
-//    @ResponseBody
-//    public String uploadProfileImage(@RequestParam("file") MultipartFile profileImgFile,
-//                                     @AuthenticationPrincipal PrincipalDetails member,
-//                                     RedirectAttributes redirectAttributes) {
-//        try {
-//            Member findMember = memberService.findById(member.getId()).orElseThrow();
-//            memberService.saveProfileImg(findMember, profileImgFile);
-//            redirectAttributes.addFlashAttribute("successMessage", "프로필 이미지가 성공적으로 업데이트되었습니다.");
-//            return "member/editForm"; // 원래 화면 URL로 리다이렉트
-//        } catch (Exception e) {
-//            redirectAttributes.addFlashAttribute("errorMessage", "이미지 업로드 중 오류 발생: " + e.getMessage());
-//            return "member/editForm";
-//        }
-//    }
-
     @PostMapping("/uploadProfileImage")
     @ResponseBody
     public Map<String, Object> uploadProfileImage(@RequestParam("file") MultipartFile profileImgFile,
@@ -227,7 +211,10 @@ public class MemberController {
         try {
             Member findMember = memberService.findById(member.getId()).orElseThrow();
             String imageUrl = memberService.saveProfileImg(findMember, profileImgFile);
-            System.out.println("imageUrl = " + imageUrl);
+
+            findMember.setProfileImgUrl(imageUrl);
+            memberService.saveMember(findMember);
+
             response.put("success", true);
             response.put("imageUrl", imageUrl);
         } catch (Exception e) {
