@@ -1,20 +1,15 @@
 package com.MGR.controller;
 
-import com.MGR.constant.ReservationStatus;
 import com.MGR.dto.*;
-import com.MGR.entity.Coupon;
 import com.MGR.entity.MemberCoupon;
 import com.MGR.entity.Order;
 import com.MGR.entity.OrderTicket;
-import com.MGR.repository.CouponRepository;
 import com.MGR.repository.MemberCouponRepository;
 import com.MGR.repository.OrderRepository;
 import com.MGR.security.PrincipalDetails;
 import com.MGR.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
-import static com.MGR.entity.QMemberCoupon.memberCoupon;
 
 @Controller
 @RequiredArgsConstructor
@@ -83,7 +77,7 @@ public class OrderController {
     // 결제 내역
     @GetMapping({"/member/orderList", "/member/orderList/{page}"})
     public String orderList(Model model, @AuthenticationPrincipal PrincipalDetails member,
-                           @PathVariable(value = "page", required = false) Integer page) {
+                            @PathVariable(value = "page", required = false) Integer page) {
 
         if (member == null) {
             // 로그인 되어 있지 않은 경우 예외 처리
@@ -100,6 +94,8 @@ public class OrderController {
         // 주문 목록을 가져와서 페이지화한 결과를 받아옴
         Page<OrderListDto> paging = orderService.getOrderList(page, memberId);
         model.addAttribute("paging", paging);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", paging.getTotalPages());
 
         return "order/orderList";
     }

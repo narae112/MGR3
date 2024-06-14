@@ -93,28 +93,31 @@ public class OrderService {
     }
 
     // 결제 목록
-    public Page<OrderListDto> getOrderList(Integer page, Long id) {
+    public Page<OrderListDto> getOrderList(Integer page, Long memberId) {
 
-        List<Sort.Order> sorts = new ArrayList<>();
-        sorts.add(Sort.Order.desc("orderDate")); // 주문 날짜 기준으로 내림차순 정렬
+        // 주문 날짜 기준으로 내림차순 정렬
+        List<Sort.Order> sorts = List.of(Sort.Order.desc("orderDate"));
 
-        Pageable pageable = PageRequest.of(page, 3, Sort.by(sorts)); // 페이지네이션 및 정렬 설정
+        // 페이지네이션 및 정렬 설정
+        Pageable pageable = PageRequest.of(page, 1, Sort.by(sorts));
 
-        Page<Order> orderPage = orderRepository.findAllByMemberId(id, pageable); // 주문을 페이징하여 가져오기
-        List<OrderListDto> orderList = new ArrayList<>();
+        // 주문을 페이징하여 가져오기
+        Page<Order> orderPage = orderRepository.findAllByMemberId(memberId, pageable);
+        List<OrderListDto> orderListDtos = new ArrayList<>();
 
-        for (Order order : orderPage.getContent()) {
+        // 각 주문을 OrderListDto로 변환
+        for (Order order : orderPage) {
             OrderListDto orderListDto = new OrderListDto(order);
-            orderList.add(orderListDto);
 
-            // 서비스에서 주문에 대한 티켓 정보를 가져와서 OrderTicketDto로 변환하여 추가
+            // 주문에 대한 티켓 정보를 가져와서 OrderTicketDto로 변환하여 추가
             List<OrderTicket> orderTickets = orderTicketRepository.findByOrderId(order.getId());
             for (OrderTicket orderTicket : orderTickets) {
                 OrderTicketDto orderTicketDto = new OrderTicketDto(orderTicket);
                 orderListDto.addOrderTicket(orderTicketDto);
             }
 
-            MemberCoupon memberCoupon = memberCouponRepository.findAllByMemberIdAndOrderId(id, order.getId());
+            // 회원 쿠폰 정보를 가져와서 할인율 설정
+            MemberCoupon memberCoupon = memberCouponRepository.findAllByMemberIdAndOrderId(memberId, order.getId());
             if (memberCoupon != null) {
                 int discountRate = memberCoupon.getCoupon().getDiscountRate();
                 orderListDto.setDiscountRate(discountRate);
@@ -122,9 +125,11 @@ public class OrderService {
                 orderListDto.setDiscountRate(0);
             }
 
-            orderList.add(orderListDto);
+            orderListDtos.add(orderListDto);
         }
 
-        return new PageImpl<>(orderList, pageable, orderPage.getTotalElements()); // 페이징된 주문 목록 반환
+        // 페이징된 주문 목록 반환
+        return new PageImpl<>(orderListDtos, pageable, orderPage.getTotalElements());
+
     }
 }

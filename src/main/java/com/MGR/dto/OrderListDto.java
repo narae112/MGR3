@@ -29,4 +29,17 @@ public class OrderListDto {
         this.orderNum = order.getOrderNum();
         this.orderDate = order.getOrderDate();
     }
+
+    public int calculateTotalPrice() {
+        int total = 0;
+        for (OrderTicketDto ticket : orderTickets) {
+            total += ticket.getTotalPrice();
+        }
+        return total;
+    }
+
+    public int calculateDiscountedTotalPrice() {
+        int total = calculateTotalPrice();
+        return total - (total * discountRate / 100);
+    }
 }
