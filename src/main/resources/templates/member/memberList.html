@@ -8,8 +8,8 @@
 <th:block layout:fragment="css">
     <style>
         .profile-img {
-             width: 25px;
-             height: 25px;
+             width: 30px;
+             height: 30px;
              border-radius: 50%;
              object-fit: cover;
          }
@@ -52,8 +52,8 @@
             <td th:text="${orderCountList[iterStat.index] != null ? orderCountList[iterStat.index] : '미사용'}"></td>
             <td th:text="${member.isSuspended != null ? (member.isSuspended ? '제재됨' : '정상') : '정상'}"></td>
             <td class="image-cell">
-                <img th:src="${member.profileImgUrl != null ? member.profileImgUrl : 'default-image-url'}"
-                     alt="Profile Image" class="profile-img"/>
+                <img th:if="${member != null and member.profileImgUrl != null}" th:src="@{${member.profileImgUrl}}" alt="Profile Image" class="profile-img"/>
+                <img th:unless="${member != null and member.profileImgUrl != null}" th:src="@{/img/login/profile.png}" alt="Profile Image" class="profile-img"/>
             </td>
         </tr>
         </tbody>

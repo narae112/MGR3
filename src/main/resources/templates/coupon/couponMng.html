@@ -67,7 +67,7 @@
                 <!-- 이전 버튼 -->
                 <li class="page-item" th:classappend="${pageNumber == 0} ? 'disabled'">
                     <a class="page-link" th:href="@{/admin/coupons/__${pageNumber - 1}__}"> <!-- 이전 페이지로 이동 -->
-                        <span>이전</span>
+                        <span>&laquo;</span>
                     </a>
                 </li>
 
@@ -81,7 +81,7 @@
                 <!-- 다음 버튼 -->
                 <li class="page-item" th:classappend="${!coupons.hasNext()} ? 'disabled'">
                     <a class="page-link" th:href="@{/admin/coupons/__${pageNumber + 1}__}"> <!-- 다음 페이지로 이동 -->
-                        <span>다음</span>
+                        <span>&raquo;</span>
                     </a>
                 </li>
 

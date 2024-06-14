@@ -46,7 +46,7 @@ public class Member {
     private String provider; //공급자
     private String providerId; //공급 아이디
 
-        @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<MemberCoupon> memberCoupons = new HashSet<>();
     
     @Builder

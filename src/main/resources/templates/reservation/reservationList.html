@@ -338,7 +338,7 @@
 
                 <!-- 다음 버튼 -->
                 <li th:class="${page == maxPage - 1} ? 'page-item disabled' : 'page-item'">
-                    <a th:href="@{~/member/reservations/{page}(page=${page + 1})}" class="page-link">다음</a>
+                    <a th:href="@{~/member/reservations/{page}(page=${page + 1})}" class="page-link">&raquo;</a>
                 </li>
             </ul>
         </div>

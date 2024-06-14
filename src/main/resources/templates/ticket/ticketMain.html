@@ -157,7 +157,7 @@
             <!-- 이전 버튼 -->
             <li class="page-item" th:classappend="${!tickets.hasPrevious()} ? 'disabled'">
                 <a class="page-link" th:href="@{|/tickets/${tickets.number - 1}|}">
-                    <span>이전</span>
+                    <span>&laquo;</span>
                 </a>
             </li>
 
@@ -171,7 +171,7 @@
             <!-- 다음 버튼 -->
             <li class="page-item" th:classappend="${!tickets.hasNext()} ? 'disabled'">
                 <a class="page-link" th:href="@{|/tickets/${tickets.number + 1}|}">
-                    <span>다음</span>
+                    <span>&raquo;</span>
                 </a>
             </li>
         </ul>

@@ -1,6 +1,7 @@
 package com.MGR.service;
 
 
+import com.MGR.entity.Image;
 import com.MGR.entity.Member;
 import com.MGR.exception.DataNotFoundException;
 import com.MGR.repository.MemberRepository;
@@ -10,13 +11,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Optional;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,6 +30,7 @@ public class MemberService{
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ImageService imageService;
 
     public Optional<Member> findByEmail(String email) {
         return memberRepository.findByEmail(email);
@@ -128,5 +133,17 @@ public class MemberService{
 
     public List<Member> findAll() {
         return memberRepository.findAll();
+    }
+
+    public String saveProfileImg(Member member, MultipartFile profileImgFile) throws Exception {
+        Image image = imageService.findByMember(member);
+
+        if (image == null) {
+            image = new Image();
+            image.setMember(member);
+        }
+
+        imageService.saveProfileImage(image, profileImgFile);
+        return image.getImgUrl(); // 이미지 URL 반환
     }
 }
