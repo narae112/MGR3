@@ -35,6 +35,9 @@ public class ImageService {
     @Value("${attractionImgLocation}")
     private String attractionImgLocation;
 
+    @Value("${profileImgLocation}")
+    private String profileImgLocation;
+
     public void saveTicketImage(Image ticketImage, MultipartFile ticketImgFile) throws Exception {
         saveImage(ticketImage, ticketImgFile, ticketImgLocation);
     }
@@ -55,7 +58,12 @@ public class ImageService {
         saveImage(attractionImage, attractionImgFile, attractionImgLocation);
     }
 
+    public void saveProfileImage(Image profileImage, MultipartFile profileImgFile) throws Exception {
+        saveImage(profileImage, profileImgFile, profileImgLocation);
+    }
+
     private void saveImage(Image image, MultipartFile imgFile, String imgLocation) throws Exception {
+        System.out.println("saveImage 시작");
         String imgOriName = imgFile.getOriginalFilename();
         String imgName = "";
         String imgUrl = "";
@@ -150,5 +158,10 @@ public class ImageService {
     }
     public Image findByTicket(Ticket ticket){
         return imageRepository.findByTicket(ticket);
+    }
+
+    public Image findByMember(Member member) {
+        System.out.println("이미지 엔티티 확인 = " + imageRepository.findByMember(member));
+        return imageRepository.findByMember(member);
     }
 }

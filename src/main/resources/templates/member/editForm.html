@@ -137,6 +137,33 @@
                     }
                 });
             }
+
+        document.querySelector('.image-cell').addEventListener('click', function() {
+                document.getElementById('file-input').click();
+            });
+
+            document.getElementById('file-input').addEventListener('change', function(event) {
+                var formData = new FormData();
+                formData.append('file', event.target.files[0]);
+
+                fetch('/member/uploadProfileImage', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.querySelector('.profile-img').src = data.imageUrl;
+                        alert('프로필 이미지가 성공적으로 업데이트되었습니다.');
+                    } else {
+                        alert('프로필 이미지 업데이트 실패: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    alert('프로필 이미지 업데이트 중 오류 발생: ' + error.message);
+                });
+            });
+
         });
                 var prevNickname = "";
             function checkNickname() {
@@ -234,8 +261,7 @@
             <div class="image-cell mb-2">
                 <img th:if="${memberInfo.profileImgUrl != null}" th:src="@{${memberInfo.profileImgUrl}}" alt="Profile Image" class="profile-img"/>
                 <img th:unless="${memberInfo.profileImgUrl != null}" th:src="@{/img/login/profile.png}" alt="Profile Image" class="profile-img"/>
-                <i class="lni lni-pencil"></i>
-                <input type="file" id="file-input" class="file-input" accept="image/*"/>
+                <i class="lni lni-pencil" onclick="document.getElementById('file-input').click();"></i>
             </div>
             <div>
                 <label for="email">이메일</label>
@@ -278,6 +304,11 @@
                         class="btn btn-primary" type="submit" id="member-info-password">비밀번호 변경</button>
                 <button class="btn btn-secondary empty-password-btn" type="button">비밀번호 변경</button>
             </div>
+
+            <form id="profileUploadForm" th:action="@{/member/uploadProfileImage}" method="post" enctype="multipart/form-data" style="display: none;">
+                <input type="file" name="file" id="file-input" class="file-input" accept="image/*" onchange="document.getElementById('profileUploadForm').submit();"/>
+            </form>
+
         </form>
     </div>
 </div>

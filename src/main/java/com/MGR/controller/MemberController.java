@@ -21,7 +21,14 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 @Controller
@@ -194,6 +201,40 @@ public class MemberController {
         model.addAttribute("orderCountList", orderCountList); // 반환
 
         return "member/memberList";
+    }
+
+//    @PostMapping("/uploadProfileImage")
+//    @ResponseBody
+//    public String uploadProfileImage(@RequestParam("file") MultipartFile profileImgFile,
+//                                     @AuthenticationPrincipal PrincipalDetails member,
+//                                     RedirectAttributes redirectAttributes) {
+//        try {
+//            Member findMember = memberService.findById(member.getId()).orElseThrow();
+//            memberService.saveProfileImg(findMember, profileImgFile);
+//            redirectAttributes.addFlashAttribute("successMessage", "프로필 이미지가 성공적으로 업데이트되었습니다.");
+//            return "member/editForm"; // 원래 화면 URL로 리다이렉트
+//        } catch (Exception e) {
+//            redirectAttributes.addFlashAttribute("errorMessage", "이미지 업로드 중 오류 발생: " + e.getMessage());
+//            return "member/editForm";
+//        }
+//    }
+
+    @PostMapping("/uploadProfileImage")
+    @ResponseBody
+    public Map<String, Object> uploadProfileImage(@RequestParam("file") MultipartFile profileImgFile,
+                                                  @AuthenticationPrincipal PrincipalDetails member) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Member findMember = memberService.findById(member.getId()).orElseThrow();
+            String imageUrl = memberService.saveProfileImg(findMember, profileImgFile);
+            System.out.println("imageUrl = " + imageUrl);
+            response.put("success", true);
+            response.put("imageUrl", imageUrl);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "이미지 업로드 중 오류 발생: " + e.getMessage());
+        }
+        return response;
     }
 }
 
