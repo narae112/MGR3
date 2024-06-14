@@ -69,4 +69,5 @@ public class Order {
     public void cancelOrder() {
         this.reservationStatus = ReservationStatus.CANCEL;
     }
+
 }

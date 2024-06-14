@@ -2,15 +2,19 @@ package com.MGR.service;
 
 import com.MGR.constant.ReservationStatus;
 import com.MGR.dto.OrderDto;
+import com.MGR.dto.OrderListDto;
+import com.MGR.dto.OrderTicketDto;
 import com.MGR.entity.*;
 import com.MGR.repository.*;
 import com.MGR.security.PrincipalDetails;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,9 +75,12 @@ public class OrderService {
         }
     }
 
-    public void changeCouponStatus(Long couponId) {
+    public void changeCouponStatus(Long couponId, Long id) {
         MemberCoupon memberCoupon = memberCouponRepository.findById(couponId).orElseThrow(EntityNotFoundException::new);
         memberCoupon.setUsed(true);
+
+        Optional<Order> order = orderRepository.findById(id);
+        memberCoupon.setOrder(order.get());
     }
 
     // 주문번호로 주문을 조회하는 메서드
@@ -85,4 +92,39 @@ public class OrderService {
         return orderRepository.countByMemberId(id);
     }
 
+
+    public Page<OrderListDto> getOrderList(Integer page, Long id) {
+
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("orderDate")); // 주문 날짜 기준으로 내림차순 정렬
+
+        Pageable pageable = PageRequest.of(page, 5, Sort.by(sorts)); // 페이지네이션 및 정렬 설정
+
+        Page<Order> orderPage = orderRepository.findAllByMemberId(id, pageable); // 주문을 페이징하여 가져오기
+        List<OrderListDto> orderList = new ArrayList<>();
+
+        for (Order order : orderPage.getContent()) {
+            OrderListDto orderListDto = new OrderListDto(order);
+            orderList.add(orderListDto);
+
+            // 서비스에서 주문에 대한 티켓 정보를 가져와서 OrderTicketDto로 변환하여 추가
+            List<OrderTicket> orderTickets = orderTicketRepository.findByOrderId(order.getId());
+            for (OrderTicket orderTicket : orderTickets) {
+                OrderTicketDto orderTicketDto = new OrderTicketDto(orderTicket);
+                orderListDto.addOrderTicket(orderTicketDto);
+            }
+
+            MemberCoupon memberCoupon = memberCouponRepository.findAllByMemberIdAndOrderId(id, order.getId());
+            if (memberCoupon != null) {
+                int discountRate = memberCoupon.getCoupon().getDiscountRate();
+                orderListDto.setDiscountRate(discountRate);
+            } else {
+                orderListDto.setDiscountRate(0);
+            }
+
+            orderList.add(orderListDto);
+        }
+
+        return new PageImpl<>(orderList, pageable, orderPage.getTotalElements()); // 페이징된 주문 목록 반환
+    }
 }
