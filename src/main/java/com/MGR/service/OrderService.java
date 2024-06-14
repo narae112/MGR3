@@ -66,7 +66,8 @@ public class OrderService {
         List<OrderTicket> orderTickets = order.get().getOrderTickets();
         for(OrderTicket orderTicket : orderTickets) {
             ReservationTicket reservationTicket = reservationTicketRepository.findById(orderTicket.getReservationTicket().getId()).orElseThrow(EntityNotFoundException::new);
-            reservationTicket.setReservationStatus(ReservationStatus.PAYED);
+//            reservationTicket.setReservationStatus(ReservationStatus.PAYED);
+            reservationTicket.updatePayedStatus();
         }
     }
 
@@ -74,6 +75,7 @@ public class OrderService {
         MemberCoupon memberCoupon = memberCouponRepository.findById(couponId).orElseThrow(EntityNotFoundException::new);
         memberCoupon.setUsed(true);
     }
+
     // 주문번호로 주문을 조회하는 메서드
     public Order findOrderByOrderNum(String orderNum) {
         return orderRepository.findByOrderNum(orderNum);
