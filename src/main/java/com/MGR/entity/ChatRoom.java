@@ -17,19 +17,18 @@ public class ChatRoom {
 
     private String name;
 
-    @ElementCollection
-    private List<String> memberEmails;
+    private String memberEmail;
 
     @Builder
-    public ChatRoom(String name, List<String> memberEmails) {
+    public ChatRoom(String name, String memberEmail) {
         this.name = name;
-        this.memberEmails = memberEmails;
+        this.memberEmail = memberEmail;
     }
 
-    public static ChatRoom createRoom(String name, List<String> memberEmails) {
+    public static ChatRoom createRoom(String name, String memberEmail) {
         return ChatRoom.builder()
                 .name(name)
-                .memberEmails(memberEmails)
+                .memberEmail(memberEmail)
                 .build();
     }
 }

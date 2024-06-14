@@ -28,12 +28,13 @@ public class ChatRoomController {
     }
 
     @PostMapping("/ws/createRoom")
-    public String createRoom(@RequestParam String name, @RequestParam List<String> memberEmails) {
-        chatService.createRoom(name, memberEmails);
+    public String createRoom(@RequestParam String name, @RequestParam String memberEmail) {
+        chatService.createRoom(name, memberEmail);
         System.out.println("name = " + name);
-        System.out.println("memberEmails = " + memberEmails.toString());
+        System.out.println("memberEmail = " + memberEmail);
         return "redirect:/ws/chatList";
     }
+
 
     @GetMapping("/ws/joinRoom/{roomId}")
     public String joinRoom(@PathVariable Long roomId, Model model) {

@@ -23,8 +23,8 @@ public class ChatService {
         return roomRepository.findById(id).orElseThrow();
     }
 
-    public ChatRoom createRoom(String name, List<String> memberEmails) {
-        return roomRepository.save(ChatRoom.createRoom(name,memberEmails));
+    public ChatRoom createRoom(String name, String memberEmail) {
+        return roomRepository.save(ChatRoom.createRoom(name,memberEmail));
     }
 
     public Chat createChat(Long roomId, String sender, String senderEmail, String message) {
