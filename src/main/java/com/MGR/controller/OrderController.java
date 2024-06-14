@@ -87,7 +87,6 @@ public class OrderController {
 
         if (member == null) {
             // 로그인 되어 있지 않은 경우 예외 처리
-            // 예를 들어 로그인 페이지로 리다이렉트 또는 에러 페이지 표시 등
             return "redirect:/login"; // 로그인 페이지로 리다이렉트
         }
 

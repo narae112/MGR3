@@ -92,13 +92,13 @@ public class OrderService {
         return orderRepository.countByMemberId(id);
     }
 
-
+    // 결제 목록
     public Page<OrderListDto> getOrderList(Integer page, Long id) {
 
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("orderDate")); // 주문 날짜 기준으로 내림차순 정렬
 
-        Pageable pageable = PageRequest.of(page, 5, Sort.by(sorts)); // 페이지네이션 및 정렬 설정
+        Pageable pageable = PageRequest.of(page, 3, Sort.by(sorts)); // 페이지네이션 및 정렬 설정
 
         Page<Order> orderPage = orderRepository.findAllByMemberId(id, pageable); // 주문을 페이징하여 가져오기
         List<OrderListDto> orderList = new ArrayList<>();

@@ -7,33 +7,58 @@
     <!-- 부트스트랩 CDN 링크 추가 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+<th:block layout:fragment="css">
+    <style>
+        .content-mg{
+            margin-left:20%;
+            margin-right:20%;
+            margin-top:2%;
+            margin-bottom:100px;
+        }
+        .repImgDiv{
+            margin-right:15px;
+            margin-left:15px;
+            height:auto;
+        }
+        .repImg{
+            height:100px;
+            width:100px;
+        }
+        .fs18{
+            font-size:18px
+        }
+        .fs24{
+            font-size:24px
+        }
+    </style>
+</th:block>
 <body>
 <div layout:fragment="content" class="content-mg">
-    <h1>주문 목록</h1>
+    <h1>결제 내역</h1>
 
     <!-- 주문 목록 출력 -->
     <div th:if="${paging.empty}">
-        <p>주문이 없습니다.</p>
+        <p>결제 내역이 없습니다.</p>
     </div>
     <div th:if="${not paging.empty}">
-        <ul>
-            <!-- 주문 목록 순회 -->
-            <li th:each="orderListDto : ${paging.content}">
-                <p th:text="${orderListDto.orderId}"></p>
-                <p th:text="${orderListDto.orderNum}"></p>
-                <p th:text="${orderListDto.orderDate}"></p>
-                <!-- 할인율 출력 -->
-                <p th:text="${orderListDto.discountRate}"></p>
-                <!-- 티켓 목록 출력 -->
-                <ul>
-                    <li th:each="orderTicketDto : ${orderListDto.orderTickets}">
-                        <!-- 티켓 정보 출력 -->
-                        <p th:text="${orderTicketDto.name}"></p>
-                        <!-- 추가 필요한 티켓 정보 출력 -->
-                    </li>
-                </ul>
-            </li>
-        </ul>
+        <div th:each="orderListDto : ${paging.content}">
+            <div>
+                <h3 th:text="${#temporals.format(orderListDto.orderDate, 'yyyy. MM. dd')}"></h3>
+                <hr/>
+                <p th:text="'주문번호 ' + ${orderListDto.orderNum}"></p>
+                <hr/>
+            </div>
+            <div th:each="orderTicketDto : ${orderListDto.orderTickets}">
+                <p th:text="'방문 예정일 : ' + ${#temporals.format(orderTicketDto.visitDate, 'yyyy. MM. dd')}"></p>
+                <h4 th:text="'[' + ${orderTicketDto.locationCategory.displayName} + '점] ' + ${orderTicketDto.name}"></h4>
+                <h5 th:text="${#numbers.formatInteger(orderTicketDto.totalPrice, 0, 'COMMA')} + '원'"></h5>
+                <p th:text="'성인 티켓 ' + ${#numbers.formatInteger(orderTicketDto.adultPrice, 0, 'COMMA')} + '원 ' +
+                            ${orderTicketDto.adultCount} + '장&nbsp;&nbsp;|&nbsp;&nbsp;아동 티켓 ' + ${#numbers.formatInteger(orderTicketDto.childPrice, 0, 'COMMA')} +
+                            '원 ' + ${orderTicketDto.childCount} + '장'"></p>
+                <hr/>
+            </div>
+
+        </div>
 
         <!-- 이전 버튼 -->
         <div th:if="${paging.hasPrevious()}">
