@@ -146,4 +146,8 @@ public class MemberService{
         imageService.saveProfileImage(image, profileImgFile);
         return image.getImgUrl(); // 이미지 URL 반환
     }
+
+    public Optional<Member> findByNickname(String nickname) {
+        return memberRepository.findByNickname(nickname);
+    }
 }
