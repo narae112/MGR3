@@ -6,6 +6,8 @@ import com.MGR.security.PrincipalDetails;
 import com.MGR.service.ChatService;
 import com.MGR.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,14 +36,34 @@ public class ChatRoomController {
         return "ws/roomForm";
     }
 
-    @PostMapping("/ws/createRoom")
-    public String createRoom(@RequestParam String name, @RequestParam String nickname,
-                             @AuthenticationPrincipal PrincipalDetails member) {
+//    @PostMapping("/ws/createRoom")
+//    public String createRoom(@RequestParam String name, @RequestParam String nickname,
+//                             @AuthenticationPrincipal PrincipalDetails member) {
+//
+//        try {
+//            chatService.createRoom(name, member, nickname);
+//            System.out.println("name = " + name);
+//            System.out.println("nickname = " + nickname);
+//            return "redirect:/ws/chatList";
+//        } catch (Exception e) {
+//            // 예외 발생 시 실패 메시지 반환
+//            return "error";
+//        }
+//    }
 
-        chatService.createRoom(name, member, nickname);
-        System.out.println("name = " + name);
-        System.out.println("nickname = " + nickname);
-        return "redirect:/ws/chatList";
+    @PostMapping("/ws/createRoom")
+    @ResponseBody
+    public ResponseEntity<?> createRoom(@RequestParam String name, @RequestParam String nickname,
+                                        @AuthenticationPrincipal PrincipalDetails member) {
+        try {
+            chatService.createRoom(name, member, nickname);
+            System.out.println("name = " + name);
+            System.out.println("nickname = " + nickname);
+            return ResponseEntity.ok().body("Room created successfully");
+        } catch (Exception e) {
+            // 예외 발생 시 실패 메시지 반환
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create room");
+        }
     }
 
 

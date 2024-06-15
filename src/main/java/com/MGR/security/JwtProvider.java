@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -90,5 +91,19 @@ public class JwtProvider {
                 .compact();
 
         return token;
+    }
+
+    public Claims getClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    public String getEmailFromToken(String token) {
+        Claims claims = getClaims(token);
+        System.out.println("클레임 이메일 = " + claims.get("email", String.class));
+        return claims.get("email", String.class);
     }
 }
