@@ -54,7 +54,7 @@
                     <p class="card-text" style="color: black;" >
                         조회수: <span th:text="${reviewBoard.count}"></span><br>
                         등록일: <span th:text="${#temporals.format(reviewBoard.createDate, 'yyyy-MM-dd HH:mm')}"></span><br>
-                        추천수: <span  th:text="${reviewBoard.voterCount} + ' recommendations'">0 recommendations></span>
+                        추천수: <span  th:text="${reviewBoard.voterCount}">0></span>
                     </p>
                 </div>
             </a>

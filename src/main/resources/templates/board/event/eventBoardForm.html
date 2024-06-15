@@ -124,7 +124,29 @@
             $(this).siblings(".custom-file-label").html(fileName);
         });
     }
+    <!--         뒤로가기 방지-->
+   window.addEventListener('load', function() {
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
 
+        // 뒤로가기 버튼 클릭 시 바로 tickets 페이지로 이동
+        window.onpopstate = function() {
+            location.replace("/board/events");
+        };
+    }
+
+    // 페이지 로드 후 바로 뒤로가기 막기
+    function preventBack() {
+        window.history.forward();
+    }
+
+    setTimeout(preventBack, 0);
+
+    // 페이지를 떠날 때 아무 동작도 하지 않도록 설정
+    window.onunload = function () {
+        // No action needed
+    };
+});
 
     </script>
 </th:block>
