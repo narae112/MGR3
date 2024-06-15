@@ -40,16 +40,24 @@
                 });
             });
             roomId = id;
+
+            // 기존 채팅 메시지 가져오기
+            $.get("/ws/chats/" + roomId, function (chats) {
+                $('#chatBox').empty();  // 채팅방을 클릭할 때마다 기존 메시지를 지움
+                chats.forEach(function (chat) {
+                    showMessage(chat);
+                });
+            });
         }
 
         function sendMessage() {
             var message = $('#messageInput').val();
-            var senderEmail = $('#senderEmail').val();
+            var senderNickname = $('#senderNickname').val();
             if (message && stompClient) {
                 var chatMessage = {
                     roomId: roomId,
-                    sender: 'User',
-                    senderEmail: senderEmail,
+                    sender: senderNickname,
+                    senderNickname: senderNickname,
                     message: message
                 };
                 console.log('Sending message:', chatMessage);
@@ -69,7 +77,6 @@
                 var id = $(this).data('room-id');
                 console.log('Connecting to room:', id);
                 connectToRoom(id);
-                $('#chatBox').empty();
             });
 
             $('#sendButton').click(function () {
@@ -93,17 +100,18 @@
             <a href="/ws/createRoom" class="btn btn-success mb-3">Create Room</a>
             <ul class="list-group" id="chatRooms">
                 <li class="list-group-item" th:each="room : ${roomList}" th:text="${room.name}" th:data-room-id="${room.id}"
-                    th:if="${#lists.contains(room.memberEmail, loggedInUserEmail)}"></li>
+                    th:if="${nickname != null and ((room.sender != null and room.sender.nickname == nickname) or (room.receiver != null and room.receiver.nickname == nickname))}"></li>
             </ul>
         </div>
         <div class="col-md-8">
             <div id="chatBox" class="chat-box"></div>
             <div class="message-input">
                 <input type="text" id="messageInput" class="form-control" placeholder="Enter message">
-                <input type="hidden" id="senderEmail" th:value="${loggedInUserEmail}">
-                <button id="sendButton" class="btn btn-primary mt-2">전송</button>
+                <input type="hidden" id="senderNickname" th:value="${nickname}"> <!-- 로그인한 사용자의 닉네임 -->
+                <button id="sendButton" class="btn btn-primary mt-2">Send</button>
             </div>
         </div>
     </div>
 </div>
 </html>
+

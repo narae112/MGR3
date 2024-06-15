@@ -17,16 +17,11 @@
         $(document).ready(function() {
             $('#createRoomForm').on('submit', function(event) {
                 event.preventDefault();
-                var memberEmail = $('#memberEmail').val().trim();
-
                 $.ajax({
                     type: 'POST',
                     url: '/ws/createRoom',
                     contentType: 'application/x-www-form-urlencoded',
-                    data: {
-                        name: $('#name').val(),
-                        memberEmail: memberEmail
-                    },
+                    data: $(this).serialize(),
                     success: function(data) {
                         window.location.href = '/ws/chatList';
                     },
@@ -47,8 +42,8 @@
             <input type="text" class="form-control" id="name" name="name" required>
         </div>
         <div class="form-group">
-            <label for="memberEmail">Member Email</label>
-            <input type="text" class="form-control" id="memberEmail" name="memberEmail" required>
+            <label for="nickname">Receiver Nickname</label>
+            <input type="text" class="form-control" id="nickname" name="nickname" required>
         </div>
         <button type="submit" class="btn btn-primary mt-2">Create Room</button>
     </form>
