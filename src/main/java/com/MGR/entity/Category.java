@@ -3,6 +3,7 @@ package com.MGR.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,7 @@ public class Category {
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AttractionTypeCategory> attractionTypeCategories = new ArrayList<>();
+
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AfterTypeCategory> afterTypeCategories = new ArrayList<>();
