@@ -24,9 +24,6 @@
 </div>
 <th:block layout:fragment="script">
     <script th:inline="javascript">
-<!--        function redirectToTicketsPage() {-->
-<!--    location.replace('/admin/coupons');-->
-<!--}-->
        $(document).ready(function() {
            // 이미지 파일 선택 이벤트 핸들러 등록
            bindDomEvent();
@@ -39,16 +36,7 @@
 
            // 오늘 날짜 설정 및 종료일 최소값 설정
            setTodayDate();
-<!--        $('form').submit(function(event) {-->
-<!--                // 폼 제출 기본 동작 방지-->
-<!--                event.preventDefault();-->
 
-<!--                // 폼 데이터 전송-->
-<!--                // 여기서 필요한 경우 Ajax를 사용하여 서버로 데이터를 전송할 수 있습니다.-->
-
-<!--                // 페이지 이동-->
-<!--                saveCouponAndRedirect();-->
-<!--            });-->
     });
 
        // 이미지 파일 선택 이벤트 핸들러
@@ -113,28 +101,29 @@
                document.getElementById("endDate").value = startDate;
            }
        }
-<!--          function saveCouponAndRedirect() {-->
-<!--            // 폼 데이터를 FormData 객체로 생성-->
-<!--            var formData = new FormData($('form')[0]);-->
+<!--         뒤로가기 방지-->
+          window.addEventListener('load', function() {
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
 
-<!--            // Ajax를 사용하여 폼 데이터를 서버로 전송-->
-<!--            $.ajax({-->
-<!--                type: 'POST',-->
-<!--                url: '/admin/coupon/new', // 저장 로직이 처리되는 URL-->
-<!--                data: formData,-->
-<!--                processData: false,-->
-<!--                contentType: false,-->
-<!--                success: function(response) {-->
-<!--                    // 저장이 성공하면 페이지를 이동합니다.-->
-<!--                    redirectToTicketsPage();-->
-<!--                },-->
-<!--                error: function(xhr, status, error) {-->
-<!--                    // 저장 중 에러가 발생하면 에러 메시지를 표시합니다.-->
-<!--                    var errorMessage = xhr.responseText;-->
-<!--                    showAlert(errorMessage);-->
-<!--                }-->
-<!--            });-->
-        }
+        // 뒤로가기 버튼 클릭 시 바로 tickets 페이지로 이동
+        window.onpopstate = function() {
+            location.replace("/admin/coupons");
+        };
+    }
+
+    // 페이지 로드 후 바로 뒤로가기 막기
+    function preventBack() {
+        window.history.forward();
+    }
+
+    setTimeout(preventBack, 0);
+
+    // 페이지를 떠날 때 아무 동작도 하지 않도록 설정
+    window.onunload = function () {
+        // No action needed
+    };
+});
     </script>
 </th:block>
 <th:block layout:fragment="css">
