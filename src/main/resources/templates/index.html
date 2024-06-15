@@ -122,7 +122,7 @@
                         <div class="blog-img review-img">
                             <a th:href="@{/review/board/detail/{id}(id=${review.id})}">
                                 <!-- 이미지 URL을 reviewImgDtoList의 첫 번째 이미지에서 가져옵니다. -->
-                              <img th:src="${review.imageUrl != null and  review.imageUrl.length() > 0 ? review.imageUrl : '/img/unicorn.png'}" alt="Review Image">
+                              <img th:src="${review.imageUrl != null and  review.imageUrl.length() > 0 ? review.imageUrl : '/img/logo/placeholder.png'}" alt="Review Image">
                             </a>
                         </div>
                         <!-- Review Content -->
