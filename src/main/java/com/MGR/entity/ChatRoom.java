@@ -15,21 +15,29 @@ public class ChatRoom {
     @Column(name = "chatRoom_id")
     private Long id;
 
+
     private String name;
 
-    @ElementCollection
-    private List<String> memberEmails;
+    @ManyToOne
+    @JoinColumn(name = "sender_id")
+    private Member sender;
+
+    @ManyToOne
+    @JoinColumn(name = "receiver_id")
+    private Member receiver;
 
     @Builder
-    public ChatRoom(String name, List<String> memberEmails) {
+    public ChatRoom(String name, Member sender, Member receiver) {
         this.name = name;
-        this.memberEmails = memberEmails;
+        this.sender = sender;
+        this.receiver = receiver;
     }
 
-    public static ChatRoom createRoom(String name, List<String> memberEmails) {
+    public static ChatRoom createRoom(String name, Member sender, Member receiver) {
         return ChatRoom.builder()
                 .name(name)
-                .memberEmails(memberEmails)
+                .sender(sender)
+                .receiver(receiver)
                 .build();
     }
 }
