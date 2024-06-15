@@ -29,6 +29,9 @@ public class ImageService {
     @Value("${boardImgLocation}")
     private String boardImgLocation;
 
+    @Value("${goWithImgLocation}")
+    private String goWithImgLocation;
+
     @Value("${couponImgLocation}")
     private String couponImgLocation;
 
@@ -48,6 +51,10 @@ public class ImageService {
 
     public void saveBoardImage(Image boardImage, MultipartFile boardImgFile) throws Exception {
         saveImage(boardImage, boardImgFile, boardImgLocation);
+    }
+
+    public void saveGoWithImage(Image goWithImage, MultipartFile goWithImgFile) throws Exception {
+        saveImage(goWithImage, goWithImgFile, goWithImgLocation);
     }
 
     public void saveCouponImage(Image couponImage, MultipartFile couponImgFile) throws Exception {
@@ -95,6 +102,10 @@ public class ImageService {
 
     public void updateBoardImage(Long boardImgId, MultipartFile boardImgFile) throws Exception {
         updateImage(boardImgId, boardImgFile, boardImgLocation);
+    }
+
+    public void updateGoWithImage(Long goWithImgId, MultipartFile goWithImageFile) throws Exception {
+        updateImage(goWithImgId, goWithImageFile, goWithImgLocation);
     }
 
     public void updateCouponImage(Long couponImgId, MultipartFile couponFile) throws Exception {

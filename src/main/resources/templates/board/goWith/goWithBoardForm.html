@@ -1,0 +1,123 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+</head>
+<Body>
+<div layout:fragment="content" class="container my-5">
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h3 class="mb-5 text-center">동행 구하기</h3>
+            <form id="add_member_form" th:object="${goWithBoardForm}" method="post" enctype="multipart/form-data">
+
+                <div>
+                    <p>이용할 지점을 선택하세요</p>
+                    <input type="radio" class="btn-check" name="options-base" id="option1" autocomplete="off">
+                    <label class="btn" for="option1">부산</label>
+                    <input type="radio" class="btn-check" name="options-base" id="option2" autocomplete="off">
+                    <label class="btn" for="option2">서울</label>
+                </div>
+
+
+                <div class="form-group mb-3">
+                    <label for="subject" class="mb-1">제목</label>
+                    <input type="text" th:field="*{subject}" class="form-control" id="subject">
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="content"  class="mb-1">내용</label>
+                    <textarea th:field="*{content}" class="form-control" rows="10" id="content"></textarea>
+                </div>
+
+                <div id="imageUploadContainer" class="form-group mb-3">
+                    <label class="form-group mb-3">이미지 업로드</label>
+                    <input type="file" class="form-control goWithImgFile" name="goWithImgFile">
+                    <input type="file" class="form-control goWithImgFile" name="goWithImgFile" style="display: none;">
+                    <input type="file" class="form-control goWithImgFile" name="goWithImgFile" style="display: none;">
+                    <input type="file" class="form-control goWithImgFile" name="goWithImgFile" style="display: none;">
+                    <input type="file" class="form-control goWithImgFile" name="goWithImgFile" style="display: none;">
+                </div>
+                <!-- reCAPTCHA -->
+                <div class="g-recaptcha" data-sitekey="6LcYWugpAAAAAGnVttnBXYbjBl8bF6l5iBRjtLlt"></div>
+                <!-- reCAPTCHA response hidden input -->
+                <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+                <input type="submit" value="저장하기" class="btn btn-primary my-2">
+            </form>
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            // 오류 메시지 처리
+            var errorMessage = /*[[${errorMessage}]]*/ '';
+            if (errorMessage != null && errorMessage !== '') {
+                showAlert(errorMessage);
+            }
+            // 이미지 입력란 변경 시 동작
+            $('.reviewImgFile').change(function() {
+                // 다음 이미지 입력란 토글
+                $(this).nextAll('input[type=file]').first().toggle();
+                // 파일 확장자 검사
+                validateFileExtension(this);
+            });
+        });
+
+        // 이미지 파일 선택 이벤트 핸들러
+        function validateFileExtension(input) {
+            var fileName = $(input).val().split("\\").pop();
+            if (fileName === '') {
+                alert("파일을 선택해주세요."); // 파일을 선택하지 않았을 때 알림 창 표시
+                return;
+            }
+
+            // 파일 확장자를 가져옵니다.
+            var fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+
+            // 이미지 파일 확장자인지 확인합니다.
+            if (fileExt != "jpg" && fileExt != "jpeg" && fileExt != "gif" && fileExt != "png" && fileExt != "bmp") {
+                // 이미지 파일이 아니면 오류를 표시합니다.
+                alert("이미지 파일만 등록이 가능합니다.");
+                // 파일 선택 초기화
+                $(input).val('');
+                return;
+            }
+        }
+    </script>
+</th:block>
+
+<script>
+    // 폼 제출 시 실행될 함수
+    $('#add_member_form').submit(function(e) {
+        e.preventDefault(); // 기본 제출 방지
+
+        var captcha = 1;
+        $.ajax({
+            url: '/verifyRecaptcha',
+            type: 'post',
+            data: {
+                recaptcha: $("#g-recaptcha-response").val()
+            },
+            success: function(data) {
+                switch (data) {
+                    case 0:
+                        console.log("자동 가입 방지 봇 통과");
+                        captcha = 0;
+                        $('#add_member_form').unbind('submit').submit(); // 리캡챠를 통과했으므로 폼 제출
+                        break;
+                    case 1:
+                        alert("자동 가입 방지 봇을 확인 한뒤 진행 해 주세요.");
+                        break;
+                    default:
+                        alert("자동 가입 방지 봇을 실행 하던 중 오류가 발생 했습니다. [Error bot Code : " + Number(data) + "]");
+                        break;
+                }
+            }
+        });
+    });
+</script>
+</Body>
+</html>
