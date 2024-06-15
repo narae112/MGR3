@@ -30,6 +30,8 @@ public class QMemberCoupon extends EntityPathBase<MemberCoupon> {
 
     public final QMember member;
 
+    public final QOrder order;
+
     public final BooleanPath used = createBoolean("used");
 
     public QMemberCoupon(String variable) {
@@ -52,6 +54,7 @@ public class QMemberCoupon extends EntityPathBase<MemberCoupon> {
         super(type, metadata, inits);
         this.coupon = inits.isInitialized("coupon") ? new QCoupon(forProperty("coupon"), inits.get("coupon")) : null;
         this.member = inits.isInitialized("member") ? new QMember(forProperty("member")) : null;
+        this.order = inits.isInitialized("order") ? new QOrder(forProperty("order"), inits.get("order")) : null;
     }
 
 }

@@ -1237,7 +1237,7 @@ ol {
 
 /* Pagination CSS */
 .pagination {
-  text-align: left;
+  text-align: center;
   margin: 60px 0 0 0;
   display: block;
 }

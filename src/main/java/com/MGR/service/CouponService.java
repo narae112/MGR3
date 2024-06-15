@@ -166,10 +166,10 @@ public class CouponService {
         return couponRepository.getAdminCouponPage(couponSearchDto, pageable);
     }
 
-    @Transactional(readOnly = true)
-    public Page<CouponMainDto> getCouponMainPage(CouponSearchDto couponSearchDto, Pageable pageable){
-        return couponRepository.getCouponMainPage(couponSearchDto, pageable);
-    }
+//    @Transactional(readOnly = true)
+//    public Page<CouponMainDto> getCouponMainPage(CouponSearchDto couponSearchDto, Pageable pageable){
+//        return couponRepository.getCouponMainPage(couponSearchDto, pageable);
+//    }
     @Transactional(readOnly = true)
     public CouponFormDto getCouponDtl(Long couponId){
         List<Image> couponImgList = imageRepository.findByCouponIdOrderByIdAsc(couponId);

@@ -17,6 +17,9 @@
 
     <div class="result wrapper" style="text-align: center;">
         <div class="box_section">
+            <div style="width: 45%; margin: 20px auto;">
+                <img src="/img/logo/successLogo.png" alt="successLogo">
+            </div>
             <h2 style="padding: 20px 0px 15px 0px">
                 <img
                         width="35px"
@@ -72,18 +75,18 @@
         const amountElement = document.getElementById("amount");
         const orderNameElement = document.getElementById("orderName");
 
-        orderIdElement.textContent = "주문번호: " + urlParams.get("orderId");
+        orderIdElement.textContent = "주문번호 : " + urlParams.get("orderId");
 
         const product = decodeURIComponent(urlParams.get("product"));
         const orderQuantity = parseInt(urlParams.get("orderQuantity"));
-        orderNameElement.textContent = "결제 내역: " + product + "외 " + (orderQuantity - 1) + " 건";
+        orderNameElement.textContent = "결제 내역: " + product + " 외 " + (orderQuantity - 1) + " 건";
 
         // orderNameElement.textContent = "주문 내역: " + decodeURIComponent(urlParams.get("orderName"));
 
         const amount = parseInt(urlParams.get("amount"));
         const formattedAmount = amount.toLocaleString(); // 천 단위로 구분하여 쉼표가 들어간 문자열로 변환
 
-        amountElement.textContent = "결제 금액: " + formattedAmount + "원";
+        amountElement.textContent = "결제 금액 : " + formattedAmount + "원";
     </script>
 
 </div>

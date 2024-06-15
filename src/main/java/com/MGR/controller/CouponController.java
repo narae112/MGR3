@@ -99,18 +99,18 @@ public class CouponController {
 //        return "redirect:/admin/coupons"; // 성공 시 쿠폰 관리 페이지로 리다이렉트
 //    }
 
-     @GetMapping(value={"coupons", "/coupons/{page}"})
-    public String couponMain(CouponSearchDto couponSearchDto,
-                             @PathVariable Optional<Integer> page, Model model){
-        Pageable pageable = PageRequest.of(page.orElse(0), 6); // 페이지 번호
-        Page<CouponMainDto> coupons = couponService.getCouponMainPage(couponSearchDto, pageable);
-
-        model.addAttribute("coupons", coupons);
-        model.addAttribute("couponSearchDto", couponSearchDto);
-        model.addAttribute("maxPage", 5);
-
-        return "coupon/admin/couponMain";
-    }
+//     @GetMapping(value={"coupons", "/coupons/{page}"})
+//    public String couponMain(CouponSearchDto couponSearchDto,
+//                             @PathVariable Optional<Integer> page, Model model){
+//        Pageable pageable = PageRequest.of(page.orElse(0), 6); // 페이지 번호
+//        Page<CouponMainDto> coupons = couponService.getCouponMainPage(couponSearchDto, pageable);
+//
+//        model.addAttribute("coupons", coupons);
+//        model.addAttribute("couponSearchDto", couponSearchDto);
+//        model.addAttribute("maxPage", 5);
+//
+//        return "coupon/admin/couponMain";
+//    }
 
     // 쿠폰 관리 페이지
     @GetMapping(value = {"/admin/coupons", "/admin/coupons/{page}"})

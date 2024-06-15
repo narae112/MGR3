@@ -22,6 +22,10 @@ public class MemberCoupon {
     @JoinColumn(name = "coupon_id")
     private Coupon coupon;
 
+    @OneToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
+
     @Column
     private String couponCode;
     // 쿠폰 코드

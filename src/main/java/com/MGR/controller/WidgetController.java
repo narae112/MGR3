@@ -126,7 +126,7 @@ public class WidgetController {
 
         // 사용한 쿠폰 사용처리
         if(couponId != 0) {
-            orderService.changeCouponStatus(couponId);
+            orderService.changeCouponStatus(couponId, id);
         }
 
         // 결제 완료 알림
