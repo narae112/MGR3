@@ -13,12 +13,12 @@
             overflow-y: scroll;
         }
         .message-input {
-            display: flex; /* 플렉스 컨테이너로 설정 */
+            display: flex;
             margin-top: 10px;
         }
         .message-input input[type="text"] {
-            flex: 1; /* 입력 창이 남은 공간을 채우도록 설정 */
-            margin-right: 10px; /* 버튼과 간격 설정 */
+            flex: 1;
+            margin-right: 10px;
         }
         .message {
             display: flex;
@@ -41,13 +41,12 @@
             margin-bottom: 5px;
         }
         .message.right .name {
-            text-align: right; /* 닉네임 오른쪽 정렬 */
+            text-align: right;
         }
         .message .text {
-            max-width: 70%;
+            max-width: 100%;
             padding: 10px;
             border-radius: 10px;
-            max-width: 100%;
         }
         .message.left .text {
             background-color: #f1f1f1;
@@ -105,16 +104,24 @@
             var senderNickname = $('#senderNickname').val();
             if (message) {
                 var chatMessage = {
-                    roomId: roomId,
                     message: message
                 };
+
+                if (roomId !== null) {
+                    chatMessage.roomId = roomId;
+                }
+
                 $.post('/api/chat/send', chatMessage, function() {
                     $('#messageInput').val('');
                 }).fail(function() {
                     console.error('Failed to send message');
                 });
+
+            } else {
+                console.error('Message is empty');
             }
         }
+
 
         function showMessage(message) {
             var messageClass = message.sender === $('#senderNickname').val() ? 'right' : 'left';
@@ -134,6 +141,11 @@
         }
 
         $(document).ready(function () {
+            // 전체 채팅 메시지를 표시
+            [[${allChatList}]].forEach(function (chat) {
+                showMessage(chat);
+            });
+
             $('#chatRooms').on('click', 'li', function () {
                 var id = $(this).data('room-id');
                 connectToRoom(id);

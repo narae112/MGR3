@@ -26,11 +26,15 @@ public class ChatRoom {
     @JoinColumn(name = "receiver_id")
     private Member receiver;
 
+    @Column
+    private boolean isGlobal = false;
+
     @Builder
-    public ChatRoom(String name, Member sender, Member receiver) {
+    public ChatRoom(String name, Member sender, Member receiver, boolean isGlobal) {
         this.name = name;
         this.sender = sender;
         this.receiver = receiver;
+        this.isGlobal = isGlobal;
     }
 
     public static ChatRoom createRoom(String name, Member sender, Member receiver) {
@@ -38,6 +42,13 @@ public class ChatRoom {
                 .name(name)
                 .sender(sender)
                 .receiver(receiver)
+                .build();
+    }
+
+    public static ChatRoom createGlobalRoom() {
+        return ChatRoom.builder()
+                .name("전체 채팅방")
+                .isGlobal(true)
                 .build();
     }
 }

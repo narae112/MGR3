@@ -34,6 +34,11 @@ public class ChatController {
             @RequestParam Long roomId,
             @RequestParam String message,
             @AuthenticationPrincipal PrincipalDetails member) {
+
+        if (roomId == null) {
+            roomId = 1L; // 전체 채팅방 ID를 1로 설정
+        }
+
         Member sender = memberService.findById(member.getId()).orElseThrow();
         ChatRoom chatRoom = chatService.findRoomById(roomId);
         Member receiver;

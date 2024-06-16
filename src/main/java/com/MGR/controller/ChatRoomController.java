@@ -6,6 +6,7 @@ import com.MGR.entity.Member;
 import com.MGR.security.PrincipalDetails;
 import com.MGR.service.ChatService;
 import com.MGR.service.MemberService;
+import com.MGR.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 
@@ -27,10 +29,12 @@ public class ChatRoomController {
         Long memberId = member.getId();
         List<ChatRoom> roomList = chatService.findAllRoomsByMember(memberId);
         Member findMember = memberService.findById(member.getId()).orElseThrow();
+        List<Chat> allChatList = chatService.findAllGlobalChats(); // 전체 채팅 메시지 가져오기
 
         model.addAttribute("roomList", roomList);
         model.addAttribute("profileImgUrl", findMember.getProfileImgUrl());
         model.addAttribute("nickname", findMember.getNickname());
+        model.addAttribute("allChatList", allChatList);
         return "api/chatList";
     }
 
@@ -53,7 +57,6 @@ public class ChatRoomController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create room");
         }
     }
-
 
     @GetMapping("/api/joinRoom/{roomId}")
     public String joinRoom(@PathVariable Long roomId, Model model) {
