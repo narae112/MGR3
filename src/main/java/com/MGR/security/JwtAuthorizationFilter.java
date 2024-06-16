@@ -37,6 +37,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                 Authentication auth = jwtProvider.getAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(auth);
                 System.out.println("JWT 토큰 검증 성공");
+                System.out.println("JWT 토큰 = " + token);
             } else {
                 System.out.println("유효하지 않은 JWT 토큰");
             }

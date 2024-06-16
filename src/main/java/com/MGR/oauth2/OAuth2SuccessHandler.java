@@ -47,7 +47,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         accessTokenCookie.setHttpOnly(true);
         accessTokenCookie.setSecure(true); // HTTPS 사용 시에만 설정
         accessTokenCookie.setPath("/");
-        accessTokenCookie.setMaxAge(5 * 60);
+        accessTokenCookie.setMaxAge(7 * 24 * 60 * 60);
         response.addCookie(accessTokenCookie);
 
         // Refresh Token 생성 및 쿠키에 설정
