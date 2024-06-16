@@ -22,7 +22,7 @@ public class GoWithBoardService {
     private final ImageService imageService;
 
 
-    public Long createGoWithBoard(Member user, String title, String content, LocalDate wantDate, LocationCategory locationCategory,
+    public Long createGoWithBoard(Member user, String title, String content, String wantDate, LocationCategory locationCategory,
                                   AgeCategory ageCategory, List<String> attractionTypes, List<String> afterTypes,
                                   List<String> personalities, List<MultipartFile> goWithImgFileList) throws Exception {
 
@@ -42,16 +42,19 @@ public class GoWithBoardService {
 
         goWithBoardRepository.save(goWithBoard);
 
+
         for (int i = 0; i < goWithImgFileList.size(); i++) {
             Image goWithImage = new Image();
             goWithImage.setGoWithBoard(goWithBoard);
-
             if (i == 0) {
                 goWithImage.setRepImgYn(true);
             } else {
                 goWithImage.setRepImgYn(false);
             }
-            imageService.saveGoWithImage(goWithImage, goWithImgFileList.get(i));
+
+            if(!goWithImgFileList.get(i).isEmpty()) {
+                imageService.saveGoWithImage(goWithImage, goWithImgFileList.get(i));
+            }
         }
         return goWithBoard.getId();
     }

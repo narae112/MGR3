@@ -11,6 +11,7 @@ import java.util.UUID;
 @Log
 public class FileService {
     public String uploadFile(String uploadPath,String originalFileName, byte[] fileData) throws Exception{
+        System.out.println("originalFileName 이미지명 = " + originalFileName);
         UUID uuid = UUID.randomUUID(); //파일 이름 생성
         String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
         //lastIndexOf() 메서드는 문자열에서 지정된 문자또는  문자열이 마지막으로 등장하는 위치 인덱스 반환
@@ -21,7 +22,7 @@ public class FileService {
         FileOutputStream fos = new FileOutputStream(fileUploadFullUrl);
         fos.write(fileData);
         fos.close();
-
+        System.out.println("savedFileName 이미지명 = " + savedFileName);
         return savedFileName;
     }
     public void deleteFile(String filePath) throws Exception{

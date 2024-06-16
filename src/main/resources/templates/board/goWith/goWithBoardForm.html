@@ -118,12 +118,15 @@
 
                 <div id="imageUploadContainer" class="form-group mb-3">
                     <label class="form-group mb-3">이미지 업로드</label>
-                    <input type="file" class="form-control goWithImgFile" name="goWithImgFile">
-                    <input type="file" class="form-control goWithImgFile" name="goWithImgFile" style="display: none;">
-                    <input type="file" class="form-control goWithImgFile" name="goWithImgFile" style="display: none;">
-                    <input type="file" class="form-control goWithImgFile" name="goWithImgFile" style="display: none;">
-                    <input type="file" class="form-control goWithImgFile" name="goWithImgFile" style="display: none;">
+                    <label class="form-group mb-3">이미지 업로드</label>
+                    <input type="file" class="form-control goWithImgFile" name="goWithImgFile" id="fileInput0">
+                    <input type="file" class="form-control goWithImgFile" name="goWithImgFile" id="fileInput1" style="display: none;">
+                    <input type="file" class="form-control goWithImgFile" name="goWithImgFile" id="fileInput2" style="display: none;">
+                    <input type="file" class="form-control goWithImgFile" name="goWithImgFile" id="fileInput3" style="display: none;">
+                    <input type="file" class="form-control goWithImgFile" name="goWithImgFile" id="fileInput4" style="display: none;">
                 </div>
+
+
 
                 <!-- reCAPTCHA -->
                 <div class="g-recaptcha" data-sitekey="6LcYWugpAAAAAGnVttnBXYbjBl8bF6l5iBRjtLlt"></div>
@@ -194,30 +197,27 @@
     $('#add_member_form').submit(function(e) {
         e.preventDefault(); // 기본 제출 방지
 
-        var captcha = 1;
-        $.ajax({
-            url: '/verifyRecaptcha',
-            type: 'post',
-            data: {
-                recaptcha: $("#g-recaptcha-response").val()
-            },
-            success: function(data) {
-                switch (data) {
-                    case 0:
-                        console.log("자동 가입 방지 봇 통과");
-                        captcha = 0;
-                        $('#add_member_form').unbind('submit').submit(); // 리캡챠를 통과했으므로 폼 제출
-                        break;
-                    case 1:
-                        alert("자동 가입 방지 봇을 확인 한뒤 진행 해 주세요.");
-                        break;
-                    default:
-                        alert("자동 가입 방지 봇을 실행 하던 중 오류가 발생 했습니다. [Error bot Code : " + Number(data) + "]");
-                        break;
-                }
+    $('#add_member_form').submit(function(e) {
+
+        var response = grecaptcha.getResponse();
+
+        if (response.length === 0) {
+            alert("로봇 방지 검증란을 체크해주세요");
+            return;
+        } else {
+            $("#g-recaptcha-response").val(response);
+        }
+
+        $('.goWithImgFile').each(function() {
+            if (!$(this).val()) {
+                $(this).remove();
             }
         });
+        this.submit();
     });
+
+
+
 </script>
 </body>
 </html>

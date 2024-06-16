@@ -27,7 +27,7 @@ public class GoWithBoardFormDto {
 
     private Member member;
 
-    private LocalDate wantDate;
+    private String wantDate;
     private LocationCategory locationCategory;
     private AgeCategory ageCategory;
 
