@@ -203,7 +203,7 @@
 
         if (response.length === 0) {
             alert("로봇 방지 검증란을 체크해주세요");
-            e.preventDefault();
+            return;
         } else {
             $("#g-recaptcha-response").val(response);
         }
@@ -213,8 +213,9 @@
                 $(this).remove();
             }
         });
+        this.submit();
     });
-});
+
 
 
 </script>
