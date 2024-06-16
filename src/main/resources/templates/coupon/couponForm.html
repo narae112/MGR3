@@ -37,7 +37,36 @@
            // 오늘 날짜 설정 및 종료일 최소값 설정
            setTodayDate();
 
+           $("form").submit(function(event) {
+        event.preventDefault();  // 기본 제출 동작을 막음
+        var form = $(this);
+        var formData = new FormData(form[0]);  // 폼 데이터를 FormData 객체로 직렬화하여 전송
+
+        $.ajax({
+            type: form.attr('method'),
+            url: form.attr('action'),
+            data: formData,
+            contentType: false,  // 데이터 타입을 설정하지 않음
+            processData: false,  // 데이터를 query string으로 변환하지 않음
+            success: function(response) {
+                showAlert(response);  // 성공적인 메시지를 모달 창에 표시
+                window.location.replace("/admin/coupons");  // 성공적으로 처리되면 다른 페이지로 이동
+            },
+            error: function(xhr, status, error) {
+                if (xhr.status === 400) {
+                    showAlert(xhr.responseText);  // 입력값 오류 메시지를 모달 창에 표시
+                } else if (xhr.status === 404) {
+                    showAlert("쿠폰을 찾을 수 없습니다.");
+                } else if (xhr.status === 500) {
+                    showAlert("서버 오류: " + xhr.responseText);  // 서버 내부 오류 메시지를 모달 창에 표시
+                } else {
+                    showAlert("오류 발생: " + xhr.status + " " + xhr.statusText);  // 기타 오류 처리
+                }
+            }
+        });
     });
+});
+
 
        // 이미지 파일 선택 이벤트 핸들러
        function bindDomEvent() {
@@ -101,29 +130,7 @@
                document.getElementById("endDate").value = startDate;
            }
        }
-<!--         뒤로가기 방지-->
-          window.addEventListener('load', function() {
-    if (window.history.replaceState) {
-        window.history.replaceState(null, null, window.location.href);
 
-        // 뒤로가기 버튼 클릭 시 바로 tickets 페이지로 이동
-        window.onpopstate = function() {
-            location.replace("/admin/coupons");
-        };
-    }
-
-    // 페이지 로드 후 바로 뒤로가기 막기
-    function preventBack() {
-        window.history.forward();
-    }
-
-    setTimeout(preventBack, 0);
-
-    // 페이지를 떠날 때 아무 동작도 하지 않도록 설정
-    window.onunload = function () {
-        // No action needed
-    };
-});
     </script>
 </th:block>
 <th:block layout:fragment="css">
