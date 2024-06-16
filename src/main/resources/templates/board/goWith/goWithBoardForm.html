@@ -1,35 +1,120 @@
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
 <head>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 </head>
-<Body>
-<div layout:fragment="content" class="container my-5">
+<th:block layout:fragment="css">
+<style>
+    input[type="radio"] + label,
+    input[type="checkbox"] + label {
+        border: 1px solid #ccc; /* 기본 회색 테두리 */
+    }
 
+    input[type="radio"]:checked + label,
+    input[type="checkbox"]:checked + label {
+        border-width: 2px; /* 선택된 경우 테두리 두께를 두 배로 증가 */
+        border-color: black; /* 선택된 경우 검은색 테두리로 변경 */
+    }
+    .btn-label-spacing {
+        margin: 0 10px 10px 0; /* 원하는 만큼 여백을 추가하세요 */
+    }
+    p {
+        margin: 10px 0;
+    }
+</style>
+</th:block>
+<body>
+<div layout:fragment="content" class="container my-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
             <h3 class="mb-5 text-center">동행 구하기</h3>
-            <form id="add_member_form" th:object="${goWithBoardForm}" method="post" enctype="multipart/form-data">
+            <form id="add_member_form" th:object="${goWithBoardFormDto}" th:action="@{/goWithBoard/create}" method="post" enctype="multipart/form-data">
+
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="text-center">
+                            <p>방문하실 날짜를 선택하세요</p>
+                            <div id="datepicker" class="text-center"></div>
+                            <input type="hidden" th:field="*{wantDate}" id="wantDate">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="text-center">
+                            <p>이용할 지점을 선택하세요</p>
+                            <input type="radio" class="btn-check" name="locationCategory" id="locationOption1" th:field="*{locationCategory}" value="BUSAN" autocomplete="off">
+                            <label class="btn" for="locationOption1">부산</label>
+                            <input type="radio" class="btn-check" name="locationCategory" id="locationOption2" th:field="*{locationCategory}" value="SEOUL" autocomplete="off">
+                            <label class="btn" for="locationOption2">서울</label>
+                        </div>
+                    </div>
+                </div>
+
 
                 <div>
-                    <p>이용할 지점을 선택하세요</p>
-                    <input type="radio" class="btn-check" name="options-base" id="option1" autocomplete="off">
-                    <label class="btn" for="option1">부산</label>
-                    <input type="radio" class="btn-check" name="options-base" id="option2" autocomplete="off">
-                    <label class="btn" for="option2">서울</label>
+                    <p>선호하는 나이대를 선택하세요</p>
+                    <input type="radio" class="btn-check" name="ageCategory" id="ageOption1" th:field="*{ageCategory}" value="NOMATTER" autocomplete="off">
+                    <label class="btn btn-label-spacing" for="ageOption1">상관없음</label>
+                    <input type="radio" class="btn-check" name="ageCategory" id="ageOption2" th:field="*{ageCategory}" value="TEENAGER" autocomplete="off">
+                    <label class="btn btn-label-spacing" for="ageOption2">10대</label>
+                    <input type="radio" class="btn-check" name="ageCategory" id="ageOption3" th:field="*{ageCategory}" value="TWENTYTOTHIRTY" autocomplete="off">
+                    <label class="btn btn-label-spacing" for="ageOption3">20대 - 30대</label>
+                    <input type="radio" class="btn-check" name="ageCategory" id="ageOption4" th:field="*{ageCategory}" value="THIRTYTOFORTY" autocomplete="off">
+                    <label class="btn btn-label-spacing" for="ageOption4">30대 - 40대</label>
+                    <input type="radio" class="btn-check" name="ageCategory" id="ageOption5" th:field="*{ageCategory}" value="FORTYTOFIFTY" autocomplete="off">
+                    <label class="btn btn-label-spacing" for="ageOption5">40대 - 50대</label>
+                    <input type="radio" class="btn-check" name="ageCategory" id="ageOption6" th:field="*{ageCategory}" value="OVERFIFTY" autocomplete="off">
+                    <label class="btn btn-label-spacing" for="ageOption6">50대 이상</label>
                 </div>
 
-
                 <div class="form-group mb-3">
-                    <label for="subject" class="mb-1">제목</label>
-                    <input type="text" th:field="*{subject}" class="form-control" id="subject">
+                    <label for="title" class="mb-1">제목</label>
+                    <input type="text" th:field="*{title}" class="form-control" id="title">
                 </div>
 
                 <div class="form-group mb-3">
-                    <label for="content"  class="mb-1">내용</label>
+                    <label for="content" class="mb-1">내용</label>
                     <textarea th:field="*{content}" class="form-control" rows="10" id="content"></textarea>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="attractionTypes" class="mb-1">놀이기구 취향</label>
+                    <div class="row">
+                        <div class="col-auto" th:each="attractionType : ${attractionTypes}">
+                            <div class="mr-2 mb-2">
+                                <input type="checkbox" class="btn-check" name="attractionTypes" th:id="'attractionType' + ${attractionType.name}" th:value="${attractionType.name}" autocomplete="off">
+                                <label class="btn" th:for="'attractionType' + ${attractionType.name}" th:text="${attractionType.name}"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="afterTypes" class="mb-1">동행 이후 취향</label>
+                    <div class="row">
+                        <div class="col-auto" th:each="afterType : ${afterTypes}">
+                            <div class="mr-2 mb-2">
+                                <input type="checkbox" class="btn-check" name="afterTypes" th:id="'afterType' + ${afterType.name}" th:value="${afterType.name}" autocomplete="off">
+                                <label class="btn" th:for="'afterType' + ${afterType.name}" th:text="${afterType.name}"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="personalities" class="mb-1">성격</label>
+                    <div class="row">
+                        <div class="col-auto" th:each="personality : ${personalities}">
+                            <div class="mr-2 mb-2">
+                                <input type="checkbox" class="btn-check" name="personalities" th:id="'personality' + ${personality.name}" th:value="${personality.name}" autocomplete="off">
+                                <label class="btn" th:for="'personality' + ${personality.name}" th:text="${personality.name}"></label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="imageUploadContainer" class="form-group mb-3">
@@ -40,6 +125,7 @@
                     <input type="file" class="form-control goWithImgFile" name="goWithImgFile" style="display: none;">
                     <input type="file" class="form-control goWithImgFile" name="goWithImgFile" style="display: none;">
                 </div>
+
                 <!-- reCAPTCHA -->
                 <div class="g-recaptcha" data-sitekey="6LcYWugpAAAAAGnVttnBXYbjBl8bF6l5iBRjtLlt"></div>
                 <!-- reCAPTCHA response hidden input -->
@@ -51,14 +137,29 @@
 </div>
 <th:block layout:fragment="script">
     <script th:inline="javascript">
+
         $(document).ready(function() {
             // 오류 메시지 처리
             var errorMessage = /*[[${errorMessage}]]*/ '';
             if (errorMessage != null && errorMessage !== '') {
                 showAlert(errorMessage);
             }
+
+            // 달력 초기화
+            $("#datepicker").datepicker({
+                minDate: 0, // 오늘부터 선택 가능
+                onSelect: function(dateText) {
+                    // 선택한 날짜를 wantDate 변수에 할당
+                    $("#wantDate").val(dateText);
+                }
+            });
+
+            // 페이지 로드 시 오늘 날짜를 wantDate 변수에 할당
+            var today = $.datepicker.formatDate('yy-mm-dd', new Date());
+            $("#wantDate").val(today);
+
             // 이미지 입력란 변경 시 동작
-            $('.reviewImgFile').change(function() {
+            $('.goWithImgFile').change(function() {
                 // 다음 이미지 입력란 토글
                 $(this).nextAll('input[type=file]').first().toggle();
                 // 파일 확장자 검사
@@ -119,5 +220,5 @@
         });
     });
 </script>
-</Body>
+</body>
 </html>

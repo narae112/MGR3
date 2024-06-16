@@ -104,8 +104,8 @@ public class ImageService {
         updateImage(boardImgId, boardImgFile, boardImgLocation);
     }
 
-    public void updateGoWithImage(Long goWithImgId, MultipartFile goWithImageFile) throws Exception {
-        updateImage(goWithImgId, goWithImageFile, goWithImgLocation);
+    public void updateGoWithImage(Long goWithImgId, MultipartFile goWithImgFile) throws Exception {
+        updateImage(goWithImgId, goWithImgFile, goWithImgLocation);
     }
 
     public void updateCouponImage(Long couponImgId, MultipartFile couponFile) throws Exception {

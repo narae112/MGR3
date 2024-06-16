@@ -131,4 +131,15 @@ public class CategoryService {
         return CategoryFormDto.of(category);
     }
 
+    public List<AttractionTypeCategory> getAllAttractionTypeCategories() {
+        return attractionTypeCategoryRepository.findAll();
+    }
+
+    public List<AfterTypeCategory> getAllAfterTypeCategories() {
+        return afterTypeCategoryRepository.findAll();
+    }
+
+    public List<PersonalityCategory> getAllPersonalityCategories() {
+        return personalityCategoryRepository.findAll();
+    }
 }

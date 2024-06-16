@@ -26,6 +26,14 @@ public class GoWithBoardService {
                                   AgeCategory ageCategory, List<String> attractionTypes, List<String> afterTypes,
                                   List<String> personalities, List<MultipartFile> goWithImgFileList) throws Exception {
 
+        if (user == null) {
+            throw new IllegalArgumentException("User must not be null");
+        }
+
+        if (title == null || title.isEmpty() || content == null || content.isEmpty()) {
+            throw new IllegalArgumentException("Title and content must not be empty");
+        }
+
         GoWithBoard goWithBoard = new GoWithBoard();
 
         goWithBoard.setMember(user);
@@ -33,14 +41,14 @@ public class GoWithBoardService {
         goWithBoard.setWantDate(wantDate);
         goWithBoard.setLocationCategory(locationCategory);
         goWithBoard.setAgeCategory(ageCategory);
-        goWithBoard.setAttractionTypes(String.join(",", attractionTypes));
-        goWithBoard.setAfterTypes(String.join(",", afterTypes));
-        goWithBoard.setPersonalities(String.join(",", personalities));
+        goWithBoard.setAttractionTypes(attractionTypes != null ? String.join(",", attractionTypes) : "");
+        goWithBoard.setAfterTypes(afterTypes != null ? String.join(",", afterTypes) : "");
+        goWithBoard.setPersonalities(personalities != null ? String.join(",", personalities) : "");
 
         goWithBoard.setTitle(title);
         goWithBoard.setContent(content);
 
-        this.goWithBoardRepository.save(goWithBoard);
+        goWithBoardRepository.save(goWithBoard);
 
         for (int i = 0; i < goWithImgFileList.size(); i++) {
             Image goWithImage = new Image();
