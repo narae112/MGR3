@@ -26,14 +26,6 @@ public class GoWithBoardService {
                                   AgeCategory ageCategory, List<String> attractionTypes, List<String> afterTypes,
                                   List<String> personalities, List<MultipartFile> goWithImgFileList) throws Exception {
 
-        if (user == null) {
-            throw new IllegalArgumentException("User must not be null");
-        }
-
-        if (title == null || title.isEmpty() || content == null || content.isEmpty()) {
-            throw new IllegalArgumentException("Title and content must not be empty");
-        }
-
         GoWithBoard goWithBoard = new GoWithBoard();
 
         goWithBoard.setMember(user);
