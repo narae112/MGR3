@@ -13,7 +13,56 @@
             overflow-y: scroll;
         }
         .message-input {
+            display: flex; /* 플렉스 컨테이너로 설정 */
             margin-top: 10px;
+        }
+        .message-input input[type="text"] {
+            flex: 1; /* 입력 창이 남은 공간을 채우도록 설정 */
+            margin-right: 10px; /* 버튼과 간격 설정 */
+        }
+        .message {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        .message img {
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+        .message .content {
+            display: flex;
+            flex-direction: column;
+            max-width: 70%;
+        }
+        .message .name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .message.right .name {
+            text-align: right; /* 닉네임 오른쪽 정렬 */
+        }
+        .message .text {
+            max-width: 70%;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 100%;
+        }
+        .message.left .text {
+            background-color: #f1f1f1;
+        }
+        .message.right {
+            justify-content: flex-end;
+        }
+        .message.right .text {
+            background-color: #007bff;
+            color: #fff;
+        }
+        .message.right img {
+            order: 2;
+            margin-left: 10px;
+            margin-right: 0;
         }
     </style>
 </th:block>
@@ -68,7 +117,19 @@
         }
 
         function showMessage(message) {
-            $('#chatBox').append('<div><strong>' + message.sender + ':</strong> ' + message.message + '</div>');
+            var messageClass = message.sender === $('#senderNickname').val() ? 'right' : 'left';
+            var profileImg = message.profileImgUrl || '/img/login/profile.png';
+
+            var messageElement =
+                '<div class="message ' + messageClass + '">' +
+                    '<img src="' + profileImg + '" alt="Profile Image">' +
+                    '<div class="content">' +
+                        '<div class="name">' + message.sender + '</div>' +
+                        '<div class="text">' + message.message + '</div>' +
+                    '</div>' +
+                '</div>';
+
+            $('#chatBox').append(messageElement);
             $('#chatBox').scrollTop($('#chatBox')[0].scrollHeight);
         }
 
@@ -96,7 +157,7 @@
     <hr class="my-4">
     <div class="row">
         <div class="col-md-4">
-            <a href="/api/createRoom" class="btn btn-success mb-3">Create Room</a>
+            <a href="/api/createRoom" class="btn btn-success mb-3">채팅방 만들기</a>
             <ul class="list-group" id="chatRooms">
                 <li class="list-group-item" th:each="room : ${roomList}" th:text="${room.name}" th:data-room-id="${room.id}"></li>
             </ul>
@@ -106,12 +167,15 @@
             <div class="message-input">
                 <input type="text" id="messageInput" class="form-control" placeholder="Enter message">
                 <input type="hidden" id="senderNickname" th:value="${nickname}">
-                <button id="sendButton" class="btn btn-primary mt-2">전송</button>
+                <input type="hidden" id="profileImgUrl" th:value="${profileImgUrl}">
+                <button id="sendButton" class="btn btn-primary">전송</button>
             </div>
         </div>
     </div>
 </div>
 </html>
+
+
 
 <!--<!DOCTYPE html>-->
 <!--<html xmlns:th="http://www.thymeleaf.org"-->

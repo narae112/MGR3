@@ -2,6 +2,7 @@ package com.MGR.controller;
 
 import com.MGR.entity.Chat;
 import com.MGR.entity.ChatRoom;
+import com.MGR.entity.Member;
 import com.MGR.security.PrincipalDetails;
 import com.MGR.service.ChatService;
 import com.MGR.service.MemberService;
@@ -25,10 +26,11 @@ public class ChatRoomController {
     public String roomList(Model model, @AuthenticationPrincipal PrincipalDetails member) {
         Long memberId = member.getId();
         List<ChatRoom> roomList = chatService.findAllRoomsByMember(memberId);
-        String nickname = memberService.findById(member.getId()).orElseThrow().getNickname();
-        System.out.println("닉네임 찾기 = " + nickname);
+        Member findMember = memberService.findById(member.getId()).orElseThrow();
+
         model.addAttribute("roomList", roomList);
-        model.addAttribute("nickname", nickname);
+        model.addAttribute("profileImgUrl", findMember.getProfileImgUrl());
+        model.addAttribute("nickname", findMember.getNickname());
         return "api/chatList";
     }
 

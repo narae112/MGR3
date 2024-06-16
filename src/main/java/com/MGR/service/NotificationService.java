@@ -267,7 +267,7 @@ public class NotificationService {
         if (userEmitters != null) {
             userEmitters.forEach((toId, sseEmitter) -> {
                 try {
-                    String data = "{\"sender\":\"" + member.getNickname() + "\",\"message\":\"" + message + "\"}";
+                    String data = "{\"sender\":\"" + member.getNickname() + "\",\"message\":\"" + message + "\",\"profileImgUrl\":\"" + member.getProfileImgUrl() + "\"}";
                     sseEmitter.send(SseEmitter.event().name("chat").data(data));
                 } catch (IOException e) {
                     userEmitters.remove(toId);
