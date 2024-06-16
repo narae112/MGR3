@@ -43,4 +43,12 @@ public class ChatService {
         ChatRoom room = roomRepository.findById(roomId).orElseThrow(() -> new IllegalArgumentException("Invalid room ID")); // 방 찾기 -> 없는 방일 경우 예외처리
         return chatRepository.save(Chat.createChat(room, sender, senderEmail, message));
     }
+
+    public List<ChatRoom> findAllRoomsByMember(Long memberId) {
+        return roomRepository.findBySenderIdOrReceiverId(memberId);
+    }
+
+//    public List<ChatRoom> findRoomByMemberId(Long id) {
+//        return roomRepository.findBySenderIdOrReceiverId(id);
+//    }
 }

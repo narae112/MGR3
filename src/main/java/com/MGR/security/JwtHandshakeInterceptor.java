@@ -29,12 +29,12 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
             if (accessToken != null && jwtProvider.validateToken(accessToken)) {
                 Authentication auth = jwtProvider.getAuthentication(accessToken);
                 SecurityContextHolder.getContext().setAuthentication(auth);
-
+                System.out.println("웹소켓 세션 확인 auth.getPrincipal()) = " + auth.getPrincipal());
                 // 사용자 정보를 웹소켓 세션에 저장
                 attributes.put("user", auth.getPrincipal());
                 return true;
             } else {
-                System.out.println("Invalid JWT token");
+                System.out.println("웹소켓 세션 안됨 Invalid JWT token");
                 response.setStatusCode(HttpStatus.UNAUTHORIZED);
                 return false;
             }

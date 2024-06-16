@@ -21,37 +21,23 @@ public class ChatRoomController {
     private final ChatService chatService;
     private final MemberService memberService;
 
-    @GetMapping("/ws/chatList")
+    @GetMapping("/api/chatList")
     public String roomList(Model model, @AuthenticationPrincipal PrincipalDetails member) {
-        List<ChatRoom> roomList = chatService.findAllRoom();
+        Long memberId = member.getId();
+        List<ChatRoom> roomList = chatService.findAllRoomsByMember(memberId);
         String nickname = memberService.findById(member.getId()).orElseThrow().getNickname();
         System.out.println("닉네임 찾기 = " + nickname);
         model.addAttribute("roomList", roomList);
         model.addAttribute("nickname", nickname);
-        return "ws/chatList";
+        return "api/chatList";
     }
 
-    @GetMapping("/ws/createRoom")
+    @GetMapping("/api/createRoom")
     public String roomForm() {
-        return "ws/roomForm";
+        return "api/roomForm";
     }
 
-//    @PostMapping("/ws/createRoom")
-//    public String createRoom(@RequestParam String name, @RequestParam String nickname,
-//                             @AuthenticationPrincipal PrincipalDetails member) {
-//
-//        try {
-//            chatService.createRoom(name, member, nickname);
-//            System.out.println("name = " + name);
-//            System.out.println("nickname = " + nickname);
-//            return "redirect:/ws/chatList";
-//        } catch (Exception e) {
-//            // 예외 발생 시 실패 메시지 반환
-//            return "error";
-//        }
-//    }
-
-    @PostMapping("/ws/createRoom")
+    @PostMapping("/api/createRoom")
     @ResponseBody
     public ResponseEntity<?> createRoom(@RequestParam String name, @RequestParam String nickname,
                                         @AuthenticationPrincipal PrincipalDetails member) {
@@ -67,12 +53,12 @@ public class ChatRoomController {
     }
 
 
-    @GetMapping("/ws/joinRoom/{roomId}")
+    @GetMapping("/api/joinRoom/{roomId}")
     public String joinRoom(@PathVariable Long roomId, Model model) {
         List<Chat> chatList = chatService.findAllChatByRoomId(roomId);
 
         model.addAttribute("roomId", roomId);
         model.addAttribute("chatList", chatList);
-        return "ws/chatList";
+        return "api/chatList";
     }
 }

@@ -55,4 +55,5 @@ public class NotificationController {
 
         return new ResponseEntity<>(notificationCount, HttpStatus.OK);
     }
+
 }
