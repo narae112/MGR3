@@ -1,8 +1,12 @@
 package com.MGR.controller;
 
-import com.MGR.config.VerifyRecaptcha;
 import com.MGR.dto.GoWithBoardFormDto;
+import com.MGR.dto.GoWithCommentFormDto;
+import com.MGR.dto.ReviewBoardForm;
+import com.MGR.dto.ReviewCommentForm;
+import com.MGR.entity.GoWithBoard;
 import com.MGR.entity.Member;
+import com.MGR.entity.ReviewBoard;
 import com.MGR.security.PrincipalDetails;
 import com.MGR.service.CategoryService;
 import com.MGR.service.GoWithBoardService;
@@ -16,14 +20,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Controller
@@ -33,6 +36,7 @@ public class GoWithBoardController {
     private final GoWithBoardService goWithBoardService;
     private final CategoryService categoryService;
 
+    // 폼
     @GetMapping("/goWithBoard/create")
     public String showGoWithBoardForm(Model model) {
         addCategoryAttributes(model);
@@ -40,6 +44,7 @@ public class GoWithBoardController {
         return "board/goWith/goWithBoardForm";
     }
 
+    // 게시글 작성
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/goWithBoard/create")
     public String goWithCreate(Model model, @Valid GoWithBoardFormDto goWithBoardFormDto, BindingResult bindingResult,
@@ -49,17 +54,6 @@ public class GoWithBoardController {
             redirectAttributes.addFlashAttribute("error", "로그인 후 이용해주세요.");
             return "member/loginForm";
         }
-
-//        String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
-//        try {
-//            boolean recaptchaVerified = VerifyRecaptcha.verify(gRecaptchaResponse);
-//            if (!recaptchaVerified) {
-//                bindingResult.reject("recaptcha.error", "로봇 방지 검증란을 체크해주세요");
-//            }
-//        } catch (IOException e) {
-//            System.out.println("recaptcha 오류 e = " + e);
-//            bindingResult.reject("recaptcha.error", "Error while verifying reCAPTCHA");
-//        }
 
         if (bindingResult.hasErrors()) {
             addCategoryAttributes(model); // 카테고리 데이터 다시 추가
@@ -105,4 +99,20 @@ public class GoWithBoardController {
         model.addAttribute("afterTypes", categoryService.getAllAfterTypeCategories());
         model.addAttribute("personalities", categoryService.getAllPersonalityCategories());
     }
+
+    // 게시글 보기
+    @GetMapping(value = "/goWithBoard/detail/{id}")
+    public String detail(Model model, @PathVariable("id") Long id, GoWithCommentFormDto goWithCommentFormDto) {
+        GoWithBoard goWithBoard = this.goWithBoardService.getGoWithBoard(id);
+        goWithBoardService.saveGoWithBoard(goWithBoard);
+        model.addAttribute("goWithBoard", goWithBoard);
+        GoWithBoardFormDto goWithBoardFormDto = goWithBoardService.getGoWithBoardDtl(id);
+        model.addAttribute("goWithBoardForm",goWithBoardFormDto);
+
+//        프로필 보여주기에 필요한 정보 가져오기
+
+        return "board/goWith/goWithBoardDtl";
+    }
+
+
 }
