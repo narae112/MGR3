@@ -28,6 +28,7 @@ public class NotificationService {
     private final MemberService memberService;
     private final NotificationRepository notificationRepository;
     public final Map<Long, SseEmitter> sseEmitters = new ConcurrentHashMap<>();
+    private final Map<Long, Map<Long, SseEmitter>> roomEmitters = new ConcurrentHashMap<>();
     // 1. 모든 Emitters 를 저장하는 ConcurrentHashMap
 
     // 메시지 알림
@@ -232,7 +233,6 @@ public class NotificationService {
         }
     }
 
-
     public List<Notification> findByMemberId(Long userId) {
         System.out.println("2= " + notificationRepository.findByMemberIdOrderByCreatedDateDesc(userId));
         return notificationRepository.findByMemberIdOrderByCreatedDateDesc(userId);
@@ -247,5 +247,32 @@ public class NotificationService {
         List<Notification> byMemberId = notificationRepository.findByMemberId(memberId);
         return byMemberId.size();
     }
-}
 
+    // 구독 메서드 수정
+    public SseEmitter subscribeToRoom(Long userId, Long roomId) {
+        SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
+        roomEmitters.computeIfAbsent(roomId, k -> new ConcurrentHashMap<>()).put(userId, sseEmitter);
+
+        sseEmitter.onCompletion(() -> roomEmitters.get(roomId).remove(userId));
+        sseEmitter.onTimeout(() -> roomEmitters.get(roomId).remove(userId));
+        sseEmitter.onError((e) -> roomEmitters.get(roomId).remove(userId));
+
+        return sseEmitter;
+    }
+
+    @Transactional
+    public void sendMessage(Long roomId, Long fromId, String message) {
+        Map<Long, SseEmitter> userEmitters = roomEmitters.get(roomId);
+        Member member = memberService.findById(fromId).orElseThrow();
+        if (userEmitters != null) {
+            userEmitters.forEach((toId, sseEmitter) -> {
+                try {
+                    String data = "{\"sender\":\"" + member.getNickname() + "\",\"message\":\"" + message + "\"}";
+                    sseEmitter.send(SseEmitter.event().name("chat").data(data));
+                } catch (IOException e) {
+                    userEmitters.remove(toId);
+                }
+            });
+        }
+    }
+}
