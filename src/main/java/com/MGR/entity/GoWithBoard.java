@@ -35,7 +35,7 @@ public class GoWithBoard {
     private String content;
 
     @Column
-    private LocalDate wantDate; // 이용자가 원하는 날짜
+    private String wantDate; // 이용자가 원하는 날짜
 
     @Enumerated(EnumType.STRING)
     @Column

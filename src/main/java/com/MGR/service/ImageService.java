@@ -81,6 +81,7 @@ public class ImageService {
                 // 이미지 URL 생성
                 String imgDirName = imgLocation.substring(imgLocation.lastIndexOf("/") + 1);
                 imgUrl = "/images/" + imgDirName + "/" + imgName;
+                System.out.println("imgUrl: " + imgUrl);
             }
             // 이미지 정보 저장
             image.updateImg(imgOriName, imgName, imgUrl);

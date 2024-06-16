@@ -23,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Controller
@@ -49,28 +50,34 @@ public class GoWithBoardController {
             return "member/loginForm";
         }
 
-        String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
-        try {
-            boolean recaptchaVerified = VerifyRecaptcha.verify(gRecaptchaResponse);
-            if (!recaptchaVerified) {
-                bindingResult.reject("recaptcha.error", "로봇 방지 검증란을 체크해주세요");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            bindingResult.reject("recaptcha.error", "Error while verifying reCAPTCHA");
-        }
+//        String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
+//        try {
+//            boolean recaptchaVerified = VerifyRecaptcha.verify(gRecaptchaResponse);
+//            if (!recaptchaVerified) {
+//                bindingResult.reject("recaptcha.error", "로봇 방지 검증란을 체크해주세요");
+//            }
+//        } catch (IOException e) {
+//            System.out.println("recaptcha 오류 e = " + e);
+//            bindingResult.reject("recaptcha.error", "Error while verifying reCAPTCHA");
+//        }
 
         if (bindingResult.hasErrors()) {
             addCategoryAttributes(model); // 카테고리 데이터 다시 추가
+            System.out.println("유효성 검사 오류 = " + bindingResult.getAllErrors());
             return "board/goWith/goWithBoardForm";
         }
 
         Member siteUser = this.memberService.getUser(member.getName());
-
+        System.out.println("로그인한 사용자 정보 = " + siteUser);
         // 디버깅 로그 추가
-        System.out.println("Attraction Types: " + goWithBoardFormDto.getAttractionTypes());
-        System.out.println("After Types: " + goWithBoardFormDto.getAfterTypes());
-        System.out.println("Personalities: " + goWithBoardFormDto.getPersonalities());
+        System.out.println("ㅇㅇㅇAttraction Types: " + goWithBoardFormDto.getAttractionTypes());
+        System.out.println("ㅇㅇㅇAfter Types: " + goWithBoardFormDto.getAfterTypes());
+        System.out.println("ㅇㅇㅇPersonalities: " + goWithBoardFormDto.getPersonalities());
+
+        List<MultipartFile> filteredImgFileList = goWithImgFileList.stream()
+                .filter(file -> file != null && !file.isEmpty())
+                .toList();
+        System.out.println("filteredImgFileList 파일 = " + filteredImgFileList);
 
         try {
             // 게시글 생성과 이미지 저장
@@ -79,11 +86,13 @@ public class GoWithBoardController {
                     goWithBoardFormDto.getLocationCategory(), goWithBoardFormDto.getAgeCategory(),
                     goWithBoardFormDto.getAttractionTypes(), goWithBoardFormDto.getAfterTypes(),
                     goWithBoardFormDto.getPersonalities(), goWithImgFileList);
-
+            System.out.println("goWithImgFileList 의 사이즈 = " + goWithImgFileList.size());
+            System.out.println("goWithBoardId 가 생성되면 저장이 된거 = " + goWithBoardId);
             model.addAttribute("goWithBoardId", goWithBoardId); // ID 모델에 추가
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("error", "새 글 생성 중 오류가 발생하였습니다.");
+            System.out.println("글 생성 중 오류 발생 = " + e);
             addCategoryAttributes(model); // 카테고리 데이터 다시 추가
             return "board/goWith/goWithBoardForm";
         }
