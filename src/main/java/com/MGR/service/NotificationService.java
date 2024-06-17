@@ -179,7 +179,34 @@ public class NotificationService {
             notificationRepository.save(notification); // 보낸 메세지 저장
         }
     }
+    @Transactional
+    public void goWithBoard(GoWithBoard goWithBoard, Member member) {
 
+        //알림메세지 생성
+        String data = "[동행찾기] 비슷한 취향의 사용자가 글을 올렸습니다.";
+        System.out.println("data = " + data);
+        SseEmitter sseEmitter = sseEmitters.get(member.getId());
+        System.out.println("sseEmitter = " + sseEmitter);
+
+        if (sseEmitter != null) {
+            try {
+                sseEmitter.send(SseEmitter.event() //sseEmitter 객체에 메세지 담아서 보내기
+                        .name("message")
+                        .data(data));
+
+                int notificationCount = countNotificationsForMember(member.getId());
+                System.out.println("notificationCount 알림수량 = " + notificationCount);
+                sseEmitter.send(SseEmitter.event()
+                        .name("notificationCount")
+                        .data(notificationCount));
+
+            } catch (Exception e) {
+                sseEmitters.remove(member.getId());
+            }
+            Notification notification = new Notification(member.getId(), data, "동행찾기", goWithBoard.getId());
+            notificationRepository.save(notification); // 보낸 메세지 저장
+        }
+    }
     // 결제 완료 알림
     @Transactional
     public void notifyOrder(Long id, Long couponId) {

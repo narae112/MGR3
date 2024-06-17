@@ -34,6 +34,8 @@ public class Notification {
 
     private Long reviewCommentId;
 
+    private Long goWidthBoardId;
+
     @CreatedDate
     private LocalDateTime createdDate;
 
@@ -53,6 +55,9 @@ public class Notification {
                 break;
             case "리뷰댓글":
                 this.reviewCommentId = id;
+                break;
+            case "동행찾기":
+                this.goWidthBoardId = id;
                 break;
             default:
                 throw new IllegalArgumentException("공지 타입 입력 오류= " + type);
