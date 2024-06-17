@@ -209,4 +209,17 @@ public class GoWithBoardController {
         return "redirect:/board/goWith/goWithBoardList";
     }
 
+    // 게시글 목록 조회
+    @GetMapping("/goWithBoard/list")
+    public String showGoWithBoardList(Model model, @RequestParam(defaultValue = "0") int page) {
+        int size = 6; // 페이지당 글 개수
+        Page<GoWithBoardFormDto> goWithBoardsPage = goWithBoardService.getAllGoWithBoards(page, size);
+
+        model.addAttribute("goWithBoardsPage", goWithBoardsPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", goWithBoardsPage.getTotalPages());
+
+        return "board/goWith/goWithBoardList";
+    }
+
 }

@@ -15,6 +15,7 @@ import com.MGR.repository.ImageRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -151,4 +152,10 @@ public class GoWithBoardService {
         goWithBoardRepository.save(goWithBoard);
     }
 
+    @Transactional(readOnly = true)
+    public Page<GoWithBoardFormDto> getAllGoWithBoards(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<GoWithBoard> goWithBoardPage = goWithBoardRepository.findAll(pageable);
+        return goWithBoardPage.map(GoWithBoardFormDto::of);
+    }
 }

@@ -9,5 +9,51 @@
     </style>
 </th:block>
 <div layout:fragment="content">
+
+    <div class="goWithBoardList">
+        <div class="row">
+            <!-- 카드 형식으로 글 목록 반복 -->
+            <div class="col-md-4" th:each="goWithBoard : ${goWithBoardsPage.content}">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a th:href="@{'/goWithBoard/detail/' + ${goWithBoard.id}}" th:text="${goWithBoard.title}">글 제목</a>
+                        </h5>
+                        <p class="card-text" th:text="${goWithBoard.memberName}">작성자</p>
+                        <p class="card-text" th:text="${#temporals.format(goWithBoard.createDate, 'yyyy-MM-dd HH:mm:ss')}">작성일</p>
+                        <p class="card-text" th:if="${goWithBoard.getImageUrl() != null}">
+                            <img th:src="${goWithBoard.getImageUrl()}" alt="대표 이미지" class="img-thumbnail">
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 페이지네이션 -->
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <!-- 이전 페이지 링크 -->
+                    <li th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{'/goWithBoard/list?page=' + (currentPage - 1)}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+
+                    <!-- 페이지 번호 -->
+                    <li th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
+                        th:class="${pageNum == currentPage ? 'active' : ''}">
+                        <a class="page-link" th:href="@{'/goWithBoard/list?page=' + pageNum}" th:text="${pageNum + 1}"></a>
+                    </li>
+
+                    <!-- 다음 페이지 링크 -->
+                    <li th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{'/goWithBoard/list?page=' + (currentPage + 1)}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
 </div>
 </html>
