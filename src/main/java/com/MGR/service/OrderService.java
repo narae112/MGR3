@@ -132,4 +132,32 @@ public class OrderService {
         return new PageImpl<>(orderListDtos, pageable, orderPage.getTotalElements());
 
     }
+
+    public Page<OrderListDto> getAllOrderList(int page) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "orderDate"));
+        Page<Order> orderPage = orderRepository.findAll(pageable);
+        List<OrderListDto> orderListDtos = new ArrayList<>();
+
+        for (Order order : orderPage) {
+            OrderListDto orderListDto = new OrderListDto(order);
+            List<OrderTicket> orderTickets = orderTicketRepository.findByOrderId(order.getId());
+            for (OrderTicket orderTicket : orderTickets) {
+                OrderTicketDto orderTicketDto = new OrderTicketDto(orderTicket);
+                orderListDto.addOrderTicket(orderTicketDto);
+            }
+
+            MemberCoupon memberCoupon = memberCouponRepository.findAllByMemberIdAndOrderId(order.getMember().getId(), order.getId());
+            if (memberCoupon != null) {
+                int discountRate = memberCoupon.getCoupon().getDiscountRate();
+                orderListDto.setDiscountRate(discountRate);
+            } else {
+                orderListDto.setDiscountRate(0);
+            }
+
+            orderListDtos.add(orderListDto);
+        }
+
+        return new PageImpl<>(orderListDtos, pageable, orderPage.getTotalElements());
+    }
+
 }

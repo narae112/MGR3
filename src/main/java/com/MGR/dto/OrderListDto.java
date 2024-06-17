@@ -17,7 +17,7 @@ public class OrderListDto {
     private Long orderId;
     private String orderNum; // 주문 번호
     private LocalDateTime orderDate; // 주문일
-    private int discountRate;
+    private int discountRate = 0;
     private List<OrderTicketDto> orderTickets = new ArrayList<>();
 
     public void addOrderTicket(OrderTicketDto orderTicketDto){

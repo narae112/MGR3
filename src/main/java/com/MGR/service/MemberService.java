@@ -3,6 +3,7 @@ package com.MGR.service;
 
 import com.MGR.entity.Image;
 import com.MGR.entity.Member;
+import com.MGR.entity.Order;
 import com.MGR.exception.DataNotFoundException;
 import com.MGR.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -150,4 +151,5 @@ public class MemberService{
     public Optional<Member> findByNickname(String nickname) {
         return memberRepository.findByNickname(nickname);
     }
+
 }
