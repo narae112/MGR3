@@ -44,7 +44,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .cors(Customizer.withDefaults()) //cors 설정
+//                .cors(Customizer.withDefaults()) //cors 설정
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/**").permitAll()
                         .requestMatchers("/ws/**").permitAll()
@@ -120,6 +120,7 @@ public class SecurityConfig {
                 admin.setName("관리자");
                 admin.setEmail("admin@mgr.com");
                 admin.setNickname("초기관리자");
+                admin.setProfileImgUrl("/img/login/profile.png");
                 admin.setPassword(passwordEncoder.encode("1"));
                 admin.setRole("ROLE_ADMIN");
 
@@ -128,24 +129,25 @@ public class SecurityConfig {
         };
     }
 
-//    @Bean
-//    public CommandLineRunner initDbUser(MemberRepository memberRepository, PasswordEncoder passwordEncoder){
-//
-//        return createAdmin -> {
-//            boolean isAdminPresent = memberRepository.findByName("사용자").isPresent();
-//
-//            if (!isAdminPresent) {
-//                Member user = new Member();
-//
-//                user.setName("");
-//                user.setEmail("user@mgr.com");
-//                user.setNickname("지구123");
-//                user.setBirth("2023-05-31");
-//                user.setPassword(passwordEncoder.encode("1"));
-//                user.setRole("ROLE_USER");
-//
-//                memberRepository.save(user);
-//            }
-//        };
-//    }
+    @Bean
+    public CommandLineRunner initDbUser(MemberRepository memberRepository, PasswordEncoder passwordEncoder){
+
+        return createAdmin -> {
+            boolean isUserPresent = memberRepository.findByName("사용자").isPresent();
+
+            if (!isUserPresent) {
+                Member user = new Member();
+
+                user.setName("사용자");
+                user.setEmail("user@mgr.com");
+                user.setNickname("지구123");
+                user.setBirth("2023-05-31");
+                user.setProfileImgUrl("/img/login/profile.png");
+                user.setPassword(passwordEncoder.encode("1"));
+                user.setRole("ROLE_USER");
+
+                memberRepository.save(user);
+            }
+        };
+    }
 }

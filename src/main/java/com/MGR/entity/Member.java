@@ -72,6 +72,7 @@ public class Member {
 
         member.setName(memberFormDto.getName());
         member.setNickname(memberFormDto.getNickname());
+        member.setProfileImgUrl("/img/login/profile.png");
         member.setBirth(memberFormDto.getBirth());
         member.setRole("ROLE_USER");
         member.setIsSuspended(false);
