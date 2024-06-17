@@ -5,7 +5,7 @@ import lombok.*;
 
 import java.util.List;
 
-@Getter @ToString
+@Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class ChatRoom {

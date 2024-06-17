@@ -20,7 +20,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -63,9 +65,13 @@ public class ChatController {
     }
 
     @GetMapping("/api/chats/{roomId}")
-    public ResponseEntity<List<Chat>> getChatHistory(@PathVariable Long roomId) {
+    public ResponseEntity<Map<String,Object>> getChatHistory(@PathVariable Long roomId) {
         List<Chat> chatList = chatService.findAllChatByRoomId(roomId);
-        return new ResponseEntity<>(chatList, HttpStatus.OK);
+        ChatRoom roomById = chatService.findRoomById(roomId);
+        Map<String, Object> response = new HashMap<>();
+        response.put("chatList", chatList);
+        response.put("chatRoom", roomById);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 //    private final ChatService chatService;

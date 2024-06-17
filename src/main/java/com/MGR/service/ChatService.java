@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -80,7 +81,25 @@ public class ChatService {
         chatRepository.save(chat);
     }
 
-//    public List<ChatRoom> findRoomByMemberId(Long id) {
-//        return roomRepository.findBySenderIdOrReceiverId(id);
-//    }
+    @Transactional
+    public void deleteChatRoomMemberId(Long roomId, Long memberId) {
+        ChatRoom chatRoom = roomRepository.findById(roomId).orElseThrow();
+
+        if (chatRoom.getSender() != null && chatRoom.getSender().getId().equals(memberId)) {
+            chatRoom.setSender(null);
+
+        } else if (chatRoom.getReceiver() != null && chatRoom.getReceiver().getId().equals(memberId)) {
+            chatRoom.setReceiver(null);
+        }
+
+        // sender 와 receiver 가 둘 다 null 이면 관련된 Chat 레코드 삭제
+        if (chatRoom.getReceiver() == null && chatRoom.getSender() == null) {
+            chatRepository.deleteByRoomId(roomId);
+            roomRepository.deleteById(roomId);
+        } else {
+            roomRepository.save(chatRoom);
+        }
+    }
+
+
 }
