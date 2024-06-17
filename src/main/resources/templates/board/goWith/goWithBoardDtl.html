@@ -99,6 +99,30 @@
         font-size: 30px; /* 아이콘 크기 조정 */
         z-index: 1; /* 아이콘을 이미지 위에 표시합니다. */
      }
+        .attraction-types-box, .after-types-box, .personalities-box {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+
+    .attraction-types-header, .after-types-header, .personalities-header {
+        font-weight: bold;
+        font-size: 16px;
+        margin-bottom: 5px;
+    }
+
+    .attraction-types-content, .after-types-content, .personalities-content {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .attraction-type, .after-type, .personality {
+        padding: 5px 10px;
+        margin: 5px;
+        background-color: #f0f0f0;
+        border-radius: 3px;
+    }
     </style>
 </head>
 <body>
@@ -111,51 +135,89 @@
 
     <div class="row justify-content-center">
         <!-- 프로필 사진 및 닉네임 -->
-        <div class="col-md-2 text-end">
-            <img th:if="${goWithBoardForm.memberProfileImgUrl != null}" th:src="${goWithBoardForm.memberProfileImgUrl}" class="rounded-circle" width="50" height="50">
-            <img th:if="${goWithBoardForm.memberProfileImgUrl == null}" src="/img/unicorn.png" class="rounded-circle" width="50" height="50">
-            <span th:text="${goWithBoardForm.memberName}" class="ms-2"></span>
-        </div>
+
         <!-- 게시글 내용 -->
-        <div class="col-md-10">
-            <div class="col-md-12">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+
+                <!-- 이미지 칸 -->
+                <div class="image-container my-3">
+                    <div class="swiper-container">
+                        <div class="swiper-wrapper">
+                            <div th:each="goWithImage, iterStat : ${goWithBoardForm.goWithImgDtoList}" class="swiper-slide">
+                                <a th:if="${not #strings.isEmpty(goWithImage.imgUrl)}" th:href="${goWithImage.imgUrl}" data-lightbox="image-gallery">
+                                    <img th:src="${goWithImage.imgUrl}" class="rounded" >
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-pagination"></div>
+                </div>
                 <h3 class="mb-5 text-center" th:text="${goWithBoardForm.title}"></h3>
+                <div class="d-flex justify-content-end">
+                    <img th:if="${goWithBoardForm.memberProfileImgUrl != null}" th:src="${goWithBoardForm.memberProfileImgUrl}" class="rounded-circle" width="50" height="50">
+                    <img th:if="${goWithBoardForm.memberProfileImgUrl == null}" src="/img/unicorn.png" class="rounded-circle" width="50" height="50">
+                    <span th:text="${goWithBoardForm.memberName}" class="ms-2"></span>
+                </div>
                 <!-- 컨텐츠 -->
                 <div class="goWith-content">
                     <div class="card my-3">
                         <div class="card-body">
-                            <div class="card-text" th:utext="${@commonUtil.markdown(goWithBoardForm.content)}"></div>
+                            <div class="card-text "  th:utext="${@commonUtil.markdown(goWithBoardForm.content)}"></div>
                             <div class="d-flex justify-content-end">
                                 <div th:if="${goWithBoard.modifiedDate != null}" class="badge bg-light text-dark p-2 text-start mx-3">
                                     <div class="mb-2">modified at</div>
                                     <div th:text="${#temporals.format(goWithBoard.modifiedDate, 'yyyy-MM-dd HH:mm')}"></div>
                                 </div>
                                 <div class="badge bg-light text-dark p-2 text-start">
-                                    <div class="mb-2">
-                                        <span th:if="${goWithBoard.memberName != null}" th:text="${goWithBoard.memberName}"></span>
-                                    </div>
+<!--                                    <div class="mb-2">-->
+<!--                                        <div th:text="${goWithBoard != null ? goWithBoard.memberName : 'Unknown'}"></div>-->
+<!--                                    </div>-->
+                                    <div th:text="${goWithBoardForm.memberName}"></div>
                                     <div th:text="${#temporals.format(goWithBoard.createDate, 'yyyy-MM-dd HH:mm')}"></div>
                                 </div>
                             </div>
-                            <hr>
-                            <!-- 이미지 칸 -->
-                            <div class="image-container my-3">
-                                <div class="swiper-container">
-                                    <div class="swiper-wrapper">
-                                        <div th:each="goWithImage, iterStat : ${goWithBoardForm.goWithImgDtoList}" class="swiper-slide">
-                                            <a th:if="${not #strings.isEmpty(goWithImage.imgUrl)}" th:href="${goWithImage.imgUrl}" data-lightbox="image-gallery">
-                                                <img th:src="${goWithImage.imgUrl}" class="rounded">
-                                                <i class="fas fa-plus-circle"></i>
-                                            </a>
-                                        </div>
+
+                        </div>
+                        <hr>
+                        <div class="my-3">
+                            <!-- attractionTypes 출력 -->
+                            <div class="attraction-types-box">
+                                <div class="attraction-types-header">놀이기구 취향</div>
+                                <div class="attraction-types-content">
+                                    <div th:each="attractionType : ${goWithBoard.attractionTypes}" class="attraction-type">
+                                        <p th:text="${attractionType}"></p>
                                     </div>
                                 </div>
-                                <div class="swiper-pagination"></div>
+                            </div>
+
+                            <!-- afterTypes 출력 -->
+                            <div class="after-types-box">
+                                <div class="after-types-header">동행 후 행선지</div>
+                                <div class="after-types-content">
+                                    <div th:each="afterType : ${goWithBoard.afterTypes}" class="after-type">
+                                        <p th:text="${afterType}"></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- personalities 출력 -->
+                            <div class="personalities-box">
+                                <div class="personalities-header">성격</div>
+                                <div class="personalities-content">
+                                    <div th:each="personality : ${goWithBoard.personalities}" class="personality">
+                                        <p th:text="${personality}"></p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <hr>
                         <div class="my-3">
                             <a th:href="@{/goWith/goWithBoardList}" class="btn btn-sm btn-outline-secondary">목록으로</a>
+                            <a th:href="@{|/goWithBoard/modify/${goWithBoard.id}|}" class="btn btn-primary my-2"
+                               sec:authorize="isAuthenticated()"
+                               th:unless="${goWithBoard.member != null and #authentication.getPrincipal().getName() == goWithBoard.member.name}"
+                               th:text="채팅하기"></a>
                             <a th:href="@{|/goWithBoard/modify/${goWithBoard.id}|}" class="btn btn-sm btn-outline-secondary"
                                sec:authorize="isAuthenticated()"
                                th:if="${goWithBoard.member != null and #authentication.getPrincipal().getName() == goWithBoard.member.name}"
@@ -173,7 +235,7 @@
         </div>
     </div>
         <div class="row justify-content-center">
-            <div class="col-md-8">
+            <div class="col-md-10">
                 <h5 class="border-bottom my-3 py-2" th:text="|${#lists.size(goWithBoard.commentList)}개의 답변이 있습니다.|"></h5>
                 <!-- 답변 반복 시작 -->
                 <div class="card my-3" th:each="goWithComment : ${goWithBoard.commentList}">
@@ -187,7 +249,7 @@
                             </div>
                             <div class="badge bg-light text-dark p-2 text-start">
                                 <div class="mb-2">
-                                    <span th:if="${goWithComment.author != null}" th:text="${goWithComment.author.nickname}"></span>
+                                    <span th:if="${goWithBoard.author != null}" th:text="${goWithBoard.author.nickname}"></span>
                                 </div>
                                 <div th:text="${#temporals.format(goWithComment.createDate, 'yyyy-MM-dd HH:mm')}"></div>
                             </div>
