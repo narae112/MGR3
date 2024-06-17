@@ -29,4 +29,21 @@ public class CategoryFormDto {
     public static CategoryFormDto of(Category category){
         return modelMapper.map(category, CategoryFormDto.class);
     }
+    public boolean isAttractionTypeCategoriesValid() {
+        return getNonEmptySize(this.attractionTypeCategory) >= 2;
+    }
+
+    public boolean isAfterTypeCategoriesValid() {
+        return getNonEmptySize(this.afterTypeCategory) >= 2;
+    }
+
+    public boolean isPersonalityCategoriesValid() {
+        return getNonEmptySize(this.personalityCategory) >= 2;
+    }
+
+    private int getNonEmptySize(List<String> list) {
+        return (int) list.stream()
+                .filter(str -> str != null && !str.trim().isEmpty())
+                .count();
+    }
 }
