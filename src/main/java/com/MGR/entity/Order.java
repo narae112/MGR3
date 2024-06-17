@@ -33,6 +33,8 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrderTicket> orderTickets = new ArrayList<>();
+
+
     //cascade=CascadeType.ALL 모든 변경 유형이 자식에 영향(저장,업데이트,삭제)
     //orphanRemoval = true 부모엔티티에서 자식 엔티티를 제거할 때 자식엔티티도 자동삭제
 
