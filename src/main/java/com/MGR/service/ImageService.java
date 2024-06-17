@@ -151,6 +151,20 @@ public class ImageService {
         }
     }
 
+    public void deleteImagesByGoWithBoardId(Long goWithBoardId) throws Exception {
+        List<Image> images = imageRepository.findByGoWithBoardId(goWithBoardId);
+        for (Image image : images) {
+            try {
+                fileService.deleteFile(image.getImgName()); // 파일 시스템에서 이미지 파일 삭제
+                imageRepository.delete(image); // 데이터베이스에서 이미지 레코드 삭제
+            } catch (Exception e) {
+                // 개별 이미지 삭제 실패 시 로그 기록 또는 별도 처리
+                System.err.println("이미지 삭제 실패: " + e.getMessage());
+                throw new Exception("이미지 삭제 중 오류가 발생하였습니다.", e);
+            }
+        }
+    }
+
     public void deleteImage(EventBoard eventBoard) {
         Image image = imageRepository.findByEventBoard(eventBoard);
         imageRepository.delete(image);

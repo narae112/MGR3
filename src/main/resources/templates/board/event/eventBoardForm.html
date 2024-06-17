@@ -98,7 +98,40 @@
         // 초기화 함수 호출
     $(document).ready(function() {
         bindDomEvent();
+
+               $("form").submit(function(event) {
+        event.preventDefault();  // 기본 제출 동작을 막음
+        var form = $(this);
+        var formData = new FormData(form[0]);  // 폼 데이터를 FormData 객체로 직렬화하여 전송
+
+       $.ajax({
+    type: form.attr('method'),   // POST, GET 등
+    url: form.attr('action'),   // 요청 URL
+    data: formData,   // 직렬화된 폼 데이터
+    contentType: false,   // 데이터 타입 설정 안 함
+    processData: false,   // 데이터를 query string으로 변환 안 함
+    success: function(response) {
+        showAlert(response);   // 성공적인 메시지 표시
+        window.location.replace("/board/events");   // 성공 시 페이지 이동
+    },
+    error: function(xhr, status, error) {
+        if (xhr.status === 400) {
+            showAlert(xhr.responseText);   // 입력값 오류 메시지 표시
+        } else if (xhr.status === 404) {
+            showAlert("이벤트를 찾을 수 없습니다.");
+        } else if (xhr.status === 500) {
+            showAlert("서버 오류: " + xhr.responseText);   // 서버 오류 메시지 표시
+        } else {
+            showAlert("오류 발생: " + xhr.status + " " + xhr.statusText);   // 기타 오류 처리
+        }
+    }
+});
     });
+ });
+ // 오류 메시지를 표시하는 함수
+       function showAlert(errorMessage) {
+           alert(errorMessage);
+       }
 
     function bindDomEvent() {
         $(".custom-file-input").on("change", function() {
@@ -124,29 +157,7 @@
             $(this).siblings(".custom-file-label").html(fileName);
         });
     }
-    <!--         뒤로가기 방지-->
-   window.addEventListener('load', function() {
-    if (window.history.replaceState) {
-        window.history.replaceState(null, null, window.location.href);
 
-        // 뒤로가기 버튼 클릭 시 바로 tickets 페이지로 이동
-        window.onpopstate = function() {
-            location.replace("/board/events");
-        };
-    }
-
-    // 페이지 로드 후 바로 뒤로가기 막기
-    function preventBack() {
-        window.history.forward();
-    }
-
-    setTimeout(preventBack, 0);
-
-    // 페이지를 떠날 때 아무 동작도 하지 않도록 설정
-    window.onunload = function () {
-        // No action needed
-    };
-});
 
     </script>
 </th:block>
@@ -155,8 +166,7 @@
 <div layout:fragment="content" class="container my-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <form th:action="@{/board/eventBoard/create}" method="POST"
-                  th:object="${eventBoardFormDto}" enctype="multipart/form-data" onsubmit="return validateForm();">
+            <form role="form" method="POST" th:object="${eventBoardFormDto}" enctype="multipart/form-data" onsubmit="return validateForm();">
                 <h3 class="mb-5 text-center">이벤트 등록</h3>
 
                 <div class="form-group mb-3">
@@ -217,13 +227,9 @@
 
                 <div>
 
-                    <button th:if="${#strings.isEmpty(eventBoardFormDto.id)}"
-                            th:formaction="@{'/board/eventBoard/create'}"
-                            class="btn btn-primary" type="submit" id="eventBoard-create">등록</button>
+                    <button th:if="${eventBoardFormDto.id == null}" th:formaction="@{/board/eventBoard/new}" class="btn btn-primary" type="submit" id="eventBoard-create">등록</button>
 
-                    <button th:unless="${#strings.isEmpty(eventBoardFormDto.id)}"
-                            th:formaction="@{'/board/eventBoard/update/' + ${eventBoardFormDto.id}}"
-                            class="btn btn-primary" type="submit" id="eventBoard-edit">수정완료</button>
+                    <button th:if="${eventBoardFormDto.id != null}" th:formaction="@{/board/eventBoard/edit/{id}(id=${eventBoardFormDto.id})}" class="btn btn-primary" type="submit" id="eventBoard-edit">수정완료</button>
                 </div>
             </form>
         </div>

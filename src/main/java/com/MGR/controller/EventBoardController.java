@@ -11,6 +11,8 @@ import com.MGR.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,7 +21,9 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -47,25 +51,23 @@ public class EventBoardController {
         return "board/event/eventBoardForm";
     }
 
-    @PostMapping("/eventBoard/create")
-    public String eventBoardCreate(@Valid EventBoardFormDto BoardFormDto,
-                                   BindingResult result, Model model,
-                                   @AuthenticationPrincipal PrincipalDetails member,
-                                   @RequestParam("eventImgFile") List<MultipartFile> imgFileList){
-        if(result.hasErrors()) {
-            model.addAttribute("BoardFormDto", BoardFormDto);
-            return "board/event/eventBoardForm";
+    @PostMapping("/eventBoard/new")
+    public ResponseEntity<String> eventBoardCreate(@Valid EventBoardFormDto BoardFormDto,
+                                                   BindingResult result, Model model,
+                                                   @AuthenticationPrincipal PrincipalDetails member,
+                                                   @RequestParam("eventImgFile") List<MultipartFile> imgFileList) {
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body("입력한 값들을 확인해주세요.");
         }
         try {
             Member findMember = memberService.findByEmail(member.getUsername()).orElseThrow();
-            eventBoardService.saveBoard(BoardFormDto,findMember, imgFileList);
-        } catch (IllegalStateException e){
-            model.addAttribute("errorMessage","게시판 등록 중 오류가 발생했습니다");
-            return "board/event/eventBoardForm";
+            eventBoardService.saveBoard(BoardFormDto, findMember, imgFileList);
+            return ResponseEntity.ok("이벤트가 성공적으로 등록되었습니다.");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("게시판 등록 중 오류가 발생했습니다");
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
-        return "redirect:/board/events";
     }
 
     @GetMapping("/eventBoard/edit/{id}")
@@ -81,24 +83,22 @@ public class EventBoardController {
         return "board/event/eventBoardForm";
     }
 
-    @PostMapping("/eventBoard/update/{id}")
-    public String UpdateEventBoard(@Valid EventBoard eventBoard,
-                                   BindingResult result, Model model, @PathVariable("id") Long id,
-                                   @RequestParam(value = "eventImgFile", required = false) List<MultipartFile> imgFileList){
-        if(result.hasErrors()) {
-            return "board/event/eventBoardForm";
+    @PostMapping("/eventBoard/edit/{id}")
+    public ResponseEntity<String> updateEventBoard(@PathVariable Long id,
+                                                   @Valid EventBoard eventBoard,
+                                                   BindingResult result,
+                                                   @RequestParam(value = "eventImgFile", required = false) List<MultipartFile> imgFileList) {
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body("입력한 값들을 확인해주세요.");
         }
 
         try {
-            eventBoardService.update(id, eventBoard, imgFileList);
+            eventBoardService.update(id, eventBoard, imgFileList);  // 업데이트 로직 수행
+            return ResponseEntity.ok().body("이벤트가 성공적으로 수정되었습니다.");
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "수정 중 오류가 발생했습니다.");
-            return "board/event/eventBoardForm";
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("수정 중 오류가 발생했습니다.");
         }
-
-        return "redirect:/board/event/" + id;
     }
-
     @GetMapping("/event/{id}") //이벤트 게시판 게시글 id
     public String eventBoardDetail(@PathVariable("id") Long id,Model model){
 

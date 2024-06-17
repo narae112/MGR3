@@ -28,4 +28,8 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
     Image findByTicket(Ticket ticket);
 
     Image findByMember(Member member);
+
+    List<Image> findByGoWithBoardIdOrderByIdAsc(Long goWithBoardId);
+
+    List<Image> findByGoWithBoardId(Long goWithBoardId);
 }
