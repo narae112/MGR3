@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter @Setter
-public class GoWithBoardComment {
+public class GoWithComment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

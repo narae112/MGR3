@@ -54,9 +54,8 @@ public class GoWithBoard {
     @Column
     private String personalities; // 성격
 
-//    @OneToMany(mappedBy = "goWithBoard", cascade = CascadeType.ALL)
-//    private List<GoWithComment> commentList; // 댓글
-
+    @OneToMany(mappedBy = "goWithBoard", cascade = CascadeType.ALL)
+    private List<GoWithComment> commentList; // 댓글
 
     @OneToMany(mappedBy = "goWithBoard", cascade = CascadeType.ALL)
     private List<Image> images;

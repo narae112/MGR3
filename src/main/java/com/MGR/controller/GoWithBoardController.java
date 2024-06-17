@@ -1,9 +1,11 @@
 package com.MGR.controller;
 
+import com.MGR.config.ProfanityListLoader;
+import com.MGR.constant.AgeCategory;
+import com.MGR.constant.LocationCategory;
 import com.MGR.dto.GoWithBoardFormDto;
 import com.MGR.dto.GoWithCommentFormDto;
 import com.MGR.dto.ReviewBoardForm;
-import com.MGR.dto.ReviewCommentForm;
 import com.MGR.entity.GoWithBoard;
 import com.MGR.entity.Member;
 import com.MGR.entity.ReviewBoard;
@@ -14,6 +16,10 @@ import com.MGR.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -24,6 +30,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -105,14 +112,101 @@ public class GoWithBoardController {
     public String detail(Model model, @PathVariable("id") Long id, GoWithCommentFormDto goWithCommentFormDto) {
         GoWithBoard goWithBoard = this.goWithBoardService.getGoWithBoard(id);
         goWithBoardService.saveGoWithBoard(goWithBoard);
-        model.addAttribute("goWithBoard", goWithBoard);
         GoWithBoardFormDto goWithBoardFormDto = goWithBoardService.getGoWithBoardDtl(id);
-        model.addAttribute("goWithBoardForm",goWithBoardFormDto);
 
-//        프로필 보여주기에 필요한 정보 가져오기
+        model.addAttribute("goWithBoard", goWithBoard);
+        model.addAttribute("goWithBoardForm",goWithBoardFormDto);
 
         return "board/goWith/goWithBoardDtl";
     }
 
+    // 게시글 수정
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/goWithBoard/modify/{id}")
+    public String goWithModify(Model model, @PathVariable("id") Long id,
+                               @AuthenticationPrincipal PrincipalDetails member) {
+        GoWithBoard goWithBoard = this.goWithBoardService.getGoWithBoard(id);
+        if (!goWithBoard.getMember().getName().equals(member.getName())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다");
+        }
+
+        GoWithBoardFormDto goWithBoardFormDto = new GoWithBoardFormDto();
+        goWithBoardFormDto.setId(goWithBoard.getId());
+        goWithBoardFormDto.setTitle(goWithBoard.getTitle());
+        goWithBoardFormDto.setContent(goWithBoard.getContent());
+        goWithBoardFormDto.setWantDate(goWithBoard.getWantDate());
+        goWithBoardFormDto.setLocationCategory(goWithBoard.getLocationCategory());
+        goWithBoardFormDto.setAgeCategory(goWithBoard.getAgeCategory());
+        goWithBoardFormDto.setAttractionTypes(goWithBoard.getAttractionTypes() != null ? List.of(goWithBoard.getAttractionTypes().split(",")) : null);
+        goWithBoardFormDto.setAfterTypes(goWithBoard.getAfterTypes() != null ? List.of(goWithBoard.getAfterTypes().split(",")) : null);
+        goWithBoardFormDto.setPersonalities(goWithBoard.getPersonalities() != null ? List.of(goWithBoard.getPersonalities().split(",")) : null);
+
+        model.addAttribute("goWithBoardFormDto", goWithBoardFormDto);
+        addCategoryAttributes(model);
+        return "board/goWith/goWithBoardForm";
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/goWithBoard/modify/{id}")
+    public String goWithModify(Model model, @Valid GoWithBoardFormDto goWithBoardFormDto, BindingResult bindingResult,
+                               @AuthenticationPrincipal PrincipalDetails member,
+                               @PathVariable("id") Long id,
+                               @RequestParam("goWithImgFile") List<MultipartFile> goWithImgFileList) {
+
+        if (bindingResult.hasErrors()) {
+            addCategoryAttributes(model); // 카테고리 데이터 다시 추가
+            return "board/goWith/goWithBoardForm";
+        }
+
+        GoWithBoard goWithBoard = this.goWithBoardService.getGoWithBoard(id);
+        if (!goWithBoard.getMember().getName().equals(member.getName())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다");
+        }
+
+        List<String> profanityList = ProfanityListLoader.loadProfanityList("unsafe.txt");
+        for (String profanity : profanityList) {
+            if (goWithBoardFormDto.getContent().contains(profanity) || goWithBoardFormDto.getTitle().contains(profanity)) {
+                model.addAttribute("error", "질문에 욕설이 포함되어 있습니다. 다시 작성해주세요.");
+                addCategoryAttributes(model); // 카테고리 데이터 다시 추가
+                return "board/goWith/goWithBoardForm";
+            }
+        }
+
+        try {
+            this.goWithBoardService.modify(goWithBoard, goWithBoardFormDto.getTitle(), goWithBoardFormDto.getContent(),
+                    goWithBoardFormDto.getWantDate(), goWithBoardFormDto.getLocationCategory(),
+                    goWithBoardFormDto.getAgeCategory(), goWithBoardFormDto.getAttractionTypes(),
+                    goWithBoardFormDto.getAfterTypes(), goWithBoardFormDto.getPersonalities(),
+                    goWithImgFileList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("error", "게시글 수정 중 오류가 발생하였습니다");
+            addCategoryAttributes(model); // 카테고리 데이터 다시 추가
+            return "board/goWith/goWithBoardForm";
+        }
+
+        return String.format("redirect:/goWithBoard/detail/%s", id);
+    }
+
+    //삭제
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/goWithBoard/delete/{id}")
+    public String goWithDelete(@AuthenticationPrincipal PrincipalDetails member,
+                               @PathVariable("id") Long id) {
+        GoWithBoard goWithBoard = this.goWithBoardService.getGoWithBoard(id);
+        if (!goWithBoard.getMember().getName().equals(member.getName())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");
+        }
+
+        try {
+            this.goWithBoardService.delete(goWithBoard);
+        } catch (Exception e) {
+            e.printStackTrace();
+            // 삭제 중 에러 발생 시 에러 페이지로 리다이렉트 또는 다른 처리 방법 구현
+            return "redirect:/error";
+        }
+
+        return "redirect:/board/goWith/goWithBoardList";
+    }
 
 }

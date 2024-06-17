@@ -33,6 +33,8 @@ public class QImage extends EntityPathBase<Image> {
 
     public final QEventBoard eventBoard;
 
+    public final QGoWithBoard goWithBoard;
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final StringPath imgName = createString("imgName");
@@ -40,6 +42,8 @@ public class QImage extends EntityPathBase<Image> {
     public final StringPath imgOriName = createString("imgOriName");
 
     public final StringPath imgUrl = createString("imgUrl");
+
+    public final QMember member;
 
     //inherited
     public final StringPath modifiedBy = _super.modifiedBy;
@@ -77,6 +81,8 @@ public class QImage extends EntityPathBase<Image> {
         this.attraction = inits.isInitialized("attraction") ? new QAttraction(forProperty("attraction")) : null;
         this.coupon = inits.isInitialized("coupon") ? new QCoupon(forProperty("coupon"), inits.get("coupon")) : null;
         this.eventBoard = inits.isInitialized("eventBoard") ? new QEventBoard(forProperty("eventBoard"), inits.get("eventBoard")) : null;
+        this.goWithBoard = inits.isInitialized("goWithBoard") ? new QGoWithBoard(forProperty("goWithBoard"), inits.get("goWithBoard")) : null;
+        this.member = inits.isInitialized("member") ? new QMember(forProperty("member")) : null;
         this.reviewBoard = inits.isInitialized("reviewBoard") ? new QReviewBoard(forProperty("reviewBoard"), inits.get("reviewBoard")) : null;
         this.ticket = inits.isInitialized("ticket") ? new QTicket(forProperty("ticket")) : null;
     }
