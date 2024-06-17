@@ -80,4 +80,6 @@ public class GoWithBoard {
         }
         return null;
     }
+    @ManyToOne
+    private Member author;
 }
