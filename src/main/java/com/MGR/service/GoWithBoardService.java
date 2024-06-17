@@ -158,4 +158,22 @@ public class GoWithBoardService {
         Page<GoWithBoard> goWithBoardPage = goWithBoardRepository.findAll(pageable);
         return goWithBoardPage.map(GoWithBoardFormDto::of);
     }
+
+    @Transactional(readOnly = true)
+    public Page<GoWithBoardFormDto> searchGoWithBoards(List<String> ageCategories,
+                                                       List<String> locationCategories,
+                                                       List<String> attractionTypes,
+                                                       List<String> afterTypes,
+                                                       List<String> personalities) {
+        // 필터링 조건을 받아서 해당 조건에 맞는 게시글을 조회하는 메서드를 호출합니다.
+        // 이 메서드는 선택된 조건들을 기반으로 검색된 페이지를 반환해야 합니다.
+        // 여기서는 단순 예시로 전달된 값들을 이용하여 게시글을 필터링하는 방법을 보여줍니다.
+        // 실제로는 여기서 조건에 맞는 게시글을 조회하는 쿼리를 작성해야 합니다.
+        // 이 예제에서는 페이지를 고정 크기로 반환합니다. 필요에 따라 페이지 크기 등을 조정할 수 있습니다.
+        Pageable pageable = PageRequest.of(0, 10); // 페이지 크기 10으로 설정
+        Page<GoWithBoard> filteredGoWithBoardsPage = goWithBoardRepository.findAll(pageable);
+
+        // 필터링된 게시글 페이지를 GoWithBoardFormDto로 매핑합니다.
+        return filteredGoWithBoardsPage.map(GoWithBoardFormDto::of);
+    }
 }

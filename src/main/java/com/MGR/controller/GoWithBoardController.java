@@ -5,10 +5,8 @@ import com.MGR.constant.AgeCategory;
 import com.MGR.constant.LocationCategory;
 import com.MGR.dto.GoWithBoardFormDto;
 import com.MGR.dto.GoWithCommentFormDto;
-import com.MGR.dto.ReviewBoardForm;
 import com.MGR.entity.GoWithBoard;
 import com.MGR.entity.Member;
-import com.MGR.entity.ReviewBoard;
 import com.MGR.security.PrincipalDetails;
 import com.MGR.service.CategoryService;
 import com.MGR.service.GoWithBoardService;
@@ -17,8 +15,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -215,6 +211,12 @@ public class GoWithBoardController {
         int size = 6; // 페이지당 글 개수
         Page<GoWithBoardFormDto> goWithBoardsPage = goWithBoardService.getAllGoWithBoards(page, size);
 
+        addCategoryAttributes(model); // 체크박스 데이터 추가
+
+        // LocationCategory와 AgeCategory 추가
+        model.addAttribute("locationCategories", LocationCategory.values());
+        model.addAttribute("ageCategories", AgeCategory.values());
+
         model.addAttribute("goWithBoardsPage", goWithBoardsPage);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", goWithBoardsPage.getTotalPages());
@@ -222,4 +224,21 @@ public class GoWithBoardController {
         return "board/goWith/goWithBoardList";
     }
 
+    @GetMapping("/goWithBoard/search")
+    public String searchGoWithBoard(Model model,
+                                    @RequestParam(required = false) List<String> ageCategories,
+                                    @RequestParam(required = false) List<String> locationCategories,
+                                    @RequestParam(required = false) List<String> attractionTypes,
+                                    @RequestParam(required = false) List<String> afterTypes,
+                                    @RequestParam(required = false) List<String> personalities) {
+        // 선택된 값을 기반으로 필터링된 게시글 목록을 조회하는 메서드를 호출합니다.
+        // 이 메서드는 선택된 값들을 조건으로 사용하여 필터링된 페이지를 반환해야 합니다.
+        Page<GoWithBoardFormDto> filteredGoWithBoardsPage = goWithBoardService.searchGoWithBoards(ageCategories, locationCategories, attractionTypes, afterTypes, personalities);
+
+        // 기존의 모델 속성을 추가하는 부분과 동일하게 결과를 모델에 추가합니다.
+        model.addAttribute("goWithBoardsPage", filteredGoWithBoardsPage);
+        // 필요한 경우 추가 모델 속성을 설정합니다.
+
+        return "board/goWith/goWithBoardList"; // 필요한 뷰로 반환합니다.
+    }
 }
