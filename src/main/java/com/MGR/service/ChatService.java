@@ -12,8 +12,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -53,9 +54,9 @@ public class ChatService {
     }
 
     //채팅 메시지 생성
-    public Chat createChat(Long roomId, String sender, String senderEmail, String message, String profileImgUrl) {
+    public void createChat(Long roomId, Member sender, String senderEmail, String message, String profileImgUrl) {
         ChatRoom room = roomRepository.findById(roomId).orElseThrow(() -> new IllegalArgumentException("Invalid room ID")); // 방 찾기 -> 없는 방일 경우 예외처리
-        return chatRepository.save(Chat.createChat(room, sender, senderEmail, message, profileImgUrl));
+        chatRepository.save(Chat.createChat(room, sender, senderEmail, message, profileImgUrl));
     }
 
     public List<ChatRoom> findAllRoomsByMember(Long memberId) {
@@ -74,7 +75,7 @@ public class ChatService {
                 new IllegalStateException("Member not found"));
         Chat chat = Chat.builder()
                 .room(room)
-                .sender(sender.getNickname())
+                .sender(sender)
                 .senderEmail(sender.getEmail())
                 .message(message)
                 .build();
@@ -101,5 +102,34 @@ public class ChatService {
         }
     }
 
+    public void markMessagesAsRead(Long roomId, Long memberId){
+        List<Chat> chatList = chatRepository.findAllByRoomId(roomId);
+        for (Chat chat : chatList) {
+            if (!chat.getSender().getId().equals(memberId)) {
+                chat.setIsRead(true);
+                chatRepository.save(chat);
+            }
+        }
+    }
 
+    public int getUnreadCount(Long roomId, Long memberId) {
+        List<Chat> chatList = chatRepository.findAllByRoomId(roomId);
+        return (int) chatList.stream()
+                .filter(chat -> !chat.getSender().getId().equals(memberId) && !chat.getIsRead())
+                .count();
+    }
+
+    public Map<String, Object> getChatHistory(Long roomId, Long memberId) {
+        List<Chat> chatList = chatRepository.findAllByRoomId(roomId);
+        ChatRoom roomById = findRoomById(roomId);
+
+        int unreadCount = getUnreadCount(roomId, memberId);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("chatList", chatList);
+        response.put("chatRoom", roomById);
+        response.put("unreadCount", unreadCount);
+
+        return response;
+    }
 }

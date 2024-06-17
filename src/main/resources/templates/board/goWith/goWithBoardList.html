@@ -1,0 +1,127 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<!-- css -->
+<th:block layout:fragment="css">
+    <style>
+    h3{
+        margin: 20px 0;
+    }
+    .goWithBoardList {
+        margin-top: 20px;
+    }
+
+    /* 카드 형식 스타일 */
+    .checkbox-card {
+        border: 1px solid #dee2e6;
+        border-radius: 10px;
+        padding: 20px;
+        height: 100%; /* 내부 요소의 높이를 카드 높이에 맞추기 */
+    }
+    </style>
+</th:block>
+<div layout:fragment="content" class="container">
+    <h3>동행 찾기 게시판</h3>
+
+    <div class="row align-items-stretch"> <!-- 모든 열의 높이를 맞추기 -->
+        <div class="col-md-8">
+            <div class="goWithBoardList">
+                <div class="row">
+                    <!-- 카드 형식으로 글 목록 반복 -->
+                    <div class="col-md-4" th:each="goWithBoard : ${goWithBoardsPage.content}">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <a th:href="@{'/goWithBoard/detail/' + ${goWithBoard.id}}" th:text="${goWithBoard.title}">글 제목</a>
+                                </h5>
+                                <p class="card-text" th:text="${goWithBoard.memberName}">작성자</p>
+                                <p class="card-text" th:text="${#temporals.format(goWithBoard.createDate, 'yyyy-MM-dd HH:mm:ss')}">작성일</p>
+                                <p class="card-text" th:if="${goWithBoard.getImageUrl() != null}">
+                                    <img th:src="${goWithBoard.getImageUrl()}" alt="대표 이미지" class="img-thumbnail">
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+<!--                &lt;!&ndash; 페이지네이션 &ndash;&gt;-->
+<!--                <div class="row">-->
+<!--                    <nav aria-label="Page navigation" class="col-md-12">-->
+
+<!--                        <ul class="pagination">-->
+<!--                            &lt;!&ndash; 이전 페이지 링크 &ndash;&gt;-->
+<!--                            <li th:classappend="${currentPage == 0 ? 'disabled' : ''}">-->
+<!--                                <a class="page-link" th:href="@{'/goWithBoard/list?page=' + (currentPage - 1)}" aria-label="Previous">-->
+<!--                                    <span aria-hidden="true">&laquo;</span>-->
+<!--                                </a>-->
+<!--                            </li>-->
+
+<!--                            &lt;!&ndash; 페이지 번호 &ndash;&gt;-->
+<!--                            <li th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"-->
+<!--                                th:class="${pageNum == currentPage ? 'active' : ''}">-->
+<!--                                <a class="page-link" th:href="@{'/goWithBoard/list?page=' + pageNum}" th:text="${pageNum + 1}"></a>-->
+<!--                            </li>-->
+
+<!--                            &lt;!&ndash; 다음 페이지 링크 &ndash;&gt;-->
+<!--                            <li th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}">-->
+<!--                                <a class="page-link" th:href="@{'/goWithBoard/list?page=' + (currentPage + 1)}" aria-label="Next">-->
+<!--                                    <span aria-hidden="true">&raquo;</span>-->
+<!--                                </a>-->
+<!--                            </li>-->
+<!--                        </ul>-->
+<!--                    </nav>-->
+<!--                </div>-->
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-3 checkbox-card">
+                <div class="card-body">
+                    <form th:action="@{/goWithBoard/search}" method="GET">
+                        <!-- Age Category 라디오 버튼 -->
+                        <div class="btn-group-toggle" data-toggle="buttons">
+                            <label class="btn btn-secondary" th:each="age : ${ageCategories}">
+                                <input type="radio" th:id="'age_' + ${age}" th:name="'ageCategories'" th:value="${age.displayName}">
+                                <span th:text="${age.displayName}"></span>
+                            </label>
+                        </div>
+
+                        <!-- Location Category 라디오 버튼 -->
+                        <div class="btn-group-toggle" data-toggle="buttons">
+                            <label class="btn btn-secondary" th:each="location : ${locationCategories}">
+                                <input type="radio" th:id="'location_' + ${location}" th:name="'locationCategories'" th:value="${location.displayName}">
+                                <span th:text="${location.displayName}"></span>
+                            </label>
+                        </div>
+
+                        <!-- Attraction Types 체크박스 -->
+                        <div class="btn-group-toggle" data-toggle="buttons">
+                            <label class="btn btn-secondary" th:each="attractionType : ${attractionTypes}">
+                                <input type="checkbox" th:id="'attraction_' + ${attractionType}" th:name="'attractionTypes'" th:value="${attractionType}">
+                                <span th:text="${attractionType}"></span>
+                            </label>
+                        </div>
+
+                        <!-- After Types 체크박스 -->
+                        <div class="btn-group-toggle" data-toggle="buttons">
+                            <label class="btn btn-secondary" th:each="afterType : ${afterTypes}">
+                                <input type="checkbox" th:id="'after_' + ${afterType}" th:name="'afterTypes'" th:value="${afterType}">
+                                <span th:text="${afterType}"></span>
+                            </label>
+                        </div>
+
+                        <!-- Personalities 체크박스 -->
+                        <div class="btn-group-toggle" data-toggle="buttons">
+                            <label class="btn btn-secondary" th:each="personality : ${personalities}">
+                                <input type="checkbox" th:id="'personality_' + ${personality}" th:name="'personalities'" th:value="${personality}">
+                                <span th:text="${personality}"></span>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

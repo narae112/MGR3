@@ -1,5 +1,7 @@
 package com.MGR.repository;
 
+import com.MGR.constant.AgeCategory;
+import com.MGR.constant.LocationCategory;
 import com.MGR.entity.GoWithBoard;
 import com.MGR.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;

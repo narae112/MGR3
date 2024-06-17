@@ -77,6 +77,7 @@ public class ReviewBoardController {
         model.addAttribute("reviewBoardForm",reviewBoardForm);
         return "board/review/board_detail";
     }
+
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/orderCheck")
     public String orderCheck(OrderCheckForm orderCheckForm, @AuthenticationPrincipal PrincipalDetails member, Model model) {

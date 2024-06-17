@@ -5,14 +5,12 @@ import com.MGR.constant.LocationCategory;
 import com.MGR.entity.GoWithBoard;
 import com.MGR.entity.Image;
 import com.MGR.entity.Member;
-import com.MGR.entity.ReviewBoard;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +24,7 @@ public class GoWithBoardFormDto {
     private LocalDateTime modifiedDate;
 
     private Member member;
+    private String memberName;
 
     private String wantDate;
     private LocationCategory locationCategory;
@@ -45,14 +44,18 @@ public class GoWithBoardFormDto {
     private List<ImageDto> goWithImgDtoList = new ArrayList<>();
     private List<Long> goWithImgIds = new ArrayList<>();
 
+    private String memberProfileImgUrl;  // 프로필 이미지 URL 추가
+
     private static ModelMapper modelMapper = new ModelMapper();
+
     public GoWithBoard createGoWithBoard() {
         return modelMapper.map(this, GoWithBoard.class);
     }
 
     public static GoWithBoardFormDto of(GoWithBoard goWithBoard) {
         GoWithBoardFormDto goWithBoardFormDto = modelMapper.map(goWithBoard, GoWithBoardFormDto.class);
-        // GoWithBoard 와 연관된 이미지 가져오기
+
+        // GoWithBoard와 연관된 이미지 가져오기
         List<Image> images = goWithBoard.getImages();
         if (images != null && !images.isEmpty()) {
             List<ImageDto> imageDtos = images.stream()
@@ -67,6 +70,12 @@ public class GoWithBoardFormDto {
 
             goWithBoardFormDto.setGoWithImgIds(imageIds);
         }
+
+        // 작성자의 프로필 정보 추가
+        Member member = goWithBoard.getMember();
+        goWithBoardFormDto.setMemberName(member.getNickname());
+        goWithBoardFormDto.setMemberProfileImgUrl(member.getProfileImgUrl());
+
         return goWithBoardFormDto;
     }
 

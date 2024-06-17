@@ -50,8 +50,10 @@ public class ChatController {
         } else {
             receiver = chatRoom.getSender();
         }
-        chatService.createChat(roomId, sender.getNickname(), sender.getEmail(), message, sender.getProfileImgUrl());
+        chatService.createChat(roomId, sender, sender.getEmail(), message, sender.getProfileImgUrl());
         notificationService.sendMessage(roomId, sender.getId(), message);
+
+        notificationService.sendReadEvent(roomId, receiver.getId());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -65,47 +67,26 @@ public class ChatController {
     }
 
     @GetMapping("/api/chats/{roomId}")
-    public ResponseEntity<Map<String,Object>> getChatHistory(@PathVariable Long roomId) {
+    public ResponseEntity<Map<String, Object>> getChatHistory(@PathVariable Long roomId, @AuthenticationPrincipal PrincipalDetails member) {
         List<Chat> chatList = chatService.findAllChatByRoomId(roomId);
         ChatRoom roomById = chatService.findRoomById(roomId);
+
+        int unreadCount = chatService.getUnreadCount(roomId, member.getId());
+
         Map<String, Object> response = new HashMap<>();
         response.put("chatList", chatList);
         response.put("chatRoom", roomById);
+        response.put("unreadCount", unreadCount);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-//    private final ChatService chatService;
-//    private static final Logger logger = LoggerFactory.getLogger(ChatController.class);
-//
-//    @MessageMapping("/{roomId}")
-//    @SendTo("/room/{roomId}")
-//    public ChatMessage chat(@DestinationVariable Long roomId, ChatMessage message) {
-//        logger.info("Received message: " + message.getMessage() + " from: " + message.getSender());
-//        try {
-//            Chat chat = chatService.createChat(roomId, message.getSender(), message.getSenderEmail(), message.getMessage());
-//            return ChatMessage.builder()
-//                    .roomId(roomId)
-//                    .sender(chat.getSender())
-//                    .senderEmail(chat.getSenderEmail())
-//                    .message(chat.getMessage())
-//                    .build();
-//        } catch (Exception e) {
-//            logger.error("Error processing message", e);
-//            throw new RuntimeException("Error processing message", e);
-//        }
-//    }
-//
-//    @GetMapping("/ws/chats/{roomId}")
-//    public List<Chat> getChats(@PathVariable Long roomId) {
-//        try {
-//            logger.info("Fetching chats for room ID: " + roomId);
-//            List<Chat> chatList = chatService.findAllChatByRoomId(roomId);
-//            logger.info("Number of chats fetched: " + chatList.size());
-//            return chatList;
-//        } catch (Exception e) {
-//            logger.error("Error fetching chats for room ID: " + roomId, e);
-//            throw new RuntimeException("Error fetching chats for room ID: " + roomId, e);
-//        }
-//    }
+    @PostMapping("/api/chats/{roomId}/read")
+    public ResponseEntity<?> markAsRead(@PathVariable Long roomId, @AuthenticationPrincipal PrincipalDetails member) {
+        chatService.markMessagesAsRead(roomId, member.getId());
+        notificationService.sendReadEvent(roomId, member.getId());
+        return ResponseEntity.ok().build();
+    }
+
 }
 
