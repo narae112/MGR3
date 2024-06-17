@@ -82,7 +82,10 @@ public class CategoryController {
         if (bindingResult.hasErrors()) {
             return "categories/form";
         }
-
+        if (!categoryFormDto.isAttractionTypeCategoriesValid() || !categoryFormDto.isAfterTypeCategoriesValid() || !categoryFormDto.isPersonalityCategoriesValid()) {
+            model.addAttribute("error", "각 카테고리 유형은 최소 두 개 이상의 값을 가져야 합니다.");
+            return "categories/form";
+        }
         try {
             Category category = categoryService.getCategory(id);
             categoryService.modify(category, categoryFormDto.getAttractionTypeCategory(),
