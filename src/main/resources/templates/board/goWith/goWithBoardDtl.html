@@ -214,7 +214,7 @@
                         <hr>
                         <div class="my-3">
                             <a th:href="@{/goWith/goWithBoardList}" class="btn btn-sm btn-outline-secondary">목록으로</a>
-                            <a th:href="@{|/goWithBoard/modify/${goWithBoard.id}|}" class="btn btn-primary my-2"
+                            <a th:href="@{|/startChat/${goWithBoard.id}/${goWithBoard.member.nickname}|}" class="btn btn-primary my-2"
                                sec:authorize="isAuthenticated()"
                                th:unless="${goWithBoard.member != null and #authentication.getPrincipal().getName() == goWithBoard.member.name}"
                                th:text="채팅하기"></a>

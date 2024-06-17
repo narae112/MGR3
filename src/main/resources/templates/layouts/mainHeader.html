@@ -144,6 +144,10 @@
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link" sec:authorize="hasAnyRole('ROLE_USER')" th:href="@{/goWithBoard/list}">게시판</a>
+                                            <a class="nav-link" th:href="@{/goWithBoard/create}">게시판</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/api/chatList}">채팅 목록</a>
                                         </li>
 
                                     </ul>

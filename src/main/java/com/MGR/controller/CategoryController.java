@@ -49,12 +49,8 @@ public class CategoryController {
         if (bindingResult.hasErrors()) {
             return "categories/form";
         }
-        if (categoryFormDto.getAttractionTypeCategory().size() < 2 ||
-                categoryFormDto.getAfterTypeCategory().size() < 2 ||
-                categoryFormDto.getPersonalityCategory().size() < 2) {
-            bindingResult.rejectValue("attractionTypeCategory", "size", "놀이기구 취향 키워드를 최소 두 개 이상 입력해주세요.");
-            bindingResult.rejectValue("afterTypeCategory", "size", "동행 후 일정 키워드를 최소 두 개 이상 입력해주세요.");
-            bindingResult.rejectValue("personalityCategory", "size", "성격 키워드를 최소 두 개 이상 입력해주세요.");
+        if (!categoryFormDto.isAttractionTypeCategoriesValid() || !categoryFormDto.isAfterTypeCategoriesValid() || !categoryFormDto.isPersonalityCategoriesValid()) {
+            model.addAttribute("error", "각 카테고리 유형은 최소 두 개 이상의 값을 가져야 합니다.");
             return "categories/form";
         }
         try {
@@ -86,7 +82,10 @@ public class CategoryController {
         if (bindingResult.hasErrors()) {
             return "categories/form";
         }
-
+        if (!categoryFormDto.isAttractionTypeCategoriesValid() || !categoryFormDto.isAfterTypeCategoriesValid() || !categoryFormDto.isPersonalityCategoriesValid()) {
+            model.addAttribute("error", "각 카테고리 유형은 최소 두 개 이상의 값을 가져야 합니다.");
+            return "categories/form";
+        }
         try {
             Category category = categoryService.getCategory(id);
             categoryService.modify(category, categoryFormDto.getAttractionTypeCategory(),

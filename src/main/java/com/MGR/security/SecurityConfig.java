@@ -16,10 +16,12 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -44,7 +46,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .cors(Customizer.withDefaults()) //cors 설정
+//                .cors(Customizer.withDefaults()) //cors 설정
+
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/**").permitAll()
                         .requestMatchers("/ws/**").permitAll()
@@ -77,6 +80,10 @@ public class SecurityConfig {
                         .successHandler(oAuth2SuccessHandler)
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(oAuth2MemberService))
+                )
+
+                .headers(headers -> headers
+                        .cacheControl(HeadersConfigurer.CacheControlConfig::disable)
                 )
 
                 .addFilterBefore(new JwtAuthenticationFilter(authenticationManager, jwtProvider,
@@ -119,7 +126,8 @@ public class SecurityConfig {
 
                 admin.setName("관리자");
                 admin.setEmail("admin@mgr.com");
-                admin.setNickname("초기관리자");
+                admin.setNickname("MGR관리자");
+                admin.setProfileImgUrl("/img/login/profile.png");
                 admin.setPassword(passwordEncoder.encode("1"));
                 admin.setRole("ROLE_ADMIN");
 
@@ -128,24 +136,25 @@ public class SecurityConfig {
         };
     }
 
-//    @Bean
-//    public CommandLineRunner initDbUser(MemberRepository memberRepository, PasswordEncoder passwordEncoder){
-//
-//        return createAdmin -> {
-//            boolean isAdminPresent = memberRepository.findByName("사용자").isPresent();
-//
-//            if (!isAdminPresent) {
-//                Member user = new Member();
-//
-//                user.setName("");
-//                user.setEmail("user@mgr.com");
-//                user.setNickname("지구123");
-//                user.setBirth("2023-05-31");
-//                user.setPassword(passwordEncoder.encode("1"));
-//                user.setRole("ROLE_USER");
-//
-//                memberRepository.save(user);
-//            }
-//        };
-//    }
+    @Bean
+    public CommandLineRunner initDbUser(MemberRepository memberRepository, PasswordEncoder passwordEncoder){
+
+        return createAdmin -> {
+            boolean isUserPresent = memberRepository.findByName("사용자").isPresent();
+
+            if (!isUserPresent) {
+                Member user = new Member();
+
+                user.setName("사용자");
+                user.setEmail("user@mgr.com");
+                user.setNickname("지구123");
+                user.setBirth("2023-05-31");
+                user.setProfileImgUrl("/img/login/profile.png");
+                user.setPassword(passwordEncoder.encode("1"));
+                user.setRole("ROLE_USER");
+
+                memberRepository.save(user);
+            }
+        };
+    }
 }

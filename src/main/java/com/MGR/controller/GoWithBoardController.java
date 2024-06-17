@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -106,7 +107,9 @@ public class GoWithBoardController {
 
     // 게시글 보기
     @GetMapping(value = "/goWithBoard/detail/{id}")
-    public String detail(Model model, @PathVariable("id") Long id, GoWithCommentFormDto goWithCommentFormDto) {
+    public String detail(Model model, @PathVariable("id") Long id,
+                         GoWithCommentFormDto goWithCommentFormDto,
+                         @AuthenticationPrincipal PrincipalDetails member) {
         GoWithBoard goWithBoard = this.goWithBoardService.getGoWithBoard(id);
         goWithBoardService.saveGoWithBoard(goWithBoard);
         GoWithBoardFormDto goWithBoardFormDto = goWithBoardService.getGoWithBoardDtl(id);
@@ -257,5 +260,13 @@ public class GoWithBoardController {
 
         // 게시글 목록 페이지로 이동합니다.
         return "board/goWith/goWithBoardList";
+    }
+
+    @GetMapping("/startChat/{id}/{nickname}")
+    public String startChat(@PathVariable Long id, @PathVariable String nickname, Model model) {
+        GoWithBoard goWithBoard = goWithBoardService.findById(id);
+        model.addAttribute("nickname", nickname);
+        model.addAttribute("title", goWithBoard.getTitle());
+        return "api/roomForm";
     }
 }

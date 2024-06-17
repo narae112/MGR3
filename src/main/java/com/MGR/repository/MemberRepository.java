@@ -2,6 +2,7 @@ package com.MGR.repository;
 
 import com.MGR.entity.Member;
 import com.MGR.entity.MemberCoupon;
+import com.MGR.entity.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
