@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -57,6 +58,17 @@ public class ChatRoomController {
         }
     }
 
+    @PostMapping("/api/deleteRoom")
+    public ResponseEntity<?> deleteRoom(@RequestBody Map<String, Long> request,
+                                        @AuthenticationPrincipal PrincipalDetails member) {
+        Long roomId = request.get("roomId");
+        Long memberId = member.getId();
+
+        chatService.deleteChatRoomMemberId(roomId, memberId);
+
+        return ResponseEntity.ok().body("채팅방이 삭제되었습니다.");
+    }
+
     @GetMapping("/api/joinRoom/{roomId}")
     public String joinRoom(@PathVariable Long roomId, Model model) {
         List<Chat> chatList = chatService.findAllChatByRoomId(roomId);
@@ -65,4 +77,6 @@ public class ChatRoomController {
         model.addAttribute("chatList", chatList);
         return "api/chatList";
     }
+
+
 }

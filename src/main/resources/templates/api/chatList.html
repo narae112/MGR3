@@ -87,6 +87,23 @@
             background-color: #007bff;
             color: white;
         }
+        .close-button {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            color: #000;
+            cursor: pointer;
+        }
+        .close-button:hover {
+            color: #fff;
+        }
+        .center-message{
+           justify-content: center;
+           text-align: center;
+           width: 100%;
+        }
     </style>
 </th:block>
 
@@ -116,11 +133,23 @@
 
             roomId = id;
 
-            $.get(`/api/chats/${roomId}`, function (chats) {
+            $.get(`/api/chats/${roomId}`, function (response) {
+                const chats = response.chatList;
+                const chatRoom = response.chatRoom;
+
                 $('#chatBox').empty();
                 chats.forEach(function (chat) {
                     showMessage(chat);
                 });
+
+                if ((roomId !== 1) && (chatRoom.sender == null || chatRoom.receiver == null)) {
+                    $('#messageInput').prop('disabled', true);
+                    $('#messageInput').attr('placeholder', '상대방이 채팅을 종료했습니다.');
+                    $('#chatBox').append('<div class="message center-message"><div class="text">상대방이 채팅을 종료했습니다.</div></div>');
+                } else {
+                    $('#messageInput').prop('disabled', false);
+                    $('#messageInput').attr('placeholder', 'Enter message');
+                }
             }).fail(function() {
                 console.error('Failed to fetch chat history');
             });
@@ -209,6 +238,27 @@
                 }
             });
         });
+
+        function deleteRoom(button, roomId) {
+            var roomId = $(button).data('room-id');
+
+            // AJAX 요청을 통해 서버에 채팅방 삭제 요청 보내기
+            $.ajax({
+                url: '/api/deleteRoom',
+                type: 'POST',
+                data: JSON.stringify({ roomId: roomId }),
+                contentType: 'application/json; charset=utf-8',
+                success: function(response) {
+                    // 채팅방 목록에서 해당 항목 삭제
+                    $('li[data-room-id="' + roomId + '"]').remove();
+                    alert(response);
+                    window.location.href = '/api/chatList';
+                },
+                error: function(xhr, status, error) {
+                    console.error('Failed to delete room:', error);
+                }
+            });
+        }
     </script>
 </th:block>
 
@@ -219,7 +269,10 @@
         <div class="col-md-4">
             <a href="/api/createRoom" class="btn btn-success mb-3">채팅방 만들기</a>
             <ul class="list-group" id="chatRooms">
-                <li class="list-group-item" th:each="room : ${roomList}" th:text="${room.name}" th:data-room-id="${room.id}"></li>
+                <li class="list-group-item" th:each="room : ${roomList}" th:data-room-id="${room.id}">
+                    <span th:text="${room.name}"></span>
+                    <span class="close-button" th:data-room-id="${room.id}" onclick="deleteRoom(this)">&times;</span>
+                </li>
             </ul>
         </div>
         <div class="col-md-8">

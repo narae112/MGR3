@@ -119,7 +119,7 @@ public class SecurityConfig {
 
                 admin.setName("관리자");
                 admin.setEmail("admin@mgr.com");
-                admin.setNickname("초기관리자");
+                admin.setNickname("MGR관리자");
                 admin.setProfileImgUrl("/img/login/profile.png");
                 admin.setPassword(passwordEncoder.encode("1"));
                 admin.setRole("ROLE_ADMIN");
