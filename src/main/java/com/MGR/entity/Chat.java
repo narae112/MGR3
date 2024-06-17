@@ -1,15 +1,12 @@
 package com.MGR.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
-@Getter @ToString
+@Getter @Setter
 @RequiredArgsConstructor
 @Entity
 public class Chat {
@@ -22,7 +19,9 @@ public class Chat {
     @JoinColumn(name = "room_id")
     private ChatRoom room;
 
-    private String sender;
+    @ManyToOne
+    @JoinColumn(name = "sender_id")
+    private Member sender;
 
     private String senderEmail;
 
@@ -35,14 +34,17 @@ public class Chat {
     @Column(updatable = false)
     private LocalDateTime sendDate;
 
+    private Boolean isRead = false;
+
     @Builder
-    public Chat(ChatRoom room, String sender, String senderEmail, String message, String profileImgUrl) {
+    public Chat(ChatRoom room, Member sender, String senderEmail, String message, String profileImgUrl) {
         this.room = room;
         this.sender = sender;
         this.senderEmail = senderEmail;
         this.message = message;
         this.sendDate = LocalDateTime.now();
         this.profileImgUrl = profileImgUrl;
+        this.isRead = false;
     }
 
     /**
@@ -52,7 +54,7 @@ public class Chat {
      * @param message 내용
      * @return Chat Entity
      */
-    public static Chat createChat(ChatRoom room, String sender, String senderEmail, String message, String profileImgUrl) {
+    public static Chat createChat(ChatRoom room, Member sender, String senderEmail, String message, String profileImgUrl) {
         return Chat.builder()
                 .room(room)
                 .sender(sender)

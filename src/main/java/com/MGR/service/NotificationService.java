@@ -267,8 +267,26 @@ public class NotificationService {
         if (userEmitters != null) {
             userEmitters.forEach((toId, sseEmitter) -> {
                 try {
-                    String data = "{\"sender\":\"" + member.getNickname() + "\",\"message\":\"" + message + "\",\"profileImgUrl\":\"" + member.getProfileImgUrl() + "\"}";
+                    boolean isRead = fromId.equals(toId);
+                    String data = "{\"sender\":{\"nickname\":\"" + member.getNickname()
+                            + "\"},\"message\":\"" + message + "\",\"profileImgUrl\":\""
+                            + member.getProfileImgUrl() + "\",\"isRead\":" + isRead + "}";
+
                     sseEmitter.send(SseEmitter.event().name("chat").data(data));
+                } catch (IOException e) {
+                    userEmitters.remove(toId);
+                }
+            });
+        }
+    }
+
+    public void sendReadEvent(Long roomId, Long userId) {
+        Map<Long, SseEmitter> userEmitters = roomEmitters.get(roomId);
+        if (userEmitters != null) {
+            userEmitters.forEach((toId, sseEmitter) -> {
+                try {
+                    String data = "{\"roomId\":" + roomId + ",\"userId\":" + userId + "}";
+                    sseEmitter.send(SseEmitter.event().name("read").data(data));
                 } catch (IOException e) {
                     userEmitters.remove(toId);
                 }
