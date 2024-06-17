@@ -48,7 +48,7 @@ public class ChatController {
         } else {
             receiver = chatRoom.getSender();
         }
-        chatService.createChat(roomId, sender.getNickname(), sender.getEmail(), message);
+        chatService.createChat(roomId, sender.getNickname(), sender.getEmail(), message, sender.getProfileImgUrl());
         notificationService.sendMessage(roomId, sender.getId(), message);
         return new ResponseEntity<>(HttpStatus.OK);
     }

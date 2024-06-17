@@ -27,7 +27,7 @@ public class ChatRoom {
     private Member receiver;
 
     @Column
-    private boolean isGlobal = false;
+    private Boolean isGlobal = false;
 
     @Builder
     public ChatRoom(String name, Member sender, Member receiver, boolean isGlobal) {

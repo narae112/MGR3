@@ -52,9 +52,9 @@ public class ChatService {
     }
 
     //채팅 메시지 생성
-    public Chat createChat(Long roomId, String sender, String senderEmail, String message) {
+    public Chat createChat(Long roomId, String sender, String senderEmail, String message, String profileImgUrl) {
         ChatRoom room = roomRepository.findById(roomId).orElseThrow(() -> new IllegalArgumentException("Invalid room ID")); // 방 찾기 -> 없는 방일 경우 예외처리
-        return chatRepository.save(Chat.createChat(room, sender, senderEmail, message));
+        return chatRepository.save(Chat.createChat(room, sender, senderEmail, message, profileImgUrl));
     }
 
     public List<ChatRoom> findAllRoomsByMember(Long memberId) {
