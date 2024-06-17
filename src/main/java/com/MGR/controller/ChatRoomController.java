@@ -51,10 +51,9 @@ public class ChatRoomController {
             chatService.createRoom(name, member, nickname);
             System.out.println("name = " + name);
             System.out.println("nickname = " + nickname);
-            return ResponseEntity.ok().body("Room created successfully");
+            return ResponseEntity.ok().body("새로운 채팅방이 생성되었습니다");
         } catch (Exception e) {
-            // 예외 발생 시 실패 메시지 반환
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create room");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("일치하는 닉네임이 없습니다");
         }
     }
 

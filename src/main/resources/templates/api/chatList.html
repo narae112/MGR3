@@ -6,11 +6,15 @@
 
 <th:block layout:fragment="css">
     <style>
+        #chatTitle {
+            margin-bottom: 30px;
+        }
         .chat-box {
             border: 1px solid #ccc;
             padding: 10px;
             height: 400px;
             overflow-y: scroll;
+            background-color: #F4F4F4;
         }
         .message-input {
             display: flex;
@@ -24,6 +28,7 @@
             display: flex;
             align-items: flex-start;
             margin-bottom: 20px;
+            position: relative;
         }
         .message img {
             border-radius: 50%;
@@ -35,10 +40,12 @@
             display: flex;
             flex-direction: column;
             max-width: 70%;
+            position: relative;
         }
         .message .name {
             font-weight: bold;
             margin-bottom: 5px;
+            font-size: 0.9em;
         }
         .message.right .name {
             text-align: right;
@@ -47,9 +54,16 @@
             max-width: 100%;
             padding: 10px;
             border-radius: 10px;
+            font-size: 0.9em;
+        }
+        .message .time {
+            font-size: 0.7em;
+            color: #888;
+            position: absolute;
+            bottom: 5px;
         }
         .message.left .text {
-            background-color: #f1f1f1;
+            background-color: #fff;
         }
         .message.right {
             justify-content: flex-end;
@@ -63,19 +77,32 @@
             margin-left: 10px;
             margin-right: 0;
         }
+        .message.left .time {
+            right: -55px;
+        }
+        .message.right .time {
+            left: -55px;
+        }
+        .list-group-item.active {
+            background-color: #007bff;
+            color: white;
+        }
     </style>
 </th:block>
 
 <th:block layout:fragment="script">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.34/moment-timezone-with-data.min.js"></script>
     <script th:inline="javascript">
         var eventSource = null;
-        var roomId = null;
+        var roomId = 1;
 
-        function connectToRoom(id) {
+        function connectToRoom(id, title) {
             if (eventSource !== null) {
                 eventSource.close();
             }
+
+             $('#chatTitle').text(title);
 
             eventSource = new EventSource(`/api/chat/subscribe?roomId=${id}`);
 
@@ -104,6 +131,7 @@
             var senderNickname = $('#senderNickname').val();
             if (message) {
                 var chatMessage = {
+                    roomId: roomId || 1,
                     message: message
                 };
 
@@ -127,12 +155,23 @@
             var messageClass = message.sender === $('#senderNickname').val() ? 'right' : 'left';
             var profileImg = message.profileImgUrl || '/img/login/profile.png';
 
+            var date = moment.tz(message.timestamp, "Asia/Seoul");
+            var hours = date.hours();
+            var minutes = date.minutes();
+            var period = hours >= 12 ? '오후' : '오전';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // 0을 12로 변환
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+
+            var time = period + ' ' + hours + ':' + minutes;
+
             var messageElement =
                 '<div class="message ' + messageClass + '">' +
                     '<img src="' + profileImg + '" alt="Profile Image">' +
                     '<div class="content">' +
                         '<div class="name">' + message.sender + '</div>' +
                         '<div class="text">' + message.message + '</div>' +
+                        '<div class="time">' + time + '</div>' +
                     '</div>' +
                 '</div>';
 
@@ -141,14 +180,23 @@
         }
 
         $(document).ready(function () {
+             $('#messageInput').attr('placeholder', '채팅 목록을 선택해주세요');
+
             // 전체 채팅 메시지를 표시
+            connectToRoom(roomId,"전체 채팅방");
+
             [[${allChatList}]].forEach(function (chat) {
                 showMessage(chat);
             });
 
             $('#chatRooms').on('click', 'li', function () {
                 var id = $(this).data('room-id');
-                connectToRoom(id);
+                var title = $(this).text();
+                connectToRoom(id, title);
+                $('#messageInput').attr('placeholder', 'Enter message');
+
+                $('#chatRooms .list-group-item').removeClass('active');
+                $(this).addClass('active');
             });
 
             $('#sendButton').click(function () {
@@ -175,6 +223,7 @@
             </ul>
         </div>
         <div class="col-md-8">
+            <h5 id="chatTitle" class="text-center">전체 채팅방</h5>
             <div id="chatBox" class="chat-box"></div>
             <div class="message-input">
                 <input type="text" id="messageInput" class="form-control" placeholder="Enter message">
