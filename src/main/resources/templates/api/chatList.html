@@ -121,6 +121,7 @@
 
         var eventSource = null;
         var roomId = 1;
+        var currentRoomId = null;
 
         function connectToRoom(id, title) {
             if (eventSource !== null) {
@@ -145,21 +146,22 @@
                 if (roomId === currentRoomId) {
                     $('#chatBox .message').each(function() {
                         const messageElement = $(this);
-                        const message = messageElement.data('message');
+                        const message = JSON.parse(messageElement.attr('data-message'));
                         if (message.sender.nickname !== $('#senderNickname').val() && !message.isRead) {
                             message.isRead = true;
                             messageElement.find('.unread-count').text(0);
+                            messageElement.attr('data-message', JSON.stringify(message));
                         }
                     });
                 }
             });
-
 
             eventSource.onerror = function (event) {
                 console.error('EventSource failed: ', event);
             };
 
             roomId = id;
+            currentRoomId = id;
 
             $.get(`/api/chats/${roomId}`, function (response) {
                 const chats = response.chatList;
@@ -182,19 +184,29 @@
 
                 // 메세지 읽음 처리
                 markMessagesAsRead(roomId);
-                updateUnreadCount(unreadCount);
             }).fail(function() {
                 console.error('Failed to fetch chat history');
+            });
+        }
+
+        function sendReadEvent(roomId) {
+            const userId = $('#senderId').val(); // 사용자 ID를 가져옵니다.
+            $.post('/api/chat/sendReadEvent', { roomId: roomId, userId: userId }, function() {
+                console.log('Read event sent');
+            }).fail(function() {
+                console.error('Failed to send read event');
             });
         }
 
         function markMessagesAsRead(roomId) {
             $.post(`/api/chats/${roomId}/read`, function() {
                 console.log('Messages marked as read');
+                sendReadEvent(roomId);
             }).fail(function() {
                 console.error('Failed to mark messages as read');
             });
         }
+
 
         function updateUnreadCount(unreadCount) {
             if (unreadCount > 0) {
@@ -207,7 +219,7 @@
         }
 
         function sendMessage() {
-            var message = $('#messageInput').val();
+            var message = $('#messageInput').val().trim();
             var senderNickname = $('#senderNickname').val();
             if (message) {
                 var chatMessage = {
@@ -221,7 +233,8 @@
 
                 $.post('/api/chat/send', chatMessage, function() {
                     $('#messageInput').val('');
-
+                    // 메세지 읽음 처리
+                    markMessagesAsRead(roomId);
                 }).fail(function() {
                     console.error('Failed to send message');
                 });
@@ -265,6 +278,7 @@
             // 전체 채팅 메시지를 표시
             connectToRoom(roomId, "전체 채팅방");
 
+            /* 채팅 목록 반복문 처리 */
             [[${allChatList}]].forEach(function (chat) {
                 showMessage(chat, chat.isRead ? 0 : chat.unreadCount);
             });
@@ -334,6 +348,7 @@
                 <input type="text" id="messageInput" class="form-control" placeholder="Enter message">
                 <input type="hidden" id="senderNickname" th:value="${nickname}">
                 <input type="hidden" id="profileImgUrl" th:value="${profileImgUrl}">
+                <input type="hidden" id="senderId" th:value="${member.id}">
                 <button id="sendButton" class="btn btn-primary">전송</button>
             </div>
         </div>

@@ -82,11 +82,20 @@ public class ChatController {
     }
 
     @PostMapping("/api/chats/{roomId}/read")
-    public ResponseEntity<?> markAsRead(@PathVariable Long roomId, @AuthenticationPrincipal PrincipalDetails member) {
+    public ResponseEntity<?> markAsRead(@PathVariable Long roomId,
+                                        @AuthenticationPrincipal PrincipalDetails member) {
         chatService.markMessagesAsRead(roomId, member.getId());
         notificationService.sendReadEvent(roomId, member.getId());
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/api/chat/sendReadEvent")
+    @ResponseBody
+    public ResponseEntity<Void> sendReadEvent(@RequestParam Long roomId, @RequestParam Long userId) {
+        notificationService.sendReadEvent(roomId, userId);
+        return ResponseEntity.ok().build();
+    }
+
 
 }
 
