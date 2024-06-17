@@ -11,12 +11,14 @@ import com.MGR.entity.Member;
 import com.MGR.entity.ReviewBoard;
 import com.MGR.exception.DataNotFoundException;
 import com.MGR.repository.GoWithBoardRepository;
+import com.MGR.repository.GoWithBoardSpecification;
 import com.MGR.repository.ImageRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +27,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -159,21 +162,33 @@ public class GoWithBoardService {
         return goWithBoardPage.map(GoWithBoardFormDto::of);
     }
 
-    @Transactional(readOnly = true)
     public Page<GoWithBoardFormDto> searchGoWithBoards(List<String> ageCategories,
                                                        List<String> locationCategories,
                                                        List<String> attractionTypes,
                                                        List<String> afterTypes,
-                                                       List<String> personalities) {
-        // 필터링 조건을 받아서 해당 조건에 맞는 게시글을 조회하는 메서드를 호출합니다.
-        // 이 메서드는 선택된 조건들을 기반으로 검색된 페이지를 반환해야 합니다.
-        // 여기서는 단순 예시로 전달된 값들을 이용하여 게시글을 필터링하는 방법을 보여줍니다.
-        // 실제로는 여기서 조건에 맞는 게시글을 조회하는 쿼리를 작성해야 합니다.
-        // 이 예제에서는 페이지를 고정 크기로 반환합니다. 필요에 따라 페이지 크기 등을 조정할 수 있습니다.
-        Pageable pageable = PageRequest.of(0, 10); // 페이지 크기 10으로 설정
-        Page<GoWithBoard> filteredGoWithBoardsPage = goWithBoardRepository.findAll(pageable);
+                                                       List<String> personalities,
+                                                       int page, int size) {
+        // 문자열 목록을 열거형 값으로 변환
+        List<AgeCategory> parsedAgeCategories = ageCategories != null ?
+                ageCategories.stream()
+                        .map(AgeCategory::valueOf) // 문자열을 AgeCategory 열거형 값으로 변환
+                        .collect(Collectors.toList())
+                : null;
 
-        // 필터링된 게시글 페이지를 GoWithBoardFormDto로 매핑합니다.
+        List<LocationCategory> parsedLocationCategories = locationCategories != null ?
+                locationCategories.stream()
+                        .map(LocationCategory::valueOf) // 문자열을 LocationCategory 열거형 값으로 변환
+                        .collect(Collectors.toList())
+                : null;
+
+        // 선택된 값을 기반으로 필터링된 게시글 목록을 조회하는 메서드를 호출합니다.
+        // 이 메서드는 선택된 값들을 조건으로 사용하여 필터링된 페이지를 반환해야 합니다.
+//        Pageable pageable = PageRequest.of(0, 6); // 페이지 크기 6으로 설정
+//        Specification<GoWithBoard> spec = GoWithBoardSpecification.withFilters(parsedAgeCategories, parsedLocationCategories, attractionTypes, afterTypes, personalities);
+        Pageable pageable = PageRequest.of(page, size); // 페이지와 크기 설정
+        Specification<GoWithBoard> spec = GoWithBoardSpecification.withFilters(parsedAgeCategories, parsedLocationCategories, attractionTypes, afterTypes, personalities);
+        Page<GoWithBoard> filteredGoWithBoardsPage = goWithBoardRepository.findAll(spec, pageable);
+
         return filteredGoWithBoardsPage.map(GoWithBoardFormDto::of);
     }
 }

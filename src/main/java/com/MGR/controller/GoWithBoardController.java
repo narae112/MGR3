@@ -30,6 +30,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Controller
@@ -206,9 +207,13 @@ public class GoWithBoardController {
     }
 
     // 게시글 목록 조회
-    @GetMapping("/goWithBoard/list")
-    public String showGoWithBoardList(Model model, @RequestParam(defaultValue = "0") int page) {
+    @GetMapping({"/goWithBoard/list", "/goWithBoard/list/{page}"})
+    public String showGoWithBoardList(Model model, @PathVariable(value = "page", required = false) Integer page) {
+
         int size = 6; // 페이지당 글 개수
+        if (page == null || page < 0) {
+            page = 0;
+        }
         Page<GoWithBoardFormDto> goWithBoardsPage = goWithBoardService.getAllGoWithBoards(page, size);
 
         addCategoryAttributes(model); // 체크박스 데이터 추가
@@ -224,21 +229,33 @@ public class GoWithBoardController {
         return "board/goWith/goWithBoardList";
     }
 
-    @GetMapping("/goWithBoard/search")
+    @GetMapping({"/goWithBoard/search", "/goWithBoard/search{page}"})
     public String searchGoWithBoard(Model model,
                                     @RequestParam(required = false) List<String> ageCategories,
                                     @RequestParam(required = false) List<String> locationCategories,
                                     @RequestParam(required = false) List<String> attractionTypes,
                                     @RequestParam(required = false) List<String> afterTypes,
-                                    @RequestParam(required = false) List<String> personalities) {
-        // 선택된 값을 기반으로 필터링된 게시글 목록을 조회하는 메서드를 호출합니다.
-        // 이 메서드는 선택된 값들을 조건으로 사용하여 필터링된 페이지를 반환해야 합니다.
-        Page<GoWithBoardFormDto> filteredGoWithBoardsPage = goWithBoardService.searchGoWithBoards(ageCategories, locationCategories, attractionTypes, afterTypes, personalities);
+                                    @RequestParam(required = false) List<String> personalities,
+                                    @PathVariable(value = "page", required = false) Integer page){
 
-        // 기존의 모델 속성을 추가하는 부분과 동일하게 결과를 모델에 추가합니다.
+        int size = 6; // 페이지당 글 개수
+        if (page == null || page < 0) {
+            page = 0;
+        }
+
+        // 서비스로부터 필터링된 결과를 받아옵니다.
+        Page<GoWithBoardFormDto> filteredGoWithBoardsPage = goWithBoardService.searchGoWithBoards(ageCategories, locationCategories, attractionTypes, afterTypes, personalities, page, 6);
+
+        addCategoryAttributes(model); // 체크박스 데이터 추가
+
+        // LocationCategory와 AgeCategory 추가
+        model.addAttribute("locationCategories", LocationCategory.values());
+        model.addAttribute("ageCategories", AgeCategory.values());
+        // 모델에 검색된 게시글 목록을 추가합니다.
         model.addAttribute("goWithBoardsPage", filteredGoWithBoardsPage);
         // 필요한 경우 추가 모델 속성을 설정합니다.
 
-        return "board/goWith/goWithBoardList"; // 필요한 뷰로 반환합니다.
+        // 게시글 목록 페이지로 이동합니다.
+        return "board/goWith/goWithBoardList";
     }
 }
