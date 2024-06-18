@@ -3,9 +3,7 @@ package com.MGR.dto;
 import com.MGR.constant.CouponType;
 import com.MGR.constant.DiscountType;
 import com.MGR.entity.Coupon;
-import jakarta.validation.constraints.AssertTrue;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
@@ -34,6 +32,9 @@ public class CouponFormDto {
 
     private DiscountType discountType;
 
+    @NotNull(message = "할인율을 입력하세요")
+    @Max(value = 100)
+    @Min(value = 0)
     private Integer discountRate; // 할인율
 
     private Integer discountAmount; // 할인액

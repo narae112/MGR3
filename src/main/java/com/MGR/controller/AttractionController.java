@@ -33,7 +33,11 @@ public class AttractionController {
     private final ImageService imageService;
 
     @GetMapping({"/attractionList", "/attractionList/{page}"})
-    public String attractionList(Model model, @RequestParam(value = "page", defaultValue = "0") int page){
+    public String attractionList(Model model, @PathVariable(value = "page", required = false) Integer page){
+        if (page == null) {
+            page = 0; // 페이지 값이 없을 경우 기본값을 0으로 설정
+        }
+
         Page<Attraction> paging = attractionService.getAttractionList(page);
         model.addAttribute("paging", paging);
 
@@ -44,7 +48,7 @@ public class AttractionController {
         }
         model.addAttribute("imageUrls", imageUrls);
 
-        return "/attraction/attractionList";
+        return "attraction/attractionList";
     }
 
     @GetMapping("/new")
@@ -52,7 +56,7 @@ public class AttractionController {
         //게시글 입력 폼
         model.addAttribute("attractionDto",new Attraction());
 
-        return "/attraction/attractionForm";
+        return "attraction/attractionForm";
     }
 
     @PostMapping("/create")
@@ -70,7 +74,7 @@ public class AttractionController {
         }
 
         if(result.hasErrors()) {
-            return "/attraction/attractionList";
+            return "attraction/attractionList";
         }
 
         try {
@@ -78,7 +82,7 @@ public class AttractionController {
             return "redirect:/attraction/" + attraction.getId();
         } catch (IllegalStateException e){
             model.addAttribute("errorMessage","어트랙션 등록 중 오류가 발생했습니다");
-            return "/attraction/attractionList";
+            return "attraction/attractionList";
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

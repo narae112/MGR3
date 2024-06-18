@@ -46,25 +46,62 @@
 <th:block layout:fragment="script">
     <script th:inline="javascript">
         $(document).ready(function() {
+            // 오류 메시지 처리
+            var errorMessage = /*[[${errorMessage}]]*/ '';
+            if (errorMessage != null && errorMessage !== '') {
+                showAlert(errorMessage);
+            }
             // 이미지 입력란 변경 시 동작
             $('.reviewImgFile').change(function() {
                 // 다음 이미지 입력란 토글
                 $(this).nextAll('input[type=file]').first().toggle();
+                // 파일 확장자 검사
+                validateFileExtension(this);
             });
         });
-           function bindDomEvent() {
-           $(".custom-file-input").on("change", function() {
-               var fileName = $(this).val().split("\\").pop();
-               var fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
 
-               if (fileExt != "jpg" && fileExt != "jpeg" && fileExt != "gif" && fileExt != "png" && fileExt != "bmp") {
-                   alert("이미지 파일만 등록이 가능합니다.");
-                   return;
-               }
+        // 이미지 파일 선택 이벤트 핸들러
+        function validateFileExtension(input) {
+            var fileName = $(input).val().split("\\").pop();
+            if (fileName === '') {
+                alert("파일을 선택해주세요."); // 파일을 선택하지 않았을 때 알림 창 표시
+                return;
+            }
 
-               $(this).siblings(".custom-file-label").html(fileName);
-           });
-       }
+            // 파일 확장자를 가져옵니다.
+            var fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+
+            // 이미지 파일 확장자인지 확인합니다.
+            if (fileExt != "jpg" && fileExt != "jpeg" && fileExt != "gif" && fileExt != "png" && fileExt != "bmp") {
+                // 이미지 파일이 아니면 오류를 표시합니다.
+                alert("이미지 파일만 등록이 가능합니다.");
+                // 파일 선택 초기화
+                $(input).val('');
+                return;
+            }
+        }
+    window.addEventListener('load', function() {
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+
+        // 뒤로가기 버튼 클릭 시 바로 tickets 페이지로 이동
+        window.onpopstate = function() {
+            location.replace("/review/board/list");
+        };
+    }
+
+    // 페이지 로드 후 바로 뒤로가기 막기
+    function preventBack() {
+        window.history.forward();
+    }
+
+    setTimeout(preventBack, 0);
+
+    // 페이지를 떠날 때 아무 동작도 하지 않도록 설정
+    window.onunload = function () {
+        // No action needed
+    };
+});
     </script>
 </th:block>
 

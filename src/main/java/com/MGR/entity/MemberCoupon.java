@@ -22,9 +22,14 @@ public class MemberCoupon {
     @JoinColumn(name = "coupon_id")
     private Coupon coupon;
 
+    @OneToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
+
     @Column
     private String couponCode;
     // 쿠폰 코드
+
     private boolean used; // 사용 여부
 
     public static MemberCoupon memberGetCoupon(Member member, Coupon coupon){

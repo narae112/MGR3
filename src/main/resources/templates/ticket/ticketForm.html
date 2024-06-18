@@ -37,7 +37,36 @@
 
            // 오늘 날짜 설정 및 종료일 최소값 설정
            setTodayDate();
-       });
+
+            $("form").submit(function(event) {
+                   event.preventDefault();  // 기본 제출 동작을 막음
+                   var form = $(this);
+                   var formData = new FormData(form[0]);  // 폼 데이터를 FormData 객체로 직렬화하여 전송
+
+                   $.ajax({
+                       type: form.attr('method'),
+                       url: form.attr('action'),
+                       data: formData,
+                       contentType: false,  // 데이터 타입을 설정하지 않음
+                       processData: false,  // 데이터를 query string으로 변환하지 않음
+                       success: function(response) {
+                           showAlert(response);  // 성공적인 메시지를 모달 창에 표시
+                           window.location.replace("/tickets");  // 성공적으로 처리되면 다른 페이지로 이동
+                       },
+                       error: function(xhr, status, error) {
+                           if (xhr.status === 400) {
+                               showAlert(xhr.responseText);  // 입력값 오류 메시지를 모달 창에 표시
+                           } else if (xhr.status === 404) {
+                               showAlert("티켓을 찾을 수 없습니다.");
+                           } else if (xhr.status === 500) {
+                               showAlert("서버 오류: " + xhr.responseText);  // 서버 내부 오류 메시지를 모달 창에 표시
+                           } else {
+                               showAlert("오류 발생: " + xhr.status + " " + xhr.statusText);  // 기타 오류 처리
+                           }
+                       }
+                   });
+               });
+           });
 
        // 이미지 파일 선택 이벤트 핸들러
        function bindDomEvent() {
@@ -101,6 +130,7 @@
                document.getElementById("endDate").value = startDate;
            }
        }
+
     </script>
 </th:block>
 <div layout:fragment="content" class="container my-5">
@@ -173,7 +203,7 @@
                 <div class="form-group mb-3">
                     <div th:if="${#lists.isEmpty(ticketFormDto.ticketImgDtoList)}">
                             <div class="custom-file img-div form-group mb-3">
-                                <input type="file" class="custom-file-input form-control" name="ticketImgFile">
+                                <input type="file" class="custom-file-input form-control" name="ticketImgFile" required>
                                 <label class="custom-file-label" th:text="티켓이미지"></label>
                             </div>
                         </div>
@@ -181,7 +211,7 @@
                 <div th:if = "${not #lists.isEmpty(ticketFormDto.ticketImgDtoList)}">
                     <div class="form-group" th:each="ticketImgDto, status: ${ticketFormDto.ticketImgDtoList}">
                         <div class="form-group mb-3">
-                            <input type="file" class="custom-file-input form-control" name="ticketImgFile">
+                            <input type="file" class="custom-file-input form-control" name="ticketImgFile" required>
                             <input type="hidden" name="ticketImgIds" th:value="${ticketImgDto.id}">
                             <label class="custom-file-label" th:text="${not #strings.isEmpty(ticketImgDto.imgOriName)} ? ${ticketImgDto.imgOriName} : '상품이미지' + ${status.index+1}"></label>
                         </div>

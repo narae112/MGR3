@@ -6,22 +6,26 @@
     <title>답변 수정</title>
 </head>
 <body>
-<div layout:fragment="content" class="container">
+<div layout:fragment="content" class="container my-5">
     <div th:if="${error}" class="alert alert-danger" role="alert">
         <span th:text="${error}"></span>
     </div>
-    <h5 class="my-3 border-bottom pb-2">답변 수정</h5>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h3 class="mb-5 text-center">답변 수정</h3>
     <!-- 답변 수정 폼 -->
-    <form th:object="${reviewCommentForm}" method="post">
+            <form th:object="${reviewCommentForm}" method="post">
 
         <!-- 폼 에러 메시지 표시 부분 -->
-        <div th:replace="board/review/form_errors :: formErrorsFragment"></div>
-        <div class="mb-3">
-            <label for="content" class="form-label">내용</label>
-            <textarea th:field="*{content}" class="form-control" rows="10" id="content"></textarea>
+                <div th:replace="board/review/form_errors :: formErrorsFragment"></div>
+                    <div class="form-group mb-3">
+                        <label for="content" class="form-label">내용</label>
+                        <textarea th:field="*{content}" class="form-control" rows="8" id="content"></textarea>
+                    </div>
+                 <input type="submit" value="저장하기" class="btn btn-primary my-2">
+            </form>
         </div>
-        <input type="submit" value="저장하기" class="btn btn-primary my-2">
-    </form>
+    </div>
 </div>
 </body>
 </html>

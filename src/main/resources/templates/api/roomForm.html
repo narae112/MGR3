@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+
+<!-- css -->
+<th:block layout:fragment="css">
+    <style>
+        /* 필요한 스타일 추가 가능 */
+    </style>
+</th:block>
+
+<!-- js -->
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            $('#createRoomForm').on('submit', function(event) {
+                event.preventDefault();
+                $.ajax({
+                    type: 'POST',
+                    url: '/api/createRoom',
+                    contentType: 'application/x-www-form-urlencoded',
+                    data: $(this).serialize(),
+                    success: function(data) {
+                        alert('새로운 채팅방을 개설했습니다');
+                        window.location.href = '/api/chatList';
+                    },
+                    error: function(xhr, status, error) {
+                       alert('Failed to create room: ' + xhr.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+</th:block>
+
+<div layout:fragment="content">
+    <h3 class="mb-5 text-center">채팅방 만들기</h3>
+    <hr class="my-4">
+    <form id="createRoomForm">
+        <div class="form-group">
+            <label for="name">채팅방 이름</label>
+            <input type="text" class="form-control" id="name" name="name" th:value="${title}" required>
+        </div>
+        <div class="form-group">
+            <label for="nickname">초대할 닉네임</label>
+            <input type="text" class="form-control" id="nickname" name="nickname" placeholder="관리자 닉네임은 'MGR관리자' 입니다."
+                   th:value="${nickname}" required>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">생성</button>
+    </form>
+</div>
+</html>

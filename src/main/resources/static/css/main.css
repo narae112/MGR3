@@ -1218,8 +1218,8 @@ ol {
   font-size: 14px;
   color: #fff !important;
   position: fixed;
-  bottom: 30px;
-  right: 30px;
+  bottom: 80px !important;
+  right: 70px !important;
   z-index: 9;
   cursor: pointer;
   -webkit-transition: all .3s ease-out 0s;
@@ -1237,7 +1237,7 @@ ol {
 
 /* Pagination CSS */
 .pagination {
-  text-align: left;
+  text-align: center;
   margin: 60px 0 0 0;
   display: block;
 }
@@ -2257,8 +2257,8 @@ ol {
 
 .count-down .box-content {
   text-align: center;
-  /* background-color: #3813c2; */
-  background-image: url("../images/count-down/bg.png");
+  /* background-color: #3813c2;
+  background-image: url("../images/count-down/bg.png"); */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -2503,7 +2503,7 @@ ol {
   font-size: 30px;
   -webkit-box-shadow: 0px 10px 30px rgba(48, 128, 227, 0.18);
           box-shadow: 0px 10px 30px rgba(48, 128, 227, 0.18);
-  background-image: url("../images/count-down/bg.png");
+  /*background-image: url("../images/count-down/bg.png");*/
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

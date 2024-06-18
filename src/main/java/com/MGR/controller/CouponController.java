@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -39,27 +41,27 @@ public class CouponController {
 
     // 쿠폰 등록
     @PostMapping("/admin/coupon/new")
-    public String newCoupon(@Valid CouponFormDto couponFormDto, BindingResult bindingResult,
-                            Model model, @RequestParam("couponImgFile") List<MultipartFile> couponImgFileList) {
+    public ResponseEntity<String> newCouponAjax(@Valid CouponFormDto couponFormDto, BindingResult bindingResult,
+                                                @RequestParam("couponImgFile") List<MultipartFile> couponImgFileList) {
 
         if (bindingResult.hasErrors()) {
-            return "coupon/couponForm";
+            return ResponseEntity.badRequest().body("입력한 값들을 확인해주세요.");
         }
-        if (couponFormDto.getDiscountAmount() == null && couponFormDto.getDiscountRate() == null) {
-            model.addAttribute("errorMessage", "할인액 또는 할인율을 입력해주세요");
-            return "coupon/couponForm";
+        // 이미지 파일이 없는 경우
+        if (couponImgFileList.isEmpty() || couponImgFileList.get(0).isEmpty()) {
+            return ResponseEntity.badRequest().body("상품 이미지는 필수 입력 값 입니다.");
         }
         try {
             couponService.createCoupon(couponFormDto, couponImgFileList);
+            return ResponseEntity.ok("쿠폰이 성공적으로 등록되었습니다.");
         } catch (DuplicateCouponNameException e) {
-            model.addAttribute("errorMessage", e.getMessage());
-            return "coupon/couponForm";
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "쿠폰 등록 중 에러가 발생하였습니다");
-            return "redirect:/admin/coupon/new"; // 에러 발생 시 폼으로 리다이렉트
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("쿠폰 등록 중 오류가 발생했습니다.");
         }
-        return "redirect:/admin/coupons";// 성공 시 쿠폰 관리 페이지로 리다이렉트
     }
+
 
     //쿠폰 수정
     @GetMapping(value = "/admin/coupon/{couponId}")
@@ -99,18 +101,18 @@ public class CouponController {
 //        return "redirect:/admin/coupons"; // 성공 시 쿠폰 관리 페이지로 리다이렉트
 //    }
 
-     @GetMapping(value={"coupons", "/coupons/{page}"})
-    public String couponMain(CouponSearchDto couponSearchDto,
-                             @PathVariable Optional<Integer> page, Model model){
-        Pageable pageable = PageRequest.of(page.orElse(0), 6); // 페이지 번호
-        Page<CouponMainDto> coupons = couponService.getCouponMainPage(couponSearchDto, pageable);
-
-        model.addAttribute("coupons", coupons);
-        model.addAttribute("couponSearchDto", couponSearchDto);
-        model.addAttribute("maxPage", 5);
-
-        return "coupon/admin/couponMain";
-    }
+//     @GetMapping(value={"coupons", "/coupons/{page}"})
+//    public String couponMain(CouponSearchDto couponSearchDto,
+//                             @PathVariable Optional<Integer> page, Model model){
+//        Pageable pageable = PageRequest.of(page.orElse(0), 6); // 페이지 번호
+//        Page<CouponMainDto> coupons = couponService.getCouponMainPage(couponSearchDto, pageable);
+//
+//        model.addAttribute("coupons", coupons);
+//        model.addAttribute("couponSearchDto", couponSearchDto);
+//        model.addAttribute("maxPage", 5);
+//
+//        return "coupon/admin/couponMain";
+//    }
 
     // 쿠폰 관리 페이지
     @GetMapping(value = {"/admin/coupons", "/admin/coupons/{page}"})
@@ -118,7 +120,7 @@ public class CouponController {
                                @PathVariable("page") Optional<Integer> page, Model model){
         // 페이지 매개변수 처리
         int pageNumber = page.orElse(0); // 페이지 매개변수가 없는 경우 0으로 초기화
-        Pageable pageable = PageRequest.of(pageNumber, 3);
+        Pageable pageable = PageRequest.of(pageNumber, 5);
 
         // 쿠폰 페이지 가져오기
         Page<Coupon> coupons = couponService.getAdminCouponPage(couponSearchDto, pageable);

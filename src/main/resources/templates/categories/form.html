@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/default}">
+<head>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+</head>
+<body>
+<div layout:fragment="content" class="container my-5">
+    <div th:if="${error}" class="alert alert-danger" role="alert">
+        <span th:text="${error}"></span>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h3 class="mb-5 text-center">키워드 등록</h3>
+            <form id="form" th:object="${categoryFormDto}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                <div th:replace="categories/form_errors :: formErrorsFragment"></div>
+
+                <!-- 동행 후 일정 키워드 -->
+                <div class="form-group mb-2">
+                    <label class="mb-3">동행 후 일정 키워드</label>
+                    <div class="row">
+                        <div class="col-6" th:each="index : ${#numbers.sequence(0, 0)}">
+                            <input type="text" class="form-control mb-1 afterCategory" name="afterCategory"
+                                   th:field="*{afterTypeCategory[__${index}__]}" placeholder="ex) 간단히 밥 먹기">
+                        </div>
+                        <div class="col-6" th:each="index : ${#numbers.sequence(1, 5)}">
+                            <input type="text" class="form-control mb-1 afterCategory" name="afterCategory"
+                                   th:field="*{afterTypeCategory[__${index}__]}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 놀이기구 취향 키워드 -->
+                <div class="form-group mb-3">
+                    <label class="mb-2">놀이기구 취향 키워드</label>
+                    <div class="row">
+                        <div class="col-6" th:each="index : ${#numbers.sequence(0, 0)}">
+                            <input type="text" class="form-control mb-1 attractionCategory" name="attractionCategory"
+                                   th:field="*{attractionTypeCategory[__${index}__]}" placeholder="ex) 스릴을 즐겨요">
+                        </div>
+                        <div class="col-6" th:each="index : ${#numbers.sequence(1, 5)}">
+                            <input type="text" class="form-control mb-1 attractionCategory" name="attractionCategory"
+                                   th:field="*{attractionTypeCategory[__${index}__]}" >
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 성격 키워드 -->
+                <div class="form-group mb-3">
+                    <label class="mb-2">성격 키워드</label>
+                    <div class="row">
+                        <div class="col-sm-6 mb-1" th:each="index : ${#numbers.sequence(0, 0)}">
+                            <input type="text" class="form-control mb-1 personalityCategory" name="personalityCategory"
+                                   th:field="*{personalityCategory[__${index}__]}" placeholder="ex) 외향적이에요">
+                        </div>
+                        <div class="col-sm-6 mb-1" th:each="index : ${#numbers.sequence(1, 5)}">
+                            <input type="text" class="form-control mb-1 personalityCategory" name="personalityCategory"
+                                   th:field="*{personalityCategory[__${index}__]}">
+                        </div>
+                    </div>
+                </div>
+
+                <input type="submit" value="저장하기" class="btn btn-primary my-2">
+            </form>
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        <!--         뒤로가기 방지-->
+        window.addEventListener('load', function() {
+if (window.history.replaceState) {
+ window.history.replaceState(null, null, window.location.href);
+
+ // 뒤로가기 버튼 클릭 시 바로 tickets 페이지로 이동
+ window.onpopstate = function() {
+     location.replace("/admin/category/list");
+ };
+}
+
+// 페이지 로드 후 바로 뒤로가기 막기
+function preventBack() {
+ window.history.forward();
+}
+
+setTimeout(preventBack, 0);
+
+// 페이지를 떠날 때 아무 동작도 하지 않도록 설정
+window.onunload = function () {
+ // No action needed
+};
+});
+    </script>
+</th:block>
+</body>
+</html>

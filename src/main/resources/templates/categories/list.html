@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <!-- css -->
+    <th:block layout:fragment="css">
+        <style>
+
+        </style>
+    </th:block>
+</head>
+<body>
+<div layout:fragment="content">
+    <h3 class="mb-5 text-center">키워드 관리</h3>
+
+    <hr class="my-4">
+    <!-- 등록버튼 -->
+    <div class="col-6" th:if="${#lists.isEmpty(categories)}">
+        <a th:href="@{/admin/category/create}" class="btn btn-primary mb-4">키워드 등록하기</a>
+    </div>
+    <div class="col-6" th:unless="${#lists.isEmpty(categories)}" th:each="category : ${categories}">
+        <button class="btn btn-primary mb-4" onclick="showAlert()">키워드 등록하기</button>
+        <a th:href="@{/admin/category/modify/{id}(id=${category.id})}" class="btn btn-primary mb-4">수정</a>
+        <a th:href="@{/admin/category/delete/{id}(id=${category.id})}" class="btn btn-danger mb-4">삭제</a>
+
+    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>놀이기구 취향 키워드</th>
+            <th>동행 후 행선지 키워드</th>
+            <th>성격 키워드</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="category : ${categories}">
+            <td>
+                <table>
+                    <tr th:each="attraction : ${category.attractionTypeCategories}">
+                        <td th:text="${attraction.name}">놀이기구</td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+                <table>
+                    <tr th:each="after : ${category.afterTypeCategories}">
+                        <td th:text="${after.name}">행선지</td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+                <table>
+                    <tr th:each="personality : ${category.personalityCategories}">
+                        <td th:text="${personality.name}">성격</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<!-- 스크립트 -->
+<script layout:fragment="script" type="text/javascript">
+    function showAlert() {
+      alert('이미 등록된 키워드가 있습니다.\n기존 키워드 목록을 삭제하고 진행해주세요.');
+  }
+</script>
+</body>
+</html>

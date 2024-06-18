@@ -1,0 +1,116 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+
+</head>
+<th:block layout:fragment="css">
+    <style>
+        .content-mg{
+            margin-left:20%;
+            margin-right:20%;
+            margin-top:2%;
+            margin-bottom:100px;
+        }
+        h2{
+            text-align: center;
+            margin: 10px 0 20px 0;
+        }
+        h3{
+            padding-left: 20px;
+        }
+        .orderTicket{
+            padding-left: 10px;
+        }
+        .orderNum{
+            font-size: 16px;
+        }
+        .orderNum > span{
+            color: #444;
+            font-weight: bold;
+        }
+        .visitDate {
+            margin-bottom: 10px;
+        }
+        .visitDate > span{
+            font-size: 20px;
+            color: #333;
+        }
+        .name{
+            font-size: 18px;
+            color: black;
+        }
+    </style>
+</th:block>
+
+<div layout:fragment="content" class="content-mg">
+    <h2>결제 내역</h2>
+
+    <!-- 주문 목록 출력 -->
+    <div th:if="${paging.empty}">
+        <p>결제 내역이 없습니다.</p>
+    </div>
+    <div th:if="${not paging.empty}">
+        <div th:each="orderListDto : ${paging.content}">
+            <div>
+                <h3 th:text="${#temporals.format(orderListDto.orderDate, 'yyyy. MM. dd')}"></h3>
+                <hr/>
+                <p class="orderNum">주문 번호&nbsp;&nbsp;<span th:text="${orderListDto.orderNum}"></span></p>
+                <hr/>
+                <!-- 주문에 속한 티켓 목록 출력 -->
+                <div class="orderTicket" th:each="orderTicketDto : ${orderListDto.orderTickets}">
+                    <p class="visitDate">방문 예정일&nbsp;&nbsp;<span th:text="${#temporals.format(orderTicketDto.visitDate, 'yyyy. MM. dd')}"></span></p>
+                    <span class="name" th:text="'[' + ${orderTicketDto.locationCategory.displayName} + '점] ' + ${orderTicketDto.name}"></span>
+                    &nbsp;&nbsp;&nbsp;· · · &nbsp;
+                    <span th:text="${#numbers.formatInteger(orderTicketDto.totalPrice, 0, 'COMMA')} + '원'"></span>
+                    <span th:text="'성인 티켓 ' + ${#numbers.formatInteger(orderTicketDto.adultPrice, 0, 'COMMA')} + '원 ' +
+                                ${orderTicketDto.adultCount} + '장&nbsp;&nbsp;|&nbsp;&nbsp;아동 티켓 ' + ${#numbers.formatInteger(orderTicketDto.childPrice, 0, 'COMMA')} +
+                                '원 ' + ${orderTicketDto.childCount} + '장'"></span>
+                    <hr/>
+                </div>
+                <div>
+                    <p>총 결제 금액 <span th:text="${#numbers.formatInteger(orderListDto.calculateTotalPrice(), 0, 'COMMA')} + '원'"></span></p>
+                    <p>쿠폰 할인율 <span th:text="${orderListDto.discountRate} + '%'"></span></p>
+                    <hr/>
+                    <p>최종 결제 금액 <span th:text="${#numbers.formatInteger(orderListDto.calculateDiscountedTotalPrice(), 0, 'COMMA')} + '원'"></span></p>
+                </div>
+                <hr/> <!-- 각 주문 사이에 구분선 추가 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 페이지 네이션 -->
+    <nav aria-label="Page navigation" class="justify-content-center">
+        <ul class="pagination">
+            <!-- 이전 버튼 -->
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                <a class="page-link" th:if="${currentPage != 0}" th:href="@{|~/member/orderList/${currentPage - 1}|}" aria-label="Previous">
+                    <span aria-hidden="true">&lt;</span>
+                </a>
+                <span th:if="${currentPage == 0}" class="page-link disabled" aria-hidden="true" tabindex="-1">
+                <span aria-hidden="true">&lt;</span>
+            </span>
+            </li>
+
+            <!-- 페이지 번호 -->
+            <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}" class="page-item" th:classappend="${i == currentPage} ? 'active'">
+                <a class="page-link" th:href="@{|~/member/orderList/${i}|}" th:text="${i + 1}"></a>
+            </li>
+
+            <!-- 다음 버튼 -->
+            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                <a class="page-link" th:if="${currentPage != totalPages - 1}" th:href="@{|~/member/orderList/${currentPage + 1}|}" aria-label="Next">
+                    <span aria-hidden="true">&gt;</span>
+                </a>
+                <span th:if="${currentPage == totalPages - 1}" class="page-link disabled" aria-hidden="true" tabindex="-1">
+                <span aria-hidden="true">&gt;</span>
+            </span>
+            </li>
+        </ul>
+    </nav>
+
+
+
+
+</div>
+</html>

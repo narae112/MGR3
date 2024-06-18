@@ -15,6 +15,7 @@ import com.MGR.service.MemberService;
 import com.MGR.service.OrderService;
 import com.MGR.service.ReviewBoardService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +33,10 @@ import com.MGR.config.VerifyRecaptcha;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -73,6 +77,7 @@ public class ReviewBoardController {
         model.addAttribute("reviewBoardForm",reviewBoardForm);
         return "board/review/board_detail";
     }
+
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/orderCheck")
     public String orderCheck(OrderCheckForm orderCheckForm, @AuthenticationPrincipal PrincipalDetails member, Model model) {
@@ -254,7 +259,7 @@ public class ReviewBoardController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/vote/{id}")
     public String reviewVote(@AuthenticationPrincipal PrincipalDetails member,
-                             @PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+                             @PathVariable("id") Long id, RedirectAttributes redirectAttributes,Model model) {
         if (member == null) {
             redirectAttributes.addFlashAttribute("error", "로그인이 필요한 서비스입니다.");
             return "member/loginForm";
@@ -263,22 +268,27 @@ public class ReviewBoardController {
         try {
             ReviewBoard reviewBoard = this.reviewBoardService.getReviewBoard(id);
             Member siteUser = this.memberService.getUser(member.getName());
-            if (reviewBoard.getVoter().contains(siteUser)) {
-                // 이미 투표한 경우에는 투표 취소
+            Set<Member> voters = reviewBoard.getVoter(); // 리뷰의 추천자 목록을 가져옵니다.
+            boolean isVoted = voters != null && voters.contains(siteUser);
+            // 현재 사용자가 리뷰를 추천했는지 여부를 확인합니다.
+            model.addAttribute("isVoted", isVoted);
+            // 추천 여부에 따라 동작을 수행합니다.
+            if (isVoted) {
+                // 이미 추천한 경우, 추천을 취소합니다.
                 this.reviewBoardService.cancelVote(reviewBoard, siteUser);
-                redirectAttributes.addFlashAttribute("success", "추천이 취소되었습니다.");
             } else {
+                // 추천하지 않은 경우, 추천을 합니다.
                 this.reviewBoardService.vote(reviewBoard, siteUser);
-                redirectAttributes.addFlashAttribute("success", "추천가 완료되었습니다.");
             }
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "오류가 발생했습니다. 다시 시도해주세요.");
+            System.out.println("예외 발생: {}"+e.getMessage());
+            // 예외의 스택 트레이스도 로깅할 수 있음
+            System.out.println("예외 발생: {}"+e);
         }
 
-        return String.format("redirect:/review/board/detail/%s", id);
+        return "redirect:/review/board/detail/" + id;
     }
-
-
 
 
 

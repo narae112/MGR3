@@ -1,12 +1,22 @@
 package com.MGR.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
+import java.time.LocalDateTime;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ChatMessage {
-    private String from;
-    private String text;
-}
 
+    private Long roomId;
+    private String sender;
+    private String senderEmail;
+    private String message;
+    private LocalDateTime sendDate;
+
+}

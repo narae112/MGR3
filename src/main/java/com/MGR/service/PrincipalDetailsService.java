@@ -31,6 +31,11 @@ public class PrincipalDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         System.out.println("loadUserByUsername 시작, email = " + email);
         Optional<Member> memberOptional = memberRepository.findByEmail(email);
+
+        if(memberOptional.isEmpty()){
+            throw new UsernameNotFoundException(email);
+        }
+
         Member member = memberOptional.orElseThrow(() -> new UsernameNotFoundException(email));
 
 //        return new CustomUserDetails(member);

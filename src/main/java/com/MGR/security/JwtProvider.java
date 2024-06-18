@@ -1,28 +1,22 @@
 package com.MGR.security;
 
-//import com.MGR.service.OAuth2MemberService;
 import com.MGR.entity.Member;
 import com.MGR.service.MemberService;
-import com.MGR.service.OAuth2MemberService;
 import com.MGR.service.PrincipalDetailsService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.core.OAuth2AccessToken;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
-import java.util.regex.Pattern;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -30,23 +24,13 @@ import java.util.regex.Pattern;
 public class JwtProvider {
     @Value("${jwt.secretKey}")
     private String secretKey;
-    @Value("${jwt.expiredTime}")
-    private Long expiredTime;
+    @Value("${jwt.accessTokenExpiredTime}")
+    private Long accessTokenExpiredTime;
+    @Value("${jwt.refreshTokenExpiredTime}")
+    private Long refreshTokenExpiredTime;
 
     private final PrincipalDetailsService principalDetailsService;
-    private final OAuth2MemberService oAuth2MemberService;
     private final MemberService memberService;
-    private final ClientRegistrationRepository clientRegistrationRepository;
-
-    public String getMemberId(String token) {
-
-        return Jwts.parserBuilder()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .get("email", String.class);
-    }
 
     public Long getId(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token)
@@ -58,7 +42,7 @@ public class JwtProvider {
             Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
             return true;
         } catch (Exception e) {
-            log.error("JWT 토큰 검증 실패: {}", e.getMessage());
+            System.out.println("validateToken JWT 토큰 검증 실패 = " + e.getMessage());
             return false;
         }
     }
@@ -70,35 +54,56 @@ public class JwtProvider {
                 .parseClaimsJws(token)
                 .getBody();
         Long id = claims.get("id", Long.class);
-        System.out.println("getAuthentication id = " + id);
-        System.out.println(claims.getSubject());
 
-        Member member = memberService.findById(id).orElseThrow();
-        String memberEmail = member.getEmail();
+        String email = memberService.findById(id).get().getEmail();
 
-        String email = claims.get("email", String.class);
-        System.out.println("getAuthentication email = " + email);
-
-       UserDetails userDetails = principalDetailsService.loadUserByUsername(memberEmail);
+       UserDetails userDetails = principalDetailsService.loadUserByUsername(email);
 
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
-    public String createToken(String email, Long id, boolean isOauth2) {
+    public String createRefreshToken(String email, Long id) {
         Claims claims = Jwts.claims();
         claims.put("email", email);
         claims.put("id", id);
-        claims.setSubject(isOauth2 ? "oauth2_" + email : email); // 주체 설정
-        System.out.println("createToken claims 발행 확인 = " + claims);
-        System.out.println(claims.getSubject());
-        System.out.println("createToken email = " + email);
+        System.out.println("createRefreshToken claims 발행 확인 = " + claims);
+
         String token = Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expiredTime))
+                .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiredTime))
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
-        System.out.println("token 발행 확인 = " + token);
         return token;
+    }
+
+    public String createToken(String email, Long id) {
+        Claims claims = Jwts.claims();
+        claims.put("email", email);
+        claims.put("id", id);
+        System.out.println("createToken claims 발행 확인 = " + claims);
+
+        String token = Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiredTime))
+                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .compact();
+
+        return token;
+    }
+
+    public Claims getClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    public String getEmailFromToken(String token) {
+        Claims claims = getClaims(token);
+        System.out.println("클레임 이메일 = " + claims.get("email", String.class));
+        return claims.get("email", String.class);
     }
 }

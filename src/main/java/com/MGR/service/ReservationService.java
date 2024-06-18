@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -84,13 +85,15 @@ public class ReservationService {
         Optional<Member> member = memberRepository.findByEmail(email);
         Reservation reservation = reservationRepository.findByMemberId(member.get().getId());
 
-        List<ReservationDtlDto> reservationDtlDtos = new ArrayList<>();
-        reservationDtlDtos = reservationTicketRepository.findReservations(reservation.getId(), pageable);
+        Page<ReservationTicket> reservationTickets = reservationTicketRepository.findByReservationId(reservation.getId(), pageable);
+        List<ReservationDtlDto> dtos = reservationTickets.stream()
+                .map(ReservationDtlDto::new)
+                .toList();
         // 주문 목록 조회
         Long totalCount = reservationTicketRepository.countReservation(reservation.getId());
-        // 총 주문 갯수
 
-        return new PageImpl<ReservationDtlDto>(reservationDtlDtos, pageable, totalCount);
+
+        return new PageImpl<>(dtos, pageable, totalCount);
     }
 
     // 티켓 수량 수정
@@ -124,13 +127,15 @@ public class ReservationService {
             inventory.addQuantity(result); // 재고에 더해준다
         }
 
-        if (reservationTicket.getAdultCount() != adultCountInt && reservationTicket.getChildCount() == childCountInt) { // 수량의 변동이 어른티켓만 있으면
-            reservationTicket.updateAdultCount(adultCountInt);
-        } else if (reservationTicket.getAdultCount() == adultCountInt && reservationTicket.getChildCount() != childCountInt) { // 수량의 변동이 아동티켓만 있으면
-            reservationTicket.updateChildCount(childCountInt);
-        } else if (reservationTicket.getAdultCount() != adultCountInt && reservationTicket.getChildCount() != childCountInt) { // 수량의 변동이 양쪽 다 있으면
-            reservationTicket.updateAllCount(adultCountInt, childCountInt);
-        }
+//        if (reservationTicket.getAdultCount() != adultCountInt && reservationTicket.getChildCount() == childCountInt) { // 수량의 변동이 어른티켓만 있으면
+//            reservationTicket.updateAdultCount(adultCountInt);
+//        } else if (reservationTicket.getAdultCount() == adultCountInt && reservationTicket.getChildCount() != childCountInt) { // 수량의 변동이 아동티켓만 있으면
+//            reservationTicket.updateChildCount(childCountInt);
+//        } else if (reservationTicket.getAdultCount() != adultCountInt && reservationTicket.getChildCount() != childCountInt) { // 수량의 변동이 양쪽 다 있으면
+//            reservationTicket.updateAllCount(adultCountInt, childCountInt);
+//        }
+        reservationTicket.setAdultCount(adultCount);
+        reservationTicket.setChildCount(childCount);
 
         reservationTicketRepository.save(reservationTicket); // 데이터베이스에 수정된 내용 저장
     }

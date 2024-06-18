@@ -1,8 +1,7 @@
 package com.MGR.security;
 
-import com.MGR.dto.MemberFormDto;
 import com.MGR.entity.Member;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.MGR.service.RedisService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -11,46 +10,49 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
+    private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+    private final RedisService redisService;
 
     //로그인을 시도할 때 실행
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         System.out.println("attemptAuthentication 시작");
         Member member = new Member();
+
         try {
             // URL 인코딩된 폼 데이터 읽기
             String email = request.getParameter("email");
-            System.out.println("email = " + email);
             String password = request.getParameter("password");
-            System.out.println("password = " + password);
+            System.out.println("받은 email: " + email);
+            System.out.println("받은 암호화된 password: " + password);
+            // 암호화된 비밀번호 복호화
+            String decryptedPassword = AESUtil.decrypt(password);
+
+            System.out.println("URL 인코딩된 폼 데이터 email = " + email);
+            System.out.println("복호화된 password = " + decryptedPassword);
+
             member.setEmail(email);
-            member.setPassword(password);
+            member.setPassword(decryptedPassword);
 
-            System.out.println("member 로그인 정보 = " + member);
-
+        } catch (BadCredentialsException e) {
+            System.out.println("로그인 정보 에러 = " + e.getMessage());
         } catch (Exception e) {
             System.out.println("json 읽어오는 중 에러 = " + e.getMessage());
         }
 
-        if (member.getEmail() == null || member.getPassword() == null) {
-            System.out.println("Member 객체의 이메일 또는 비밀번호가 null 입니다.");
-            throw new AuthenticationException("Member 객체의 이메일 또는 비밀번호가 null 입니다.") {};
-        }
 
         //토큰 생성
         UsernamePasswordAuthenticationToken token =
@@ -64,7 +66,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             return authenticate;
         } catch (AuthenticationException e) {
             log.error("인증 실패: {}", e.getMessage(), e);
-            throw e;
+            try {
+                // 실패 처리
+                customAuthenticationFailureHandler.onAuthenticationFailure(request, response, e);
+            } catch (IOException | ServletException ex) {
+                log.error("Authentication failure handler 처리 중 에러: {}", ex.getMessage(), ex);
+            }
+            return null;
         }
 
     }
@@ -75,20 +83,36 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         PrincipalDetails principal = (PrincipalDetails) authResult.getPrincipal();
         Member member = principal.getMember();
-        String jwt = jwtProvider.createToken(member.getEmail(), member.getId(), false);
+        String jwt = jwtProvider.createToken(member.getEmail(), member.getId());
         response.setHeader("Authorization", "Bearer " + jwt);
 
-        // JWT를 쿠키에 설정
-        Cookie cookie = new Cookie("at", jwt);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true); // HTTPS 사용 시에만 설정
-        cookie.setPath("/");
-        cookie.setMaxAge(24 * 60 * 60); // 1일 동안 유효
-        response.addCookie(cookie);
-        System.out.println("JWT 토큰 생성 및 쿠키에 추가 완료");
+        // JWT를 쿠키에 설정 (Access Token)
+        Cookie accessTokenCookie = new Cookie("at", jwt);
+        accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setSecure(true); // HTTPS 사용 시에만 설정
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setMaxAge(7 * 24 * 60 * 60);
+//        accessTokenCookie.setMaxAge(30);
+        response.addCookie(accessTokenCookie);
+
+        // Refresh Token 생성 및 쿠키에 설정
+        String refreshToken = jwtProvider.createRefreshToken(principal.getMember().getOauth2Id(), principal.getMember().getId());
+        Cookie refreshTokenCookie = new Cookie("rt", refreshToken);
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(true); // HTTPS 사용 시에만 설정
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); // 7*24시간 동안 유효
+//        refreshTokenCookie.setMaxAge(2*60);
+        response.addCookie(refreshTokenCookie);
+
+        // Redis 에 RefreshToken 저장
+        redisService.saveRefreshToken(principal.getMember().getId(), refreshToken);
 
         response.sendRedirect("/");
     }
 
-
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+        getFailureHandler().onAuthenticationFailure(request, response, failed);
+    }
 }

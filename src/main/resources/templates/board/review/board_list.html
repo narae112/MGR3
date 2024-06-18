@@ -6,7 +6,7 @@
 <th:block layout:fragment="css">
     <style>
         /* 테이블과 h3 사이에 간격을 주는 CSS */
-        .row {
+        .reviewContainer >.row {
                margin-top: 30px; /* 필요에 따라 조정하세요 */
            }
     </style>
@@ -28,50 +28,38 @@
     </div>
     <hr class="my-4">
     <!--    등록버튼-->
-    <div class="col-6">
-        <a th:href="@{/review/board/orderCheck}" class="btn btn-primary">리뷰 등록하기</a>
+    <div class="col-6 reviewContainer">
+        <a th:href="@{/review/board/orderCheck}" class="btn btn-primary mb-4">리뷰 등록하기</a>
             </div>
-            <div class="row">
-                <div th:each="reviewBoard : ${paging}" class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body d-flex flex-column justify-content-between"> <!-- 카드 바디를 열기 전에 d-flex flex-column justify-content-between 클래스 추가 -->
-                            <h5 class="card-title">
-                                <a th:href="@{|/review/board/detail/${reviewBoard.id}|}" th:text="${reviewBoard.subject}"></a>
-                            </h5>
-                                <h6 class="card-subtitle mb-2 text-muted" th:text="${reviewBoard.author.nickname}"></h6>
-                                <!-- 이미지 표시 -->
-<!--                            <div class="mb-3" style="height: 300px; overflow: hidden;">-->
-<!--                                <img th:if="${#strings.length(reviewBoard.getFirstImageUrl()) > 0}"-->
-<!--                                     th:src="${reviewBoard.getFirstImageUrl()}"-->
-<!--                                     class="card-img-top img-fluid rounded"-->
-<!--                                     style="width: 100%; height: auto; object-fit: cover;">-->
-<!--                                <img th:if="${#strings.length(reviewBoard.getFirstImageUrl()) == 0}"-->
-<!--                                     th:src="@{/img/unicorn.png}"-->
-<!--                                     class="card-img-top img-fluid rounded"-->
-<!--                                     style="width: 100%; height: auto; object-fit: cover;">-->
-<!--                             이 코드 저번까진 됐는데 갑자기 안됨 ㅜㅜ 뭐가 문제지........-->
-<!--                            </div>-->
-                            <div class="mb-3" style="height: 300px; overflow: hidden;">
-                                <img th:if="${reviewBoard.getFirstImageUrl() != null and #strings.length(reviewBoard.getFirstImageUrl()) > 0}"
-                                     th:src="${reviewBoard.getFirstImageUrl()}"
-                                     class="card-img-top img-fluid rounded"
-                                     style="width: 100%; height: auto; object-fit: cover;">
-                                <img th:if="${reviewBoard.getFirstImageUrl() == null or #strings.length(reviewBoard.getFirstImageUrl()) == 0}"
-                                     th:src="@{/img/unicorn.png}"
-                                     class="card-img-top img-fluid rounded"
-                                     style="width: 100%; height: auto; object-fit: cover;">
-                            </div>
+    <div class="row">
+        <div th:each="reviewBoard : ${paging}" class="col-md-4 mb-4">
+            <a th:href="@{|/review/board/detail/${reviewBoard.id}|}" class="card h-100 card-link">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <h5 class="card-title" th:text="${reviewBoard.subject}"></h5>
+                    <h6 class="card-subtitle mb-2 text-muted" th:text="${reviewBoard.author.nickname}"></h6>
 
-
-                            <!-- 기타 정보 표시 -->
-                                <p class="card-text">
-                                    조회수: <span th:text="${reviewBoard.count}"></span><br>
-                                    등록일: <span th:text="${#temporals.format(reviewBoard.createDate, 'yyyy-MM-dd HH:mm')}"></span>
-                                </p>
-                        </div>
+                    <!-- 이미지 표시 -->
+                    <div class="mb-3" style="height: 300px; overflow: hidden; display: flex; justify-content: center; align-items: center;">
+                        <img th:if="${reviewBoard.getFirstImageUrl() != null and #strings.length(reviewBoard.getFirstImageUrl()) > 0}"
+                             th:src="${reviewBoard.getFirstImageUrl()}"
+                             class="card-img-top img-fluid rounded"
+                             style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                        <img th:if="${reviewBoard.getFirstImageUrl() == null or #strings.length(reviewBoard.getFirstImageUrl()) == 0}"
+                             th:src="@{/img/logo/placeholder.png}"
+                             class="card-img-top img-fluid rounded"
+                             style="max-width: 100%; max-height: 100%; object-fit: contain;">
                     </div>
+
+                    <!-- 기타 정보 표시 -->
+                    <p class="card-text" style="color: black;" >
+                        조회수: <span th:text="${reviewBoard.count}"></span><br>
+                        등록일: <span th:text="${#temporals.format(reviewBoard.createDate, 'yyyy-MM-dd HH:mm')}"></span><br>
+                        추천수: <span  th:text="${reviewBoard.voterCount}">0></span>
+                    </p>
                 </div>
-            </div>
+            </a>
+        </div>
+    </div>
 
     <!-- 페이징처리 시작 -->
     <div th:if="${!paging.empty}" class="pagination-container justify-content-center">
@@ -79,7 +67,7 @@
             <li class="page-item" th:classappend="${paging.first} ? 'disabled'">
                 <a class="page-link" href="#" th:attr="data-page=${paging.number - 1}" aria-label="Previous">
                     <span aria-hidden="true"></span>
-                    <span class="sr-only">이전</span>
+                    <span class="sr-only">&laquo;</span>
                 </a>
             </li>
             <li th:each="page: ${#numbers.sequence(0, paging.totalPages - 1)}"
@@ -89,7 +77,7 @@
             <li class="page-item" th:classappend="${paging.last} ? 'disabled'">
                 <a class="page-link" href="#" th:attr="data-page=${paging.number + 1}" aria-label="Next">
                     <span aria-hidden="true"></span>
-                    <span class="sr-only">다음</span>
+                    <span class="sr-only">&raquo;</span>
                 </a>
             </li>
         </ul>

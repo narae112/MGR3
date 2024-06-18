@@ -1,19 +1,27 @@
 package com.MGR.service;
 
 
+import com.MGR.entity.Image;
 import com.MGR.entity.Member;
+import com.MGR.entity.Order;
 import com.MGR.exception.DataNotFoundException;
 import com.MGR.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,6 +31,7 @@ public class MemberService{
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ImageService imageService;
 
     public Optional<Member> findByEmail(String email) {
         return memberRepository.findByEmail(email);
@@ -77,6 +86,38 @@ public class MemberService{
         return memberRepository.findAll();
     }
 
+//    public Page<Member> getAllMembers(Integer page) {
+//        List<Member> memberList = memberRepository.findAll();
+//
+//        List<Member> sortedList = memberList.stream()
+//                .sorted(Comparator.comparing(Member::getId))
+//                .toList();
+//
+//        List<Sort.Order> sorts = new ArrayList<>();
+//        sorts.add(Sort.Order.desc("id"));
+//        Pageable pageable = PageRequest.of(page, 5, Sort.by(sorts));
+//
+//        int start = (int) pageable.getOffset();
+//        int end = Math.min((start + pageable.getPageSize()), sortedList.size());
+//
+//        List<Member> pagedList = new ArrayList<>();
+//        if (start <= end) {
+//            pagedList = sortedList.subList(start, end);
+//        }
+//
+//        return new PageImpl<>(pagedList, pageable, sortedList.size());
+//    }
+
+//    public Page<Member> getAllMembers(Integer page) {
+//        Pageable pageable = PageRequest.of(page, 5, Sort.by(Sort.Order.desc("id")));
+//        return memberRepository.findAll(pageable);
+//    }
+
+    public Page<Member> getAllMembers(Integer page) {
+        Pageable pageable = PageRequest.of(page, 5, Sort.by(Sort.Order.desc("id")));
+        return memberRepository.findByRole("ROLE_USER", pageable);
+    }
+
     public List<Member> findByAllUser() {
         //member 의 role 이 User 인 것만 찾기
         return memberRepository.findAll()
@@ -90,5 +131,25 @@ public class MemberService{
         return memberRepository.findByBirth(todayStr);
     }
 
+
+    public List<Member> findAll() {
+        return memberRepository.findAll();
+    }
+
+    public String saveProfileImg(Member member, MultipartFile profileImgFile) throws Exception {
+        Image image = imageService.findByMember(member);
+
+        if (image == null) {
+            image = new Image();
+            image.setMember(member);
+        }
+
+        imageService.saveProfileImage(image, profileImgFile);
+        return image.getImgUrl(); // 이미지 URL 반환
+    }
+
+    public Optional<Member> findByNickname(String nickname) {
+        return memberRepository.findByNickname(nickname);
+    }
 
 }

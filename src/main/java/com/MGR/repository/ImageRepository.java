@@ -1,13 +1,9 @@
 package com.MGR.repository;
 
-import com.MGR.entity.Attraction;
-import com.MGR.entity.EventBoard;
-import com.MGR.entity.Image;
-import com.MGR.entity.Member;
+import com.MGR.entity.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ImageRepository extends JpaRepository<Image, Long> {
     List<Image> findByTicketIdOrderByIdAsc(Long ticketId);
@@ -28,4 +24,12 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
     Image findByEventBoard(EventBoard eventBoard);
 
     Image findByAttraction(Attraction attraction);
+
+    Image findByTicket(Ticket ticket);
+
+    Image findByMember(Member member);
+
+    List<Image> findByGoWithBoardIdOrderByIdAsc(Long goWithBoardId);
+
+    List<Image> findByGoWithBoardId(Long goWithBoardId);
 }

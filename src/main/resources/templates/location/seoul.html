@@ -6,7 +6,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>오시는 길</title>
     <style>
         li {
             list-style: none;
@@ -118,110 +117,147 @@
         th {
             background-color: #f2f2f2;
         }
+        .map-container {
+    width: calc(50% - 30px); /* 두 지도를 나란히 배치하기 위해 20px 여백을 뺀 너비로 설정 */
+    max-width: 500px; /* 각 지도의 최대 너비 설정 */
+    height: 400px; /* 지도의 높이 설정 */
+    margin: 10px; /* 여백 설정 */
+    box-sizing: border-box; /* 여백 포함해서 너비 설정 */
+    display: inline-block; /* 요소를 인라인 블록 요소로 설정하여 나란히 배치 */
+}
     </style>
 </head>
 <body>
 <div layout:fragment="content">
-    <h2 class="title">오시는 길</h2>
+    <h2 class="title">서울점</h2>
+    <a href="/location" class="btn btn-primary btn-lg mt-3">부산점 보러가기</a>
     <div class="container mgr">
-        <div id="map1"></div> <!-- 수정된 부분 -->
-        <div id="map2"></div> <!-- 수정된 부분 -->
+        <div class="map-container">
+            <div id="map1"></div>
+            <h4 style="text-align: center;">위치</h4>
+        </div>
+        <div class="map-container">
+            <div id="map2"></div>
+            <h4 style="text-align: center;">근처 맛집</h4>
+        </div>
     </div>
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=91a33b69084e7e19defca68fb0f0f32a"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=161f466b56568422496327f4f5d31195"></script>
     <script>
         // 첫 번째 지도 설정
-        var mapContainer1 = document.getElementById('map1');
-        var mapOption1 = {
-            center: new kakao.maps.LatLng(37.511116200799286, 127.09809942237753),
-            level: 3
-        };
-        var map1 = new kakao.maps.Map(mapContainer1, mapOption1);
-        var marker1 = new kakao.maps.Marker({
-            position: map1.getCenter()
-        });
-        var infowindow1 = new kakao.maps.InfoWindow({
-            content: '<div style="padding:5px;">MERRY GO RIDE</div>'
-        });
-        marker1.setMap(map1); // 마커를 지도에 표시
-        kakao.maps.event.addListener(marker1, 'click', function() {
-            infowindow1.open(map1, marker1);
-        });
+          var mapContainer1 = document.getElementById('map1');
+          var mapOption1 = {
+              center: new kakao.maps.LatLng(37.511116200799286, 127.09809942237753),
+              level: 3
+          };
+          var map1 = new kakao.maps.Map(mapContainer1, mapOption1);
+          var marker1 = new kakao.maps.Marker({
+              position: map1.getCenter()
+          });
+          var infowindow1 = new kakao.maps.InfoWindow({
+              content: '<div style="padding:5px;">MERRY GO RIDE</div>'
+          });
+          marker1.setMap(map1); // 마커를 지도에 표시
+          kakao.maps.event.addListener(marker1, 'click', function() {
+              infowindow1.open(map1, marker1);
+          });
+          infowindow1.open(map1, marker1);
 
-        // 두 번째 지도 설정
-        var mapContainer2 = document.getElementById('map2');
-        var mapOption2 = {
-            center: new kakao.maps.LatLng(37.511116200799286, 127.09809942237753), // 밥집의 좌표로 지도 중심 설정
-            level: 3
-        };
-        var map2 = new kakao.maps.Map(mapContainer2, mapOption2);
-        var infowindow2 = new kakao.maps.InfoWindow({ zIndex: 1 });
+      // 두 번째 지도 설정
+      var mapContainer2 = document.getElementById('map2');
+      var mapOption2 = {
+          center: new kakao.maps.LatLng(37.511116200799286, 127.09809942237753), // 밥집의 좌표로 지도 중심 설정
+          level: 3
+      };
+      var map2 = new kakao.maps.Map(mapContainer2, mapOption2);
+      var infowindow2 = new kakao.maps.InfoWindow({ zIndex: 1 });
 
-        // 밥집의 위치를 마커로 표시
-        var marker2 = new kakao.maps.Marker({
-            map: map2,
-            position: new kakao.maps.LatLng( 37.51181091359397, 127.09805282650211)
-        });
+      // 마커2 생성
+      var marker2 = new kakao.maps.Marker({
+          position: new kakao.maps.LatLng(37.51181091359397, 127.09805282650211),
+          map: map2
+      });
 
-        // 마커를 클릭하면 인포윈도우를 표시
-        kakao.maps.event.addListener(marker2, 'click', function() {
-            infowindow2.setContent('<div style="padding:5px;font-size:12px;">더식당</div>');
-            infowindow2.open(map2, marker2);
-        });
-           var marker3 = new kakao.maps.Marker({
-            map: map2,
-            position: new kakao.maps.LatLng(37.511586716895025, 127.09677442345803)
-        });
+      // 인포윈도우2 생성
+      var infowindow2_2 = new kakao.maps.InfoWindow({
+          content: '<div style="padding:5px;font-size:12px;">더식당</div>'
+      });
 
-        // 마커를 클릭하면 인포윈도우를 표시
-        kakao.maps.event.addListener(marker3, 'click', function() {
-            infowindow2.setContent('<div style="padding:5px;font-size:12px;">포메인 잠실점</div>');
-            infowindow2.open(map2, marker3);
-        });
-           var marker4 = new kakao.maps.Marker({
-            map: map2,
-            position: new kakao.maps.LatLng(37.51078435943558, 127.09733891678627)
-        });
+      // 인포윈도우2 표시
+      infowindow2_2.open(map2, marker2);
 
-        // 마커를 클릭하면 인포윈도우를 표시
-        kakao.maps.event.addListener(marker4, 'click', function() {
-            infowindow2.setContent('<div style="padding:5px;font-size:12px;">애슐리 퀸즈 잠실점</div>');
-            infowindow2.open(map2, marker4);
-        });
-           var marker5 = new kakao.maps.Marker({
-            map: map2,
-            position: new kakao.maps.LatLng(37.511929301658256, 127.09652602910934)
-        });
+      // 마커3 생성
+      var marker3 = new kakao.maps.Marker({
+          position: new kakao.maps.LatLng(37.511586716895025, 127.09677442345803),
+          map: map2
+      });
 
-        // 마커를 클릭하면 인포윈도우를 표시
-        kakao.maps.event.addListener(marker5, 'click', function() {
-            infowindow2.setContent('<div style="padding:5px;font-size:12px;">로얄테라스가든</div>');
-            infowindow2.open(map2, marker5);
-        });
+      // 인포윈도우3 생성
+      var infowindow3 = new kakao.maps.InfoWindow({
+          content: '<div style="padding:5px;font-size:12px;">포메인 잠실점</div>'
+      });
 
-          var marker6 = new kakao.maps.Marker({
-            map: map2,
-            position: new kakao.maps.LatLng(37.51077532143716, 127.09737283679966)
-        });
+      // 인포윈도우3 표시
+      infowindow3.open(map2, marker3);
 
-        // 마커를 클릭하면 인포윈도우를 표시
-        kakao.maps.event.addListener(marker6, 'click', function() {
-            infowindow2.setContent('<div style="padding:5px;font-size:12px;">홍짜장</div>');
-            infowindow2.open(map2, marker6);
-        });
-          var marker7 = new kakao.maps.Marker({
-            map: map2,
-            position: new kakao.maps.LatLng(37.51117917212295, 127.09929617094896 )
-        });
+      // 마커4 생성
+      var marker4 = new kakao.maps.Marker({
+          position: new kakao.maps.LatLng(37.51078435943558, 127.09733891678627),
+          map: map2
+      });
 
-        // 마커를 클릭하면 인포윈도우를 표시
-        kakao.maps.event.addListener(marker7, 'click', function() {
-            infowindow2.setContent('<div style="padding:5px;font-size:12px;">누들코트</div>');
-            infowindow2.open(map2, marker7);
-        });
-        // 추가 마커들도 위와 같은 방법으로 설정하면 됩니다.
+      // 인포윈도우4 생성
+      var infowindow4 = new kakao.maps.InfoWindow({
+          content: '<div style="padding:5px;font-size:12px;">애슐리 퀸즈 잠실점</div>'
+      });
+
+      // 인포윈도우4 표시
+      infowindow4.open(map2, marker4);
+
+<!--      // 마커5 생성-->
+<!--      var marker5 = new kakao.maps.Marker({-->
+<!--          position: new kakao.maps.LatLng(37.511929301658256, 127.09652602910934),-->
+<!--          map: map2-->
+<!--      });-->
+
+<!--      // 인포윈도우5 생성-->
+<!--      var infowindow5 = new kakao.maps.InfoWindow({-->
+<!--          content: '<div style="padding:5px;font-size:12px;">로얄테라스가든</div>'-->
+<!--      });-->
+
+<!--      // 인포윈도우5 표시-->
+<!--      infowindow5.open(map2, marker5);-->
+
+<!--      // 마커6 생성-->
+<!--      var marker6 = new kakao.maps.Marker({-->
+<!--          position: new kakao.maps.LatLng(37.51077532143716, 127.09737283679966),-->
+<!--          map: map2-->
+<!--      });-->
+
+<!--      // 인포윈도우6 생성-->
+<!--      var infowindow6 = new kakao.maps.InfoWindow({-->
+<!--          content: '<div style="padding:5px;font-size:12px;">홍짜장</div>'-->
+<!--      });-->
+
+<!--      // 인포윈도우6 표시-->
+<!--      infowindow6.open(map2, marker6);-->
+
+      // 마커7 생성
+      var marker7 = new kakao.maps.Marker({
+          position: new kakao.maps.LatLng(37.51117917212295, 127.09929617094896),
+          map: map2
+      });
+
+      // 인포윈도우7 생성
+      var infowindow7 = new kakao.maps.InfoWindow({
+          content: '<div style="padding:5px;font-size:12px;">누들코트</div>'
+      });
+
+      // 인포윈도우7 표시
+      infowindow7.open(map2, marker7);
+
     </script>
     <div class="button mgr">
-        <a href="https://kko.to/92UskdgEOE" title="카카오지도 새창열기" target="_blank" class="btn btn-primary btn-lg mt-3">카카오지도 보러가기</a>
+        <a href="https://kko.to/92UskdgEOE"  class="btn btn-primary btn-lg mt-5">카카오지도 보러가기</a>
     </div>
     <div class="container mgr">
         <div class="section subway">

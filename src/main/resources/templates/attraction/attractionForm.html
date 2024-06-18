@@ -14,14 +14,80 @@
 <!-- js -->
 <th:block layout:fragment="script">
     <script th:inline="javascript">
+        $(document).ready(function() {
 
+           // 파일 선택 이벤트 핸들러
+           $(".custom-file-input").on("change", function() {
+               var fileName = $(this).val().split("\\").pop();
+               if (fileName === '') {
+                   alert("파일을 선택해주세요."); // 파일을 선택하지 않았을 때 알림 창 표시
+                   return;
+               }
+
+               // 파일 확장자를 가져옵니다.
+               var fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+
+               // 이미지 파일 확장자인지 확인합니다.
+               if (fileExt != "jpg" && fileExt != "jpeg" && fileExt != "gif" && fileExt != "png" && fileExt != "bmp") {
+                   // 이미지 파일이 아니면 오류를 표시합니다.
+                   alert("이미지 파일만 등록이 가능합니다.");
+                   // 파일 선택 초기화
+                   $(this).val('');
+                   $(this).siblings(".custom-file-label").html('파일을 선택해주세요');
+                   return;
+               }
+
+               $(this).siblings(".custom-file-label").html(fileName);
+           });
+       });
+
+   function validateForm() {
+       var imgFileInput = document.querySelector('input[name="imgFile"]');
+       var errorMessage = document.getElementById('img-error-message');
+       if (imgFileInput && !imgFileInput.files.length) {
+           alert("이미지 파일을 첨부해 주세요.");
+           return false;
+       }
+       errorMessage.style.display = 'none';
+       return true;
+   }
+
+    // 초기화 함수 호출
+    $(document).ready(function() {
+        bindDomEvent();
+    });
+
+    function bindDomEvent() {
+        $(".custom-file-input").on("change", function() {
+            var fileName = $(this).val().split("\\").pop();
+            if (fileName === '') {
+                alert("파일을 선택해주세요."); // 파일을 선택하지 않았을 때 알림 창 표시
+                return;
+            }
+
+            // 파일 확장자를 가져옵니다.
+            var fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+
+            // 이미지 파일 확장자인지 확인합니다.
+            if (fileExt != "jpg" && fileExt != "jpeg" && fileExt != "gif" && fileExt != "png" && fileExt != "bmp") {
+                // 이미지 파일이 아니면 오류를 표시합니다.
+                alert("이미지 파일만 등록이 가능합니다.");
+                // 파일 선택 초기화
+                $(this).val('');
+                $(this).siblings(".custom-file-label").html('파일을 선택해주세요');
+                return;
+            }
+
+            $(this).siblings(".custom-file-label").html(fileName);
+        });
+    }
     </script>
 </th:block>
 
 <div layout:fragment="content">
 
     <form th:action="@{/attraction/create}" method="POST"
-          th:object="${attractionDto}" enctype="multipart/form-data">
+          th:object="${attractionDto}" enctype="multipart/form-data" onsubmit="return validateForm();">
         <input type="hidden" id="attractionId" name="id" class="form-control"
                th:field="*{id}">
 
@@ -39,7 +105,7 @@
 
         <div class="mb-3">
             <label th:for="closureDay">운휴 일자</label>
-            <input th:field="*{closureDay}" class="form-control" type="number" placeholder="운휴 일자를 입력하세요" required/>
+            <input th:field="*{closureDay}" class="form-control" type="number" placeholder="운휴 일자를 입력하세요"  min="1" max="31" required/>
             <span th:errors="*{closureDay}"></span>
         </div>
 

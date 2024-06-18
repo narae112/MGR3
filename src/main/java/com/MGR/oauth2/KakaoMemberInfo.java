@@ -38,4 +38,10 @@ public class KakaoMemberInfo implements OAuth2MemberInfo{
     public String getEmail() {
         return kakaoAccountAttributes.get("email").toString();
     }
+
+    @Override
+    public String getProfileImgUrl(){
+        return profileAttributes.get("profile_image_url").toString();
+    }
+
 }

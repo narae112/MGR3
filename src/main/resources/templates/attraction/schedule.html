@@ -12,12 +12,26 @@
             justify-content: center;
             overflow-x: auto;
             white-space: nowrap;
+            min-height: 250px; /* 최소 높이 지정 */
         }
         .carousel-item-schedule {
             flex: 0 0 auto;
             text-align: center;
             margin: 0 10px;
         }
+        .carousel-item-schedule img {
+            width: 300px; /* 고정된 가로 크기 */
+            height: 200px; /* 고정된 세로 크기 */
+            object-fit: cover; /* 이미지를 컨테이너에 맞추되, 비율을 유지하며 잘라냄 */
+            margin: 20px 10px;
+        }
+        .carousel-item-schedule img.placeholder-image {
+            width: 300px; /* 고정된 가로 크기 */
+            height: 200px; /* 고정된 세로 크기 */
+            object-fit: contain; /* 이미지를 컨테이너에 맞추되, 비율을 유지하며 잘라냄 */
+            margin: 20px 10px;
+        }
+
         .date-navigation {
             display: flex;
             justify-content: center;
@@ -62,10 +76,10 @@
 
 <div layout:fragment="content">
 
-    <h2 class="center">운휴 일정</h2>
+    <h3 class="mb-5 text-center">운휴 일정</h3>
     <hr class="my-4">
 
-    <div class="date-navigation">
+    <div class="date-navigation my-4">
         <button id="prevButton" class="btn btn-primary">&lt;</button>
         <h2 id="currentDate" th:text="${#temporals.format(schedule, 'yyyy-MM-dd')}"
             th:data-date="${#temporals.format(schedule, 'yyyy-MM-dd')}"></h2>
@@ -73,8 +87,12 @@
     </div>
 
     <div class="carousel-schedule">
-        <div th:each="attraction : ${attractionList}" class="carousel-item-schedule">
-            <img th:src="${imageUrls[attraction.id]}" alt="이미지" style="width:200px;height:auto;">
+        <div th:if="${#lists.isEmpty(attractionList)}" class="carousel-item-schedule">
+            <img th:src="@{/img/logo/placeholder.png}" alt="로고" class="placeholder-image">
+            <h3>모든 어트랙션을 이용 할 수 있습니다.</h3>
+        </div>
+        <div th:each="attraction : ${attractionList}" class="carousel-item-schedule" th:unless="${#lists.isEmpty(attractionList)}">
+            <img th:src="${imageUrls[attraction.id]}" alt="이미지">
             <h3 th:text="${attraction.name}">이름</h3>
         </div>
     </div>

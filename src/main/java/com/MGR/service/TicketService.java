@@ -6,7 +6,6 @@ import com.MGR.dto.MainTicketDto;
 import com.MGR.dto.TicketFormDto;
 import com.MGR.dto.TicketSearchDto;
 import com.MGR.entity.*;
-import com.MGR.exception.DuplicateTicketNameException;
 import com.MGR.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -46,11 +45,6 @@ public class TicketService {
     }
     
     public Long saveTicket(TicketFormDto ticketFormDto, List<MultipartFile> ticketImgFileList) throws Exception {
-        boolean isDuplicate =isTicketNameDuplicated (ticketFormDto.getName());
-        if (isDuplicate) {
-            throw new DuplicateTicketNameException("중복된 티켓 정보가 존재합니다.");
-        }
-
         // 티켓 저장
         Ticket ticket = ticketFormDto.createTicket();
         ticketRepository.save(ticket);
@@ -68,16 +62,31 @@ public class TicketService {
             imageService.saveTicketImage(ticketImage, ticketImgFileList.get(i));
         }
 
+        //재고 생성
+
+        // 시작일(startDate)부터 종료일(endDate)까지의 기간을 계산하여 재고 생성
+        LocalDate currentDate = ticket.getStartDate();
+        LocalDate endDate = ticket.getEndDate();
+
+        while (!currentDate.isAfter(endDate)) {
+            // 재고 생성
+            Inventory inventory = Inventory.createInventory(ticket, 100, currentDate);
+            inventoryRepository.save(inventory);
+
+            // 다음 날짜로 이동
+            currentDate = currentDate.plusDays(1);
+        }
+
         return ticket.getId();
     }
 
 
-    public boolean isTicketNameDuplicated(String name) {
-        return ticketRepository.existsByName(name);
-    }
-    public boolean isExistedTicketNameDuplicated(String name, Long excludeId) {
-        return ticketRepository.existsByNameAndIdNot(name, excludeId);
-    }
+//    public boolean isTicketNameDuplicated(String name) {
+//        return ticketRepository.existsByName(name);
+//    }
+//    public boolean isExistedTicketNameDuplicated(String name, Long excludeId) {
+//        return ticketRepository.existsByNameAndIdNot(name, excludeId);
+//    }
     //티켓 데이터를 읽어오는 함수
     @Transactional(readOnly = true)
     public TicketFormDto getTicketDtl(Long ticketId){
@@ -97,29 +106,53 @@ public class TicketService {
 
     @Transactional
 
-    public Long updateTicket(TicketFormDto ticketFormDto, List<MultipartFile> ticketImgFileList) throws Exception {
-//        boolean isDuplicate = isDuplicateTicket(ticketFormDto);
-//        if (isDuplicate) {
-//            throw new DuplicateTicketNameException("중복된 티켓 정보가 존재합니다.");
-//        }
-
+    public Ticket updateTicket(Long id, TicketFormDto ticketFormDto, List<MultipartFile> ticketImgFileList) throws Exception {
+        Ticket ticket = ticketRepository.findById(id).orElseThrow();
         // 업데이트할 티켓을 가져옵니다.
-        Ticket ticketToUpdate = ticketRepository.findById(ticketFormDto.getId())
-                .orElseThrow(() -> new EntityNotFoundException("티켓을 찾을 수 없습니다. ID: " + ticketFormDto.getId()));
 
-        // 티켓 정보 업데이트
-        ticketToUpdate.updateTicket(ticketFormDto);
-        ticketRepository.save(ticketToUpdate);
+        // endDate를 변경한 경우
+        LocalDate oldEndDate = ticket.getEndDate();
+        LocalDate newEndDate = ticketFormDto.getEndDate();
 
-        // 이미지 업데이트
-        List<Long> ticketImgIds = ticketFormDto.getTicketImgIds();
-        for (int i = 0; i < ticketImgIds.size(); i++) {
-            Long imgId = ticketImgIds.get(i);
-            MultipartFile imgFile = ticketImgFileList.get(i);
-            imageService.updateTicketImage(imgId, imgFile);
+        // endDate가 변경된 경우에만 재고 업데이트
+        if (!oldEndDate.equals(newEndDate)) {
+            // endDate가 앞당겨진 경우, 기존 endDate 이후의 재고 삭제
+            if (newEndDate.isBefore(oldEndDate)) {
+                // endDate 이후의 재고 삭제
+                inventoryRepository.deleteByTicketAndDateAfter(ticket, newEndDate);
+            }
+            // endDate가 뒤로 늘어난 경우, 새로운 endDate 이후의 재고 추가
+            else {
+                // 시작일(startDate)부터 새로운 endDate까지의 기간을 계산하여 재고 생성
+                LocalDate currentDate = oldEndDate.plusDays(1); // 기존 endDate 다음 날부터 시작
+                while (!currentDate.isAfter(newEndDate)) {
+                    // 재고 생성
+                    Inventory inventory = Inventory.createInventory(ticket, 100, currentDate);
+                    inventoryRepository.save(inventory);
+
+                    // 다음 날짜로 이동
+                    currentDate = currentDate.plusDays(1);
+                }
+            }
         }
 
-        return ticketToUpdate.getId();
+        ticket.setName(ticketFormDto.getName());
+        ticket.setAdultPrice(ticketFormDto.getAdultPrice());
+        ticket.setChildPrice(ticketFormDto.getChildPrice());
+        ticket.setLocationCategory(ticketFormDto.getLocationCategory());
+        ticket.setMemo(ticketFormDto.getMemo());
+        ticket.setStartDate(ticketFormDto.getStartDate());
+        ticket.setEndDate(ticketFormDto.getEndDate());
+
+        ticketRepository.save(ticket);
+
+        Image findImage = imageService.findByTicket(ticket);
+
+        MultipartFile imgFile = ticketImgFileList.get(0);
+
+        imageService.saveTicketImage(findImage, imgFile);
+
+        return ticket;
     }
 
     @Transactional

@@ -2,16 +2,17 @@ package com.MGR.controller;
 
 import com.MGR.dto.EventBoardFormDto;
 import com.MGR.dto.MemberFormDto;
-import com.MGR.entity.Coupon;
-import com.MGR.entity.Member;
-import com.MGR.entity.MemberCoupon;
+import com.MGR.entity.*;
 import com.MGR.repository.MemberCouponRepository;
 //import com.MGR.security.CustomUserDetails;
+import com.MGR.repository.MemberCouponService;
 import com.MGR.security.PrincipalDetails;
 import com.MGR.service.CouponService;
 import com.MGR.service.MemberService;
+import com.MGR.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -20,10 +21,15 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.*;
 
 @Controller
 @RequestMapping("/member")
@@ -32,8 +38,9 @@ public class MemberController {
 
     private final MemberService memberService;
     private final PasswordEncoder passwordEncoder;
-    private final MemberCouponRepository memberCouponRepository;
     private final CouponService couponService;
+    private final MemberCouponService memberCouponService;
+    private final OrderService orderService;
 
     @PostMapping("/create")
     public String createMember(@Valid MemberFormDto memberFormDto,
@@ -61,7 +68,7 @@ public class MemberController {
         System.out.println("memberInfo: " + memberInfo); // 로깅 추가
         model.addAttribute("memberInfo", memberInfo);
 
-        return "/member/editForm";
+        return "member/editForm";
     }
 
     @GetMapping("/changePasswordForm")
@@ -71,7 +78,7 @@ public class MemberController {
         System.out.println("memberInfo: " + memberInfo); // 로깅 추가
         model.addAttribute("memberInfo", memberInfo);
 
-        return "/member/changePasswordForm";
+        return "member/changePasswordForm";
     }
 
     @PostMapping("/editNickname/{id}")
@@ -150,27 +157,72 @@ public class MemberController {
         //회원정보 변경 전 비밀번호 인증
     }
 
-    @GetMapping("/myPage")
-    public String myPage(Model model, @AuthenticationPrincipal PrincipalDetails member){
+    @GetMapping({"/myCoupon", "/myCoupon/{page}"})
+    public String myCoupon(Model model, @AuthenticationPrincipal PrincipalDetails member,
+                         @PathVariable(value = "page", required = false) Integer page){
+        if (page == null) {
+            page = 0; // 페이지 값이 없을 경우 기본값을 0으로 설정
+        }
+        Long id = member.getId(); // 현재 인증 되어있는 사용자의 id로
 
-        Long memberId = member.getId(); // 현재 인증 되어있는 사용자의 id로
-
-        List<MemberCoupon> memberCouponList = memberCouponRepository.findAllByMemberId(memberId);//member coupon 을 전부 찾아서
-        model.addAttribute("memberCouponList", memberCouponList); // 반환
+        Page<MemberCoupon> paging = memberCouponService.getCouponList(page, id); // 반환
+        model.addAttribute("paging", paging);
 
         List<Coupon> couponList = new ArrayList<>();
-        for (MemberCoupon memberCoupon : memberCouponList) {
+
+        for (MemberCoupon memberCoupon : paging) {
             Coupon coupon = couponService.findById(memberCoupon.getCoupon().getId());
             memberCoupon.setCoupon(coupon); // MemberCoupon 객체에 Coupon 객체 설정
             couponList.add(coupon);
-            // member coupon 쿠폰의 id로 coupon 찾아서
         }
 
         model.addAttribute("couponList", couponList); // 반환
 
-        return "member/myPage";
+        return "member/myCoupon";
     }
 
+    @GetMapping({"/memberList", "/memberList/{page}"})
+    public String memberList(Model model,
+                           @PathVariable(value = "page", required = false) Integer page){
+
+        if (page == null) {
+            page = 0; // 페이지 값이 없을 경우 기본값을 0으로 설정
+        }
+
+        Page<Member> paging = memberService.getAllMembers(page);
+        model.addAttribute("paging", paging);
+
+        List<Integer> orderCountList = new ArrayList<>();
+
+        for (Member member : paging) {
+            orderCountList.add(orderService.countByMemberId(member.getId()));
+        }
+
+        model.addAttribute("orderCountList", orderCountList); // 반환
+
+        return "member/memberList";
+    }
+
+    @PostMapping("/uploadProfileImage")
+    @ResponseBody
+    public Map<String, Object> uploadProfileImage(@RequestParam("file") MultipartFile profileImgFile,
+                                                  @AuthenticationPrincipal PrincipalDetails member) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Member findMember = memberService.findById(member.getId()).orElseThrow();
+            String imageUrl = memberService.saveProfileImg(findMember, profileImgFile);
+
+            findMember.setProfileImgUrl(imageUrl);
+            memberService.saveMember(findMember);
+
+            response.put("success", true);
+            response.put("imageUrl", imageUrl);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "이미지 업로드 중 오류 발생: " + e.getMessage());
+        }
+        return response;
+    }
 }
 
 

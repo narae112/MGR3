@@ -23,30 +23,140 @@
 <!-- js -->
 <th:block layout:fragment="script">
     <script th:inline="javascript">
+     $(document).ready(function() {
+        // 오늘 날짜를 가져오는 함수
+        function getTodayDate() {
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0'); // 1월은 0부터 시작하므로 +1
+            var yyyy = today.getFullYear();
+            return yyyy + '-' + mm + '-' + dd;
+        }
 
- $(document).ready(function() {
-    // 오늘 날짜를 가져오는 함수
-    function getTodayDate() {
-        var today = new Date();
-        var dd = String(today.getDate()).padStart(2, '0');
-        var mm = String(today.getMonth() + 1).padStart(2, '0'); // 1월은 0부터 시작하므로 +1
-        var yyyy = today.getFullYear();
-        return yyyy + '-' + mm + '-' + dd;
-    }
+        // 시작일(input id="startDate")의 값을 오늘 날짜로 설정
+        $('#startDate').val(getTodayDate());
+        $('#startDate').attr("min",getTodayDate());
 
-    // 시작일(input id="startDate")의 값을 오늘 날짜로 설정
-    $('#startDate').val(getTodayDate());
-    $('#startDate').attr("min",getTodayDate());
+        var startDate = $('#startDate').val();
+        $('#endDate').attr("min",startDate);
 
-    var startDate = $('#startDate').val();
-    $('#endDate').attr("min",startDate);
+        $('#startDate').on('change', function() {
+            var startDate = $(this).val();
+            $('#endDate').attr("min", startDate);
+        });
+        // 파일 선택 이벤트 핸들러
+        $(".custom-file-input").on("change", function() {
+            var fileName = $(this).val().split("\\").pop();
+            if (fileName === '') {
+                alert("파일을 선택해주세요."); // 파일을 선택하지 않았을 때 알림 창 표시
+                return;
+            }
 
-    $('#startDate').on('change', function() {
-        var startDate = $(this).val();
-        $('#endDate').attr("min", startDate);
+            // 파일 확장자를 가져옵니다.
+            var fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+
+            // 이미지 파일 확장자인지 확인합니다.
+            if (fileExt != "jpg" && fileExt != "jpeg" && fileExt != "gif" && fileExt != "png" && fileExt != "bmp") {
+                // 이미지 파일이 아니면 오류를 표시합니다.
+                alert("이미지 파일만 등록이 가능합니다.");
+                // 파일 선택 초기화
+                $(this).val('');
+                $(this).siblings(".custom-file-label").html('파일을 선택해주세요');
+                return;
+            }
+
+            $(this).siblings(".custom-file-label").html(fileName);
+        });
     });
 
+
+    function validateForm() {
+        var title = document.getElementById('title').value;
+        var content = document.getElementById('content').value;
+        var startDate = document.getElementById('startDate').value;
+        var endDate = document.getElementById('endDate').value;
+
+        if (!title) {
+            alert('제목을 입력하세요');
+            return false;
+        }
+        if (!content) {
+            alert('내용을 입력하세요');
+            return false;
+        }
+        if (!startDate) {
+            alert('게시 시작 일자를 입력하세요');
+            return false;
+        }
+        if (!endDate) {
+            alert('게시 종료 일자를 입력하세요');
+            return false;
+        }
+        return true;
+    }
+
+        // 초기화 함수 호출
+    $(document).ready(function() {
+        bindDomEvent();
+
+               $("form").submit(function(event) {
+        event.preventDefault();  // 기본 제출 동작을 막음
+        var form = $(this);
+        var formData = new FormData(form[0]);  // 폼 데이터를 FormData 객체로 직렬화하여 전송
+
+       $.ajax({
+    type: form.attr('method'),   // POST, GET 등
+    url: form.attr('action'),   // 요청 URL
+    data: formData,   // 직렬화된 폼 데이터
+    contentType: false,   // 데이터 타입 설정 안 함
+    processData: false,   // 데이터를 query string으로 변환 안 함
+    success: function(response) {
+        showAlert(response);   // 성공적인 메시지 표시
+        window.location.replace("/board/events");   // 성공 시 페이지 이동
+    },
+    error: function(xhr, status, error) {
+        if (xhr.status === 400) {
+            showAlert(xhr.responseText);   // 입력값 오류 메시지 표시
+        } else if (xhr.status === 404) {
+            showAlert("이벤트를 찾을 수 없습니다.");
+        } else if (xhr.status === 500) {
+            showAlert("서버 오류: " + xhr.responseText);   // 서버 오류 메시지 표시
+        } else {
+            showAlert("오류 발생: " + xhr.status + " " + xhr.statusText);   // 기타 오류 처리
+        }
+    }
 });
+    });
+ });
+ // 오류 메시지를 표시하는 함수
+       function showAlert(errorMessage) {
+           alert(errorMessage);
+       }
+
+    function bindDomEvent() {
+        $(".custom-file-input").on("change", function() {
+            var fileName = $(this).val().split("\\").pop();
+            if (fileName === '') {
+                alert("파일을 선택해주세요."); // 파일을 선택하지 않았을 때 알림 창 표시
+                return;
+            }
+
+            // 파일 확장자를 가져옵니다.
+            var fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+
+            // 이미지 파일 확장자인지 확인합니다.
+            if (fileExt != "jpg" && fileExt != "jpeg" && fileExt != "gif" && fileExt != "png" && fileExt != "bmp") {
+                // 이미지 파일이 아니면 오류를 표시합니다.
+                alert("이미지 파일만 등록이 가능합니다.");
+                // 파일 선택 초기화
+                $(this).val('');
+                $(this).siblings(".custom-file-label").html('파일을 선택해주세요');
+                return;
+            }
+
+            $(this).siblings(".custom-file-label").html(fileName);
+        });
+    }
 
 
     </script>
@@ -56,8 +166,7 @@
 <div layout:fragment="content" class="container my-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <form th:action="@{/board/eventBoard/create}" method="POST"
-                  th:object="${eventBoardFormDto}" enctype="multipart/form-data">
+            <form role="form" method="POST" th:object="${eventBoardFormDto}" enctype="multipart/form-data" onsubmit="return validateForm();">
                 <h3 class="mb-5 text-center">이벤트 등록</h3>
 
                 <div class="form-group mb-3">
@@ -102,13 +211,13 @@
                 <div class="form-group mb-3">
                     <div th:if="${#lists.isEmpty(eventImgDtoList)}">
                         <div class="form-group mb-3">
-                            <input type="file" class="form-control" name="eventImgFile" required>
+                            <input type="file" class="custom-file-input form-control" name="eventImgFile" required>
                         </div>
                     </div>
                     <div th:if="${not #lists.isEmpty(eventImgDtoList)}">
                         <div class="form-group" th:each="eventBoardFormDto, status: ${eventBoardFormDto.eventImgDtoList}">
                             <div class="form-group mb-3">
-                                <input type="file" class="form-control" name="eventImgFile" required>
+                                <input type="file" class="custom-file-input form-control" name="eventImgFile" required>
                                 <label class="custom-file-label" th:text="${not #strings.isEmpty(eventImgDtoList.imgOriName)} ? ${eventImgDtoList.imgOriName} : '상품이미지' + ${status.index+1}"></label>
                             </div>
                         </div>
@@ -116,13 +225,12 @@
                 </div>
                 <!--        이미지 등록 끝-->
 
-                <button th:if="${#strings.isEmpty(eventBoardFormDto.id)}"
-                        th:formaction="@{'/board/eventBoard/create'}"
-                        class="btn btn-primary" type="submit" id="eventBoard-create">등록</button>
+                <div>
 
-                <button th:unless="${#strings.isEmpty(eventBoardFormDto.id)}"
-                        th:formaction="@{'/board/eventBoard/update/' + ${eventBoardFormDto.id}}"
-                        class="btn btn-primary" type="submit" id="eventBoard-edit">수정완료</button>
+                    <button th:if="${eventBoardFormDto.id == null}" th:formaction="@{/board/eventBoard/new}" class="btn btn-primary" type="submit" id="eventBoard-create">등록</button>
+
+                    <button th:if="${eventBoardFormDto.id != null}" th:formaction="@{/board/eventBoard/edit/{id}(id=${eventBoardFormDto.id})}" class="btn btn-primary" type="submit" id="eventBoard-edit">수정완료</button>
+                </div>
             </form>
         </div>
     </div>
