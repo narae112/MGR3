@@ -25,6 +25,8 @@ public class QNotification extends EntityPathBase<Notification> {
 
     public final DateTimePath<java.time.LocalDateTime> createdDate = createDateTime("createdDate", java.time.LocalDateTime.class);
 
+    public final NumberPath<Long> goWidthBoardId = createNumber("goWidthBoardId", Long.class);
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final NumberPath<Long> memberId = createNumber("memberId", Long.class);
