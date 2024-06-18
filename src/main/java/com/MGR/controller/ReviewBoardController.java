@@ -67,7 +67,8 @@ public class ReviewBoardController {
         return "board/review/board_list";
     }
     @GetMapping(value = "/detail/{id}")
-    public String detail(Model model, @PathVariable("id") Long id, ReviewCommentForm reviewCommentForm) {
+    public String detail(Model model, @PathVariable("id") Long id, ReviewCommentForm reviewCommentForm,
+                         @AuthenticationPrincipal PrincipalDetails member) {
         ReviewBoard reviewBoard = this.reviewBoardService.getReviewBoard(id);
         int count = reviewBoard.viewCount();
         reviewBoard.setCount(count);
@@ -75,6 +76,14 @@ public class ReviewBoardController {
         model.addAttribute("reviewBoard", reviewBoard);
         ReviewBoardForm reviewBoardForm = reviewBoardService.getReviewBoardDtl(id);
         model.addAttribute("reviewBoardForm",reviewBoardForm);
+
+        boolean isVoted = false;
+        if(member != null){
+            Member siteMember = memberService.findById(member.getId()).orElseThrow();
+            isVoted = reviewBoard.getVoter().contains(siteMember);
+        }
+        model.addAttribute("isVoted", isVoted);
+
         return "board/review/board_detail";
     }
 
@@ -271,7 +280,8 @@ public class ReviewBoardController {
             Set<Member> voters = reviewBoard.getVoter(); // 리뷰의 추천자 목록을 가져옵니다.
             boolean isVoted = voters != null && voters.contains(siteUser);
             // 현재 사용자가 리뷰를 추천했는지 여부를 확인합니다.
-            model.addAttribute("isVoted", isVoted);
+            System.out.println("isVoted 추천여부 = " + isVoted);
+
             // 추천 여부에 따라 동작을 수행합니다.
             if (isVoted) {
                 // 이미 추천한 경우, 추천을 취소합니다.
@@ -280,6 +290,7 @@ public class ReviewBoardController {
                 // 추천하지 않은 경우, 추천을 합니다.
                 this.reviewBoardService.vote(reviewBoard, siteUser);
             }
+            redirectAttributes.addFlashAttribute("isVoted", !isVoted);
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "오류가 발생했습니다. 다시 시도해주세요.");
             System.out.println("예외 발생: {}"+e.getMessage());
