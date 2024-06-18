@@ -35,6 +35,7 @@ public class ChatRoomController {
         model.addAttribute("roomList", roomList);
         model.addAttribute("profileImgUrl", findMember.getProfileImgUrl());
         model.addAttribute("nickname", findMember.getNickname());
+        model.addAttribute("member", findMember);
         model.addAttribute("allChatList", allChatList);
         return "api/chatList";
     }

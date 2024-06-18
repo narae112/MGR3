@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
 
 <!-- CSS 스타일 시트 -->
@@ -49,14 +50,12 @@
             padding: 0;
             font-size: 0.875rem;
         }
-
         .select-search input {
             border-bottom: 1px solid #000;
             padding-bottom: 0px !important;
             border-radius: 0 !important; /* 보더 라디오스를 없애서 밑줄 표시 효과 */
             padding: 5px;
             font-size: 0.875rem; /* 폰트 크기 줄이기 */
-
         }
     </style>
 </th:block>
@@ -64,38 +63,45 @@
 <!-- 스크립트 -->
 <th:block layout:fragment="script">
     <script th:inline="javascript">
-        $(document).ready(function(){
-           var errorMessage = /*[[${errorMessage}]]*/ '';
-           if(errorMessage != null && errorMessage !== ''){
-               alert(errorMessage);
-           }
+        $(document).ready(function() {
+            var errorMessage = /*[[${errorMessage}]]*/ '';
+            if (errorMessage != null && errorMessage !== '') {
+                alert(errorMessage);
+            }
 
-           bindDomEvent();
-       });
+            $('#searchQuery').keypress(function(event) {
+                if (event.which === 13) {
+                    search();
+                }
+            });
 
-       function search() {
-           var searchPeriodType = $("#searchPeriodType").val();
-           var locationCategory = $("#locationCategory").val();
-           var searchBy = $("#searchBy").val();
-           var searchQuery = $("#searchQuery").val();
+            function search() {
+                var searchPeriodType = $("#searchPeriodType").val();
+                var locationCategory = $("#locationCategory").val();
+                var searchBy = $("#searchBy").val();
+                var searchQuery = $("#searchQuery").val();
 
-           location.href = "/tickets?searchPeriodType=" + searchPeriodType
-               + "&locationCategory=" + locationCategory
-               + "&searchBy=" + searchBy
-               + "&searchQuery=" + searchQuery;
-       }
+                location.href = "/tickets?searchPeriodType=" + searchPeriodType
+                    + "&locationCategory=" + locationCategory
+                    + "&searchBy=" + searchBy
+                    + "&searchQuery=" + searchQuery;
+            }
+
+        });
     </script>
+
 </th:block>
 
 <!-- 페이지 내용 -->
 <div layout:fragment="content" class="container my-5">
-
-    <h3 class="mb-5 text-center">티켓 목록</h3>
-
+    <h3 class="mb-5 text-center" aria-label="티켓 목록 조회" tabindex="101">티켓 목록</h3>
+    <hr class="my-4">
     <!-- 검색 폼 -->
-    <div class="form-row d-flex justify-content-center" th:object="${ticketSearchDto}">
+    <div class="form-row d-flex justify-content-center" th:object="${ticketSearchDto}"
+         aria-label="티켓 검색 메뉴" tabindex="102">
         <div class="select-container col-auto">
-            <select id="searchPeriodType" class="form-control">
+            <select id="searchPeriodType" class="ticketSearchSelect form-control"
+                    aria-label="남은 유효 기간 선택" tabindex="103">
                 <option value="all">남은 유효 기간(전체)</option>
                 <option value="1d">1일 이내</option>
                 <option value="1w">1주 이내</option>
@@ -104,7 +110,8 @@
             </select>
         </div>
         <div class="select-container col-auto">
-            <select id="locationCategory" class="form-control">
+            <select id="locationCategory" class="form-control"
+                    aria-label="남은 유효 기간 선택" tabindex="103">
                 <option value="">지역 구분(전체)</option>
                 <option value="BUSAN">부산</option>
                 <option value="SEOUL">서울</option>

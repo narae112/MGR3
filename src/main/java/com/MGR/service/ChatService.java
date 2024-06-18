@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -132,4 +133,18 @@ public class ChatService {
 
         return response;
     }
+
+    public List<Chat> updateReadStatus(Long roomId, Long userId) {
+        List<Chat> chats = chatRepository.findAllByRoomId(roomId);
+        List<Chat> updatedChats = new ArrayList<>();
+        for (Chat chat : chats) {
+            if (!chat.getSender().getId().equals(userId) && !chat.getIsRead()) {
+                chat.setIsRead(true);
+                chatRepository.save(chat);
+                updatedChats.add(chat);
+            }
+        }
+        return updatedChats;
+    }
+
 }
