@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,6 +42,36 @@ public class PaymentController {
         model.addAttribute("totalPages", paging.getTotalPages());
 
         return "order/paymentList";
+    }
+
+
+    @GetMapping({"/admin/paymentGraph", "/admin/paymentGraph/{page}"})
+    public String paymentGraph(Model model, @PathVariable(value = "page", required = false) Integer page) {
+        if (page == null || page < 0) {
+            page = 0;
+        }
+
+        Page<OrderListDto> paging = orderService.getAllOrderList(page);
+        Map<String, Member> memberMap = new HashMap<>();
+
+        // 각 주문에 대한 멤버 정보 가져오기
+        for (OrderListDto orderDto : paging.getContent()) {
+            Order order = orderService.findOrderByOrderNum(orderDto.getOrderNum());
+            if (order != null) {
+                Member member = order.getMember();
+                memberMap.put(orderDto.getOrderNum(), member);
+            }
+        }
+
+        // 날짜별 총 결제 금액 가져오기
+        Map<LocalDate, Integer> totalPriceByDate = orderService.getTotalPriceByDate(paging.getContent());
+
+        model.addAttribute("paging", paging);
+        model.addAttribute("memberMap", memberMap);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", paging.getTotalPages());
+        model.addAttribute("totalPriceByDate", totalPriceByDate);
+        return "order/paymentGraph";
     }
 }
 
