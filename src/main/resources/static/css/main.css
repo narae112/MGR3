@@ -1909,7 +1909,18 @@ ol {
   visibility: visible;
 }
 
+.navbar-nav .nav-item:focus-within > .sub-menu  {
+  top: 100%;
+  opacity: 1;
+  visibility: visible;
+}
+
 .navbar-nav .nav-item:hover > .sub-menu .sub-menu {
+  left: 100%;
+  top: 0;
+}
+
+.navbar-nav .nav-item:focus > .sub-menu .sub-menu {
   left: 100%;
   top: 0;
 }
@@ -1960,7 +1971,7 @@ ol {
   transition: all 0.1s ease;
 }
 
-.navbar-nav .nav-item .sub-menu .nav-item a::before {
+.navbar-nav .nav-item .-menu .nav-item a::before {
   display: none;
 }
 
