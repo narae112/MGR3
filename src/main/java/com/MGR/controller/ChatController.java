@@ -52,8 +52,8 @@ public class ChatController {
         }
         chatService.createChat(roomId, sender, sender.getEmail(), message, sender.getProfileImgUrl());
         notificationService.sendMessage(roomId, sender.getId(), message);
-
         notificationService.sendReadEvent(roomId, receiver.getId());
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -94,6 +94,14 @@ public class ChatController {
     public ResponseEntity<Void> sendReadEvent(@RequestParam Long roomId, @RequestParam Long userId) {
         notificationService.sendReadEvent(roomId, userId);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/api/chat/updateReadStatus")
+    public ResponseEntity<Map<String, List<Chat>>> updateReadStatus(@RequestParam Long roomId, @RequestParam Long userId) {
+        List<Chat> updatedMessages = chatService.updateReadStatus(roomId, userId);
+        Map<String, List<Chat>> response = new HashMap<>();
+        response.put("updatedMessages", updatedMessages);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 

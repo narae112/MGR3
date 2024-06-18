@@ -313,6 +313,7 @@ public class NotificationService {
                 try {
                     String data = "{\"roomId\":" + roomId + ",\"userId\":" + userId + "}";
                     sseEmitter.send(SseEmitter.event().name("read").data(data));
+                    System.out.println("Read event sent: " + data);
                 } catch (IOException e) {
                     userEmitters.remove(toId);
                 }

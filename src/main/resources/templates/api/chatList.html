@@ -118,7 +118,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.34/moment-timezone-with-data.min.js"></script>
     <script th:inline="javascript">
-
         var eventSource = null;
         var roomId = 1;
         var currentRoomId = null;
@@ -135,25 +134,6 @@
             eventSource.addEventListener('chat', function (event) {
                 const message = JSON.parse(event.data);
                 showMessage(message, message.isRead ? 0 : 1); // 읽음 상태에 따라 표시
-            });
-
-            eventSource.addEventListener('read', function (event) {
-                const data = JSON.parse(event.data);
-                const roomId = data.roomId;
-                const userId = data.userId;
-
-                // 현재 방의 읽음 처리인 경우에만 업데이트
-                if (roomId === currentRoomId) {
-                    $('#chatBox .message').each(function() {
-                        const messageElement = $(this);
-                        const message = JSON.parse(messageElement.attr('data-message'));
-                        if (message.sender.nickname !== $('#senderNickname').val() && !message.isRead) {
-                            message.isRead = true;
-                            messageElement.find('.unread-count').text(0);
-                            messageElement.attr('data-message', JSON.stringify(message));
-                        }
-                    });
-                }
             });
 
             eventSource.onerror = function (event) {
@@ -201,12 +181,32 @@
         function markMessagesAsRead(roomId) {
             $.post(`/api/chats/${roomId}/read`, function() {
                 console.log('Messages marked as read');
-                sendReadEvent(roomId);
+                updateReadStatus(roomId);
             }).fail(function() {
                 console.error('Failed to mark messages as read');
             });
         }
 
+        function updateReadStatus(roomId) {
+            const userId = $('#senderId').val();
+            $.post('/api/chat/updateReadStatus', { roomId: roomId, userId: userId }, function(response) {
+                console.log('Read status updated');
+                const updatedMessages = response.updatedMessages;
+                updatedMessages.forEach(function(updatedMessage) {
+                    $('#chatBox .message').each(function() {
+                        const messageElement = $(this);
+                        const message = JSON.parse(messageElement.attr('data-message'));
+                        if (message.id === updatedMessage.id) {
+                            message.isRead = updatedMessage.isRead;
+                            messageElement.find('.unread-count').text(updatedMessage.isRead ? 0 : 1);
+                            messageElement.attr('data-message', JSON.stringify(message));
+                        }
+                    });
+                });
+            }).fail(function() {
+                console.error('Failed to update read status');
+            });
+        }
 
         function updateUnreadCount(unreadCount) {
             if (unreadCount > 0) {
@@ -258,6 +258,7 @@
             minutes = minutes < 10 ? '0' + minutes : minutes;
 
             var time = period + ' ' + hours + ':' + minutes;
+            var unreadCountText = (message.isRead ? 0 : 1) ? '<span class="unread-count">' + (message.isRead ? 0 : 1) + '</span>' : '';
 
             var messageElement =
                 '<div class="message ' + messageClass + '" data-message=\'' + JSON.stringify(message) + '\'>' +
@@ -265,7 +266,8 @@
                     '<div class="content">' +
                         '<div class="name">' + message.sender.nickname + '</div>' +
                         '<div class="text">' + message.message + '</div>' +
-                        '<div class="time"><span class="unread-count">' + (message.isRead ? 0 : 1) + '</span>' + time + '</div>' +
+<!--                        '<div class="time">' + unreadCountText + time + '</div>' +-->
+                        '<div class="time">'+ time + '</div>' +
                     '</div>' +
                 '</div>';
             $('#chatBox').append(messageElement);

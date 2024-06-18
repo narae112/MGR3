@@ -179,7 +179,7 @@
         </div>
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <h5 class="border-bottom my-3 py-2" th:text="|${#lists.size(reviewBoard.commentList)}개의 답변이 있습니다.|"></h5>
+                <h5 class="border-bottom my-3 py-2" th:text="|${#lists.size(reviewBoard.commentList)}개의 댓글이 있습니다.|"></h5>
                 <!-- 답변 반복 시작 -->
                 <div class="card my-3" th:each="reviewComment : ${reviewBoard.commentList}">
                     <a th:id="|reviewComment_${reviewComment.id}|"></a>
