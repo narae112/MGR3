@@ -52,6 +52,48 @@
         .fieldError {
             color: #bd2130;
         }
+        .password-group {
+            display: flex;
+            align-items: center;
+        }
+        .password-group input {
+            margin-right: 10px;
+        }
+        .password-group button {
+            white-space: nowrap;
+        }
+        .profile-img {
+             width: 100px;
+             height: 100px;
+             border-radius: 50%;
+             object-fit: contain;
+         }
+        .image-cell {
+        position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer; /* 클릭 가능하도록 커서 변경 */
+        }
+        .file-input {
+            display: none; /* 파일 입력 요소 숨김 */
+        }
+        .image-cell i {
+            position: absolute;
+            bottom: 5px;
+            right: 35%;
+            color: #fff; /* 아이콘 색상 설정 */
+            transform: rotate(90deg); /* 아이콘 90도 회전 */
+            background-color:#0D6EFD;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem; /* 아이콘 텍스트 크기 설정 */
+        }
     </style>
 </th:block>
 
@@ -67,14 +109,6 @@
             document.getElementById('member-edit').addEventListener('click', function(event) {
                 event.preventDefault();
                 verifyPassword();
-            });
-
-            document.getElementById('prevButton').addEventListener('click', function() {
-                changeDate(0);
-            });
-
-            document.getElementById('nextButton').addEventListener('click', function() {
-                changeDate(2);
             });
 
             function verifyPassword() {
@@ -103,6 +137,33 @@
                     }
                 });
             }
+
+        document.querySelector('.image-cell').addEventListener('click', function() {
+                document.getElementById('file-input').click();
+            });
+
+            document.getElementById('file-input').addEventListener('change', function(event) {
+                var formData = new FormData();
+                formData.append('file', event.target.files[0]);
+
+                fetch('/member/uploadProfileImage', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.querySelector('.profile-img').src = data.imageUrl;
+                        alert('프로필 이미지가 성공적으로 업데이트되었습니다.');
+                    } else {
+                        alert('프로필 이미지 업데이트 실패: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    alert('프로필 이미지 업데이트 중 오류 발생: ' + error.message);
+                });
+            });
+
         });
                 var prevNickname = "";
             function checkNickname() {
@@ -179,55 +240,99 @@
                 $('.empty-nickname-btn').css("display", "none");
             }
         }
+        <!--         뒤로가기 방지-->
+<!--    window.addEventListener('load', function() {-->
+<!--    if (window.history.replaceState) {-->
+<!--        window.history.replaceState(null, null, window.location.href);-->
+
+<!--        // 뒤로가기 버튼 클릭 시 바로 tickets 페이지로 이동-->
+<!--        window.onpopstate = function() {-->
+<!--            location.replace("/");-->
+<!--        };-->
+<!--    }-->
+
+<!--    // 페이지 로드 후 바로 뒤로가기 막기-->
+<!--    function preventBack() {-->
+<!--        window.history.forward();-->
+<!--    }-->
+
+<!--    setTimeout(preventBack, 0);-->
+
+<!--    // 페이지를 떠날 때 아무 동작도 하지 않도록 설정-->
+<!--    window.onunload = function () {-->
+<!--        // No action needed-->
+<!--    };-->
+<!--});-->
     </script>
 </th:block>
 
 <div layout:fragment="content">
 
-    <div class="mb-3 verifyPassword">
-        <h4>비밀번호 인증이 필요합니다</h4>
-        <label for="verifyPassword">비밀번호</label>
-        <input class="form-control" type="password" id="verifyPassword" />
-        <button class="btn btn-primary" type="submit" id="member-edit" onClick="verifyPassword()">확인</button>
+    <h3 class="mb-5 text-center">회원정보 변경</h3>
+
+    <div class="mb-3 verifyPassword text-center">
+        <p class="mb-2">비밀번호 인증이 필요합니다</p>
+        <form class="password-group w-50 mx-auto">
+            <label for="verifyPassword"></label>
+            <input class="form-control" type="password" id="verifyPassword" />
+            <button class="btn btn-primary" type="submit" id="member-edit" onClick="verifyPassword()">확인</button>
+        </form>
     </div>
 
-    <form th:action="@{/member/edit}" th:object="${memberInfo}" class="edit-form" role="form" method="POST">
-        <h4>회원정보 수정</h4>
-
-        <div>
-            <label for="email">이메일</label>
-            <input type="text" id="email" name="email" class="form-control"
-                   th:value="${memberInfo.email}" readonly>
-        </div>
-        <div>
-            <label for="nickname">닉네임</label>
-            <div class="input-group">
-                <input type="text" id="nickname" name="nickname" class="form-control"
-                       th:value="${memberInfo.nickname}" onkeyup="checkNickname(); emptyNickname();">
-
-                <span class="input-group-btn">
-                    <button th:formaction="@{'/member/editNickname/' + ${memberInfo.id}}"
-                            class="btn btn-primary nickname-btn" type="submit" id="member-info-edit">닉네임 변경</button>
-                    <button class="btn btn-secondary empty-nickname-btn" type="button">닉네임 변경</button>
-                </span>
+    <div class="d-flex justify-content-center">
+        <form th:action="@{/member/edit}" th:object="${memberInfo}" class="edit-form" role="form" method="POST">
+            <div class="image-cell mb-2">
+                <img th:if="${memberInfo.profileImgUrl != null}" th:src="@{${memberInfo.profileImgUrl}}" alt="Profile Image" class="profile-img"/>
+                <img th:unless="${memberInfo.profileImgUrl != null}" th:src="@{/img/login/profile.png}" alt="Profile Image" class="profile-img"/>
+                <i class="lni lni-pencil" onclick="document.getElementById('file-input').click();"></i>
             </div>
-            <span class="nickname_ok">사용 가능한 닉네임 입니다</span>
-            <span class="errorMessage" th:if="${#fields.hasErrors('nickname')}"
-                  th:errors="*{nickname}"></span>
-        </div>
-        <div class="mb-3">
-            <label for="password">비밀번호</label>
-            <input class="form-control" name="password" type="password" id="password" th:field="*{password}" onblur="checkPassword()" />
-        </div>
-        <div class="mb-3">
-            <label for="password2">비밀번호 확인</label>
-            <input class="form-control" name="password2" type="password" id="password2" onkeyup="checkPassword()" />
-            <div>비밀번호는 8자 이상, 16자 이하로 입력해주세요</div>
-            <div class="password_already">비밀번호가 일치하지 않습니다</div>
-        </div>
-        <button th:formaction="@{'/member/editPassword/' + ${memberInfo.id}}"
-                class="btn btn-primary" type="submit" id="member-info-password">비밀번호 변경</button>
-        <button class="btn btn-secondary empty-password-btn" type="button">비밀번호 변경</button>
-    </form>
+            <div>
+                <label for="email">이메일</label>
+                <input type="text" id="email" name="email" class="form-control"
+                       th:value="${memberInfo.email}" readonly>
+            </div>
+            <div th:if="${memberInfo.birth}">
+                <label for="birth">생일</label>
+                <input type="text" id="birth" name="birth" class="form-control"
+                       th:value="${memberInfo.birth}" readonly>
+            </div>
+            <div>
+                <label for="nickname">닉네임</label>
+                <div class="input-group">
+                    <input type="text" id="nickname" name="nickname" class="form-control"
+                           th:value="${memberInfo.nickname}" onkeyup="checkNickname(); emptyNickname();">
+
+                    <span class="input-group-btn">
+                        <button th:formaction="@{'/member/editNickname/' + ${memberInfo.id}}"
+                                class="btn btn-primary nickname-btn" type="submit" id="member-info-edit">닉네임 변경</button>
+                        <button class="btn btn-secondary empty-nickname-btn" type="button">닉네임 변경</button>
+                    </span>
+                </div>
+                <span class="nickname_ok">사용 가능한 닉네임 입니다</span>
+                <span class="errorMessage" th:if="${#fields.hasErrors('nickname')}"
+                      th:errors="*{nickname}"></span>
+            </div>
+            <div class="mb-3">
+                <label for="password">비밀번호</label>
+                <input class="form-control" name="password" type="password" id="password" th:field="*{password}" onblur="checkPassword()" />
+            </div>
+            <div class="mb-3">
+                <label for="password2">비밀번호 확인</label>
+                <input class="form-control" name="password2" type="password" id="password2" onkeyup="checkPassword()" />
+                <div>비밀번호는 8자 이상, 16자 이하로 입력해주세요</div>
+                <div class="password_already">비밀번호가 일치하지 않습니다</div>
+            </div>
+            <div class="d-flex justify-content-center">
+                <button th:formaction="@{'/member/editPassword/' + ${memberInfo.id}}"
+                        class="btn btn-primary" type="submit" id="member-info-password">비밀번호 변경</button>
+                <button class="btn btn-secondary empty-password-btn" type="button">비밀번호 변경</button>
+            </div>
+
+            <form id="profileUploadForm" th:action="@{/member/uploadProfileImage}" method="post" enctype="multipart/form-data" style="display: none;">
+                <input type="file" name="file" id="file-input" class="file-input" accept="image/*" onchange="document.getElementById('profileUploadForm').submit();"/>
+            </form>
+
+        </form>
+    </div>
 </div>
 </html>

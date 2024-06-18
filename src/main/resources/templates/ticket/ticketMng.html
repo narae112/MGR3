@@ -2,41 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
-
 <th:block layout:fragment="script">
-    <!--스크립트-->
-    <script th:inline="javascript">
-        $(document).ready(function() {
-            /* 성공 메시지 처리 */
-            var successMessage = /*[[${successMessage}]]*/ '[[${successMessage}]]';
-            if (successMessage) {
-                alert(successMessage);
-            }
-
-            /* 오류 메시지 처리 */
-            var errorMessage = /*[[${errorMessage}]]*/ '[[${errorMessage}]]';
-            if (errorMessage) {
-                alert(errorMessage);
-            }
-
-            bindDomEvent();
-        });
-
-
-        function page(page){
-            var searchDateType = $("#searchDateType").val();
-            var searchBy = $("#searchBy").val();
-            var searchQuery = $("#searchQuery").val();
-
-            location.href="/admin/tickets/" + page + "?searchDateType=" + searchDateType
-            + "&searchBy=" + searchBy
-            + "&searchQuery=" + searchQuery;
-        }
-</script>
-</th:block>
-
-<!-- 사용자 CSS 추가 -->
-<th:block layout:fragment="css">
+<!--    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">-->
     <style>
         .pagination {
             display: flex;
@@ -49,29 +16,24 @@
             margin-top: 20px; /* 페이지네이션과 검색 폼 사이에 여백 추가 */
         }
     </style>
-</th:block>
+<script th:inline="javascript">
+    $(document).ready(function() {
+        function page(page) {
+            var searchDateType = $("#searchDateType").val();
+            var searchBy = $("#searchBy").val();
+            var searchQuery = $("#searchQuery").val();
 
+            location.href="/admin/tickets/" + page + "?searchDateType=" + searchDateType
+                + "&searchBy=" + searchBy
+                + "&searchQuery=" + searchQuery;
+        }
+    });
+
+</script>
+</th:block>
 <div layout:fragment="content">
 
-    <h3 class="mb-5 text-center">티켓 관리</h3>
-
-    <div class="form-inline d-flex justify-content-center" th:object="${ticketSearchDto}">
-        <select th:field="*{searchDateType}" class="form-control" style="width:auto;">
-            <option value="all">전체기간</option>
-            <option value="1d">1일</option>
-            <option value="1w">1주</option>
-            <option value="1m">1개월</option>
-            <option value="6m">6개월</option>
-        </select>
-        <select th:field="*{searchBy}" class="form-control" style="width:auto;">
-            <option value="name">티켓명</option>
-            <option value="createdBy">등록자</option>
-        </select>
-
-        <input th:field="*{searchQuery}" type="text" class="form-control" placeholder="검색어를 입력해주세요">
-        <button id="searchBtn" type="submit" class="btn btn-primary">검색</button>
-    </div>
-
+    <h3 class="mb-5 text-center"><strong>티켓 관리</strong></h3>
     <form th:action="@{'/admin/tickets/' + ${tickets.number}}" role="form" method="get" th:object="${tickets}">
         <table class="table my-5">
             <thead>
@@ -94,13 +56,14 @@
             </tbody>
         </table>
 
+
 <!--        현재페이지-->
         <div class="d-flex justify-content-center my-3" th:if="${!tickets.isEmpty()}">
             <ul class="pagination justify-content-center">
                 <!-- 이전 버튼 -->
                 <li class="page-item" th:classappend="${pageNumber == 0} ? 'disabled'">
                     <a class="page-link" th:href="@{/admin/tickets/__${pageNumber - 1}__}"> <!-- 이전 페이지로 이동 -->
-                        <span>이전</span>
+                        <span>&laquo;</span>
                     </a>
                 </li>
 
@@ -114,13 +77,28 @@
                 <!-- 다음 버튼 -->
                 <li class="page-item" th:classappend="${!tickets.hasNext()} ? 'disabled'">
                     <a class="page-link" th:href="@{/admin/tickets/__${pageNumber + 1}__}"> <!-- 다음 페이지로 이동 -->
-                        <span>다음</span>
+                        <span>&raquo;</span>
                     </a>
                 </li>
 
             </ul>
         </div>
-
+<!--        <div class="pagination-search-separator"></div>-->
+<!--        <div class="form-inline d-flex justify-content-center" th:object="${ticketSearchDto}">-->
+<!--            <select id="searchDateType" th:field="*{searchDateType}" class="form-control" style="width:auto;">-->
+<!--                <option value="all">전체기간</option>-->
+<!--                <option value="1d">1일</option>-->
+<!--                <option value="1w">1주</option>-->
+<!--                <option value="1m">1개월</option>-->
+<!--                <option value="6m">6개월</option>-->
+<!--            </select>-->
+<!--            <select id="searchBy" th:field="*{searchBy}" class="form-control" style="width:auto;">-->
+<!--                <option value="name">티켓이름</option>-->
+<!--                <option value="createdBy">등록자</option>-->
+<!--            </select>-->
+<!--            <input id="searchQuery" th:field="*{searchQuery}" type="text" class="form-control" placeholder="검색어를 입력해주세요">-->
+<!--            <button id="searchBtn" type="submit" class="btn btn-primary">검색</button>-->
+<!--        </div>-->
     </form>
 
 </div>

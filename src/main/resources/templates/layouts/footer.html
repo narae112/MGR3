@@ -1,7 +1,77 @@
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:with="lang=${#locale.language}" th:lang="${lang}">
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        function refreshToken() {
+             return fetch('/api/token/refresh', {
+                 method: 'POST',
+                 credentials: 'include' // 쿠키를 포함시키기 위해 필요
+             }).then(response => {
+                 if (response.ok) {
+                     return response.json();
+                 } else {
+                     throw new Error('Failed to refresh token');
+                 }
+             });
+         }
+
+         function apiRequest(url, options) {
+             return fetch(url, options).then(response => {
+                 if (response.status === 401) { // 토큰 만료 등의 이유로 401 Unauthorized가 발생한 경우
+                     return refreshToken().then(() => {
+                         // 토큰 갱신 후 다시 API 요청을 시도
+                         return fetch(url, options);
+                     });
+                 }
+                 return response;
+             });
+         }
+
+         // API 요청 예제
+         function getData() {
+             apiRequest('/api/data', {
+                 method: 'GET',
+                 headers: {
+                     'Authorization': 'Bearer ' + getAccessTokenFromCookie()
+                 }
+             }).then(response => {
+                 if (response.ok) {
+                     return response.json();
+                 } else {
+                     throw new Error('Failed to fetch data');
+                 }
+             }).then(data => {
+                 console.log(data);
+             }).catch(error => {
+                 console.error(error);
+             });
+         }
+
+         function getAccessTokenFromCookie() {
+             const name = 'at=';
+             const decodedCookie = decodeURIComponent(document.cookie);
+             const ca = decodedCookie.split(';');
+             for (let i = 0; i < ca.length; i++) {
+                 let c = ca[i];
+                 while (c.charAt(0) === ' ') {
+                     c = c.substring(1);
+                 }
+                 if (c.indexOf(name) === 0) {
+                     return c.substring(name.length, c.length);
+                 }
+             }
+             return '';
+         }
+
+         // 페이지가 로드될 때 데이터 가져오기
+         document.addEventListener('DOMContentLoaded', getData);
+    </script>
+</th:block>
+
 
 <footer th:fragment="footer" class="footer">
-
 <!-- Start Footer Area -->
     <!-- Start Footer Top -->
     <!-- 원래 푸터가 있었음 -->
@@ -11,15 +81,31 @@
     <div class="copyright">
         <div class="container">
             <div class="inner-content">
-                <div class="row">
-                    <div class="col-12">
-                        <p>여기에 우리 로고하고 깃 연결되는 링크 넣고싶음</p>
-                        <p class="copyright-text">Copyright © Merry Go Ride. All rights reserved.</p>
+                <div class="info-row">
+                    <div class="company-info">
+                        <h3>MGR</h3>
+                        <p> 팀장 : 박나래 | 제작기간 : 총 5주</p>
+                        <p> 팀원 : 손혜원, 최영인</p>
                     </div>
+                    <div class="footer-logo">
+                        <img src="/img/footerLogo.png" style="width: 300px;" alt="푸터로고">
+                    </div>
+                    <div class="git-link">
+                        <div class="button git-btn" data-wow-delay=".8s">
+                            <a href="https://github.com/dashboard">
+                                <img src="/img/github-mark-white.png" style="width: 30px;" alt="깃 연결 링크">
+                                 Git Hub</a>
+                        </div>
+                        <p>Email : merrygoride2024@gmail.com</p>
+                    </div>
+                </div>
+                <div class="copyright-text">
+                    <p>Copyright © Merry Go Ride. All rights reserved.</p>
                 </div>
             </div>
         </div>
     </div>
+
 
     <a href="#" class="scroll-top">
         <i class="lni lni-chevron-up"></i>

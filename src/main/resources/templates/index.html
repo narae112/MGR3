@@ -4,6 +4,14 @@
        xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="~{layouts/main}">
 
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        function navigateToLocation() {
+            window.location.href = '/location';
+        }
+    </script>
+</th:block>
+
 <div layout:fragment="content">
 
     <!-- Start Hero Area -->
@@ -16,13 +24,11 @@
             <div class="row align-items-center">
                 <div class="col-lg-6 offset-lg-3 col-md-12 col-12">
                     <div class="hero-content">
-                        <h5 th:onclick="@{/location}" class="wow zoomIn" data-wow-delay=".2s">
-                            <i class="lni lni-map-marker"></i> MGR 오는길
+                        <h5 class="wow zoomIn" data-wow-delay=".2s">
+                            <span th:onclick="navigateToLocation()"><i class="lni lni-map-marker"></i> MGR 오는길</span>
                         </h5>
                         <h2 class="wow fadeInUp" data-wow-delay=".4s">Merry Go Ride 2024</h2>
-                        <p class="wow fadeInUp" data-wow-delay=".6s">Lorem ipsum dolor sit amet, consectetur adipisicing
-                            elit. deleniti voluptatum! Natus
-                            beatae laborum veniam distinctio.</p>
+                        <p class="wow fadeInUp" data-wow-delay=".6s">Welcome to MGR. This website was created by three students learning web development.</p>
                         <div class="button wow fadeInUp" data-wow-delay=".8s">
                             <a th:href="@{/tickets}" class="btn ">Buy Ticket Now</a>
                         </div>
@@ -33,7 +39,7 @@
     </section>
     <!-- End Hero Area -->
 
-    <button type="button" class="chatbot" data-toggle="modal" data-target="#chatModal">
+    <button type="button" class="chatbot" data-toggle="modal" data-target="#chatbotModal">
         <img th:src="@{/img/chatbot_icon.png}">
     </button>
 
@@ -82,14 +88,14 @@
 
     <div class="slider_wrapper">
         <div class="att_slider">
-            <div class="slide_img"><img th:src="@{/img/attraction/attraction1.png}" alt=""></div>
-            <div class="slide_img"><img th:src="@{/img/attraction/attraction2.png}" alt=""></div>
-            <div class="slide_img"><img th:src="@{/img/attraction/attraction3.png}" alt=""></div>
-            <div class="slide_img"><img th:src="@{/img/attraction/attraction4.png}" alt=""></div>
-            <div class="slide_img"><img th:src="@{/img/attraction/attraction5.png}" alt=""></div>
-            <div class="slide_img"><img th:src="@{/img/attraction/attraction6.png}" alt=""></div>
-            <div class="slide_img"><img th:src="@{/img/attraction/attraction7.png}" alt=""></div>
-            <div class="slide_img"><img th:src="@{/img/attraction/attraction8.png}" alt=""></div>
+            <a class="slide_img" th:href="@{~/attraction/attractionList}"><img th:src="@{/img/attraction/attraction1.png}" alt=""></a>
+            <a class="slide_img" th:href="@{~/attraction/attractionList}"><img th:src="@{/img/attraction/attraction2.png}" alt=""></a>
+            <a class="slide_img" th:href="@{~/attraction/attractionList}"><img th:src="@{/img/attraction/attraction3.png}" alt=""></a>
+            <a class="slide_img" th:href="@{~/attraction/attractionList}"><img th:src="@{/img/attraction/attraction4.png}" alt=""></a>
+            <a class="slide_img" th:href="@{~/attraction/attractionList}"><img th:src="@{/img/attraction/attraction5.png}" alt=""></a>
+            <a class="slide_img" th:href="@{~/attraction/attractionList}"><img th:src="@{/img/attraction/attraction6.png}" alt=""></a>
+            <a class="slide_img" th:href="@{~/attraction/attractionList}"><img th:src="@{/img/attraction/attraction7.png}" alt=""></a>
+            <a class="slide_img" th:href="@{~/attraction/attractionList}"><img th:src="@{/img/attraction/attraction8.png}" alt=""></a>
         </div>
     </div>
     </section>
@@ -102,8 +108,8 @@
                 <div class="col-12">
                     <div class="section-title">
                         <h3 class="wow zoomIn" data-wow-delay=".2s">Review</h3>
-                        <h2 class="wow fadeInUp" data-wow-delay=".4s">MGR Best Review</h2>
-                        <p class="wow fadeInUp" data-wow-delay=".6s">There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form.</p>
+                        <h2 class="wow fadeInUp" data-wow-delay=".4s">Customer-Favorite MGR Best Reviews</h2>
+                        <p class="wow fadeInUp" data-wow-delay=".6s">Discover the top reviews chosen by you! Read the cherished stories of unforgettable moments experienced at MGR Amusement Park.</p>
                     </div>
                 </div>
             </div>
@@ -111,16 +117,16 @@
                 <!-- Thymeleaf를 통해 서버에서 전달된 추천 수가 많은 리뷰를 동적으로 렌더링합니다. -->
                 <div th:each="review : ${topRatedReviews}" class="col-lg-4 col-md-6 col-12 wow fadeInUp" data-wow-delay=".4s">
                     <!-- Single Review -->
-                    <div class="card-img-top img-fluid rounded">
+                    <div class="single-blog-grid">
                         <!-- Review Image -->
-                        <div class="review-img" style="height: 400px; overflow: hidden;">
+                        <div class="blog-img review-img">
                             <a th:href="@{/review/board/detail/{id}(id=${review.id})}">
                                 <!-- 이미지 URL을 reviewImgDtoList의 첫 번째 이미지에서 가져옵니다. -->
-<!--                                <img th:src="${review.imageUrl.length() > 0 ? review.imageUrl : '/img/unicorn.png'}" alt="Review Image" style="width: 100%; height: auto; object-fit: cover;">-->
+                              <img th:src="${review.imageUrl != null and  review.imageUrl.length() > 0 ? review.imageUrl : '/img/logo/placeholder.png'}" alt="Review Image">
                             </a>
                         </div>
                         <!-- Review Content -->
-                        <div class="review-content">
+                        <div class="blog-content review-content">
                             <!-- 리뷰 제목 -->
                             <h4 class="title" th:text="${review.subject}">Review Title</h4>
                             <!-- 작성자 정보 -->
@@ -145,10 +151,9 @@
                     <div class="inner-content">
                         <div class="text">
                             <!-- <h5 class="wow zoomIn" data-wow-delay=".2s">Free Lite Version</h5> -->
-                            <h2 class="wow fadeInUp" data-wow-delay=".4s">Currently you are using free LiteVersion of EventGrids
+                            <h2 class="wow fadeInUp" data-wow-delay=".4s">A new event at MGR is starting soon
                             </h2>
-                            <p class="wow fadeInUp" data-wow-delay=".6s">Please, purchase full version of the template
-                                to get all pages, features and commercial license.</p>
+                            <p class="wow fadeInUp" data-wow-delay=".6s">Join us at MGR Amusement Park to create a special day just for you</p>
                         </div>
                     </div>
                 </div>
@@ -156,17 +161,17 @@
         </div>
     </section>
     <!-- 섹션 나누는 이미지 끝 -->
-    <div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
+    <div class="modal fade" id="chatbotModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="chatModalLabel">MGR 챗봇</h5>
+                    <h5 class="modal-title" id="chatbotModalLabel">MGR 챗봇</h5>
                     <button type="button" class="btn btn-danger close" style="margin-left: auto;" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div id="chatWindow" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
+                    <div id="chatbotWindow" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
                     </div>
                     <div class="input-group mt-3">
                         <input type="text" id="userInput" class="form-control" placeholder="메세지를 입력하세요">
@@ -208,20 +213,20 @@ $(document).ready(function() {
     function sendMessage() {
         var userMessage = $('#userInput').val();
         if (userMessage.trim() !== "") {
-            $('#chatWindow').append('<div class="text-right"><strong>User :</strong> ' + userMessage + '</div>');
+            $('#chatbotWindow').append('<div class="text-right"><strong>User :</strong> ' + userMessage + '</div>');
             $('#userInput').val('');
 
             $.ajax({
-                url: '/gemini/chat',
+                url: '/gemini/chatbot',
                 type: 'GET',
                 data: { message: userMessage },
                 success: function(response) {
-                    $('#chatWindow').append('<div class="text-left"><strong>ChatMRG :</strong> ' + response + '</div>');
-                    $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
+                    $('#chatbotWindow').append('<div class="text-left"><strong>ChatMRG :</strong> ' + response + '</div>');
+                    $('#chatbotWindow').scrollTop($('#chatbotWindow')[0].scrollHeight);
                 },
                 error: function(xhr, status, error) {
-                    $('#chatWindow').append('<div class="text-left text-danger"><strong>Error:</strong> ' + xhr.responseText + '</div>');
-                    $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
+                    $('#chatbotWindow').append('<div class="text-left text-danger"><strong>Error:</strong> ' + xhr.responseText + '</div>');
+                    $('#chatbotWindow').scrollTop($('#chatbotWindow')[0].scrollHeight);
                 }
             });
         }
@@ -229,13 +234,13 @@ $(document).ready(function() {
 
     $('#sendButton').click(function() {
         sendMessage();
-        $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
+        $('#chatbotWindow').scrollTop($('#chatbotWindow')[0].scrollHeight);
     });
 
     $('#userInput').keypress(function(event) {
         if (event.which === 13) {
             sendMessage();
-            $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
+            $('#chatbotWindow').scrollTop($('#chatbotWindow')[0].scrollHeight);
         }
     });
 });

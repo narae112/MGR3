@@ -1,9 +1,7 @@
 package com.MGR.security;
 
-import com.MGR.dto.MemberFormDto;
 import com.MGR.entity.Member;
-import com.MGR.service.MemberService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.MGR.service.RedisService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -18,11 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -30,6 +24,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
     private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+    private final RedisService redisService;
 
     //로그인을 시도할 때 실행
     @Override
@@ -41,11 +36,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             // URL 인코딩된 폼 데이터 읽기
             String email = request.getParameter("email");
             String password = request.getParameter("password");
+            System.out.println("받은 email: " + email);
+            System.out.println("받은 암호화된 password: " + password);
+            // 암호화된 비밀번호 복호화
+            String decryptedPassword = AESUtil.decrypt(password);
 
             System.out.println("URL 인코딩된 폼 데이터 email = " + email);
+            System.out.println("복호화된 password = " + decryptedPassword);
 
             member.setEmail(email);
-            member.setPassword(password);
+            member.setPassword(decryptedPassword);
 
         } catch (BadCredentialsException e) {
             System.out.println("로그인 정보 에러 = " + e.getMessage());
@@ -83,17 +83,30 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         PrincipalDetails principal = (PrincipalDetails) authResult.getPrincipal();
         Member member = principal.getMember();
-        String jwt = jwtProvider.createToken(member.getEmail(), member.getId(), false);
+        String jwt = jwtProvider.createToken(member.getEmail(), member.getId());
         response.setHeader("Authorization", "Bearer " + jwt);
 
-        // JWT를 쿠키에 설정
-        Cookie cookie = new Cookie("at", jwt);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true); // HTTPS 사용 시에만 설정
-        cookie.setPath("/");
-        cookie.setMaxAge(24 * 60 * 60); // 1일 동안 유효
-        response.addCookie(cookie);
-        System.out.println("JWT 토큰 생성 및 쿠키에 추가 완료");
+        // JWT를 쿠키에 설정 (Access Token)
+        Cookie accessTokenCookie = new Cookie("at", jwt);
+        accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setSecure(true); // HTTPS 사용 시에만 설정
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setMaxAge(7 * 24 * 60 * 60);
+//        accessTokenCookie.setMaxAge(30);
+        response.addCookie(accessTokenCookie);
+
+        // Refresh Token 생성 및 쿠키에 설정
+        String refreshToken = jwtProvider.createRefreshToken(principal.getMember().getOauth2Id(), principal.getMember().getId());
+        Cookie refreshTokenCookie = new Cookie("rt", refreshToken);
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(true); // HTTPS 사용 시에만 설정
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); // 7*24시간 동안 유효
+//        refreshTokenCookie.setMaxAge(2*60);
+        response.addCookie(refreshTokenCookie);
+
+        // Redis 에 RefreshToken 저장
+        redisService.saveRefreshToken(principal.getMember().getId(), refreshToken);
 
         response.sendRedirect("/");
     }

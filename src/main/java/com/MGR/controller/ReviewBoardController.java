@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -76,6 +77,7 @@ public class ReviewBoardController {
         model.addAttribute("reviewBoardForm",reviewBoardForm);
         return "board/review/board_detail";
     }
+
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/orderCheck")
     public String orderCheck(OrderCheckForm orderCheckForm, @AuthenticationPrincipal PrincipalDetails member, Model model) {
@@ -254,35 +256,38 @@ public class ReviewBoardController {
 
         return "redirect:/review/board/list";
     }
-    @PostMapping("/vote/{id}")
-    @ResponseBody
-    public Map<String, Object> reviewVote(@AuthenticationPrincipal PrincipalDetails member,
-                                          @PathVariable("id") Long id) {
-        Map<String, Object> response = new HashMap<>();
-
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/vote/{id}")
+    public String reviewVote(@AuthenticationPrincipal PrincipalDetails member,
+                             @PathVariable("id") Long id, RedirectAttributes redirectAttributes,Model model) {
         if (member == null) {
-            response.put("error", "로그인이 필요한 서비스입니다.");
-            return response;
+            redirectAttributes.addFlashAttribute("error", "로그인이 필요한 서비스입니다.");
+            return "member/loginForm";
         }
 
         try {
             ReviewBoard reviewBoard = this.reviewBoardService.getReviewBoard(id);
             Member siteUser = this.memberService.getUser(member.getName());
-            if (reviewBoard.getVoter().contains(siteUser)) {
-                // 이미 투표한 경우에는 투표 취소
+            Set<Member> voters = reviewBoard.getVoter(); // 리뷰의 추천자 목록을 가져옵니다.
+            boolean isVoted = voters != null && voters.contains(siteUser);
+            // 현재 사용자가 리뷰를 추천했는지 여부를 확인합니다.
+            model.addAttribute("isVoted", isVoted);
+            // 추천 여부에 따라 동작을 수행합니다.
+            if (isVoted) {
+                // 이미 추천한 경우, 추천을 취소합니다.
                 this.reviewBoardService.cancelVote(reviewBoard, siteUser);
-                response.put("message", "추천이 취소되었습니다.");
-                response.put("recommended", false);
             } else {
+                // 추천하지 않은 경우, 추천을 합니다.
                 this.reviewBoardService.vote(reviewBoard, siteUser);
-                response.put("message", "추천이 완료되었습니다.");
-                response.put("recommended", true);
             }
         } catch (Exception e) {
-            response.put("error", "오류가 발생했습니다. 다시 시도해주세요.");
+            redirectAttributes.addFlashAttribute("error", "오류가 발생했습니다. 다시 시도해주세요.");
+            System.out.println("예외 발생: {}"+e.getMessage());
+            // 예외의 스택 트레이스도 로깅할 수 있음
+            System.out.println("예외 발생: {}"+e);
         }
 
-        return response;
+        return "redirect:/review/board/detail/" + id;
     }
 
 

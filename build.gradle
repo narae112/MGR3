@@ -32,8 +32,10 @@ dependencies {
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.2.0'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 
-	compileOnly 'org.projectlombok:lombok'
+//    runtimeOnly 'com.mysql:mysql-connector-j'
 	runtimeOnly 'com.h2database:h2'
+
+	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
@@ -73,6 +75,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 
 	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+
+	// redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.springframework.data:spring-data-redis'
+
+	implementation 'org.springframework.boot:spring-boot-devtools'
 }
 
 tasks.named('bootBuildImage') {
@@ -96,4 +104,15 @@ tasks.withType(JavaCompile) {
 
 clean.doLast {
 	file(querydslDir).deleteDir()
+}
+
+jar {
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	manifest {
+		attributes 'Main-Class': 'com.MGR.MgrApplication'
+	}
+}
+
+bootJar {
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

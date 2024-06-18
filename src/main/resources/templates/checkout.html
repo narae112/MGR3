@@ -28,7 +28,7 @@
         <span th:text="'방문예정일 : ' + ${orderTicket.visitDate}"></span><br/>
         <span th:text="'[' + ${orderTicket.locationCategory.displayName} + '점] ' + ${orderTicket.name}"></span>
         <!-- [지점] 티켓 이름 -->
-        <span th:text="'성인 티켓 : ' + ${orderTicket.adultCount} + '장 ' + ${(orderTicket.adultPrice) * (orderTicket.adultCount)} + '원 | ' + '아동 티켓 : ' + ${orderTicket.childCount} + '장 ' + ${(orderTicket.childPrice) * (orderTicket.childCount)} + '원'"></span>
+        <span th:text="'성인 티켓 : ' + ${orderTicket.adultCount} + '장 ' + ${#numbers.formatInteger((orderTicket.adultPrice) * (orderTicket.adultCount), 0, 'COMMA')} + '원 | ' + '아동 티켓 : ' + ${orderTicket.childCount} + '장 ' + ${#numbers.formatInteger((orderTicket.childPrice) * (orderTicket.childCount), 0, 'COMMA')} + '원'"></span>
         <hr/>
       </div>
       <!-- 주문서 정보 -->
@@ -36,7 +36,7 @@
         총 주문건수: <span th:text="${#lists.size(orderTickets)}"></span> 건
       </div>
       <div>
-        총 결제금액: <span th:text="${totalPrice}"></span> 원
+        총 결제금액: <span th:text="${#numbers.formatInteger(totalPrice, 0, 'COMMA')}"></span> 원
       </div>
     </div>
     <!-- 쿠폰 체크박스 -->
@@ -93,13 +93,13 @@
   let couponId = 0;
   let couponDiscountRate = 0;
 
-  function getSelectedCoupon() {
-    couponId = parseInt(couponSelect.value);
-    couponDiscountRate = parseInt(couponSelect.options[couponSelect.selectedIndex].getAttribute("data-discount-rate"));
+function getSelectedCoupon() {
+    couponId = parseInt(couponSelect.value || 0); // 선택하지 않았을 때 기본값으로 0 설정
+    couponDiscountRate = parseInt(couponSelect.options[couponSelect.selectedIndex].getAttribute("data-discount-rate") || 0); // 선택하지 않았을 때 기본값으로 0 설정
     console.log("Selected Coupon Id: " + couponId);
     console.log("Selected Coupon Discount Rate: " + couponDiscountRate);
     updatePrice();
-  }
+}
 
   const generateRandomString = () => window.btoa(Math.random()).slice(0, 20);
 
@@ -136,25 +136,45 @@
   paymentMethodWidget.on("ready", function () {
     button.disabled = false;
     couponSelect.disabled = false;
+    updatePrice(); // 페이지 로드 시 할인 적용 후 금액의 기본값 설정
   });
 
   // ------  결제 금액 업데이트 ------
   function updatePrice() {
     const discountedAmount = amount - (amount * couponDiscountRate / 100);
+    const formattedDiscountedAmount = numberWithCommas(discountedAmount); // 콤마(,) 추가
     const discountedPriceElement = document.getElementById("discountedPrice");
-    discountedPriceElement.textContent = discountedAmount + " 원";
+    discountedPriceElement.textContent = formattedDiscountedAmount + " 원";
     paymentMethodWidget.updateAmount(discountedAmount);
   }
 
+  // 콤마(,)를 추가하는 함수
+  function numberWithCommas(x) {
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
   // ------ '결제하기' 버튼 누르면 결제창 띄우기 ------
+<!--  button.addEventListener("click", function () {-->
+<!--    // 결제를 요청하기 전에 orderId, amount를 서버에 저장하세요.-->
+<!--    // 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하는 용도입니다.-->
+<!--    paymentWidget.requestPayment({-->
+<!--      orderId: orderNum,-->
+<!--      orderName: product + "외 " + (orderQuantity-1) + " 건",-->
+<!--      couponId: couponId, // 쿠폰 ID 추가,-->
+<!--      successUrl: window.location.origin + "/success/" + RTOrderId + "/cp/" + couponId + "?orderName=" + encodeURIComponent(product + "외 " + (orderQuantity-1) + " 건"),-->
+<!--      failUrl: window.location.origin + "/fail",-->
+<!--    });-->
+<!--  });-->
   button.addEventListener("click", function () {
     // 결제를 요청하기 전에 orderId, amount를 서버에 저장하세요.
     // 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하는 용도입니다.
     paymentWidget.requestPayment({
       orderId: orderNum,
       orderName: product + "외 " + (orderQuantity-1) + " 건",
+      product: product,
+      orderQuantity: orderQuantity,
       couponId: couponId, // 쿠폰 ID 추가,
-      successUrl: window.location.origin + "/success/" + RTOrderId + /cp/ + couponId,
+      successUrl: window.location.origin + "/success/" + RTOrderId + "/cp/" + couponId + "?product=" + encodeURIComponent(product) + "&orderQuantity=" + orderQuantity,
       failUrl: window.location.origin + "/fail",
     });
   });

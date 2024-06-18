@@ -26,12 +26,52 @@
     </style>
 </th:block>
 
+<th:block layout:fragment="script">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script th:inline="javascript">
+        const AES_KEY = CryptoJS.enc.Base64.parse("K5SIlHkeI3b7JeioZJ6KEfE3yzLUUj77viXkVBF5FmE="); // Base64로 인코딩된 AES 키
+
+        function encryptPassword(event) {
+            const passwordField = document.getElementById("password");
+            const encryptedPassword = CryptoJS.AES.encrypt(passwordField.value, AES_KEY, {
+                mode: CryptoJS.mode.ECB,
+                padding: CryptoJS.pad.Pkcs7
+            }).toString();
+            passwordField.value = encryptedPassword;
+        }
+
+<!--         뒤로가기 방지-->
+<!--              window.addEventListener('load', function() {-->
+<!--    if (window.history.replaceState) {-->
+<!--        window.history.replaceState(null, null, window.location.href);-->
+
+<!--        // 뒤로가기 버튼 클릭 시 바로 tickets 페이지로 이동-->
+<!--        window.onpopstate = function() {-->
+<!--            location.replace("/");-->
+<!--        };-->
+<!--    }-->
+
+<!--    // 페이지 로드 후 바로 뒤로가기 막기-->
+<!--    function preventBack() {-->
+<!--        window.history.forward();-->
+<!--    }-->
+
+<!--    setTimeout(preventBack, 0);-->
+
+<!--    // 페이지를 떠날 때 아무 동작도 하지 않도록 설정-->
+<!--    window.onunload = function () {-->
+<!--        // No action needed-->
+<!--    };-->
+<!--});-->
+    </script>
+</th:block>
+
 <div layout:fragment="content" class="container my-5">
     <div class="container my-3">
         <h5 class="mb-5 border-bottom pb-2 text-center">로그인</h5>
         <div class="row justify-content-center">
             <div class="col-md-4">
-                <form th:action="@{/login}" method="POST">
+                <form th:action="@{/login}" method="POST" onsubmit="encryptPassword(event)">
                     <div class="mb-3">
                         <label for="email"> 이메일</label>
                         <input class="form-control" type="text" name="email" id="email"/>

@@ -17,7 +17,7 @@ public class GeminiController {
 
     private final GeminiService geminiService;
 
-    @GetMapping("/chat")
+    @GetMapping("/chatbot")
     public ResponseEntity<?> gemini(@RequestParam String message) {
         try {
             String response = geminiService.getContents(message);

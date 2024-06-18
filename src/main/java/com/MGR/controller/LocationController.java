@@ -11,14 +11,14 @@ public class LocationController {
 
     @GetMapping("/location")
     public String showLocation(){
-        return "/location/main";
+        return "location/main";
     }
     @GetMapping("/location/busan")
     public String showBusan(){
-        return "/location/busan";
+        return "location/busan";
     }
     @GetMapping("/location/seoul")
     public String showSeoul(){
-        return "/location/seoul";
+        return "location/seoul";
     }
 }

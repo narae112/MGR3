@@ -64,16 +64,17 @@
                 cache   : false,
                 success  : function(result, status){
                     alert("티켓이 예약되었습니다 \n결제 후 사용이 가능합니다");
-                    location.href='/member/reservations';
+                    window.location.replace("/member/reservations");
                 },
                 error : function(jqXHR, status, error){
 
-                    if(jqXHR.status == '401'){
+                    if(jqXHR.status == '403' || jqXHR.status == '500'){
                         alert('로그인 후 이용해주세요');
-                        location.href='/member/login';
+
+                        location.href='/login';
                     } else{
-                        alert('로그인 후 이용해주세요');
-                          location.href='/member/login';
+                        alert("오류 = " + jqXHR.status);
+                        location.href='/';
                     }
                 }
             });

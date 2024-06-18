@@ -1069,7 +1069,7 @@ ol {
   margin-left: 0;
 }
 
-/* One Click Scrool Top Button*/
+/* One Click Scroll Top Button*/
 .scroll-top {
   width: 45px;
   height: 45px;
@@ -1087,8 +1087,8 @@ ol {
   font-size: 14px;
   color: #fff !important;
   position: fixed;
-  bottom: 50px;
-  right: 50px;
+  bottom: 80px !important;
+  right: 70px !important;
   z-index: 9;
   cursor: pointer;
   -webkit-transition: all .3s ease-out 0s;
@@ -2142,7 +2142,7 @@ ol {
 .count-down .box-content {
   text-align: center;
   /* background-color: #3813c2; */
-  background-image: url("../images/count-down/bg.png");
+/*  background-image: url("../images/count-down/bg.png");*/
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -2384,8 +2384,7 @@ ol {
   font-size: 30px;
   -webkit-box-shadow: 0px 10px 30px rgba(48, 128, 227, 0.18);
           box-shadow: 0px 10px 30px rgba(48, 128, 227, 0.18);
-  background-image: url("../images/count-down/bg.png");
-  background-size: cover;
+/*  background-image: url("../images/count-down/bg.png");*/
   background-position: center;
   background-repeat: no-repeat;
 }

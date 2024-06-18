@@ -34,10 +34,16 @@ public class Image extends BaseEntity{
     private EventBoard eventBoard;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    private GoWithBoard goWithBoard;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     private Coupon coupon;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Attraction attraction;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member member;
 
     public void updateImg(String imgOriName, String imgName, String imgUrl){
         this.imgOriName = imgOriName;

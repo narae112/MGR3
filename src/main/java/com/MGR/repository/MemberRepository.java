@@ -2,6 +2,9 @@ package com.MGR.repository;
 
 import com.MGR.entity.Member;
 import com.MGR.entity.MemberCoupon;
+import com.MGR.entity.Order;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -27,5 +30,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     @Query("SELECT m FROM Member m WHERE SUBSTRING(m.birth, 6, 5) = :today")
     List<Member> findByBirth(@Param("today") String today);
+
+    Page<Member> findByRole(String role, Pageable pageable);
 
 }

@@ -6,7 +6,7 @@
 <th:block layout:fragment="css">
     <style>
         /* 테이블과 h3 사이에 간격을 주는 CSS */
-        .row {
+        .reviewContainer >.row {
                margin-top: 30px; /* 필요에 따라 조정하세요 */
            }
     </style>
@@ -28,8 +28,8 @@
     </div>
     <hr class="my-4">
     <!--    등록버튼-->
-    <div class="col-6">
-        <a th:href="@{/review/board/orderCheck}" class="btn btn-primary">리뷰 등록하기</a>
+    <div class="col-6 reviewContainer">
+        <a th:href="@{/review/board/orderCheck}" class="btn btn-primary mb-4">리뷰 등록하기</a>
             </div>
     <div class="row">
         <div th:each="reviewBoard : ${paging}" class="col-md-4 mb-4">
@@ -45,16 +45,16 @@
                              class="card-img-top img-fluid rounded"
                              style="max-width: 100%; max-height: 100%; object-fit: contain;">
                         <img th:if="${reviewBoard.getFirstImageUrl() == null or #strings.length(reviewBoard.getFirstImageUrl()) == 0}"
-                             th:src="@{/img/unicorn.png}"
+                             th:src="@{/img/logo/placeholder.png}"
                              class="card-img-top img-fluid rounded"
                              style="max-width: 100%; max-height: 100%; object-fit: contain;">
                     </div>
 
-
                     <!-- 기타 정보 표시 -->
                     <p class="card-text" style="color: black;" >
                         조회수: <span th:text="${reviewBoard.count}"></span><br>
-                        등록일: <span th:text="${#temporals.format(reviewBoard.createDate, 'yyyy-MM-dd HH:mm')}"></span>
+                        등록일: <span th:text="${#temporals.format(reviewBoard.createDate, 'yyyy-MM-dd HH:mm')}"></span><br>
+                        추천수: <span  th:text="${reviewBoard.voterCount}">0></span>
                     </p>
                 </div>
             </a>
@@ -67,7 +67,7 @@
             <li class="page-item" th:classappend="${paging.first} ? 'disabled'">
                 <a class="page-link" href="#" th:attr="data-page=${paging.number - 1}" aria-label="Previous">
                     <span aria-hidden="true"></span>
-                    <span class="sr-only">이전</span>
+                    <span class="sr-only">&laquo;</span>
                 </a>
             </li>
             <li th:each="page: ${#numbers.sequence(0, paging.totalPages - 1)}"
@@ -77,7 +77,7 @@
             <li class="page-item" th:classappend="${paging.last} ? 'disabled'">
                 <a class="page-link" href="#" th:attr="data-page=${paging.number + 1}" aria-label="Next">
                     <span aria-hidden="true"></span>
-                    <span class="sr-only">다음</span>
+                    <span class="sr-only">&raquo;</span>
                 </a>
             </li>
         </ul>

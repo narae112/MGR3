@@ -1,9 +1,6 @@
 package com.MGR.service;
 
-import com.MGR.entity.Attraction;
-import com.MGR.entity.EventBoard;
-import com.MGR.entity.Image;
-import com.MGR.entity.Member;
+import com.MGR.entity.*;
 import com.MGR.repository.ImageRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -32,11 +29,17 @@ public class ImageService {
     @Value("${boardImgLocation}")
     private String boardImgLocation;
 
+    @Value("${goWithImgLocation}")
+    private String goWithImgLocation;
+
     @Value("${couponImgLocation}")
     private String couponImgLocation;
 
     @Value("${attractionImgLocation}")
     private String attractionImgLocation;
+
+    @Value("${profileImgLocation}")
+    private String profileImgLocation;
 
     public void saveTicketImage(Image ticketImage, MultipartFile ticketImgFile) throws Exception {
         saveImage(ticketImage, ticketImgFile, ticketImgLocation);
@@ -50,6 +53,10 @@ public class ImageService {
         saveImage(boardImage, boardImgFile, boardImgLocation);
     }
 
+    public void saveGoWithImage(Image goWithImage, MultipartFile goWithImgFile) throws Exception {
+        saveImage(goWithImage, goWithImgFile, goWithImgLocation);
+    }
+
     public void saveCouponImage(Image couponImage, MultipartFile couponImgFile) throws Exception {
         saveImage(couponImage, couponImgFile, couponImgLocation);
     }
@@ -58,7 +65,12 @@ public class ImageService {
         saveImage(attractionImage, attractionImgFile, attractionImgLocation);
     }
 
+    public void saveProfileImage(Image profileImage, MultipartFile profileImgFile) throws Exception {
+        saveImage(profileImage, profileImgFile, profileImgLocation);
+    }
+
     private void saveImage(Image image, MultipartFile imgFile, String imgLocation) throws Exception {
+        System.out.println("saveImage 시작");
         String imgOriName = imgFile.getOriginalFilename();
         String imgName = "";
         String imgUrl = "";
@@ -69,6 +81,7 @@ public class ImageService {
                 // 이미지 URL 생성
                 String imgDirName = imgLocation.substring(imgLocation.lastIndexOf("/") + 1);
                 imgUrl = "/images/" + imgDirName + "/" + imgName;
+                System.out.println("imgUrl: " + imgUrl);
             }
             // 이미지 정보 저장
             image.updateImg(imgOriName, imgName, imgUrl);
@@ -90,6 +103,10 @@ public class ImageService {
 
     public void updateBoardImage(Long boardImgId, MultipartFile boardImgFile) throws Exception {
         updateImage(boardImgId, boardImgFile, boardImgLocation);
+    }
+
+    public void updateGoWithImage(Long goWithImgId, MultipartFile goWithImgFile) throws Exception {
+        updateImage(goWithImgId, goWithImgFile, goWithImgLocation);
     }
 
     public void updateCouponImage(Long couponImgId, MultipartFile couponFile) throws Exception {
@@ -134,6 +151,20 @@ public class ImageService {
         }
     }
 
+    public void deleteImagesByGoWithBoardId(Long goWithBoardId) throws Exception {
+        List<Image> images = imageRepository.findByGoWithBoardId(goWithBoardId);
+        for (Image image : images) {
+            try {
+                fileService.deleteFile(image.getImgName()); // 파일 시스템에서 이미지 파일 삭제
+                imageRepository.delete(image); // 데이터베이스에서 이미지 레코드 삭제
+            } catch (Exception e) {
+                // 개별 이미지 삭제 실패 시 로그 기록 또는 별도 처리
+                System.err.println("이미지 삭제 실패: " + e.getMessage());
+                throw new Exception("이미지 삭제 중 오류가 발생하였습니다.", e);
+            }
+        }
+    }
+
     public void deleteImage(EventBoard eventBoard) {
         Image image = imageRepository.findByEventBoard(eventBoard);
         imageRepository.delete(image);
@@ -150,5 +181,13 @@ public class ImageService {
 
     public Image findByAttraction(Attraction attraction) {
         return imageRepository.findByAttraction(attraction);
+    }
+    public Image findByTicket(Ticket ticket){
+        return imageRepository.findByTicket(ticket);
+    }
+
+    public Image findByMember(Member member) {
+        System.out.println("이미지 엔티티 확인 = " + imageRepository.findByMember(member));
+        return imageRepository.findByMember(member);
     }
 }

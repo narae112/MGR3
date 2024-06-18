@@ -1,6 +1,7 @@
 package com.MGR.repository;
 
 import com.MGR.entity.Inventory;
+import com.MGR.entity.Ticket;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
@@ -12,4 +13,6 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
     List<Inventory> findAllByTicketId(Long ticketId);
 
     Optional<Inventory> findByTicketId(Long ticketId);
+
+    void deleteByTicketAndDateAfter(Ticket ticketToUpdate, LocalDate newEndDate);
 }

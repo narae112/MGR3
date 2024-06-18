@@ -38,6 +38,8 @@ public class QMember extends EntityPathBase<Member> {
 
     public final StringPath password = createString("password");
 
+    public final StringPath profileImgUrl = createString("profileImgUrl");
+
     public final StringPath provider = createString("provider");
 
     public final StringPath providerId = createString("providerId");
