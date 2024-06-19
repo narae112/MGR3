@@ -32,14 +32,16 @@
                     contentType: false,
                     processData: false,
                     success: function(response) {
-                        showAlert(response);
-                        window.location.replace("/admin/coupons");
+                        showAlert(response.message);
+                        window.location.replace("/tickets");
                     },
                     error: function(xhr, status, error) {
                         if (xhr.status === 400) {
-                            showAlert(xhr.responseText);
+                            var response = JSON.parse(xhr.responseText);
+                            showAlert(response.message);
+                            focusField(response.field);
                         } else if (xhr.status === 404) {
-                            showAlert("쿠폰을 찾을 수 없습니다.");
+                            showAlert("티켓을 찾을 수 없습니다.");
                         } else if (xhr.status === 500) {
                             showAlert("서버 오류: " + xhr.responseText);
                         } else {
@@ -48,73 +50,82 @@
                     }
                 });
             });
-        });
 
-        function bindDomEvent() {
-            $(".custom-file-input").on("change", function() {
-                var fileName = $(this).val().split("\\").pop();
-                if (fileName === '') {
-                    alert("파일을 선택해주세요.");
-                    return;
+            // 필드에 포커스를 맞추는 함수
+            function focusField(fieldName) {
+                var field = $('[name="' + fieldName + '"]');
+                if (field.length > 0) {
+                    field.focus();
                 }
-
-                var fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
-                if (fileExt != "jpg" && fileExt != "jpeg" && fileExt != "gif" && fileExt != "png" && fileExt != "bmp") {
-                    alert("이미지 파일만 등록이 가능합니다.");
-                    $(this).val('');
-                    return;
-                }
-
-                $(this).siblings(".custom-file-label").html(fileName);
-                $('#fileNameLiveRegion').text('선택된 파일: ' + fileName); // 라이브 영역에 파일 이름 표시
-            });
-        }
-
-        function setTodayDate() {
-            var today = getTodayDate();
-            $('#startDate').val(today);
-            $('#startDate').attr("min", today);
-            $('#endDate').attr("min", today);
-
-            $('#startDate').on('change', function() {
-                var startDate = $(this).val();
-                $('#endDate').attr("min", startDate);
-                $('#startDateLiveRegion').text('선택된 시작 날짜: ' + startDate);
-            });
-
-            $('#endDate').on('change', function() {
-                var endDate = $(this).val();
-                $('#endDateLiveRegion').text('선택된 종료 날짜: ' + endDate);
-            });
-        }
-
-        function getTodayDate() {
-            var today = new Date();
-            var dd = String(today.getDate()).padStart(2, '0');
-            var mm = String(today.getMonth() + 1).padStart(2, '0');
-            var yyyy = today.getFullYear();
-            return yyyy + '-' + mm + '-' + dd;
-        }
-
-        function checkEndDate() {
-            var startDate = document.getElementById("startDate").value;
-            var endDate = document.getElementById("endDate").value;
-
-            if (endDate < startDate) {
-                alert("종료 날짜는 시작 날짜 이후여야 합니다.");
-                document.getElementById("endDate").value = startDate;
             }
-        }
 
-        // 오류 메시지를 표시하는 함수
-        function showAlert(errorMessage) {
-            $('#errorModal').modal('show'); // 모달 열기
-            $('#errorMessage').text(errorMessage); // 오류 메시지 설정
-            $('#screenReaderMessage').text(errorMessage).attr('role', 'alert'); // 스크린 리더 메시지 설정
-            $('#errorModal').on('click', 'button[data-dismiss="modal"]', function () {
-            $('#errorModal').modal('hide'); // 모달 닫기
+            function bindDomEvent() {
+                $(".custom-file-input").on("change", function() {
+                    var fileName = $(this).val().split("\\").pop();
+                    if (fileName === '') {
+                        alert("파일을 선택해주세요.");
+                        return;
+                    }
+
+                    var fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+                    if (fileExt != "jpg" && fileExt != "jpeg" && fileExt != "gif" && fileExt != "png" && fileExt != "bmp") {
+                        alert("이미지 파일만 등록이 가능합니다.");
+                        $(this).val('');
+                        return;
+                    }
+
+                    $(this).siblings(".custom-file-label").html(fileName);
+                    $('#fileNameLiveRegion').text('선택된 파일: ' + fileName); // 라이브 영역에 파일 이름 표시
+                });
+            }
+
+            function setTodayDate() {
+                var today = getTodayDate();
+                $('#startDate').val(today);
+                $('#startDate').attr("min", today);
+                $('#endDate').attr("min", today);
+
+                $('#startDate').on('change', function() {
+                    var startDate = $(this).val();
+                    $('#endDate').attr("min", startDate);
+                    $('#startDateLiveRegion').text('선택된 시작 날짜: ' + startDate);
+                });
+
+                $('#endDate').on('change', function() {
+                    var endDate = $(this).val();
+                    $('#endDateLiveRegion').text('선택된 종료 날짜: ' + endDate);
+                });
+            }
+
+            function getTodayDate() {
+                var today = new Date();
+                var dd = String(today.getDate()).padStart(2, '0');
+                var mm = String(today.getMonth() + 1).padStart(2, '0');
+                var yyyy = today.getFullYear();
+                return yyyy + '-' + mm + '-' + dd;
+            }
+
+            function checkEndDateInput() {
+                var startDate = document.getElementById("startDate").value;
+                var endDate = document.getElementById("endDate").value;
+
+                if (endDate < startDate) {
+                    alert("종료 날짜는 시작 날짜 이후여야 합니다.");
+                    document.getElementById("endDate").value = startDate;
+                }
+            }
+
+            // 오류 메시지를 표시하는 함수
+            function showAlert(errorMessage) {
+                $('#errorModal').modal('show'); // 모달 열기
+                $('#errorMessage').text(errorMessage); // 오류 메시지 설정
+                $('#screenReaderMessage').text(errorMessage).attr('role', 'alert'); // 스크린 리더 메시지 설정
+                $('#errorModal').on('click', 'button[data-dismiss="modal"]', function () {
+                    $('#errorModal').modal('hide'); // 모달 닫기
+                });
+            }
+
         });
-        }
     </script>
 </th:block>
 <th:block layout:fragment="css">
