@@ -51,7 +51,7 @@
                     processData: false,
                     success: function(response) {
                         showAlert(response.message);
-                        window.location.replace("/tickets");
+                        window.location.replace("/admin/coupons");
                     },
                     error: function(xhr, status, error) {
                         if (xhr.status === 400) {
