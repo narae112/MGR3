@@ -28,6 +28,10 @@
                 maxDate: new Date($('#endDate').val()),
                 onSelect: function(dateText) {
                     $("#visitDate").val(dateText);
+
+                    // 다음 항목으로 포커스 이동
+                    $("#adultPriceSection").focus();
+
                 }
             });
 
@@ -39,7 +43,11 @@
             var adultPrice = $("#adultPrice").val() || 0;
             var childPrice = $("#childPrice").val() || 0;
             var totalPrice = adultPrice * adultCount + childPrice * childCount;
-            $("#totalPrice").html(totalPrice + '원');
+            $("#totalPrice").html(formatNumber(totalPrice) + '원');
+        }
+
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
 
         function addReservation(){
@@ -200,32 +208,32 @@
                 </div>
             </div>
             <div class="mt-auto">
-                <div class="h4 text-danger text-start ms-3" tabindex="0">
+                <div class="h4 text-danger text-start ms-3" tabindex="0" id="adultPriceSection">
                     <input type="hidden" th:value="${ticket.adultPrice}" id="adultPrice" name="adultPrice">
                     성인: <span th:text="${#numbers.formatInteger(ticket.adultPrice, 0, 'COMMA')}"></span>원
                 </div>
                 <div class="input-group w-50">
                     <div class="input-group-prepend">
-                        <span class="input-group-text">수량</span>
+                        <span class="input-group-text" aria-label="성인 티켓 수량" tabindex="0">수량</span>
                     </div>
-                    <input type="number" name="adultCount" id="adultCount" class="form-control" value="1" min="1" onchange="calculateTotalPrice()" required>
+                    <input aria-label="성인 티켓 수량 입력" type="number" name="adultCount" id="adultCount" class="form-control" value="1" min="1" onchange="calculateTotalPrice()" required>
                 </div>
 
-                <div class="h4 text-danger text-start ms-3">
+                <div class="h4 text-danger text-start ms-3" tabindex="0">
                     <input type="hidden" th:value="${ticket.childPrice}" id="childPrice" name="childPrice">
                     어린이: <span th:text="${#numbers.formatInteger(ticket.childPrice, 0, 'COMMA')}"></span>원
                 </div>
 
                 <div class="input-group w-50">
                     <div class="input-group-prepend">
-                        <span class="input-group-text">수량</span>
+                        <span class="input-group-text" aria-label="어린이 티켓 수량" tabindex="0">수량</span>
                     </div>
-                    <input type="number" name="childCount" id="childCount" class="form-control" value="0" min="0" onchange="calculateTotalPrice()" required>
+                    <input aria-label="어린이 티켓 수량 입력" type="number" name="childCount" id="childCount" class="form-control" value="0" min="0" onchange="calculateTotalPrice()" required>
                 </div>
                 <hr class="my-4">
                 <div class="text-end mgt-50">
-                    <h5>결제 금액</h5>
-                    <h3 name="totalPrice" id="totalPrice" class="font-weight-bold"></h3>
+                    <h5 tabindex="0">결제 금액</h5>
+                    <h3 name="totalPrice" id="totalPrice" class="font-weight-bold" tabindex="0"></h3>
                     <div class="text-right">
                         <button type="button" class="btn btn-primary btn-lg mt-3" onclick="addReservation()">예약하기</button>
                     </div>
