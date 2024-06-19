@@ -24,7 +24,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -49,33 +51,45 @@ public class CouponController {
 //        }
         // 각 필드별 오류 체크
         if (bindingResult.hasFieldErrors("name")) {
-            return ResponseEntity.badRequest().body("쿠폰명을 입력해주세요.");
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("field", "name");
+            return ResponseEntity.badRequest().body("쿠폰명을 입력해주세요");
         }
         if (bindingResult.hasFieldErrors("discountRate")) {
-            return ResponseEntity.badRequest().body("할인율을 올바르게 입력해주세요.");
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("field", "discountRate");
+            return ResponseEntity.badRequest().body("할인율을 올바르게 입력해주세요");
         }
         if (bindingResult.hasFieldErrors("couponContent")) {
-            return ResponseEntity.badRequest().body("쿠폰 세부사항을 입력해주세요.");
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("field", "couponContent");
+            return ResponseEntity.badRequest().body("쿠폰 세부사항을 입력해주세요");
         }
         if (bindingResult.hasFieldErrors("startDate")) {
-            return ResponseEntity.badRequest().body("쿠폰 시작 날짜를 입력해주세요.");
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("field", "startDate");
+            return ResponseEntity.badRequest().body("쿠폰 시작 날짜를 입력해주세요");
         }
         if (bindingResult.hasFieldErrors("endDate")) {
-            return ResponseEntity.badRequest().body("쿠폰 종료 날짜를 입력해주세요.");
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("field", "endDate");
+            return ResponseEntity.badRequest().body("쿠폰 종료 날짜를 입력해주세요");
         }
 
         // 이미지 파일이 없는 경우
         if (couponImgFileList.isEmpty() || couponImgFileList.get(0).isEmpty()) {
-            return ResponseEntity.badRequest().body("상품 이미지는 필수 입력 값 입니다.");
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("field", "couponImgFile");
+            return ResponseEntity.badRequest().body("상품 이미지는 필수 입력 값 입니다");
         }
         try {
             couponService.createCoupon(couponFormDto, couponImgFileList);
-            return ResponseEntity.ok("쿠폰이 성공적으로 등록되었습니다.");
+            return ResponseEntity.ok("쿠폰이 성공적으로 등록되었습니다");
         } catch (DuplicateCouponNameException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("쿠폰 등록 중 오류가 발생했습니다.");
+                    .body("쿠폰 등록 중 오류가 발생했습니다");
         }
     }
 
@@ -87,7 +101,7 @@ public class CouponController {
             CouponFormDto couponFormDto = couponService.getCouponDtl(couponId);
             model.addAttribute("couponFormDto", couponFormDto);
         } catch (EntityNotFoundException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "존재하지 않는 티켓입니다.");
+            redirectAttributes.addFlashAttribute("errorMessage", "존재하지 않는 티켓입니다");
             model.addAttribute("couponFormDto", new CouponFormDto());
             return "coupon/couponForm";
         }
