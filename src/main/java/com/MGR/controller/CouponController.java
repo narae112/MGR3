@@ -24,7 +24,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -39,29 +41,63 @@ public class CouponController {
         return "coupon/couponForm";
     }
 
-    // 쿠폰 등록
     @PostMapping("/admin/coupon/new")
-    public ResponseEntity<String> newCouponAjax(@Valid CouponFormDto couponFormDto, BindingResult bindingResult,
-                                                @RequestParam("couponImgFile") List<MultipartFile> couponImgFileList) {
-
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body("입력한 값들을 확인해주세요.");
+    public ResponseEntity<Map<String, String>> newCouponAjax(@Valid CouponFormDto couponFormDto, BindingResult bindingResult,
+                                                             @RequestParam("couponImgFile") List<MultipartFile> couponImgFileList) {
+        if (bindingResult.hasFieldErrors("name")) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("field", "name");
+            errorResponse.put("message", "쿠폰명을 입력해주세요.");
+            return ResponseEntity.badRequest().body(errorResponse);
         }
+        if (bindingResult.hasFieldErrors("discountRate")) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("field", "discountRate");
+            errorResponse.put("message", "할인율을 올바르게 입력해주세요.");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        if (bindingResult.hasFieldErrors("couponContent")) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("field", "couponContent");
+            errorResponse.put("message", "쿠폰 세부사항을 입력해주세요.");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        if (bindingResult.hasFieldErrors("startDate")) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("field", "startDate");
+            errorResponse.put("message", "쿠폰 시작 날짜를 입력해주세요.");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        if (bindingResult.hasFieldErrors("endDate")) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("field", "endDate");
+            errorResponse.put("message", "쿠폰 종료 날짜를 입력해주세요.");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+
         // 이미지 파일이 없는 경우
         if (couponImgFileList.isEmpty() || couponImgFileList.get(0).isEmpty()) {
-            return ResponseEntity.badRequest().body("상품 이미지는 필수 입력 값 입니다.");
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("field", "couponImgFile");
+            errorResponse.put("message", "상품 이미지는 필수 입력 값입니다.");
+            return ResponseEntity.badRequest().body(errorResponse);
         }
+
         try {
             couponService.createCoupon(couponFormDto, couponImgFileList);
-            return ResponseEntity.ok("쿠폰이 성공적으로 등록되었습니다.");
+            Map<String, String> successResponse = new HashMap<>();
+            successResponse.put("message", "쿠폰이 성공적으로 등록되었습니다.");
+            return ResponseEntity.ok().body(successResponse);
         } catch (DuplicateCouponNameException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(errorResponse);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("쿠폰 등록 중 오류가 발생했습니다.");
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "쿠폰 등록 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
-
 
     //쿠폰 수정
     @GetMapping(value = "/admin/coupon/{couponId}")
