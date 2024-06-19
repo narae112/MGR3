@@ -136,6 +136,12 @@
                 field.focus();
             }
         }
+
+            function updateLiveRegion(inputId, value) {
+        const liveRegion = document.getElementById('liveRegion');
+        liveRegion.textContent = `${document.querySelector('label[for="' + inputId + '"]').textContent}는 ${value}로 선택되었습니다.`;
+    }
+
     </script>
 </th:block>
 
@@ -166,7 +172,7 @@
     <div class="row justify-content-center">
         <div class="col-md-6">
             <form role="form" method="POST" th:object="${eventBoardFormDto}" enctype="multipart/form-data" onsubmit="return validateForm();">
-                <h3 class="mb-5 text-center" tabindex="0">이벤트 등록</h3>
+                <h3 class="mb-5 text-center" aria-label="이벤트 등록 게시판" tabindex="0">이벤트 등록</h3>
 
                 <div class="form-group mb-3">
                     <label th:for="type" class="mb-1">게시글 타입</label>
@@ -180,8 +186,8 @@
 
                 <div class="form-group mb-3">
                     <label th:for="title" class="mb-1">제목</label>
-                    <input th:field="*{title}" class="form-control" type="text"/>
-                    <p class="titleError" th:text="${errors}"></p>
+                    <input id="titleInput" th:field="*{title}" class="form-control" type="text" aria-label="제목" oninput="updateAriaLabel()" />
+                    <p id="titleError" class="titleError" th:text="${errors}"></p>
                 </div>
 
                 <div class="form-group mb-3">
@@ -194,17 +200,19 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="startDate" class="mb-1">게시시작 일자</label>
-                            <input class="form-control" type="date" id="startDate" th:field="*{startDate}"/>
+                            <input class="form-control" name="startDate" type="date" id="startDate" th:field="*{startDate}" aria-label="게시시작 일자" aria-live="polite" onchange="updateLiveRegion('startDate', this.value)"/>
                         </div>
                     </div>
 
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="endDate" class="mb-1">게시종료 일자</label>
-                            <input class="form-control" type="date" id="endDate" th:field="*{endDate}"/>
+                            <input class="form-control" type="date" id="endDate" th:field="*{endDate}" aria-label="게시종료 일자" aria-live="polite" onchange="updateLiveRegion('endDate', this.value)"/>
                         </div>
                     </div>
                 </div>
+
+                <div id="liveRegion" class="sr-only" aria-live="polite"></div>
 
                 <!--        이미지 등록 시작-->
                 <div class="form-group mb-3">
