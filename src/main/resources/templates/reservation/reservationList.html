@@ -317,36 +317,13 @@
             </tbody>
         </table>
 
-        <!-- Paging -->
-<!--        <div class="Page text-center">-->
-<!--            <ul class="pagination page-reservation d-flex justify-content-center">-->
-<!--                &lt;!&ndash; 이전 버튼 &ndash;&gt;-->
-<!--                <li th:class="${currentPage == 0} ? 'page-item disabled' : 'page-item'">-->
-<!--                    <a th:href="@{~/member/reservations/{page}(page=${currentPage - 1})}" class="page-link">&laquo;</a>-->
-<!--                </li>-->
-
-<!--                &lt;!&ndash; 페이지 번호 &ndash;&gt;-->
-<!--                &lt;!&ndash; 페이지 번호 &ndash;&gt;-->
-<!--                <li th:each="i : ${#numbers.sequence(-->
-<!--                        totalPages <= 5 ? 1 : (currentPage >= totalPages - 3 ? totalPages - 4 : (currentPage >= 2 ? currentPage - 2 : 1)),-->
-<!--                        totalPages <= 5 ? totalPages : (currentPage >= totalPages - 3 ? totalPages : (currentPage >= 2 ? currentPage + 2 : 5))-->
-<!--                    )}"-->
-<!--                    th:classappend="${i == currentPage + 1} ? ' active' : ''" class="page-item" th:unless="${totalPages == 1}">-->
-<!--                    <a th:href="@{~/reservations/{page}(page=${i - 1})}" class="page-link" th:text="${i}"></a>-->
-<!--                </li>-->
-
-
-<!--                &lt;!&ndash; 다음 버튼 &ndash;&gt;-->
-<!--                <li th:class="${currentPage == totalPages - 1} ? 'page-item disabled' : 'page-item'">-->
-<!--                    <a th:href="@{~/member/reservations/{page}(page=${currentPage + 1})}" class="page-link">&raquo;</a>-->
-<!--                </li>-->
-<!--            </ul>-->
-<!--        </div>-->
-
         <nav aria-label="Page navigation">
             <ul class="pagination d-flex justify-content-center">
                 <li class="page-item" th:classappend="${paging.first} ? 'disabled'">
-                    <a class="page-link" th:href="@{|~/member/reservations/${paging.number - 1}|}" aria-label="Previous">
+                    <a class="page-link" th:if="${!paging.first}" th:href="@{|~/member/reservations/${paging.number - 1}|}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                    <a th:if="${paging.first}" class="page-link disabled" aria-label="Previous">
                         <span aria-hidden="true">&laquo;</span>
                     </a>
                 </li>
@@ -355,12 +332,16 @@
                     <a class="page-link" th:href="@{|~/member/reservations/${i - 1}|}" th:text="${i}">1</a>
                 </li>
                 <li class="page-item" th:classappend="${paging.last} ? 'disabled'">
-                    <a class="page-link" th:href="@{|~/member/reservations/${paging.number + 1}|}" aria-label="Next">
+                    <a class="page-link" th:if="${!paging.last}" th:href="@{|~/member/reservations/${paging.number + 1}|}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                    <a th:if="${paging.last}" class="page-link disabled" aria-label="Next">
                         <span aria-hidden="true">&raquo;</span>
                     </a>
                 </li>
             </ul>
         </nav>
+
 
         <h2 class="text-center">
             <span tabindex="0"> 총 결제 금액 </span>: <span id="orderTotalPrice" class="text-danger" tabindex="0">0원</span><!-- 체크된 예약 티켓 항목 전체 금액 -->

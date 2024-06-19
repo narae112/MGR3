@@ -111,6 +111,17 @@
             top: -10px;
             right: 0;
         }
+        .btn-block {
+            display: block;
+            width: 100%;
+            background-color: #101130;
+            color: #fff;
+        }
+        .btn-block:hover {
+            color: #fff;
+            background-color: #8C959F;
+        }
+
     </style>
 </th:block>
 
@@ -334,8 +345,11 @@
     <h3 class="mb-5 text-center">채팅 목록</h3>
     <hr class="my-4">
     <div class="row">
+        <h5 id="chatTitle" class="text-center">전체 채팅방</h5>
         <div class="col-md-4">
-            <a href="/api/createRoom" class="btn btn-success mb-3">채팅방 만들기</a>
+            <div class="col-md-12 mb-3" style="margin-bottom: 10px;">
+                <a href="/api/createRoom" class="btn btn-block">채팅방 만들기</a>
+            </div>
             <ul class="list-group" id="chatRooms">
                 <li class="list-group-item" th:each="room : ${roomList}" th:data-room-id="${room.id}">
                     <span th:text="${room.name}"></span>
@@ -343,8 +357,9 @@
                 </li>
             </ul>
         </div>
+
         <div class="col-md-8">
-            <h5 id="chatTitle" class="text-center">전체 채팅방</h5>
+<!--            <h5 id="chatTitle" class="text-center">전체 채팅방</h5>-->
             <div id="chatBox" class="chat-box"></div>
             <div class="message-input">
                 <input type="text" id="messageInput" class="form-control" placeholder="Enter message">
