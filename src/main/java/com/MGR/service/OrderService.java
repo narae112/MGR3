@@ -174,6 +174,7 @@ public class OrderService {
     }
 
 
-
-
+    public List<OrderTicket> findOrderTicketByOrderId(Long id) {
+        return orderTicketRepository.findByOrderId(id);
+    }
 }

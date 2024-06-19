@@ -158,6 +158,9 @@
                                         <li class="nav-item">
                                             <a class="nav-link" sec:authorize="hasAnyRole('ROLE_USER')" th:href="@{/member/orderList}">결제내역</a>
                                         </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/admin/paymentList}">매출 조회</a>
+                                        </li>
                                     </ul>
                                 </li>
 

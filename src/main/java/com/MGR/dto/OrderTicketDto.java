@@ -1,16 +1,13 @@
 package com.MGR.dto;
 
 import com.MGR.constant.LocationCategory;
-import com.MGR.constant.TicketCategory;
-import com.MGR.entity.Order;
 import com.MGR.entity.OrderTicket;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 import java.time.LocalDate;
 
-@Getter @Setter @ToString
+@Getter @Setter
 public class OrderTicketDto {
     private Long orderId;
     private LocationCategory locationCategory; // 지점
