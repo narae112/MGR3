@@ -9,6 +9,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">오류</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="닫기">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="errorMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <th:block layout:fragment="script">
     <script th:inline="javascript">
@@ -41,7 +59,7 @@
                             showAlert(response.message);
                             focusField(response.field);
                         } else if (xhr.status === 404) {
-                            showAlert("티켓을 찾을 수 없습니다.");
+                            showAlert("쿠폰을 찾을 수 없습니다.");
                         } else if (xhr.status === 500) {
                             showAlert("서버 오류: " + xhr.responseText);
                         } else {
@@ -127,8 +145,6 @@
         });
     </script>
 </th:block>
-
-
 <th:block layout:fragment="css">
     <style>
         .fieldError {
@@ -150,6 +166,7 @@
             justify-content: center;
             height: 100%;
         }
+
         #errorModal .modal-body{
             text-align: center;
         }

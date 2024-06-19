@@ -27,7 +27,9 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -44,21 +46,62 @@ public class TicketController {
     }
 
     @PostMapping("/admin/ticket/new")
-    public ResponseEntity<String> ticketNew(@Valid TicketFormDto ticketFormDto, BindingResult bindingResult,
-                                            Model model, @RequestParam("ticketImgFile") List<MultipartFile> ticketImgFileList) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body("입력한 값들을 확인해주세요.");
+    public ResponseEntity<Map<String, String>> ticketNew(@Valid TicketFormDto ticketFormDto, BindingResult bindingResult,
+                                                         Model model, @RequestParam("ticketImgFile") List<MultipartFile> ticketImgFileList) {
+        if (bindingResult.hasFieldErrors("childPrice")) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("field", "childPrice");
+            errorResponse.put("message", "어린이 티켓 가격을 올바르게 입력해주세요.");
+            return ResponseEntity.badRequest().body(errorResponse);
         }
+        if (bindingResult.hasFieldErrors("adultPrice")) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("field", "adultPrice");
+            errorResponse.put("message", "성인 티켓 가격을 올바르게 입력해주세요.");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        if (bindingResult.hasFieldErrors("name")) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("field", "name");
+            errorResponse.put("message", "티켓명을 입력해주세요.");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        if (bindingResult.hasFieldErrors("memo")) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("field", "memo");
+            errorResponse.put("message", "티켓 세부사항을 입력해주세요.");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        if (bindingResult.hasFieldErrors("startDate")) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("field", "startDate");
+            errorResponse.put("message", "티켓 시작 날짜를 입력해주세요.");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        if (bindingResult.hasFieldErrors("endDate")) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("field", "endDate");
+            errorResponse.put("message", "티켓 종료 날짜를 입력해주세요.");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+
         // 이미지 파일이 없는 경우
         if (ticketImgFileList.isEmpty() || ticketImgFileList.get(0).isEmpty()) {
-            return ResponseEntity.badRequest().body("상품 이미지는 필수 입력 값 입니다.");
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("field", "ticketImgFile");
+            errorResponse.put("message", "상품 이미지는 필수 입력 값입니다.");
+            return ResponseEntity.badRequest().body(errorResponse);
         }
+
         try {
             ticketService.saveTicket(ticketFormDto, ticketImgFileList);
-            return ResponseEntity.ok().body("티켓이 성공적으로 등록되었습니다.");
+            Map<String, String> successResponse = new HashMap<>();
+            successResponse.put("message", "티켓이 성공적으로 등록되었습니다.");
+            return ResponseEntity.ok().body(successResponse);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("티켓 등록 중 에러가 발생하였습니다.");
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "티켓 등록 중 에러가 발생하였습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
 
@@ -76,28 +119,64 @@ public class TicketController {
     }
 
     @PostMapping("/admin/ticket/{ticketId}")
-    public ResponseEntity<String> ticketUpdateAjax(@PathVariable("ticketId") Long id,
+    public ResponseEntity<Map<String, String>> ticketUpdateAjax(@PathVariable("ticketId") Long id,
                                                    @Valid TicketFormDto ticketFormDto,
                                                    BindingResult bindingResult,
                                                    @RequestParam("ticketImgFile") List<MultipartFile> ticketImgFileList) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body("입력한 값들을 확인해주세요.");
+        if (bindingResult.hasFieldErrors("childPrice")) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("field", "childPrice");
+            errorResponse.put("message", "어린이 티켓 가격을 올바르게 입력해주세요.");
+            return ResponseEntity.badRequest().body(errorResponse);
         }
+        if (bindingResult.hasFieldErrors("adultPrice")) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("field", "adultPrice");
+            errorResponse.put("message", "성인 티켓 가격을 올바르게 입력해주세요.");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        if (bindingResult.hasFieldErrors("name")) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("field", "name");
+            errorResponse.put("message", "티켓명을 입력해주세요.");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        if (bindingResult.hasFieldErrors("memo")) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("field", "memo");
+            errorResponse.put("message", "티켓 세부사항을 입력해주세요.");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        if (bindingResult.hasFieldErrors("startDate")) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("field", "startDate");
+            errorResponse.put("message", "티켓 시작 날짜를 입력해주세요.");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        if (bindingResult.hasFieldErrors("endDate")) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("field", "endDate");
+            errorResponse.put("message", "티켓 종료 날짜를 입력해주세요.");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+
         // 이미지 파일이 없는 경우
         if (ticketImgFileList.isEmpty() || ticketImgFileList.get(0).isEmpty()) {
-            return ResponseEntity.badRequest().body("상품 이미지는 필수 입력 값 입니다.");
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("field", "ticketImgFile");
+            errorResponse.put("message", "상품 이미지는 필수 입력 값입니다.");
+            return ResponseEntity.badRequest().body(errorResponse);
         }
 
         try {
             ticketService.updateTicket(id, ticketFormDto, ticketImgFileList);
-            return ResponseEntity.ok().body("티켓이 성공적으로 수정되었습니다.");
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("이미지 ID 목록과 파일 목록의 크기가 다릅니다.");
+            Map<String, String> successResponse = new HashMap<>();
+            successResponse.put("message", "티켓이 성공적으로 등록되었습니다.");
+            return ResponseEntity.ok().body(successResponse);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("티켓 수정 중 오류가 발생했습니다. 상세 오류: " + e.getMessage());
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "티켓 등록 중 에러가 발생하였습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
     @GetMapping(value = {"/admin/tickets", "/admin/tickets/{page}"})

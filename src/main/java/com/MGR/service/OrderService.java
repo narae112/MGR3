@@ -13,10 +13,11 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -159,5 +160,20 @@ public class OrderService {
 
         return new PageImpl<>(orderListDtos, pageable, orderPage.getTotalElements());
     }
+
+    public Map<LocalDate, Integer> getTotalPriceByDate(List<OrderListDto> orderList) {
+        Map<LocalDate, Integer> totalPriceByDate = new HashMap<>();
+
+        for (OrderListDto orderDto : orderList) {
+            LocalDate orderDate = orderDto.getOrderDate().toLocalDate();
+            int totalPrice = orderDto.calculateTotalPrice(); // Adjust this according to your actual method
+            totalPriceByDate.merge(orderDate, totalPrice, Integer::sum);
+        }
+
+        return totalPriceByDate;
+    }
+
+
+
 
 }

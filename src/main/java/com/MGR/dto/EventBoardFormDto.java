@@ -26,7 +26,7 @@ public class EventBoardFormDto {
     @Length(min=1, max=30, message = "제목을 30자 이하로 입력해주세요")
     private String title;
 
-    @Size(max = 299, message = "내용을 300자 미만으로 입력해주세요")
+    @Size(min=1, max = 299, message = "내용을 입력해주세요")
     private String content;
 
     @NotEmpty(message = "시작 날짜를 입력해주세요")

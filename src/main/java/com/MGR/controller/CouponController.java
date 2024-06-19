@@ -47,31 +47,31 @@ public class CouponController {
         if (bindingResult.hasFieldErrors("name")) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("field", "name");
-            errorResponse.put("message", "쿠폰명을 입력해주세요");
+            errorResponse.put("message", "쿠폰명을 입력해주세요.");
             return ResponseEntity.badRequest().body(errorResponse);
         }
         if (bindingResult.hasFieldErrors("discountRate")) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("field", "discountRate");
-            errorResponse.put("message", "할인율을 올바르게 입력해주세요");
+            errorResponse.put("message", "할인율을 올바르게 입력해주세요.");
             return ResponseEntity.badRequest().body(errorResponse);
         }
         if (bindingResult.hasFieldErrors("couponContent")) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("field", "couponContent");
-            errorResponse.put("message", "쿠폰 세부사항을 입력해주세요");
+            errorResponse.put("message", "쿠폰 세부사항을 입력해주세요.");
             return ResponseEntity.badRequest().body(errorResponse);
         }
         if (bindingResult.hasFieldErrors("startDate")) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("field", "startDate");
-            errorResponse.put("message", "쿠폰 시작 날짜를 입력해주세요");
+            errorResponse.put("message", "쿠폰 시작 날짜를 입력해주세요.");
             return ResponseEntity.badRequest().body(errorResponse);
         }
         if (bindingResult.hasFieldErrors("endDate")) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("field", "endDate");
-            errorResponse.put("message", "쿠폰 종료 날짜를 입력해주세요");
+            errorResponse.put("message", "쿠폰 종료 날짜를 입력해주세요.");
             return ResponseEntity.badRequest().body(errorResponse);
         }
 
@@ -79,14 +79,14 @@ public class CouponController {
         if (couponImgFileList.isEmpty() || couponImgFileList.get(0).isEmpty()) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("field", "couponImgFile");
-            errorResponse.put("message", "상품 이미지는 필수 입력 값입니다");
+            errorResponse.put("message", "상품 이미지는 필수 입력 값입니다.");
             return ResponseEntity.badRequest().body(errorResponse);
         }
 
         try {
             couponService.createCoupon(couponFormDto, couponImgFileList);
             Map<String, String> successResponse = new HashMap<>();
-            successResponse.put("message", "쿠폰이 성공적으로 등록되었습니다");
+            successResponse.put("message", "쿠폰이 성공적으로 등록되었습니다.");
             return ResponseEntity.ok().body(successResponse);
         } catch (DuplicateCouponNameException e) {
             Map<String, String> errorResponse = new HashMap<>();
@@ -94,7 +94,7 @@ public class CouponController {
             return ResponseEntity.badRequest().body(errorResponse);
         } catch (Exception e) {
             Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("message", "쿠폰 등록 중 오류가 발생했습니다");
+            errorResponse.put("message", "쿠폰 등록 중 오류가 발생했습니다.");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
@@ -106,7 +106,7 @@ public class CouponController {
             CouponFormDto couponFormDto = couponService.getCouponDtl(couponId);
             model.addAttribute("couponFormDto", couponFormDto);
         } catch (EntityNotFoundException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "존재하지 않는 티켓입니다");
+            redirectAttributes.addFlashAttribute("errorMessage", "존재하지 않는 티켓입니다.");
             model.addAttribute("couponFormDto", new CouponFormDto());
             return "coupon/couponForm";
         }
