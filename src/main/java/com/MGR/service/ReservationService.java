@@ -80,21 +80,44 @@ public class ReservationService {
     }
 
     // 예약 내역 불러오기
+//    @Transactional(readOnly = true)
+//    public Page<ReservationDtlDto> getReservationList(String email, Pageable pageable) {
+//        Optional<Member> member = memberRepository.findByEmail(email);
+//        Reservation reservation = reservationRepository.findByMemberId(member.get().getId());
+//
+//        Page<ReservationTicket> reservationTickets = reservationTicketRepository.findByReservationId(reservation.getId(), pageable);
+//        List<ReservationDtlDto> dtos = reservationTickets.stream()
+//                .map(ReservationDtlDto::new)
+//                .toList();
+//        // 주문 목록 조회
+//        Long totalCount = reservationTicketRepository.countReservation(reservation.getId());
+//
+//
+//        return new PageImpl<>(dtos, pageable, totalCount);
+//    }
     @Transactional(readOnly = true)
     public Page<ReservationDtlDto> getReservationList(String email, Pageable pageable) {
-        Optional<Member> member = memberRepository.findByEmail(email);
-        Reservation reservation = reservationRepository.findByMemberId(member.get().getId());
+        Optional<Member> memberOpt = memberRepository.findByEmail(email);
+
+        if (memberOpt.isEmpty()) {
+            return Page.empty(pageable);
+        }
+
+        Member member = memberOpt.get();
+        Reservation reservation = reservationRepository.findByMemberId(member.getId());
+
+        if (reservation == null) {
+            return Page.empty(pageable);
+        }
 
         Page<ReservationTicket> reservationTickets = reservationTicketRepository.findByReservationId(reservation.getId(), pageable);
-        List<ReservationDtlDto> dtos = reservationTickets.stream()
-                .map(ReservationDtlDto::new)
-                .toList();
-        // 주문 목록 조회
-        Long totalCount = reservationTicketRepository.countReservation(reservation.getId());
 
+        Page<ReservationDtlDto> dtos = reservationTickets.map(ReservationDtlDto::new);
 
-        return new PageImpl<>(dtos, pageable, totalCount);
+        return dtos;
     }
+
+
 
     // 티켓 수량 수정
     public void updateReservationTicketCount(Long reservationTicketId, Integer adultCount, Integer childCount) {
