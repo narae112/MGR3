@@ -46,6 +46,7 @@
         <p>결제 내역이 없습니다.</p>
     </div>
     <div th:if="${not paging.empty}">
+        <a th:href="@{/admin/paymentGraph}" class="btn btn-primary mb-4">자세히 보기</a>
         <table class="table">
             <thead>
             <tr>
