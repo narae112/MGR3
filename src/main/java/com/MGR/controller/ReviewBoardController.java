@@ -120,6 +120,7 @@ public class ReviewBoardController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
     public String reviewCreate(ReviewBoardForm reviewBoardForm, @AuthenticationPrincipal PrincipalDetails member, Model model) {
+
         if (member == null) {
             model.addAttribute("error", "로그인이 필요한 서비스입니다.");
             return "member/loginForm";

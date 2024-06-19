@@ -63,12 +63,6 @@
 
 $(document).ready(function() {
 
-// 탭 버튼 클릭 시 드롭다운 활성화
-$('.nav-link').on('focus', function() {
-    $(this).closest('.dd-menu').toggleClass('show');
-});
-
-
 <!--     알림 수 가져오기-->
     $.ajax({
         url: '/api/notifications/count',
