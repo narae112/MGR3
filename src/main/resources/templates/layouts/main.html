@@ -41,6 +41,21 @@
             right: 0 !important;
             transform: translate(50%, -50%) !important;
         }
+
+        .skip-nav {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #000;
+            color: #fff;
+            padding: 8px;
+            z-index: 100;
+            transition: top 0.3s;
+        }
+
+        .skip-nav:focus {
+            top: 0;
+        }
     </style>
     <th:block layout:fragment="script"></th:block>
     <th:block layout:fragment="css"></th:block>
@@ -48,16 +63,21 @@
 </head>
 <body>
 
+<a href="#header" class="skip-nav">메인 메뉴로 바로가기</a>
+<a href="#content" class="skip-nav">본문 내용으로 바로가기</a>
+<a href="#footer" class="skip-nav">하단 내용으로 바로가기</a>
+
 <script type="text/javascript" src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 <script src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 
-<div th:replace="~{layouts/mainHeader::mainHeader}"></div>
+<div th:replace="~{layouts/mainHeader::mainHeader}" id="header"></div>
 
-<div layout:fragment="content" >
+<div layout:fragment="content" id="content">
 
 </div>
 
-<div th:replace="~{layouts/footer::footer}"></div>
+<div th:replace="~{layouts/footer::footer}" id="footer"></div>
+
 
 <script>
 
