@@ -35,120 +35,121 @@
                         </button>
                         <div class="collapse navbar-collapse sub-menu-bar" id="navbarSupportedContent">
                             <ul id="nav" class="navbar-nav ms-auto">
-                                <li class="nav-item">
-                                    <a class="nav-link active"  aria-label="Toggle navigation" aria-current="page" href="/" tabindex="2">Home</a>
+                                <li class="nav-item" tabindex="0">
+                                    <a class="nav-link active"  aria-label="Toggle navigation" aria-current="page" href="/" tabindex="-1">Home</a>
                                 </li>
 
-                                <li class="nav-item">
+                                <li class="nav-item" tabindex="0">
                                     <a class="dd-menu collapsed" href="javascript:void(0)" data-bs-toggle="collapse"
                                        data-bs-target="#submenu-1-1" aria-controls="navbarSupportedContent"
-                                       aria-expanded="false" aria-label="Toggle navigation" tabindex="3">회원</a>
+                                       aria-expanded="false" aria-label="Toggle navigation" tabindex="-1">회원</a>
                                     <ul class="sub-menu collapse" id="submenu-1-1">
                                         <li class="nav-item">
-                                            <a class="nav-link"  aria-label="Toggle navigation" sec:authorize="isAnonymous()" th:href="@{/login}" tabindex="4">로그인</a>
+                                            <a class="nav-link" aria-label="Toggle navigation" sec:authorize="isAnonymous()" th:href="@{/login}">로그인</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/logout}" tabindex="5">로그아웃</a>
+                                            <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/logout}">로그아웃</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/join}" tabindex="6">회원가입</a>
+                                            <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/join}">회원가입</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/member/memberList}" tabindex="7">회원관리</a>
+                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/member/memberList}">회원관리</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_USER')" th:href="@{/member/edit}" tabindex="8">회원정보수정</a>
+                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_USER')" th:href="@{/member/edit}">회원정보수정</a>
                                         </li>
                                     </ul>
                                 </li>
 
-                                <li class="nav-item">
+                                <li class="nav-item" tabindex="0">
                                     <a class="dd-menu collapsed" href="javascript:void(0)" data-bs-toggle="collapse"
                                        data-bs-target="#submenu-1-2" aria-controls="navbarSupportedContent"
-                                       aria-expanded="false" aria-label="Toggle navigation" tabindex="9">쿠폰</a>
+                                       aria-expanded="false" tabindex="1" aria-label="Toggle navigation">쿠폰</a>
                                     <ul class="sub-menu collapse" id="submenu-1-2">
                                         <li class="nav-item">
-                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/admin/coupon/new}" tabindex="10">쿠폰 등록</a>
+                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/admin/coupon/new}">쿠폰 등록</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/admin/coupons}" tabindex="11">쿠폰 관리</a>
+                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/admin/coupons}">쿠폰 관리</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_USER')" th:href="@{/member/myCoupon}" tabindex="12">쿠폰내역</a>
+                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_USER')" th:href="@{/member/myCoupon}">쿠폰내역</a>
                                         </li>
                                     </ul>
                                 </li>
 
-                                <li class="nav-item">
+                                <li class="nav-item" tabindex="0">
                                     <a class="dd-menu collapsed" href="javascript:void(0)" data-bs-toggle="collapse"
                                        data-bs-target="#submenu-1-3" aria-controls="navbarSupportedContent"
-                                       aria-expanded="false" aria-label="Toggle navigation" tabindex="13">티켓</a>
+                                       aria-expanded="false" aria-label="Toggle navigation" tabindex="-1">티켓</a>
                                     <ul class="sub-menu collapse" id="submenu-1-3">
                                         <li class="nav-item">
-                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/admin/ticket/new}" tabindex="14">티켓 등록</a>
+                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/admin/ticket/new}">티켓 등록</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/admin/tickets}" tabindex="15">티켓 관리</a>
+                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/admin/tickets}">티켓 관리</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" th:href="@{/tickets}" tabindex="16">티켓 구매</a>
+                                            <a class="nav-link" th:href="@{/tickets}">티켓 구매</a>
                                         </li>
                                     </ul>
                                 </li>
 
-                                <li class="nav-item">
+                                <li class="nav-item" tabindex="0">
                                     <a class="dd-menu collapsed" href="javascript:void(0)" data-bs-toggle="collapse"
                                        data-bs-target="#submenu-1-4" aria-controls="navbarSupportedContent"
-                                       aria-expanded="false" aria-label="Toggle navigation" tabindex="17">예약</a>
+                                       aria-expanded="false" aria-label="Toggle navigation" tabindex="-1">예약</a>
                                     <ul class="sub-menu collapse" id="submenu-1-4">
                                         <li class="nav-item">
-                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_USER')" th:href="@{/member/reservations}" tabindex="18">예약내역</a>
+                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_USER')" th:href="@{/member/reservations}">예약내역</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_USER')" th:href="@{/member/orderList}" tabindex="19">결제내역</a>
+                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_USER')" th:href="@{/member/orderList}">결제내역</a>
                                         </li>
                                     </ul>
                                 </li>
 
-                                <li class="nav-item">
+                                <li class="nav-item" tabindex="0">
                                     <a class="dd-menu collapsed" href="javascript:void(0)" data-bs-toggle="collapse"
                                        data-bs-target="#submenu-1-5" aria-controls="navbarSupportedContent"
-                                       aria-expanded="false" aria-label="Toggle navigation" tabindex="20">안내</a>
+                                       aria-expanded="false" aria-label="Toggle navigation" tabindex="-1">안내</a>
                                     <ul class="sub-menu collapse" id="submenu-1-5">
                                         <li class="nav-item">
-                                            <a class="nav-link" th:href="@{/location}" tabindex="21">오시는 길</a>
+                                            <a class="nav-link" th:href="@{/location}">오시는 길</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" th:href="@{/attraction/schedule}" tabindex="22">운휴</a>
+                                            <a class="nav-link" th:href="@{/attraction/schedule}">운휴</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" th:href="@{/attraction/attractionList}" tabindex="23">어트랙션 소개</a>
+                                            <a class="nav-link" th:href="@{/attraction/attractionList}">어트랙션 소개</a>
                                         </li>
                                     </ul>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" th:href="@{/board/events}" tabindex="24">이벤트</a>
+                                <li class="nav-item" tabindex="0">
+                                    <a class="nav-link" th:href="@{/board/events}" tabindex="-1">이벤트</a>
                                 </li>
 
-                                <li class="nav-item">
-                                    <a class="nav-link" th:href="@{/review/board/list}" tabindex="25">리뷰</a>
+                                <li class="nav-item" tabindex="0">
+                                    <a class="nav-link" th:href="@{/review/board/list}" tabindex="-1">리뷰</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="dd-menu collapsed" href="javascript:void(0)" data-bs-toggle="collapse"
                                        data-bs-target="#submenu-1-6" aria-controls="navbarSupportedContent"
-                                       aria-expanded="false" aria-label="Toggle navigation" tabindex="26">동행 찾기</a>
+                                       aria-expanded="false" aria-label="Toggle navigation" tabindex="-1">동행 찾기</a>
                                     <ul class="sub-menu collapse" id="submenu-1-6">
                                         <li class="nav-item">
-                                            <a class="nav-link"  sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/admin/category/list}" tabindex="27">키워드 관리</a>
+                                            <a class="nav-link"  sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/admin/category/list}">키워드 관리</a>
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link" sec:authorize="hasAnyRole('ROLE_USER')" th:href="@{/goWithBoard/create}">글쓰기 폼</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_USER')" th:href="@{/goWithBoard/list}" tabindex="28">게시판</a>
+                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_USER')" th:href="@{/goWithBoard/list}">게시판</a>
+                                            <a class="nav-link" th:href="@{/goWithBoard/create}">게시판</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/api/chatList}" tabindex="29">채팅 목록</a>
+                                            <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/api/chatList}">채팅 목록</a>
                                         </li>
                                     </ul>
                                 </li>
@@ -159,7 +160,7 @@
                         <div class="button">
                             <span data-toggle="modal" data-target="#notificationModal" id="notificationButton">
                                 <div class="icon-badge-container mgr" sec:authorize="isAuthenticated()" style="cursor:pointer;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-bell-fill text-warning" viewBox="0 0 16 16" tabindex="30">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-bell-fill text-warning" viewBox="0 0 16 16">
                                         <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2m.995-14.901a1 1 0 1 0-1.99 0A5 5 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901"/>
                                     </svg>
                                     <span class="badge mgr rounded-pill bg-danger" id="notificationCount"></span>

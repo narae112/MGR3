@@ -118,9 +118,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.34/moment-timezone-with-data.min.js"></script>
     <script th:inline="javascript">
-
         var eventSource = null;
         var roomId = 1;
+        var currentRoomId = null;
 
         function connectToRoom(id, title) {
             if (eventSource !== null) {
@@ -136,30 +136,12 @@
                 showMessage(message, message.isRead ? 0 : 1); // 읽음 상태에 따라 표시
             });
 
-            eventSource.addEventListener('read', function (event) {
-                const data = JSON.parse(event.data);
-                const roomId = data.roomId;
-                const userId = data.userId;
-
-                // 현재 방의 읽음 처리인 경우에만 업데이트
-                if (roomId === currentRoomId) {
-                    $('#chatBox .message').each(function() {
-                        const messageElement = $(this);
-                        const message = messageElement.data('message');
-                        if (message.sender.nickname !== $('#senderNickname').val() && !message.isRead) {
-                            message.isRead = true;
-                            messageElement.find('.unread-count').text(0);
-                        }
-                    });
-                }
-            });
-
-
             eventSource.onerror = function (event) {
                 console.error('EventSource failed: ', event);
             };
 
             roomId = id;
+            currentRoomId = id;
 
             $.get(`/api/chats/${roomId}`, function (response) {
                 const chats = response.chatList;
@@ -182,17 +164,47 @@
 
                 // 메세지 읽음 처리
                 markMessagesAsRead(roomId);
-                updateUnreadCount(unreadCount);
             }).fail(function() {
                 console.error('Failed to fetch chat history');
+            });
+        }
+
+        function sendReadEvent(roomId) {
+            const userId = $('#senderId').val(); // 사용자 ID를 가져옵니다.
+            $.post('/api/chat/sendReadEvent', { roomId: roomId, userId: userId }, function() {
+                console.log('Read event sent');
+            }).fail(function() {
+                console.error('Failed to send read event');
             });
         }
 
         function markMessagesAsRead(roomId) {
             $.post(`/api/chats/${roomId}/read`, function() {
                 console.log('Messages marked as read');
+                updateReadStatus(roomId);
             }).fail(function() {
                 console.error('Failed to mark messages as read');
+            });
+        }
+
+        function updateReadStatus(roomId) {
+            const userId = $('#senderId').val();
+            $.post('/api/chat/updateReadStatus', { roomId: roomId, userId: userId }, function(response) {
+                console.log('Read status updated');
+                const updatedMessages = response.updatedMessages;
+                updatedMessages.forEach(function(updatedMessage) {
+                    $('#chatBox .message').each(function() {
+                        const messageElement = $(this);
+                        const message = JSON.parse(messageElement.attr('data-message'));
+                        if (message.id === updatedMessage.id) {
+                            message.isRead = updatedMessage.isRead;
+                            messageElement.find('.unread-count').text(updatedMessage.isRead ? 0 : 1);
+                            messageElement.attr('data-message', JSON.stringify(message));
+                        }
+                    });
+                });
+            }).fail(function() {
+                console.error('Failed to update read status');
             });
         }
 
@@ -207,7 +219,7 @@
         }
 
         function sendMessage() {
-            var message = $('#messageInput').val();
+            var message = $('#messageInput').val().trim();
             var senderNickname = $('#senderNickname').val();
             if (message) {
                 var chatMessage = {
@@ -221,7 +233,8 @@
 
                 $.post('/api/chat/send', chatMessage, function() {
                     $('#messageInput').val('');
-
+                    // 메세지 읽음 처리
+                    markMessagesAsRead(roomId);
                 }).fail(function() {
                     console.error('Failed to send message');
                 });
@@ -245,6 +258,7 @@
             minutes = minutes < 10 ? '0' + minutes : minutes;
 
             var time = period + ' ' + hours + ':' + minutes;
+            var unreadCountText = (message.isRead ? 0 : 1) ? '<span class="unread-count">' + (message.isRead ? 0 : 1) + '</span>' : '';
 
             var messageElement =
                 '<div class="message ' + messageClass + '" data-message=\'' + JSON.stringify(message) + '\'>' +
@@ -252,7 +266,8 @@
                     '<div class="content">' +
                         '<div class="name">' + message.sender.nickname + '</div>' +
                         '<div class="text">' + message.message + '</div>' +
-                        '<div class="time"><span class="unread-count">' + (message.isRead ? 0 : 1) + '</span>' + time + '</div>' +
+<!--                        '<div class="time">' + unreadCountText + time + '</div>' +-->
+                        '<div class="time">'+ time + '</div>' +
                     '</div>' +
                 '</div>';
             $('#chatBox').append(messageElement);
@@ -265,6 +280,7 @@
             // 전체 채팅 메시지를 표시
             connectToRoom(roomId, "전체 채팅방");
 
+            /* 채팅 목록 반복문 처리 */
             [[${allChatList}]].forEach(function (chat) {
                 showMessage(chat, chat.isRead ? 0 : chat.unreadCount);
             });
@@ -334,6 +350,7 @@
                 <input type="text" id="messageInput" class="form-control" placeholder="Enter message">
                 <input type="hidden" id="senderNickname" th:value="${nickname}">
                 <input type="hidden" id="profileImgUrl" th:value="${profileImgUrl}">
+                <input type="hidden" id="senderId" th:value="${member.id}">
                 <button id="sendButton" class="btn btn-primary">전송</button>
             </div>
         </div>

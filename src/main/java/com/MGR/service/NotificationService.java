@@ -275,7 +275,6 @@ public class NotificationService {
         return byMemberId.size();
     }
 
-    // 구독 메서드 수정
     public SseEmitter subscribeToRoom(Long userId, Long roomId) {
         SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
         roomEmitters.computeIfAbsent(roomId, k -> new ConcurrentHashMap<>()).put(userId, sseEmitter);
@@ -314,6 +313,7 @@ public class NotificationService {
                 try {
                     String data = "{\"roomId\":" + roomId + ",\"userId\":" + userId + "}";
                     sseEmitter.send(SseEmitter.event().name("read").data(data));
+                    System.out.println("Read event sent: " + data);
                 } catch (IOException e) {
                     userEmitters.remove(toId);
                 }
