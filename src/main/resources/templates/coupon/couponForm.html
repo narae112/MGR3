@@ -124,10 +124,11 @@
                     $('#errorModal').modal('hide'); // 모달 닫기
                 });
             }
-
         });
     </script>
 </th:block>
+
+
 <th:block layout:fragment="css">
     <style>
         .fieldError {
@@ -142,6 +143,21 @@
             overflow: hidden;
             clip: rect(0, 0, 0, 0);
             border: 0;
+        }
+        .modal-dialog {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+        #errorModal .modal-body{
+            text-align: center;
+        }
+        #errorModal .modal-body img{
+            display: block;
+            margin: 0 auto 20px;
+            max-width: 100px;
+            height: auto;
         }
     </style>
 </th:block>
@@ -158,6 +174,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    <img src="/img/logo/warningIcon.png" alt="waringImage">
                     <p id="errorMessage"></p>
                 </div>
                 <div class="modal-footer">

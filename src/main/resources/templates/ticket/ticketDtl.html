@@ -185,24 +185,24 @@
     <input type="hidden" id="startDate" th:value="${ticket.startDate}">
     <input type="hidden" id="endDate" th:value="${ticket.endDate}">
     <input type="hidden" id="visitDate" th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"> <!-- 선택된 날짜를 저장할 히든 필드 -->
-    <h3 class="mb-5 text-center">티켓 예매하기</h3>
+    <h3 class="mb-5 text-center" tabindex="0">티켓 예매하기</h3>
     <div class="d-flex mt-4" style="height: 100%;">
         <div class="repImgDiv flex-shrink-0 me-3" style="width: 50%;"> <!-- 티켓이미지 -->
             <img th:src="${ticket.ticketImgDtoList[0].imgUrl}" class="rounded repImg" th:alt="${ticket.name}">
         </div>
         <div class="flex-column-full">
             <div>
-                <div class="h4" th:text="${ticket.name} + ' (' + ${ticket.locationCategory.displayName} + '점)'"></div>
+                <div class="h4" th:text="${ticket.name} + ' (' + ${ticket.locationCategory.displayName} + '점)'" tabindex="0"></div>
                 <hr class="my-4">
                 <div>
-                    <p>방문예정일</p>
-                    <div id="datepicker"  class="text-center"></div> <!-- 달력만 표시 -->
+                    <p tabindex="0">방문예정일</p>
+                    <div id="datepicker"  class="text-center" aria-label="방문예정일을 선택하세요"></div> <!-- 달력만 표시 -->
                 </div>
             </div>
             <div class="mt-auto">
-                <div class="h4 text-danger text-start ms-3">
+                <div class="h4 text-danger text-start ms-3" tabindex="0">
                     <input type="hidden" th:value="${ticket.adultPrice}" id="adultPrice" name="adultPrice">
-                    성인: <span th:text="${ticket.adultPrice}"></span>원
+                    성인: <span th:text="${#numbers.formatInteger(ticket.adultPrice, 0, 'COMMA')}"></span>원
                 </div>
                 <div class="input-group w-50">
                     <div class="input-group-prepend">
@@ -213,7 +213,7 @@
 
                 <div class="h4 text-danger text-start ms-3">
                     <input type="hidden" th:value="${ticket.childPrice}" id="childPrice" name="childPrice">
-                    어린이: <span th:text="${ticket.childPrice}"></span>원
+                    어린이: <span th:text="${#numbers.formatInteger(ticket.childPrice, 0, 'COMMA')}"></span>원
                 </div>
 
                 <div class="input-group w-50">
