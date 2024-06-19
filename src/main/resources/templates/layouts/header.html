@@ -9,9 +9,61 @@
     <meta name="author" content="" />
     <title>MERRY GO RIDE.｡.:*☆</title>
 
+    <th:block layout:fragment="script">
+        <script th:inline="javascript">
+            document.addEventListener('DOMContentLoaded', function () {
+                let navItems = document.querySelectorAll('.navbar-nav .nav-item');
+
+                navItems.forEach(item => {
+                    item.addEventListener('focusin', function () {
+                        console.log("focusin1");
+                        let subMenu = item.querySelector('.sub-menu');
+                        if (subMenu) {
+                            subMenu.style.top = '100%';
+                            subMenu.style.opacity = '1';
+                            subMenu.style.visibility = 'visible';
+                            console.log("focusin2");
+                        }
+                    });
+
+                    item.addEventListener('focusout', function () {
+                        console.log("focusout1");
+                        let subMenu = item.querySelector('.sub-menu');
+                        if (subMenu) {
+                            subMenu.style.top = '';
+                            subMenu.style.opacity = '';
+                            subMenu.style.visibility = '';
+                            console.log("focusout2");
+                        }
+                    });
+                });
+            });
+
+            document.addEventListener('DOMContentLoaded', function () {
+                const notificationButton = document.getElementById('notificationButton');
+                notificationButton.addEventListener('keydown', function (event) {
+                    if (event.key === 'Enter') {
+
+                        notificationButton.click();
+                    }
+                });
+            });
+        </script>
+    </th:block>
+
     <!-- 파비콘(브라우저탭 아이콘) -->
     <link rel="icon" th:href="@{/img/unicorn.png}">
-
+    <th:block layout:fragment="css">
+        <style>
+            .navbar-nav .nav-item .dd-menu:hover > .sub-menu,
+            .navbar-nav .nav-item .dd-menu:focus > .sub-menu,
+            .navbar-nav .nav-item .dd-menu:focus-within > .sub-menu {
+                top: 100% !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+        </style>
+    </th:block>
 </head>
 <div th:fragment="header">
 <!-- Start Header Area -->
@@ -22,7 +74,7 @@
                 <div class="nav-inner">
                     <!-- Start Navbar -->
                     <nav class="navbar navbar-expand-lg">
-                        <a class="navbar-brand mrg" href="/" tabindex="1">
+                        <a class="navbar-brand mrg" href="/">
 <!--                            <h3>Merry Go Ride</h3>-->
                             <img th:src="@{/img/nav_logo/nav_logo_color.png}">
                         </a>
@@ -65,7 +117,7 @@
                                 <li class="nav-item" tabindex="0">
                                     <a class="dd-menu collapsed" href="javascript:void(0)" data-bs-toggle="collapse"
                                        data-bs-target="#submenu-1-2" aria-controls="navbarSupportedContent"
-                                       aria-expanded="false" tabindex="1" aria-label="Toggle navigation">쿠폰</a>
+                                       aria-expanded="false" aria-label="Toggle navigation">쿠폰</a>
                                     <ul class="sub-menu collapse" id="submenu-1-2">
                                         <li class="nav-item">
                                             <a class="nav-link" sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/admin/coupon/new}">쿠폰 등록</a>
@@ -133,7 +185,7 @@
                                 <li class="nav-item" tabindex="0">
                                     <a class="nav-link" th:href="@{/review/board/list}" tabindex="-1">리뷰</a>
                                 </li>
-                                <li class="nav-item">
+                                <li class="nav-item" tabindex="0">
                                     <a class="dd-menu collapsed" href="javascript:void(0)" data-bs-toggle="collapse"
                                        data-bs-target="#submenu-1-6" aria-controls="navbarSupportedContent"
                                        aria-expanded="false" aria-label="Toggle navigation" tabindex="-1">동행 찾기</a>
@@ -158,7 +210,7 @@
 
                         <!-- 알림 시작 -->
                         <div class="button">
-                            <span data-toggle="modal" data-target="#notificationModal" id="notificationButton">
+                            <span data-toggle="modal" data-target="#notificationModal" id="notificationButton" tabindex="0">
                                 <div class="icon-badge-container mgr" sec:authorize="isAuthenticated()" style="cursor:pointer;">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-bell-fill text-warning" viewBox="0 0 16 16">
                                         <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2m.995-14.901a1 1 0 1 0-1.99 0A5 5 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901"/>
@@ -167,7 +219,7 @@
                                 </div>
                             </span>
                         </div>
-                        <div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="notificationModal" tabindex="0" aria-labelledby="notificationModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
