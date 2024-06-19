@@ -44,9 +44,26 @@ public class CouponController {
     public ResponseEntity<String> newCouponAjax(@Valid CouponFormDto couponFormDto, BindingResult bindingResult,
                                                 @RequestParam("couponImgFile") List<MultipartFile> couponImgFileList) {
 
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body("입력한 값들을 확인해주세요.");
+//        if (bindingResult.hasErrors()) {
+//            return ResponseEntity.badRequest().body("입력한 값들을 확인해주세요.");
+//        }
+        // 각 필드별 오류 체크
+        if (bindingResult.hasFieldErrors("name")) {
+            return ResponseEntity.badRequest().body("쿠폰명을 입력해주세요.");
         }
+        if (bindingResult.hasFieldErrors("discountRate")) {
+            return ResponseEntity.badRequest().body("할인율을 올바르게 입력해주세요.");
+        }
+        if (bindingResult.hasFieldErrors("couponContent")) {
+            return ResponseEntity.badRequest().body("쿠폰 세부사항을 입력해주세요.");
+        }
+        if (bindingResult.hasFieldErrors("startDate")) {
+            return ResponseEntity.badRequest().body("쿠폰 시작 날짜를 입력해주세요.");
+        }
+        if (bindingResult.hasFieldErrors("endDate")) {
+            return ResponseEntity.badRequest().body("쿠폰 종료 날짜를 입력해주세요.");
+        }
+
         // 이미지 파일이 없는 경우
         if (couponImgFileList.isEmpty() || couponImgFileList.get(0).isEmpty()) {
             return ResponseEntity.badRequest().body("상품 이미지는 필수 입력 값 입니다.");
