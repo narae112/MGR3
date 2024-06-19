@@ -34,10 +34,10 @@
             });
 
             // 폼 제출 이벤트 핸들러
-            $("form").submit(function(event) {
-                event.preventDefault(); // 기본 제출 동작을 막음
+       $("form").submit(function(event) {
+                event.preventDefault();
                 var form = $(this);
-                var formData = new FormData(form[0]); // 폼 데이터를 FormData 객체로 직렬화하여 전송
+                var formData = new FormData(form[0]);
 
                 $.ajax({
                     type: form.attr('method'),
@@ -46,23 +46,32 @@
                     contentType: false,
                     processData: false,
                     success: function(response) {
-                        showAlert(response); // 성공 메시지를 모달에 표시
+                        showAlert(response.message);
                         window.location.replace("/tickets");
                     },
                     error: function(xhr, status, error) {
                         if (xhr.status === 400) {
-                            showAlert(xhr.responseText); // 입력값 오류 메시지를 모달에 표시
+                            var response = JSON.parse(xhr.responseText);
+                            showAlert(response.message);
+                            focusField(response.field);
                         } else if (xhr.status === 404) {
                             showAlert("티켓을 찾을 수 없습니다.");
                         } else if (xhr.status === 500) {
-                            showAlert("서버 오류: " + xhr.responseText); // 서버 내부 오류 메시지를 모달에 표시
+                            showAlert("서버 오류: " + xhr.responseText);
                         } else {
-                            showAlert("오류 발생: " + xhr.status + " " + xhr.statusText); // 기타 오류 처리
+                            showAlert("오류 발생: " + xhr.status + " " + xhr.statusText);
                         }
                     }
                 });
             });
 
+            // 필드에 포커스를 맞추는 함수
+            function focusField(fieldName) {
+                var field = $("[name='" + fieldName + "']");
+                if (field.length > 0) {
+                    field.focus();
+                }
+            }
             // 이미지 파일 선택 이벤트 핸들러
             $(".custom-file-input").on("change", function() {
                 var fileName = $(this).val().split("\\").pop();
@@ -109,7 +118,7 @@
                 $('#errorModal').modal('show'); // 모달 열기
                 $('#errorMessage').text(errorMessage); // 오류 메시지 설정
                 $('#screenReaderMessage').text(errorMessage).attr('role', 'alert'); // 스크린 리더 메시지 설정
-                $('#errorModal').on('click', 'button[data-dismiss="modal"]', function () {
+                      $('#errorModal').on('click', 'button[data-dismiss="modal"]', function () {
                 $('#errorModal').modal('hide'); // 모달 닫기
             });
             }
