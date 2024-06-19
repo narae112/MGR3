@@ -48,6 +48,20 @@
             right: 0 !important;
             transform: translate(50%, -50%) !important;
         }
+        .skip-nav {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #F20487;
+            color: #fff;
+            padding: 8px;
+            z-index: 100;
+            transition: top 0.3s;
+        }
+
+        .skip-nav:focus {
+            top: 0;
+        }
 
     </style>
 
@@ -57,13 +71,17 @@
 </head>
 <body>
 
-<div th:replace="~{layouts/header::header}"></div>
+<a href="#header" class="skip-nav">메인 메뉴로 바로가기</a>
+<a href="#content" class="skip-nav">본문 내용으로 바로가기</a>
+<a href="#footer" class="skip-nav">하단 내용으로 바로가기</a>
 
-<div layout:fragment="content" class="content container my-5">
+<div th:replace="~{layouts/header::header}" id="header"></div>
+
+<div layout:fragment="content" id="content" class="content container my-5">
 
 </div>
 
-<div th:replace="~{layouts/footer::footer}"></div>
+<div th:replace="~{layouts/footer::footer}" id="footer"></div>
 
 <script type="text/javascript" th:inline="javascript">
 
