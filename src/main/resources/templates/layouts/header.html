@@ -37,9 +37,8 @@
                         }
                     });
                 });
-            });
 
-            document.addEventListener('DOMContentLoaded', function () {
+
                 const notificationButton = document.getElementById('notificationButton');
                 notificationButton.addEventListener('keydown', function (event) {
                     if (event.key === 'Enter') {
@@ -117,7 +116,7 @@
                                 <li class="nav-item" tabindex="0">
                                     <a class="dd-menu collapsed" href="javascript:void(0)" data-bs-toggle="collapse"
                                        data-bs-target="#submenu-1-2" aria-controls="navbarSupportedContent"
-                                       aria-expanded="false" aria-label="Toggle navigation">쿠폰</a>
+                                       aria-expanded="false" aria-label="Toggle navigation" tabindex="-1">쿠폰</a>
                                     <ul class="sub-menu collapse" id="submenu-1-2">
                                         <li class="nav-item">
                                             <a class="nav-link" sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/admin/coupon/new}">쿠폰 등록</a>
