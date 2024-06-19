@@ -80,7 +80,7 @@ public class EventBoardController {
         // 이미지 파일이 없는 경우
         if (imgFileList.isEmpty() || imgFileList.get(0).isEmpty()) {
             errorResponse.put("field", "eventImgFile");
-            errorResponse.put("message", "이벤트 이미지는 필수 입력 값입니다.");
+            errorResponse.put("message", "이벤트 이미지는 필수 입력 값입니다");
             return ResponseEntity.badRequest().body(errorResponse);
         }
 
@@ -88,7 +88,7 @@ public class EventBoardController {
             Member findMember = memberService.findByEmail(member.getUsername()).orElseThrow();
             eventBoardService.saveBoard(BoardFormDto, findMember, imgFileList);
             Map<String, String> successResponse = new HashMap<>();
-            successResponse.put("message", "이벤트가 성공적으로 등록되었습니다.");
+            successResponse.put("message", "이벤트가 성공적으로 등록되었습니다");
             return ResponseEntity.ok().body(successResponse);
         } catch (IllegalStateException e) {
             errorResponse.put("message", "게시판 등록 중 오류가 발생했습니다");
@@ -119,14 +119,14 @@ public class EventBoardController {
                                                    BindingResult result,
                                                    @RequestParam(value = "eventImgFile", required = false) List<MultipartFile> imgFileList) {
         if (result.hasErrors()) {
-            return ResponseEntity.badRequest().body("입력한 값들을 확인해주세요.");
+            return ResponseEntity.badRequest().body("입력한 값들을 확인해주세요");
         }
 
         try {
             eventBoardService.update(id, eventBoard, imgFileList);  // 업데이트 로직 수행
-            return ResponseEntity.ok().body("이벤트가 성공적으로 수정되었습니다.");
+            return ResponseEntity.ok().body("이벤트가 성공적으로 수정되었습니다");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("수정 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("수정 중 오류가 발생했습니다");
         }
     }
     @GetMapping("/event/{id}") //이벤트 게시판 게시글 id

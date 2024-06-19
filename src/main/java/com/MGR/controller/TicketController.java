@@ -51,37 +51,37 @@ public class TicketController {
         if (bindingResult.hasFieldErrors("childPrice")) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("field", "childPrice");
-            errorResponse.put("message", "어린이 티켓 가격을 올바르게 입력해주세요.");
+            errorResponse.put("message", "어린이 티켓 가격을 올바르게 입력해주세요");
             return ResponseEntity.badRequest().body(errorResponse);
         }
         if (bindingResult.hasFieldErrors("adultPrice")) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("field", "adultPrice");
-            errorResponse.put("message", "성인 티켓 가격을 올바르게 입력해주세요.");
+            errorResponse.put("message", "성인 티켓 가격을 올바르게 입력해주세요");
             return ResponseEntity.badRequest().body(errorResponse);
         }
         if (bindingResult.hasFieldErrors("name")) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("field", "name");
-            errorResponse.put("message", "티켓명을 입력해주세요.");
+            errorResponse.put("message", "티켓명을 입력해주세요");
             return ResponseEntity.badRequest().body(errorResponse);
         }
         if (bindingResult.hasFieldErrors("memo")) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("field", "memo");
-            errorResponse.put("message", "티켓 세부사항을 입력해주세요.");
+            errorResponse.put("message", "티켓 세부사항을 입력해주세요");
             return ResponseEntity.badRequest().body(errorResponse);
         }
         if (bindingResult.hasFieldErrors("startDate")) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("field", "startDate");
-            errorResponse.put("message", "티켓 시작 날짜를 입력해주세요.");
+            errorResponse.put("message", "티켓 시작 날짜를 입력해주세요");
             return ResponseEntity.badRequest().body(errorResponse);
         }
         if (bindingResult.hasFieldErrors("endDate")) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("field", "endDate");
-            errorResponse.put("message", "티켓 종료 날짜를 입력해주세요.");
+            errorResponse.put("message", "티켓 종료 날짜를 입력해주세요");
             return ResponseEntity.badRequest().body(errorResponse);
         }
 
@@ -89,18 +89,18 @@ public class TicketController {
         if (ticketImgFileList.isEmpty() || ticketImgFileList.get(0).isEmpty()) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("field", "ticketImgFile");
-            errorResponse.put("message", "상품 이미지는 필수 입력 값입니다.");
+            errorResponse.put("message", "상품 이미지는 필수 입력 값입니다");
             return ResponseEntity.badRequest().body(errorResponse);
         }
 
         try {
             ticketService.saveTicket(ticketFormDto, ticketImgFileList);
             Map<String, String> successResponse = new HashMap<>();
-            successResponse.put("message", "티켓이 성공적으로 등록되었습니다.");
+            successResponse.put("message", "티켓이 성공적으로 등록되었습니다");
             return ResponseEntity.ok().body(successResponse);
         } catch (Exception e) {
             Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("message", "티켓 등록 중 에러가 발생하였습니다.");
+            errorResponse.put("message", "티켓 등록 중 에러가 발생하였습니다");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
@@ -111,7 +111,7 @@ public class TicketController {
             TicketFormDto ticketFormDto = ticketService.getTicketDtl(ticketId);
             model.addAttribute("ticketFormDto", ticketFormDto);
         } catch (EntityNotFoundException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "존재하지 않는 티켓입니다.");
+            redirectAttributes.addFlashAttribute("errorMessage", "존재하지 않는 티켓입니다");
             model.addAttribute("ticketFormDto", new TicketFormDto());
             return "redirect:/admin/tickets";
         }
@@ -126,37 +126,37 @@ public class TicketController {
         if (bindingResult.hasFieldErrors("childPrice")) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("field", "childPrice");
-            errorResponse.put("message", "어린이 티켓 가격을 올바르게 입력해주세요.");
+            errorResponse.put("message", "어린이 티켓 가격을 올바르게 입력해주세요");
             return ResponseEntity.badRequest().body(errorResponse);
         }
         if (bindingResult.hasFieldErrors("adultPrice")) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("field", "adultPrice");
-            errorResponse.put("message", "성인 티켓 가격을 올바르게 입력해주세요.");
+            errorResponse.put("message", "성인 티켓 가격을 올바르게 입력해주세요");
             return ResponseEntity.badRequest().body(errorResponse);
         }
         if (bindingResult.hasFieldErrors("name")) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("field", "name");
-            errorResponse.put("message", "티켓명을 입력해주세요.");
+            errorResponse.put("message", "티켓명을 입력해주세요");
             return ResponseEntity.badRequest().body(errorResponse);
         }
         if (bindingResult.hasFieldErrors("memo")) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("field", "memo");
-            errorResponse.put("message", "티켓 세부사항을 입력해주세요.");
+            errorResponse.put("message", "티켓 세부사항을 입력해주세요");
             return ResponseEntity.badRequest().body(errorResponse);
         }
         if (bindingResult.hasFieldErrors("startDate")) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("field", "startDate");
-            errorResponse.put("message", "티켓 시작 날짜를 입력해주세요.");
+            errorResponse.put("message", "티켓 시작 날짜를 입력해주세요");
             return ResponseEntity.badRequest().body(errorResponse);
         }
         if (bindingResult.hasFieldErrors("endDate")) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("field", "endDate");
-            errorResponse.put("message", "티켓 종료 날짜를 입력해주세요.");
+            errorResponse.put("message", "티켓 종료 날짜를 입력해주세요");
             return ResponseEntity.badRequest().body(errorResponse);
         }
 
@@ -164,18 +164,18 @@ public class TicketController {
         if (ticketImgFileList.isEmpty() || ticketImgFileList.get(0).isEmpty()) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("field", "ticketImgFile");
-            errorResponse.put("message", "상품 이미지는 필수 입력 값입니다.");
+            errorResponse.put("message", "상품 이미지는 필수 입력 값입니다");
             return ResponseEntity.badRequest().body(errorResponse);
         }
 
         try {
             ticketService.updateTicket(id, ticketFormDto, ticketImgFileList);
             Map<String, String> successResponse = new HashMap<>();
-            successResponse.put("message", "티켓이 성공적으로 등록되었습니다.");
+            successResponse.put("message", "티켓이 성공적으로 등록되었습니다");
             return ResponseEntity.ok().body(successResponse);
         } catch (Exception e) {
             Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("message", "티켓 등록 중 에러가 발생하였습니다.");
+            errorResponse.put("message", "티켓 등록 중 에러가 발생하였습니다");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
@@ -218,7 +218,7 @@ public class TicketController {
             // 티켓 삭제
             ticketService.deleteTicket(ticketId);
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "예약된 티켓은 삭제할 수 없습니다.");
+            redirectAttributes.addFlashAttribute("errorMessage", "예약된 티켓은 삭제할 수 없습니다");
             return "redirect:/admin/tickets";
         }
 
