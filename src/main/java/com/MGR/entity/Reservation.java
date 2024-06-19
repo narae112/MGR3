@@ -17,8 +17,8 @@ public class Reservation { // = 예약 List
     @Column(name = "reservation_id")
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-//    @ManyToOne(fetch = FetchType.LAZY)
+//    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 

@@ -85,7 +85,7 @@
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
-            <li class="page-item" th:each="i : ${#numbers.sequence(1, paging.totalPages > 0 ? paging.totalPages : 1)}"
+            <li class="page-item" th:each="i : ${#numbers.sequence(paging.totalPages < 5 ? 1 : (paging.number > paging.totalPages - 3 ? paging.totalPages - 4 : (paging.number > 2 ? paging.number - 2 : 1)), paging.totalPages < 5 ? paging.totalPages : (paging.number > paging.totalPages - 3 ? paging.totalPages : (paging.number > 2 ? paging.number + 2 : 5)))}"
                 th:classappend="${paging.number == i - 1} ? 'active'">
                 <a class="page-link" th:href="@{|~/admin/paymentList/${i - 1}|}" th:text="${i}">1</a>
             </li>
