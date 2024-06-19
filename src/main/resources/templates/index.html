@@ -25,12 +25,12 @@
                 <div class="col-lg-6 offset-lg-3 col-md-12 col-12">
                     <div class="hero-content">
                         <h5 class="wow zoomIn" data-wow-delay=".2s">
-                            <span th:onclick="navigateToLocation()"><i class="lni lni-map-marker"></i> MGR 오는길</span>
+                            <span th:onclick="navigateToLocation()" tabindex="31"><i class="lni lni-map-marker"></i> MGR 오는길</span>
                         </h5>
                         <h2 class="wow fadeInUp" data-wow-delay=".4s">Merry Go Ride 2024</h2>
                         <p class="wow fadeInUp" data-wow-delay=".6s">Welcome to MGR. This website was created by three students learning web development.</p>
                         <div class="button wow fadeInUp" data-wow-delay=".8s">
-                            <a th:href="@{/tickets}" class="btn ">Buy Ticket Now</a>
+                            <a th:href="@{/tickets}" class="btn" tabindex="32">Buy Ticket Now</a>
                         </div>
                     </div>
                 </div>
@@ -39,8 +39,8 @@
     </section>
     <!-- End Hero Area -->
 
-    <button type="button" class="chatbot" data-toggle="modal" data-target="#chatbotModal">
-        <img th:src="@{/img/chatbot_icon.png}">
+    <button type="button" class="chatbot" data-toggle="modal" data-target="#chatbotModal" tabindex="53">
+        <img th:src="@{/img/chatbot_icon.png}" alt="챗봇 버튼 이미지">
     </button>
 
     <!-- 메인 사진과 겹쳐있는 메뉴바 시작 -->
@@ -50,22 +50,22 @@
                 <div class="col-12">
                     <div class="box-head">
                         <div class="box-content">
-                            <a class="box-mgr" th:href="@{/tickets}">
+                            <a class="box-mgr" th:href="@{/tickets}" tabindex="33">
                                 <h1 id="days"><i class="lni lni-ticket"></i></h1>
                                 <br>
                                 <h3 id="daystxt">Ticket</h3>
                             </a>
-                            <a class="box-mgr" th:href="@{/board/events}">
+                            <a class="box-mgr" th:href="@{/board/events}" tabindex="34">
                                 <h1 id="seconds"><i class="lni lni-bullhorn"></i></h1>
                                 <br>
                                 <h3 id="hourstxt">Event</h3>
                             </a>
-                            <a class="box-mgr" th:href="@{/attraction/attractionList}">
+                            <a class="box-mgr" th:href="@{/attraction/attractionList}" tabindex="35">
                                 <h1 id="minutes"><i class="lni lni-rocket"></i></h1>
                                 <br>
                                 <h3 id="minutestxt">Attraction</h3>
                             </a>
-                            <a class="box-mgr" th:href="@{/review/board/list}">
+                            <a class="box-mgr" th:href="@{/review/board/list}" tabindex="36">
                                 <h1 id="hours"><i class="lni lni-star-half"></i></h1>
                                 <br>
                                 <h3 id="secondstxt">Review</h3>
@@ -81,21 +81,21 @@
     <!-- 슬라이드 시작 -->
     <section class="features section">
     <div class="section-title">
-        <h3 class="wow zoomIn" data-wow-delay=".2s">What kind of attractions are here?</h3>
-        <h2 class="wow fadeInUp" data-wow-delay=".4s">Various types of rides are waiting for you!</h2>
-        <p class="wow fadeInUp" data-wow-delay=".6s">Swipe through the slides to check the types of attractions and their operating status.</p>
+        <h3 class="wow zoomIn" data-wow-delay=".2s" aria-label="놀이기구 종류" tabindex="37">What kind of attractions are here?</h3>
+        <h2 class="wow fadeInUp" data-wow-delay=".4s" aria-label="어떤 놀이 기구가 있을까" tabindex="38">Various types of rides are waiting for you!</h2>
+        <p class="wow fadeInUp" data-wow-delay=".6s" aria-label="아래 슬라이드에 사진이 있습니다" tabindex="39">Swipe through the slides to check the types of attractions and their operating status.</p>
     </div>
 
     <div class="slider_wrapper">
-        <div class="att_slider">
-            <a class="slide_img" th:href="@{~/attraction/attractionList}"><img th:src="@{/img/attraction/attraction1.png}" alt=""></a>
-            <a class="slide_img" th:href="@{~/attraction/attractionList}"><img th:src="@{/img/attraction/attraction2.png}" alt=""></a>
-            <a class="slide_img" th:href="@{~/attraction/attractionList}"><img th:src="@{/img/attraction/attraction3.png}" alt=""></a>
-            <a class="slide_img" th:href="@{~/attraction/attractionList}"><img th:src="@{/img/attraction/attraction4.png}" alt=""></a>
-            <a class="slide_img" th:href="@{~/attraction/attractionList}"><img th:src="@{/img/attraction/attraction5.png}" alt=""></a>
-            <a class="slide_img" th:href="@{~/attraction/attractionList}"><img th:src="@{/img/attraction/attraction6.png}" alt=""></a>
-            <a class="slide_img" th:href="@{~/attraction/attractionList}"><img th:src="@{/img/attraction/attraction7.png}" alt=""></a>
-            <a class="slide_img" th:href="@{~/attraction/attractionList}"><img th:src="@{/img/attraction/attraction8.png}" alt=""></a>
+        <div class="att_slider"tabindex="-1">
+            <a class="slide_img" th:href="@{~/attraction/attractionList}"><img th:src="@{/img/attraction/attraction1.png}" alt="티익스프레스"></a>
+            <a class="slide_img" th:href="@{~/attraction/attractionList}"><img th:src="@{/img/attraction/attraction2.png}" alt="회전목마"></a>
+            <a class="slide_img" th:href="@{~/attraction/attractionList}"><img th:src="@{/img/attraction/attraction3.png}" alt="바이킹"></a>
+            <a class="slide_img" th:href="@{~/attraction/attractionList}"><img th:src="@{/img/attraction/attraction4.png}" alt="범퍼카"></a>
+            <a class="slide_img" th:href="@{~/attraction/attractionList}"><img th:src="@{/img/attraction/attraction5.png}" alt="허리케인"></a>
+            <a class="slide_img" th:href="@{~/attraction/attractionList}"><img th:src="@{/img/attraction/attraction6.png}" alt="자이로드롭"></a>
+            <a class="slide_img" th:href="@{~/attraction/attractionList}"><img th:src="@{/img/attraction/attraction7.png}" alt="점핑피쉬"></a>
+            <a class="slide_img" th:href="@{~/attraction/attractionList}"><img th:src="@{/img/attraction/attraction8.png}" alt="회전바구니"></a>
         </div>
     </div>
     </section>
@@ -107,9 +107,9 @@
             <div class="row">
                 <div class="col-12">
                     <div class="section-title">
-                        <h3 class="wow zoomIn" data-wow-delay=".2s">Review</h3>
-                        <h2 class="wow fadeInUp" data-wow-delay=".4s">Customer-Favorite MGR Best Reviews</h2>
-                        <p class="wow fadeInUp" data-wow-delay=".6s">Discover the top reviews chosen by you! Read the cherished stories of unforgettable moments experienced at MGR Amusement Park.</p>
+                        <h3 class="wow zoomIn" data-wow-delay=".2s" tabindex="45">Review</h3>
+                        <h2 class="wow fadeInUp" data-wow-delay=".4s" tabindex="46">Customer-Favorite MGR Best Reviews</h2>
+                        <p class="wow fadeInUp" data-wow-delay=".6s" tabindex="47">Discover the top reviews chosen by you! Read the cherished stories of unforgettable moments experienced at MGR Amusement Park.</p>
                     </div>
                 </div>
             </div>
@@ -122,17 +122,17 @@
                         <div class="blog-img review-img">
                             <a th:href="@{/review/board/detail/{id}(id=${review.id})}">
                                 <!-- 이미지 URL을 reviewImgDtoList의 첫 번째 이미지에서 가져옵니다. -->
-                              <img th:src="${review.imageUrl != null and  review.imageUrl.length() > 0 ? review.imageUrl : '/img/logo/placeholder.png'}" alt="Review Image">
+                              <img th:src="${review.imageUrl != null and  review.imageUrl.length() > 0 ? review.imageUrl : '/img/logo/placeholder.png'}" alt="Review Image" tabindex="48">
                             </a>
                         </div>
                         <!-- Review Content -->
                         <div class="blog-content review-content">
                             <!-- 리뷰 제목 -->
-                            <h4 class="title" th:text="${review.subject}">Review Title</h4>
+                            <h4 class="title" th:text="${review.subject}" tabindex="49">Review Title</h4>
                             <!-- 작성자 정보 -->
-                            <p class="author" th:text="${review.author.nickname}">Author</p>
+                            <p class="author" th:text="${review.author.nickname}" tabindex="50">Author</p>
                             <!-- 추천 수 -->
-                            <p class="recommendation" th:text="${review.voter.size()} + ' recommendations'">0 recommendations</p>
+                            <p class="recommendation" th:text="${review.voter.size()} + ' recommendations'" tabindex="51">0 recommendations</p>
                         </div>
                         <!-- End Review Content -->
                     </div>
@@ -149,7 +149,7 @@
             <div class="row align-items-center">
                 <div class="col-lg-8 offset-lg-2 col-md-12 col-12">
                     <div class="inner-content">
-                        <div class="text">
+                        <div class="text" tabindex="52">
                             <!-- <h5 class="wow zoomIn" data-wow-delay=".2s">Free Lite Version</h5> -->
                             <h2 class="wow fadeInUp" data-wow-delay=".4s">A new event at MGR is starting soon
                             </h2>
@@ -161,7 +161,7 @@
         </div>
     </section>
     <!-- 섹션 나누는 이미지 끝 -->
-    <div class="modal fade" id="chatbotModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
+    <div class="modal fade" id="chatbotModal" aria-labelledby="chatModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -188,6 +188,7 @@
 
 
 $(document).ready(function() {
+
 <!--    // 슬라이드 초기화-->
     $('.att_slider').slick({
         slidesToShow: 3,
@@ -209,6 +210,23 @@ $(document).ready(function() {
             }
         ]
     });
+
+<!--    // 슬라이더 이전 버튼에 tabindex 40 설정-->
+<!--    $('.att_slider .slick-prev').attr('tabindex', 40);-->
+
+<!--    // 슬라이드 사진 3장에 tabindex 설정-->
+<!--    $('.att_slider .slide_img').each(function(index) {-->
+<!--            if (index < 3) {-->
+<!--                $(this).attr('tabindex', 41 + index);-->
+<!--            }-->
+<!--        });-->
+
+<!--    // 슬라이드 이후의 요소에 tabindex를 설정하지 않음-->
+<!--    $('.att_slider .slide_img').slice(3).removeAttr('tabindex');-->
+
+<!--    // 슬라이더 다음 버튼에 tabindex 44 설정-->
+<!--    $('.att_slider .slick-next').attr('tabindex', 44);-->
+
 
     function sendMessage() {
         var userMessage = $('#userInput').val();

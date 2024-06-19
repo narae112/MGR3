@@ -91,42 +91,55 @@
                     <textarea th:field="*{content}" class="form-control" rows="10" id="content"></textarea>
                 </div>
                 <hr/>
+
                 <div class="form-group mb-3">
                     <label for="attractionTypes" class="mb-3">어트랙션 취향을 선택해보세요!</label>
                     <div class="row">
-                        <div class="col-auto" th:each="attractionType : ${attractionTypes}">
-                            <div class="mr-2 mb-2">
-                                <input type="checkbox" class="btn-check" name="attractionTypes" th:id="'attractionType' + ${attractionType.name}" th:value="${attractionType.name}" autocomplete="off">
-                                <label class="btn" th:for="'attractionType' + ${attractionType.name}" th:text="${attractionType.name}"></label>
+                        <div class="col">
+                            <div class="d-flex flex-row flex-wrap">
+                                <div th:each="attractionType : ${attractionTypes}" th:if="${attractionType.name != ''}" class="me-2 mb-2">
+                                    <input type="checkbox" class="btn-check" name="attractionTypes" th:id="'attractionType' + ${attractionType.name}" th:value="${attractionType.name}" autocomplete="off">
+                                    <label class="btn" th:for="'attractionType' + ${attractionType.name}" th:text="${attractionType.name}"></label>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <hr/>
+
                 <div class="form-group mb-3">
-                    <label for="afterTypes" class="mb-3">동행을 끝낼 때, 어떻게 하고 싶으신가요?</label>
+                    <label for="afterTypes" class="mb-3">즐거운 동행을 마치고, 당신의 다음 스텝은?</label>
                     <div class="row">
-                        <div class="col-auto" th:each="afterType : ${afterTypes}">
-                            <div class="mr-2 mb-2">
-                                <input type="checkbox" class="btn-check" name="afterTypes" th:id="'afterType' + ${afterType.name}" th:value="${afterType.name}" autocomplete="off">
-                                <label class="btn" th:for="'afterType' + ${afterType.name}" th:text="${afterType.name}"></label>
+                        <div class="col">
+                            <div class="d-flex flex-row flex-wrap">
+                                <div th:each="afterType : ${afterTypes}" th:if="${afterType.name != ''}" class="me-2 mb-2">
+                                    <input type="checkbox" class="btn-check" name="afterTypes" th:id="'afterType' + ${afterType.name}" th:value="${afterType.name}" autocomplete="off">
+                                    <label class="btn" th:for="'afterType' + ${afterType.name}" th:text="${afterType.name}"></label>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <hr/>
+
                 <div class="form-group mb-3">
                     <label for="personalities" class="mb-3">성격에 맞는 키워드를 선택해주세요!</label>
                     <div class="row">
-                        <div class="col-auto" th:each="personality : ${personalities}">
-                            <div class="mr-2 mb-2">
-                                <input type="checkbox" class="btn-check" name="personalities" th:id="'personality' + ${personality.name}" th:value="${personality.name}" autocomplete="off">
-                                <label class="btn" th:for="'personality' + ${personality.name}" th:text="${personality.name}"></label>
+                        <div class="col">
+                            <div class="d-flex flex-row flex-wrap">
+                                <div th:each="personality : ${personalities}" th:if="${personality.name != ''}" class="me-2 mb-2">
+                                    <input type="checkbox" class="btn-check" name="personalities" th:id="'personality' + ${personality.name}" th:value="${personality.name}" autocomplete="off">
+                                    <label class="btn" th:for="'personality' + ${personality.name}" th:text="${personality.name}"></label>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <hr/>
+
                 <div id="imageUploadContainer" class="form-group mb-3">
                     <label class="form-group mb-3">이미지 업로드하기</label>
                     <input type="file" class="form-control goWithImgFile" name="goWithImgFile" id="fileInput0">

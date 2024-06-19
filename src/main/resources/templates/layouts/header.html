@@ -9,53 +9,9 @@
     <meta name="author" content="" />
     <title>MERRY GO RIDE.｡.:*☆</title>
 
-    <th:block layout:fragment="script">
-        <script th:inline="javascript">
-            document.addEventListener('DOMContentLoaded', function () {
-                let navItems = document.querySelectorAll('.navbar-nav .nav-item');
-
-                navItems.forEach(item => {
-                    item.addEventListener('focusin', function () {
-                        console.log("focusin1");
-                        let subMenu = item.querySelector('.sub-menu');
-                        if (subMenu) {
-                            subMenu.style.top = '100%';
-                            subMenu.style.opacity = '1';
-                            subMenu.style.visibility = 'visible';
-                            console.log("focusin2");
-                        }
-                    });
-
-                    item.addEventListener('focusout', function () {
-                        console.log("focusout1");
-                        let subMenu = item.querySelector('.sub-menu');
-                        if (subMenu) {
-                            subMenu.style.top = '';
-                            subMenu.style.opacity = '';
-                            subMenu.style.visibility = '';
-                            console.log("focusout2");
-                        }
-                    });
-                });
-            });
-
-        </script>
-
-    </th:block>
-
     <!-- 파비콘(브라우저탭 아이콘) -->
     <link rel="icon" th:href="@{/img/unicorn.png}">
-    <th:block layout:fragment="css">
-        <style>
-            .navbar-nav .nav-item .dd-menu:hover > .sub-menu,
-            .navbar-nav .nav-item .dd-menu:focus > .sub-menu,
-            .navbar-nav .nav-item .dd-menu:focus-within > .sub-menu {
-                top: 100% !important;
-                opacity: 1 !important;
-                visibility: visible !important;
-            }
-        </style>
-    </th:block>
+
 </head>
 <div th:fragment="header">
 <!-- Start Header Area -->
@@ -66,7 +22,7 @@
                 <div class="nav-inner">
                     <!-- Start Navbar -->
                     <nav class="navbar navbar-expand-lg">
-                        <a class="navbar-brand mrg" href="/">
+                        <a class="navbar-brand mrg" href="/" tabindex="1">
 <!--                            <h3>Merry Go Ride</h3>-->
                             <img th:src="@{/img/nav_logo/nav_logo_color.png}">
                         </a>
@@ -177,7 +133,7 @@
                                 <li class="nav-item" tabindex="0">
                                     <a class="nav-link" th:href="@{/review/board/list}" tabindex="-1">리뷰</a>
                                 </li>
-                                <li class="nav-item" tabindex="0">
+                                <li class="nav-item">
                                     <a class="dd-menu collapsed" href="javascript:void(0)" data-bs-toggle="collapse"
                                        data-bs-target="#submenu-1-6" aria-controls="navbarSupportedContent"
                                        aria-expanded="false" aria-label="Toggle navigation" tabindex="-1">동행 찾기</a>
