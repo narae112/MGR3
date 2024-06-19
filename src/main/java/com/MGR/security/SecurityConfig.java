@@ -115,38 +115,38 @@ public class SecurityConfig {
         return new CorsFilter(source);
     }
 
-    @Bean
-    public CommandLineRunner initDb(MemberRepository memberRepository, PasswordEncoder passwordEncoder){
-
-        return createAdmin -> {
-            boolean isAdminPresent = memberRepository.findByName("관리자").isPresent();
-
-            if (!isAdminPresent) {
-                Member admin = new Member();
-
-                admin.setName("관리자");
-                admin.setEmail("admin@mgr.com");
-                admin.setNickname("MGR관리자");
-                admin.setProfileImgUrl("/img/login/profile.png");
-                admin.setPassword(passwordEncoder.encode("1"));
-                admin.setRole("ROLE_ADMIN");
-
-                memberRepository.save(admin);
-            }
-        };
-    }
-
+//    @Bean
+//    public CommandLineRunner initDb(MemberRepository memberRepository, PasswordEncoder passwordEncoder){
+//
+//        return createAdmin -> {
+//            boolean isAdminPresent = memberRepository.findByName("관리자").isPresent();
+//
+//            if (!isAdminPresent) {
+//                Member admin = new Member();
+//
+//                admin.setName("관리자");
+//                admin.setEmail("admin@mgr.com");
+//                admin.setNickname("MGR관리자");
+//                admin.setProfileImgUrl("/img/login/profile.png");
+//                admin.setPassword(passwordEncoder.encode("1"));
+//                admin.setRole("ROLE_ADMIN");
+//
+//                memberRepository.save(admin);
+//            }
+//        };
+//    }
+//
 //    @Bean
 //    public CommandLineRunner initDbUser(MemberRepository memberRepository, PasswordEncoder passwordEncoder){
 //
 //        return createAdmin -> {
-//            boolean isUserPresent = memberRepository.findByName("사용자").isPresent();
+//            boolean isUserPresent = memberRepository.findByName("사용자1").isPresent();
 //
 //            if (!isUserPresent) {
 //                Member user = new Member();
 //
-//                user.setName("사용자");
-//                user.setEmail("user@mgr.com");
+//                user.setName("사용자1");
+//                user.setEmail("user1@mgr.com");
 //                user.setNickname("지구123");
 //                user.setBirth("2023-05-31");
 //                user.setProfileImgUrl("/img/login/profile.png");

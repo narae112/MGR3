@@ -3,6 +3,8 @@ package com.MGR.controller;
 import com.MGR.dto.OrderListDto;
 import com.MGR.entity.Member;
 import com.MGR.entity.Order;
+import com.MGR.entity.OrderTicket;
+import com.MGR.repository.OrderTicketRepository;
 import com.MGR.service.OrderService;
 import com.MGR.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +15,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -30,13 +34,18 @@ public class PaymentController {
 
         Page<OrderListDto> paging = orderService.getAllOrderList(page);
         Map<String, Member> memberMap = new HashMap<>();
+        Map<String, List<OrderTicket>> orderTicketMap = new HashMap<>();
+
         for (OrderListDto orderDto : paging) {
             Order order = orderService.findOrderByOrderNum(orderDto.getOrderNum());
             Member member = order.getMember();
             memberMap.put(orderDto.getOrderNum(), member);
+            List<OrderTicket> orderTicketList = orderService.findOrderTicketByOrderId(order.getId());
+            orderTicketMap.put(orderDto.getOrderNum(), orderTicketList);
         }
 
         model.addAttribute("paging", paging);
+        model.addAttribute("orderTicketMap", orderTicketMap);
         model.addAttribute("memberMap", memberMap);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", paging.getTotalPages());
