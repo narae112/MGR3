@@ -75,6 +75,11 @@
                 }
             });
 
+            $('#searchButton').on('click', function(event) {
+                event.preventDefault(); // 기본 버튼 클릭 동작을 막기 위해 추가
+                search();
+            });
+
             function search() {
                 var searchPeriodType = $("#searchPeriodType").val();
                 var locationCategory = $("#locationCategory").val();
@@ -125,8 +130,8 @@
             <input id="searchQuery" type="text" class="form-control" placeholder="검색어를 입력해주세요"
                    aria-label="검색할 티켓명을 입력해주세요">
         </div>
-        <div class="select col-auto" tabindex="-1">
-            <button onclick="search()" class="btn btn-primary" >검색</button>
+        <div class="select col-auto">
+            <button id="searchButton" class="btn btn-primary" tabindex="0">검색</button>
         </div>
     </div>
 
