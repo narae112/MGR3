@@ -24,7 +24,7 @@
             justify-content: center;
             background-color: transparent;
         }
-        .social-login button {
+        .social-login a {
             width: 80px;
             height: 80px;
             background-size: contain;
@@ -35,16 +35,16 @@
             padding: 0;
             margin: 0 5px;
         }
-        .social-login button#kakao-login {
+        .social-login a#kakao-login {
             background-image: url('/img/login/btn_kakao.png');
         }
-        .social-login button#naver-login {
+        .social-login a#naver-login {
             background-image: url('/img/login/btn_naver.png');
         }
-        .social-login button#google-login {
+        .social-login a#google-login {
             background-image: url('/img/login/btn_google.png');
         }
-        .social-login button#github-login {
+        .social-login a#github-login {
             background-image: url('/img/login/btn_github.png');
         }
     </style>
@@ -68,7 +68,7 @@
 
 <div layout:fragment="content" class="container my-5">
     <div class="container my-3">
-        <h3 class="mb-5 text-center" aria-label="로그인/소셜로그인/회원가입">로그인</h3>
+        <h3 class="mb-5 text-center" aria-label="로그인/소셜로그인/회원가입" tabindex="0">로그인</h3>
         <hr class="my-4">
         <div class="row justify-content-center">
             <div class="col-md-4">
@@ -94,10 +94,10 @@
                         </div>
                     </div>
                     <div class="row social-login">
-                        <button class="col-3 mb-2" id="kakao-login" onClick="location.href='/oauth2/authorization/kakao'" aria-label="카카오 로그인"></button>
-                        <button class="col-3 mb-2" id="naver-login" onClick="location.href='/oauth2/authorization/naver'" aria-label="네이버 로그인"></button>
-                        <button class="col-3 mb-2" id="google-login" onClick="location.href='/oauth2/authorization/google'" aria-label="구글 로그인"></button>
-                        <button class="col-3 mb-2" id="github-login" onClick="location.href='/oauth2/authorization/github'" aria-label="깃허브 로그인"></button>
+                        <a class="col-3 mb-2 btn btn-primary" id="kakao-login" th:href="@{/oauth2/authorization/kakao}" aria-label="카카오 로그인" tabindex="0"> </a>
+                        <a class="col-3 mb-2 btn btn-primary" id="naver-login" th:href="@{/oauth2/authorization/naver}" aria-label="네이버 로그인" tabindex="0"> </a>
+                        <a class="col-3 mb-2 btn btn-primary" id="google-login" th:href="@{/oauth2/authorization/google}" aria-label="구글 로그인" tabindex="0"> </a>
+                        <a class="col-3 mb-2 btn btn-primary" id="github-login" th:href="@{/oauth2/authorization/github}" aria-label="깃허브 로그인" tabindex="0"></a>
                     </div>
                 </form>
             </div>

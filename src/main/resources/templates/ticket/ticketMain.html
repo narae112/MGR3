@@ -145,14 +145,14 @@
                 sec:authorize="hasRole('ADMIN')">티켓 등록하기</button>
     </div>
     <!-- 티켓 목록 -->
-    <div class="row my-5" >
+    <div class="row my-5">
         <th:block th:each="ticket, status: ${tickets.getContent()}" class="col-md-4 mb-4">
             <!-- 티켓 카드 영역 -->
             <div class="col-md-4">
                 <a th:href="@{'/ticket/' + ${ticket.id}}" class="text-dark card h-100 card-link">
-                    <div class="card-body d-flex flex-column justify-content-between"  aria-label="티켓 상품 안내">
+                    <div class="card-body d-flex flex-column justify-content-between" th:attr="aria-label='티켓 안내, 티켓명은 ' + ${ticket.name} + ', 지점은 ' + ${ticket.locationCategory.displayName} + '점, 상세 설명 : ' + ${ticket.memo}">
                         <img th:src="${ticket.imgUrl}" class="card-img-top" th:alt="${ticket.id}" style="height: 400px; overflow: hidden; display: flex; justify-content: center; align-items: center;">
-                        <div class="card-body text-center bg-light ">
+                        <div class="card-body text-center bg-light">
                             <h4 class="card-title" th:text="${ticket.name}"></h4>
                             <p class="card-text" th:text="${ticket.memo}"></p>
                             <p class="card-text" th:text="${ticket.locationCategory.displayName}+'점'"></p>
