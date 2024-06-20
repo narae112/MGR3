@@ -28,6 +28,9 @@ public class OrderListDto {
         this.orderId = order.getId();
         this.orderNum = order.getOrderNum();
         this.orderDate = order.getOrderDate();
+        for (OrderTicket orderTicket : order.getOrderTickets()) {
+            this.addOrderTicket(new OrderTicketDto(orderTicket));
+        }
     }
 
     public int calculateTotalPrice() {
