@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
 //            nav_logo_color.style.display = "block";
 //        }
 
-        var header_navbar = document.querySelector(".navbar-area");
+        var header_navbar = document.querySelector(".navbar-area.main");
         var sticky = header_navbar.offsetTop;
 
         if (window.pageYOffset > sticky) {
