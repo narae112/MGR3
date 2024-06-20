@@ -46,7 +46,12 @@ public class GoWithBoardSpecification {
                 predicates.add(buildPredicateForList(personalityField, personalities, criteriaBuilder));
             }
 
+            // 정렬 기준 추가: createDate 기준으로 내림차순 정렬
+            query.orderBy(criteriaBuilder.desc(root.get("createDate")));
+
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+
+//            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }
 

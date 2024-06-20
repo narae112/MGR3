@@ -191,7 +191,8 @@ public class GoWithBoardService {
     @Transactional(readOnly = true)
     public Page<GoWithBoardFormDto> getAllGoWithBoards(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<GoWithBoard> goWithBoardPage = goWithBoardRepository.findAll(pageable);
+//        Page<GoWithBoard> goWithBoardPage = goWithBoardRepository.findAll(pageable);
+        Page<GoWithBoard> goWithBoardPage = goWithBoardRepository.findAllByOrderByCreateDateDesc(pageable);
         return goWithBoardPage.map(GoWithBoardFormDto::of);
     }
 
@@ -202,25 +203,21 @@ public class GoWithBoardService {
                                                        List<String> afterTypes,
                                                        List<String> personalities,
                                                        int page, int size) {
-        // 문자열 목록을 열거형 값으로 변환
         List<AgeCategory> parsedAgeCategories = ageCategories != null ?
                 ageCategories.stream()
-                        .map(AgeCategory::valueOf) // 문자열을 AgeCategory 열거형 값으로 변환
+                        .map(AgeCategory::valueOf)
                         .collect(Collectors.toList())
                 : null;
 
         List<LocationCategory> parsedLocationCategories = locationCategories != null ?
                 locationCategories.stream()
-                        .map(LocationCategory::valueOf) // 문자열을 LocationCategory 열거형 값으로 변환
+                        .map(LocationCategory::valueOf)
                         .collect(Collectors.toList())
                 : null;
 
-        // 선택된 값을 기반으로 필터링된 게시글 목록을 조회하는 메서드를 호출합니다.
-        // 이 메서드는 선택된 값들을 조건으로 사용하여 필터링된 페이지를 반환해야 합니다.
-//        Pageable pageable = PageRequest.of(0, 6); // 페이지 크기 6으로 설정
-//        Specification<GoWithBoard> spec = GoWithBoardSpecification.withFilters(parsedAgeCategories, parsedLocationCategories, attractionTypes, afterTypes, personalities);
-        Pageable pageable = PageRequest.of(page, size); // 페이지와 크기 설정
         Specification<GoWithBoard> spec = GoWithBoardSpecification.withFilters(parsedAgeCategories, parsedLocationCategories, attractionTypes, afterTypes, personalities);
+
+        Pageable pageable = PageRequest.of(page, size);
         Page<GoWithBoard> filteredGoWithBoardsPage = goWithBoardRepository.findAll(spec, pageable);
 
         return filteredGoWithBoardsPage.map(GoWithBoardFormDto::of);
