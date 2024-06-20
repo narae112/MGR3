@@ -249,10 +249,10 @@
                 <td>
                     <input type="checkbox" id="checkAll" onclick="checkAll()" title="모두 선택" tabindex="0"> 전체
                 </td>
-                <td tabindex="0">티켓 정보</td>
-                <td tabindex="0">방문 예정일</td>
-                <td tabindex="0">예약 상태</td>
-                <td tabindex="0">티켓 금액</td>
+                <td>티켓 정보</td>
+                <td>방문 예정일</td>
+                <td>예약 상태</td>
+                <td>티켓 금액</td>
             </tr>
             </thead>
             <tbody>
@@ -265,7 +265,7 @@
                 </td>
                 <td class="d-flex">
                     <div class="align-self-center">
-                        <span th:text="'[' + ${reservationTicket.locationCategory.displayName} + '점] ' + ${reservationTicket.name}" class="fs24 font-weight-bold" tabindex="0"></span>
+                        <span th:text="'[' + ${reservationTicket.locationCategory.displayName} + '점] ' + ${reservationTicket.name}" class="fs24 font-weight-bold" ></span>
 
                         <!-- [지점]티켓 이름 -->
                         <div class="row g-2">
@@ -273,18 +273,19 @@
                                 <!-- 성인 금액 -->
                                 <span th:id="'adultPrice_' + ${reservationTicket.reservationTicketId}"
                                       th:data-price="${reservationTicket.adultPrice}"
-                                      th:text="'[성인] ' + ${#numbers.formatInteger(reservationTicket.adultPrice, 0, 'COMMA')} + '원'" class="align-self-center me-2" tabindex="0">
+                                      th:text="'[성인] ' + ${#numbers.formatInteger(reservationTicket.adultPrice, 0, 'COMMA')} + '원'" class="align-self-center me-2">
                                 </span>
                                 <!-- 성인 수량 -->
                                 <input type="number" name="adultCount" th:id="'adultCount_' + ${reservationTicket.reservationTicketId}"
-                                       th:value="${reservationTicket.adultCount}" min="1" onchange="changeAdultCount(this)" class="form-control" tabindex="0">
+                                       th:value="${reservationTicket.adultCount}" min="1" onchange="changeAdultCount(this)" class="form-control" tabindex="0"
+                                       th:title="'[성인 티켓의 수량은' + ${reservationTicket.adultCount} + '개 입니다. 수정하시겠습니까?] '">
                             </div>
                             <div class="col">
                                 <!-- 아동 금액 -->
                                 <span th:id="'childPrice_' + ${reservationTicket.reservationTicketId}"
                                       th:data-price="${reservationTicket.childPrice}"
                                       th:text="'[아동] ' + ${#numbers.formatInteger(reservationTicket.childPrice, 0, 'COMMA')} + '원'"
-                                      class="align-self-center me-2" tabindex="0">
+                                      class="align-self-center me-2">
                                 </span>
                                 <!-- 아동 수량 -->
                                 <input type="number" name="childCount"
@@ -293,7 +294,8 @@
                                        min="0"
                                        onchange="changeChildCount(this)"
                                        class="form-control"
-                                       tabindex="0">
+                                       tabindex="0"
+                                       th:title="'[어린이 티켓의 수량은' + ${reservationTicket.childCount} + '개 입니다. 수정하시겠습니까?] '">
                             </div>
                         </div>
                     </div>
