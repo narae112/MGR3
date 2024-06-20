@@ -24,7 +24,7 @@ class AESUtilTest {
     }
 
     @Test
-    void testEncryptAndDecrypt() {
+    void 비밀번호_암호화_복호화() {
         try {
             String originalText = "1";
             String encryptedText = AESUtil.encrypt(originalText, base64Key);
