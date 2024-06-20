@@ -35,6 +35,7 @@ public class ReviewBoardService {
     private final ImageRepository imageRepository;
     private final ImageService imageService;
     private final NotificationService notificationService;
+    private final MemberService memberService;
 
 
     @SuppressWarnings("unused")
@@ -75,6 +76,7 @@ public class ReviewBoardService {
         List<ReviewBoard> reviewBoards = reviewBoardRepository.findAll();
         return reviewBoards.stream().map(this::convertToForm).collect(Collectors.toList());
     }
+
     public Long createReviewBoard(String subject, String content, Member user, List<MultipartFile> reviewImgFileList) throws Exception {
         ReviewBoard q = new ReviewBoard();
         q.setSubject(subject);
@@ -197,6 +199,7 @@ public Page<ReviewBoard> getList(int page, String keyword, String sort) {
 
         ReviewBoardForm form = ReviewBoardForm.of(reviewBoard);
         form.setReviewImgDtoList(reviewImgDtoList);
+
         return form;
     }
 

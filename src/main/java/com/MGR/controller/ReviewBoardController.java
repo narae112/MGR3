@@ -8,14 +8,12 @@ import com.MGR.dto.ReviewCommentForm;
 import com.MGR.entity.Member;
 import com.MGR.entity.Order;
 import com.MGR.entity.ReviewBoard;
-import com.MGR.repository.ReviewBoardRepository;
 import com.MGR.security.PrincipalDetails;
 import com.MGR.service.FileService;
 import com.MGR.service.MemberService;
 import com.MGR.service.OrderService;
 import com.MGR.service.ReviewBoardService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,10 +31,7 @@ import com.MGR.config.VerifyRecaptcha;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -47,11 +42,13 @@ public class ReviewBoardController {
     private final MemberService memberService;
     private final FileService fileService;
     private final OrderService orderService;
+
     @GetMapping("/list")
     public String list(Model model,
                        @RequestParam(value = "page", defaultValue = "0") int page,
                        @RequestParam(value = "kw", defaultValue = "") String kw,
-                       @RequestParam(value = "sort", defaultValue = "date") String sort) {
+                       @RequestParam(value = "sort", defaultValue = "date") String sort,
+                       @AuthenticationPrincipal PrincipalDetails member) {
         // 페이징된 리뷰 게시글 목록 가져오기
         Page<ReviewBoard> paging = this.reviewBoardService.getList(page, kw, sort);
 
@@ -64,8 +61,29 @@ public class ReviewBoardController {
         model.addAttribute("sort", sort);
         model.addAttribute("reviewBoardForms", reviewBoardForms);
 
+        List<Boolean> isVotedList = new ArrayList<>();
+
+        for (ReviewBoardForm form : reviewBoardForms) {
+            boolean isVoted = false;
+            if (member != null && form.getVoter() != null) {
+                isVoted = form.getVoter().contains(member);
+            }
+            isVotedList.add(isVoted);
+        }
+        model.addAttribute("isVotedList", isVotedList);
+
         return "board/review/board_list";
+
     }
+
+    @GetMapping("/detail/modal/{id}")
+    @ResponseBody
+    public ReviewBoardForm getReviewBoardDetail(@PathVariable("id") Long id) {
+        ReviewBoard reviewBoard = this.reviewBoardService.getReviewBoard(id);
+        return this.reviewBoardService.getReviewBoardDtl(id);
+    }
+
+
     @GetMapping(value = "/detail/{id}")
     public String detail(Model model, @PathVariable("id") Long id, ReviewCommentForm reviewCommentForm,
                          @AuthenticationPrincipal PrincipalDetails member) {
