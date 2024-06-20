@@ -1945,8 +1945,7 @@ ol {
 .hero-area {
   position: relative;
   background-color: #101130;
-  padding: 200px 0 150px 0;
-  padding-bottom: 240px;
+  padding: 140px 0 210px 0;
   width: 100%;
   background-size: cover;
   background-position: center;
@@ -1986,10 +1985,10 @@ ol {
 }
 
 .hero-area .hero-content h5 {
-  color: #fff;
+  color: #101130;
   font-weight: 500;
   display: block;
-  margin-bottom: 18px;
+  margin-bottom: 100px;
   font-size: 16px;
   display: inline-block;
   background: #ffffff24;
@@ -2015,14 +2014,15 @@ ol {
 
 .hero-area .hero-content h5 i {
   display: inline-block;
-  margin-right: 2px;
+  text-align: center;
+  margin: 2px;
 }
 
 .hero-area .hero-content h2 {
   font-weight: 700;
   font-size: 40px;
   line-height: 55px;
-  color: #fff;
+  color: #101130;
   margin: 0px 0 18px;
   text-transform: capitalize;
   overflow: hidden;
@@ -2046,7 +2046,7 @@ ol {
   font-weight: 400;
   font-size: 16px;
   line-height: 28px;
-  color: #fff;
+  color: #101130;
   margin: 28px 0;
 }
 
@@ -2685,7 +2685,7 @@ ol {
     Call To Action CSS
 ========================================*/
 .call-action {
-  background-image: url("../images/logo/Frame2.jpg");
+  background-image: url("../images/logo/Frame3.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -2774,7 +2774,7 @@ ol {
 }
 
 .call-action .text h5 {
-  color: #fff;
+  color: #000;
   margin-bottom: 20px;
   font-size: 17px;
   display: inline-block;
@@ -2787,7 +2787,7 @@ ol {
   font-size: 37px;
   font-weight: 700;
   line-height: 45px;
-  color: #fff;
+  color: #000;
 }
 
 @media only screen and (min-width: 768px) and (max-width: 991px) {
@@ -2805,7 +2805,7 @@ ol {
 }
 
 .call-action .text p {
-  color: #fff;
+  color: #000;
   font-size: 16px;
   font-weight: 400;
   margin-top: 20px;

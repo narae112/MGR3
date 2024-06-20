@@ -38,6 +38,17 @@
             height: 100%; /* 높이를 100%로 설정 */
             font-size: inherit; /* 폰트 크기를 상속 */
         }
+
+        .btnSave{
+            background-color: #101130;
+            border-color: #101130;
+            color: #fff;
+        }
+        .btnSave:hover {
+            background-color: #f20487;
+            border-color: #f20487;
+            color: #fff;
+        }
     </style>
 </th:block>
 <body>
@@ -149,8 +160,8 @@
                     <input type="file" class="form-control goWithImgFile" name="goWithImgFile" id="fileInput4" style="display: none;">
                 </div>
                 <div class="text-center">
-                    <input type="submit" value="저장하기" class="btn btn-primary my-2">
-                    <a class="btn btn-secondary mx-2 my-2" href="/goWithBoard/list">취소</a>
+                    <input type="submit" value="저장하기" class="btnSave btn my-2">
+                    <a class="btn btn-light mx-2 my-2" href="/goWithBoard/list">취소</a>
                 </div>
             </form>
         </div>
