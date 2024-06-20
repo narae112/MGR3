@@ -4,11 +4,9 @@
       layout:decorate="~{layouts/default}">
 
 <head>
-    <!-- Chart.js CDN 추가 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
-<!-- css -->
 <th:block layout:fragment="css">
     <style>
         .content-mg {
@@ -35,16 +33,16 @@
     </style>
 </th:block>
 
-<!-- js -->
 <th:block layout:fragment="script">
     <script th:inline="javascript">
-        // 페이지 로딩 후 실행되는 함수
         document.addEventListener('DOMContentLoaded', function() {
+            // 디버깅 로그 추가
             var totalPriceByDate = /*[[${totalPriceByDate}]]*/ {};
+            console.log(totalPriceByDate);
+
             var labels = Object.keys(totalPriceByDate);
             var data = Object.values(totalPriceByDate);
 
-            // Chart.js 설정
             var ctx = document.getElementById('totalPriceChart').getContext('2d');
             var chart = new Chart(ctx, {
                 type: 'bar',
@@ -63,29 +61,13 @@
                         y: {
                             beginAtZero: true,
                             ticks: {
-                                callback: function(value, index, values) {
+                                callback: function(value) {
                                     return value.toLocaleString() + '원';
                                 }
                             }
                         }
                     }
                 }
-            });
-
-            // 날짜 범위 선택 이벤트 처리
-            var dateRangeForm = document.getElementById('dateRangeForm');
-            dateRangeForm.addEventListener('submit', function(event) {
-                event.preventDefault(); // 폼의 기본 동작 방지
-
-                var startDate = new Date(dateRangeForm.elements['startDate'].value);
-                var endDate = new Date(dateRangeForm.elements['endDate'].value);
-
-                // AJAX를 통해 선택한 범위에 해당하는 데이터를 서버로부터 가져와서 처리할 수 있음
-                console.log('Start Date:', startDate);
-                console.log('End Date:', endDate);
-
-                // 여기서 필요한 서버 요청을 추가할 수 있음
-                // 예를 들어, 서버에 startDate와 endDate를 전달하여 데이터를 가져오고, 그래프를 업데이트할 수 있음
             });
         });
     </script>
@@ -95,16 +77,15 @@
     <h3 class="mb-5 text-center">결제 내역 조회</h3>
     <hr class="my-4">
 
-    <!-- 날짜 범위 선택 폼 -->
-    <form id="dateRangeForm">
+    <form id="dateRangeForm" th:action="@{/admin/paymentGraph}" th:object="${orderSearchDto}" method="get">
         <div class="form-row">
             <div class="form-group col-md-6">
                 <label for="startDate">시작 날짜</label>
-                <input type="date" class="form-control" id="startDate" name="startDate" required>
+                <input type="date" class="form-control" id="startDate" th:field="*{startDate}" required>
             </div>
             <div class="form-group col-md-6">
                 <label for="endDate">종료 날짜</label>
-                <input type="date" class="form-control" id="endDate" name="endDate" required>
+                <input type="date" class="form-control" id="endDate" th:field="*{endDate}" required>
             </div>
         </div>
         <button type="submit" class="btn btn-primary">조회</button>
