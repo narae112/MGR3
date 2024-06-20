@@ -50,6 +50,7 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/**").permitAll()
+                        .requestMatchers("/chat/**").permitAll()
                         .requestMatchers("/ws/**").permitAll()
                         .requestMatchers("/gemini/**").permitAll()
                         .requestMatchers("/js/**").permitAll()

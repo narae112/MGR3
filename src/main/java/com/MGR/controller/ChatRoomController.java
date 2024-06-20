@@ -25,7 +25,7 @@ public class ChatRoomController {
     private final ChatService chatService;
     private final MemberService memberService;
 
-    @GetMapping("/api/chatList")
+    @GetMapping("/chat/chatList")
     public String roomList(Model model, @AuthenticationPrincipal PrincipalDetails member) {
         Long memberId = member.getId();
         List<ChatRoom> roomList = chatService.findAllRoomsByMember(memberId);
@@ -37,15 +37,15 @@ public class ChatRoomController {
         model.addAttribute("nickname", findMember.getNickname());
         model.addAttribute("member", findMember);
         model.addAttribute("allChatList", allChatList);
-        return "api/chatList";
+        return "chat/chatList";
     }
 
-    @GetMapping("/api/createRoom")
+    @GetMapping("/chat/createRoom")
     public String roomForm() {
-        return "api/roomForm";
+        return "chat/roomForm";
     }
 
-    @PostMapping("/api/createRoom")
+    @PostMapping("/chat/createRoom")
     @ResponseBody
     public ResponseEntity<?> createRoom(@RequestParam String name, @RequestParam String nickname,
                                         @AuthenticationPrincipal PrincipalDetails member) {
@@ -59,7 +59,7 @@ public class ChatRoomController {
         }
     }
 
-    @PostMapping("/api/deleteRoom")
+    @PostMapping("/chat/deleteRoom")
     public ResponseEntity<?> deleteRoom(@RequestBody Map<String, Long> request,
                                         @AuthenticationPrincipal PrincipalDetails member) {
         Long roomId = request.get("roomId");
@@ -70,13 +70,13 @@ public class ChatRoomController {
         return ResponseEntity.ok().body("채팅방이 삭제되었습니다.");
     }
 
-    @GetMapping("/api/joinRoom/{roomId}")
+    @GetMapping("/chat/joinRoom/{roomId}")
     public String joinRoom(@PathVariable Long roomId, Model model) {
         List<Chat> chatList = chatService.findAllChatByRoomId(roomId);
 
         model.addAttribute("roomId", roomId);
         model.addAttribute("chatList", chatList);
-        return "api/chatList";
+        return "chat/chatList";
     }
 
 
