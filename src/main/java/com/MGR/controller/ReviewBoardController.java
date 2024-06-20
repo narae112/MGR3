@@ -8,12 +8,14 @@ import com.MGR.dto.ReviewCommentForm;
 import com.MGR.entity.Member;
 import com.MGR.entity.Order;
 import com.MGR.entity.ReviewBoard;
+import com.MGR.repository.ReviewBoardRepository;
 import com.MGR.security.PrincipalDetails;
 import com.MGR.service.FileService;
 import com.MGR.service.MemberService;
 import com.MGR.service.OrderService;
 import com.MGR.service.ReviewBoardService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +33,10 @@ import com.MGR.config.VerifyRecaptcha;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -42,13 +47,11 @@ public class ReviewBoardController {
     private final MemberService memberService;
     private final FileService fileService;
     private final OrderService orderService;
-
     @GetMapping("/list")
     public String list(Model model,
                        @RequestParam(value = "page", defaultValue = "0") int page,
                        @RequestParam(value = "kw", defaultValue = "") String kw,
-                       @RequestParam(value = "sort", defaultValue = "date") String sort,
-                       @AuthenticationPrincipal PrincipalDetails member) {
+                       @RequestParam(value = "sort", defaultValue = "date") String sort) {
         // 페이징된 리뷰 게시글 목록 가져오기
         Page<ReviewBoard> paging = this.reviewBoardService.getList(page, kw, sort);
 
@@ -61,29 +64,8 @@ public class ReviewBoardController {
         model.addAttribute("sort", sort);
         model.addAttribute("reviewBoardForms", reviewBoardForms);
 
-        List<Boolean> isVotedList = new ArrayList<>();
-
-        for (ReviewBoardForm form : reviewBoardForms) {
-            boolean isVoted = false;
-            if (member != null && form.getVoter() != null) {
-                isVoted = form.getVoter().contains(member);
-            }
-            isVotedList.add(isVoted);
-        }
-        model.addAttribute("isVotedList", isVotedList);
-
         return "board/review/board_list";
-
     }
-
-    @GetMapping("/detail/modal/{id}")
-    @ResponseBody
-    public ReviewBoardForm getReviewBoardDetail(@PathVariable("id") Long id) {
-        ReviewBoard reviewBoard = this.reviewBoardService.getReviewBoard(id);
-        return this.reviewBoardService.getReviewBoardDtl(id);
-    }
-
-
     @GetMapping(value = "/detail/{id}")
     public String detail(Model model, @PathVariable("id") Long id, ReviewCommentForm reviewCommentForm,
                          @AuthenticationPrincipal PrincipalDetails member) {
@@ -150,8 +132,8 @@ public class ReviewBoardController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
     public String reviewCreate(Model model, @Valid ReviewBoardForm reviewBoardForm, BindingResult bindingResult,
-                                 @AuthenticationPrincipal PrincipalDetails member, HttpServletRequest request,
-                                 @RequestParam("reviewImgFile") List<MultipartFile> reviewImgFileList, RedirectAttributes redirectAttributes) {
+                               @AuthenticationPrincipal PrincipalDetails member, HttpServletRequest request,
+                               @RequestParam("reviewImgFile") List<MultipartFile> reviewImgFileList, RedirectAttributes redirectAttributes) {
         String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
         if (member == null) {
             redirectAttributes.addFlashAttribute("error", "로그인이 필요한 서비스입니다.");
@@ -201,7 +183,7 @@ public class ReviewBoardController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify/{id}")
     public String reviewModify(Model model, @PathVariable("id") Long id,
-                                 @AuthenticationPrincipal PrincipalDetails member) {
+                               @AuthenticationPrincipal PrincipalDetails member) {
         ReviewBoard reviewBoard = this.reviewBoardService.getReviewBoard(id);
         if (!reviewBoard.getAuthor().getName().equals(member.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
@@ -218,9 +200,9 @@ public class ReviewBoardController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/modify/{id}")
     public String reviewModify(Model model, @Valid ReviewBoardForm reviewBoardForm, BindingResult bindingResult,
-                                 @AuthenticationPrincipal PrincipalDetails member,
-                                 @PathVariable("id") Long id, HttpServletRequest request,
-                                 @RequestParam("reviewImgFile") List<MultipartFile> reviewImgFileList) {
+                               @AuthenticationPrincipal PrincipalDetails member,
+                               @PathVariable("id") Long id, HttpServletRequest request,
+                               @RequestParam("reviewImgFile") List<MultipartFile> reviewImgFileList) {
         String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
 
         try {
@@ -268,7 +250,7 @@ public class ReviewBoardController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/delete/{id}")
     public String reviewDelete(@AuthenticationPrincipal PrincipalDetails member,
-                                 @PathVariable("id") Long id) {
+                               @PathVariable("id") Long id) {
         ReviewBoard reviewBoard = this.reviewBoardService.getReviewBoard(id);
         if (!reviewBoard.getAuthor().getName().equals(member.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");

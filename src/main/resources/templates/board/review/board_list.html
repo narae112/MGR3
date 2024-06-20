@@ -7,65 +7,10 @@
     <style>
         /* 테이블과 h3 사이에 간격을 주는 CSS */
         .reviewContainer >.row {
-            margin-top: 30px; /* 필요에 따라 조정하세요 */
-        }
+               margin-top: 30px; /* 필요에 따라 조정하세요 */
+           }
     </style>
 </th:block>
-
-<th:block layout:fragment="script">
-    <script th:inline="javascript">
-        document.addEventListener("DOMContentLoaded", function() {
-            const page_elements = document.querySelectorAll('.page-link');
-            page_elements.forEach(function(element) {
-                element.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    const page = this.dataset.page;
-                    const form = document.createElement('form');
-                    form.method = 'GET';
-                    form.action = '/review/board/list';
-                    form.innerHTML = '<input type="hidden" name="page" value="' + page + '">';
-                    document.body.appendChild(form);
-                    form.submit();
-                });
-            });
-
-            const reviewLinks = document.querySelectorAll('.card-link');
-            reviewLinks.forEach(function(link) {
-                link.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    const reviewId = this.getAttribute('data-id');
-                    fetch(`/review/board/detail/modal/${reviewId}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            const modalContent = document.querySelector('#reviewDetailModal .modal-body');
-                            modalContent.innerHTML = `
-                                <h5>${data.subject}</h5>
-                                <h6 class="card-subtitle mb-2 text-muted">${data.author.nickname}</h6>
-                                <div style="height: 300px; overflow: hidden; display: flex; justify-content: center; align-items: center;">
-                                    <img src="${data.imageUrl ? data.imageUrl : '/img/logo/placeholder.png'}" class="img-fluid rounded" style="max-width: 100%; max-height: 100%; object-fit: contain;">
-                                </div>
-                                <p class="card-text" style="color: black;">
-                                    조회수: ${data.count}<br>
-                                    등록일: ${new Date(data.createDate).toLocaleString()}<br>
-                                    내용: ${data.content}<br>
-                                    추천수: ${data.voter.length}
-                                </p>
-                            `;
-                            const modal = new bootstrap.Modal(document.getElementById('reviewDetailModal'));
-                            modal.show();
-
-                            // 모달 닫힘 이벤트 핸들러 추가
-                            document.getElementById('reviewDetailModal').addEventListener('hidden.bs.modal', function () {
-                                document.querySelector('.modal-backdrop').remove();
-                            });
-                        })
-                        .catch(error => console.error('Error loading modal content:', error));
-                });
-            });
-        });
-    </script>
-</th:block>
-
 <div layout:fragment="content">
     <h3 class="mb-5 text-center">리뷰 게시판</h3>
     <div class="row my-3">
@@ -87,8 +32,8 @@
         <a th:href="@{/review/board/orderCheck}" class="btn btn-primary mb-4">리뷰 등록하기</a>
     </div>
     <div class="row">
-        <div th:each="reviewBoard, iterStat : ${paging}" class="col-md-4 mb-4">
-            <a href="#" class="card h-100 card-link" data-bs-toggle="modal" data-bs-target="#reviewDetailModal" th:attr="data-id=${reviewBoard.id}">
+        <div th:each="reviewBoard : ${paging}" class="col-md-4 mb-4">
+            <a th:href="@{|/review/board/detail/${reviewBoard.id}|}" class="card h-100 card-link">
                 <div class="card-body d-flex flex-column justify-content-between">
                     <h5 class="card-title" th:text="${reviewBoard.subject}"></h5>
                     <h6 class="card-subtitle mb-2 text-muted" th:text="${reviewBoard.author.nickname}"></h6>
@@ -106,10 +51,10 @@
                     </div>
 
                     <!-- 기타 정보 표시 -->
-                    <p class="card-text" style="color: black;">
+                    <p class="card-text" style="color: black;" >
                         조회수: <span th:text="${reviewBoard.count}"></span><br>
                         등록일: <span th:text="${#temporals.format(reviewBoard.createDate, 'yyyy-MM-dd HH:mm')}"></span><br>
-                        추천수: <span th:text="${#lists.size(reviewBoard.voter)}">0</span>
+                        추천수: <span  th:text="${reviewBoard.voterCount}">0></span>
                     </p>
                 </div>
             </a>
@@ -138,30 +83,30 @@
         </ul>
     </div>
     <!-- 페이징처리 끝 -->
-
-    <!-- 모달 -->
-    <div class="modal fade" id="reviewDetailModal" tabindex="-1" role="dialog" aria-labelledby="reviewDetailModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="reviewDetailModalLabel">리뷰 상세 정보</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- 모달 내용은 AJAX 요청을 통해 동적으로 로드됩니다 -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">닫기</button>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
+<!-- 스크립트 -->
+<script layout:fragment="script" type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+        const page_elements = document.querySelectorAll('.page-link');
+        page_elements.forEach(function(element) {
+            element.addEventListener('click', function(event) {
+                event.preventDefault();
+                const page = this.dataset.page;
+                const form = document.createElement('form');
+                form.method = 'GET';
+                form.action = '/review/board/list';
+                form.innerHTML = '<input type="hidden" name="page" value="' + page + '">';
+                document.body.appendChild(form);
+                form.submit();
+            });
+        });
+    });
+</script>
 
-<!--&lt;!&ndash; Bootstrap JS 추가 (필요시) &ndash;&gt;-->
-<!--<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>-->
-<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>-->
-<!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>-->
+<!-- Bootstrap JS 추가 (필요시) -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
 </html>
