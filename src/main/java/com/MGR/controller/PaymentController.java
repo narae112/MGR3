@@ -82,18 +82,24 @@ public class PaymentController {
         LocalDate endDate = orderSearchDto.getEndDate();
 
         Map<LocalDate, Integer> totalPriceByDate = orderService.getTotalPriceByDate(paging.getContent());
-//        Map<LocalDate, Integer> totalCountByDate = orderService.getTotalCountByDate(paging.getContent());
+//      Map<LocalDate, Integer> totalCountByDate = orderService.getTotalCountByDate(paging.getContent());
+      Map<LocalDate, Integer> childCountByDate = orderService.getChildCountByDate(paging.getContent());
+      Map<LocalDate, Integer> adultCountByDate = orderService.getAdultCountByDate(paging.getContent());
 
         if (startDate != null && endDate != null) {
             totalPriceByDate = totalPriceByDate.entrySet().stream()
                     .filter(entry -> !entry.getKey().isBefore(startDate) && !entry.getKey().isAfter(endDate))
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-//            totalCountByDate = totalCountByDate.entrySet().stream()
-//                    .filter(entry -> !entry.getKey().isBefore(startDate) && !entry.getKey().isAfter(endDate))
-//                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            childCountByDate = childCountByDate.entrySet().stream()
+                 .filter(entry -> !entry.getKey().isBefore(startDate) && !entry.getKey().isAfter(endDate))
+                   .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            adultCountByDate = adultCountByDate.entrySet().stream()
+                    .filter(entry -> !entry.getKey().isBefore(startDate) && !entry.getKey().isAfter(endDate))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         }
-//        model.addAttribute("totalCountByDate", totalCountByDate);
+        model.addAttribute("childCountByDate", childCountByDate);
+        model.addAttribute("adultCountByDate", adultCountByDate);
         model.addAttribute("orderSearchDto", orderSearchDto);
         model.addAttribute("paging", paging);
         model.addAttribute("currentPage", page);
@@ -102,7 +108,8 @@ public class PaymentController {
 
         // 디버깅 로그 추가
         System.out.println("Total Price By Date: " + totalPriceByDate);
-//        System.out.println("Total Price By Date: " + totalCountByDate);
+        System.out.println("Total Price By Date: " + adultCountByDate);
+        System.out.println("Total Price By Date: " + childCountByDate);
 
         return "order/paymentGraph";
     }

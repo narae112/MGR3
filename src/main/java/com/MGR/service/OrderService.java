@@ -178,6 +178,27 @@ public class OrderService {
         return totalPriceByDate;
     }
 
+
+    public Map<LocalDate, Integer> getChildCountByDate(List<OrderListDto> orderList) {
+        Map<LocalDate, Integer> childCountByDate = new HashMap<>();
+        for (OrderListDto orderDto : orderList) {
+            LocalDate orderDate = orderDto.getOrderDate().toLocalDate();
+            int childCount = orderDto.calculateChildCount();
+            childCountByDate.merge(orderDate, childCount, Integer::sum);
+        }
+        return childCountByDate;
+    }
+
+    public Map<LocalDate, Integer> getAdultCountByDate(List<OrderListDto> orderList) {
+        Map<LocalDate, Integer> adultCountByDate = new HashMap<>();
+        for (OrderListDto orderDto : orderList) {
+            LocalDate orderDate = orderDto.getOrderDate().toLocalDate();
+            int adultCount = orderDto.calculateAdultCount();
+            adultCountByDate.merge(orderDate, adultCount, Integer::sum);
+        }
+        return adultCountByDate;
+    }
+
     public List<OrderTicket> findOrderTicketByOrderId(Long id) {
         return orderTicketRepository.findByOrderId(id);
     }
