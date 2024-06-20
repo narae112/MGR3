@@ -161,18 +161,21 @@ public class OrderService {
         return new PageImpl<>(orderListDtos, pageable, orderPage.getTotalElements());
     }
 
-    public Map<LocalDate, Integer> getTotalPriceByDate(List<OrderListDto> orderList) {
-        Map<LocalDate, Integer> totalPriceByDate = new HashMap<>();
-
-        for (OrderListDto orderDto : orderList) {
-            LocalDate orderDate = orderDto.getOrderDate().toLocalDate();
-            int totalPrice = orderDto.calculateTotalPrice(); // Adjust this according to your actual method
-            totalPriceByDate.merge(orderDate, totalPrice, Integer::sum);
-        }
-
-        return totalPriceByDate;
+   public Page<OrderListDto> getAllOrderGraph(OrderSearchDto orderSearchDto, Pageable pageable) {
+        Page<Order> orders = orderRepository.getOrderPage(orderSearchDto, pageable);
+        return orders.map(order -> new OrderListDto(order));
     }
 
+    // 날짜별 총 결제 금액을 계산하는 메소드
+    public Map<LocalDate, Integer> getTotalPriceByDate(List<OrderListDto> orderList) {
+        Map<LocalDate, Integer> totalPriceByDate = new HashMap<>();
+        for (OrderListDto orderDto : orderList) {
+            LocalDate orderDate = orderDto.getOrderDate().toLocalDate();
+            int totalPrice = orderDto.calculateTotalPrice();
+            totalPriceByDate.merge(orderDate, totalPrice, Integer::sum);
+        }
+        return totalPriceByDate;
+    }
 
     public List<OrderTicket> findOrderTicketByOrderId(Long id) {
         return orderTicketRepository.findByOrderId(id);
