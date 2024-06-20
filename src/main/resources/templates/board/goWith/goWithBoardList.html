@@ -44,17 +44,35 @@
             border-color: #f20487;
             color: #fff;
         }
+        .btn-back{
+            border-color: #101130;
+            color: #101130;
+        }
+        .btn-back:hover {
+            background-color: #101130;
+            border-color: #101130;
+            color: #fff;
+        }
         /* No results message style */
         .no-results {
             font-size: 1.5rem;
             text-align: center;
             margin-top: 200px;
         }
+        .filter{
+            font-size: 24px;
+            font-weight: bold;
+            color: black;
+        }
         .btn-create{
             font-size: 20px;
             font-weight: bold;
-            background-color: #f20487;
-            color: #fff;
+            border-color: #101130;
+            background-color: #fff;
+            color: #101130;
+        }
+        .btn-create:hover{
+            border-color: #f20487;
         }
     </style>
 </th:block>
@@ -121,11 +139,11 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="text-center mb-3">
-                <a href="/goWithBoard/create" class="btn btn-create">나만의 동행 찾기 글쓰기</a>
-            </div>
             <div class="card mb-3 checkbox-card">
                 <div class="card-body">
+                    <div class="text-center mb-4">
+                        <p class="filter">동행 검색하기</p>
+                    </div>
                     <form th:action="@{/goWithBoard/search}" method="GET">
                         <!-- Age Category 라디오 버튼 -->
                         <div class="row">
@@ -211,9 +229,13 @@
                         </div>
 
                         <div class="text-center">
-                            <button type="submit" class="btn btn_search">Search</button>
+                            <button type="submit" class="btn btn_search">찾기</button>
+                            <a href="/goWithBoard/list" class="btn btn-back">되돌리기</a>
                         </div>
                     </form>
+                    <div class="text-center mt-4">
+                        <a href="/goWithBoard/create" class="btn btn-create">나만의 동행 찾기 글쓰기</a>
+                    </div>
                 </div>
             </div>
         </div>

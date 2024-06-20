@@ -96,7 +96,7 @@ public class GoWithBoardController {
             return "board/goWith/goWithBoardForm";
         }
 
-        return "redirect:/"; // 홈 화면으로 리다이렉트
+        return "redirect:/goWithBoard/list"; // 홈 화면으로 리다이렉트
     }
 
     private void addCategoryAttributes(Model model) {
