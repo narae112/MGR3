@@ -170,9 +170,9 @@
                                     <div th:text="${#temporals.format(goWithBoard.modifiedDate, 'yyyy-MM-dd HH:mm')}"></div>
                                 </div>
                                 <div class="badge bg-light text-dark p-2 text-start">
-<!--                                    <div class="mb-2">-->
-<!--                                        <div th:text="${goWithBoard != null ? goWithBoard.memberName : 'Unknown'}"></div>-->
-<!--                                    </div>-->
+                                    <!--                                    <div class="mb-2">-->
+                                    <!--                                        <div th:text="${goWithBoard != null ? goWithBoard.memberName : 'Unknown'}"></div>-->
+                                    <!--                                    </div>-->
                                     <div th:text="${goWithBoardForm.memberName}"></div>
                                     <div th:text="${#temporals.format(goWithBoard.createDate, 'yyyy-MM-dd HH:mm')}"></div>
                                 </div>
@@ -234,46 +234,46 @@
             </div>
         </div>
     </div>
-        <div class="row justify-content-center">
-            <div class="col-md-10">
-                <h5 class="border-bottom my-3 py-2" th:text="|${#lists.size(goWithBoard.commentList)}개의 댓글이 있습니다.|"></h5>
-                <!-- 답변 반복 시작 -->
-                <div class="card my-3" th:each="goWithComment : ${goWithBoard.commentList}">
-                    <a th:id="|goWithComment_${goWithComment.id}|"></a>
-                    <div class="card-body">
-                        <div class="card-text" th:utext="${@commonUtil.markdown(goWithComment.content)}"></div>
-                        <div class="d-flex justify-content-end">
-                            <div th:if="${goWithComment.modifiedDate != null}" class="badge bg-light text-dark p-2 text-start mx-3">
-                                <div class="mb-2">modified at</div>
-                                <div th:text="${#temporals.format(goWithComment.modifiedDate, 'yyyy-MM-dd HH:mm')}"></div>
-                            </div>
-                            <div class="badge bg-light text-dark p-2 text-start">
-                                <div class="mb-2">
-                                    <span th:if="${goWithBoard.author != null}" th:text="${goWithBoard.author.nickname}"></span>
-                                </div>
-                                <div th:text="${#temporals.format(goWithComment.createDate, 'yyyy-MM-dd HH:mm')}"></div>
-                            </div>
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <h5 class="border-bottom my-3 py-2" th:text="|${#lists.size(goWithBoard.commentList)}개의 댓글이 있습니다.|"></h5>
+            <!-- 답변 반복 시작 -->
+            <div class="card my-3" th:each="goWithComment : ${goWithBoard.commentList}">
+                <a th:id="|goWithComment_${goWithComment.id}|"></a>
+                <div class="card-body">
+                    <div class="card-text" th:utext="${@commonUtil.markdown(goWithComment.content)}"></div>
+                    <div class="d-flex justify-content-end">
+                        <div th:if="${goWithComment.modifiedDate != null}" class="badge bg-light text-dark p-2 text-start mx-3">
+                            <div class="mb-2">modified at</div>
+                            <div th:text="${#temporals.format(goWithComment.modifiedDate, 'yyyy-MM-dd HH:mm')}"></div>
                         </div>
-                        <div class="my-3">
-                            <a th:href="@{|/goWith/comment/modify/${goWithComment.id}|}" class="btn btn-sm btn-outline-secondary"
-                               sec:authorize="isAuthenticated()"
-                               th:if="${goWithComment.member != null and #authentication.getPrincipal().getName() == goWithComment.member.name}"
-                               th:text="수정"></a>
-                            <a href="javascript:void(0);" th:data-uri="@{|/goWith/comment/delete/${goWithComment.id}|}"
-                               class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()"
-                               th:if="${goWithComment.member != null and #authentication.getPrincipal().getName() == goWithComment.member.name}"
-                               th:text="삭제" onclick="deleteQuestion(event)"></a>
+                        <div class="badge bg-light text-dark p-2 text-start">
+                            <div class="mb-2">
+                                <span th:if="${goWithBoard.author != null}" th:text="${goWithBoard.author.nickname}"></span>
+                            </div>
+                            <div th:text="${#temporals.format(goWithComment.createDate, 'yyyy-MM-dd HH:mm')}"></div>
                         </div>
                     </div>
+                    <div class="my-3">
+                        <a th:href="@{|/goWith/comment/modify/${goWithComment.id}|}" class="btn btn-sm btn-outline-secondary"
+                           sec:authorize="isAuthenticated()"
+                           th:if="${goWithComment.member != null and #authentication.getPrincipal().getName() == goWithComment.member.name}"
+                           th:text="수정"></a>
+                        <a href="javascript:void(0);" th:data-uri="@{|/goWith/comment/delete/${goWithComment.id}|}"
+                           class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()"
+                           th:if="${goWithComment.member != null and #authentication.getPrincipal().getName() == goWithComment.member.name}"
+                           th:text="삭제" onclick="deleteQuestion(event)"></a>
+                    </div>
                 </div>
-                <form th:action="@{|/goWith/comment/create/${goWithBoard.id}|}" th:object="${goWithCommentFormDto}" method="post" class="container my-5">
-                    <div th:replace="board/goWith/form_errors :: formErrorsFragment"></div>
-                    <textarea th:field="*{content}" class="form-control" rows="5"></textarea>
-                    <input type="submit" value="답변등록" class="btn btn-primary my-2">
-                </form>
             </div>
+            <form th:action="@{|/goWith/comment/create/${goWithBoard.id}|}" th:object="${goWithCommentFormDto}" method="post" class="container my-5">
+                <div th:replace="board/goWith/form_errors :: formErrorsFragment"></div>
+                <textarea th:field="*{content}" class="form-control" rows="5"></textarea>
+                <input type="submit" value="답변등록" class="btn btn-primary my-2">
+            </form>
         </div>
     </div>
+</div>
 </div>
 
 <script layout:fragment="script" type='text/javascript'>

@@ -206,13 +206,12 @@ public class GoWithBoardController {
             return "redirect:/error";
         }
 
-        return "redirect:/board/goWith/goWithBoardList";
+        return "redirect:/goWithBoard/list";
     }
 
     // 게시글 목록 조회
     @GetMapping({"/goWithBoard/list", "/goWithBoard/list/{page}"})
     public String showGoWithBoardList(Model model, @PathVariable(value = "page", required = false) Integer page) {
-
         int size = 6; // 페이지당 글 개수
         if (page == null || page < 0) {
             page = 0;
@@ -226,39 +225,37 @@ public class GoWithBoardController {
         model.addAttribute("ageCategories", AgeCategory.values());
 
         model.addAttribute("goWithBoardsPage", goWithBoardsPage);
-        model.addAttribute("currentPage", page);
+        model.addAttribute("currentPage", page); // 현재 페이지 정보 추가
         model.addAttribute("totalPages", goWithBoardsPage.getTotalPages());
 
         return "board/goWith/goWithBoardList";
     }
 
-    @GetMapping({"/goWithBoard/search", "/goWithBoard/search{page}"})
+    @GetMapping("/goWithBoard/search")
     public String searchGoWithBoard(Model model,
                                     @RequestParam(required = false) List<String> ageCategories,
                                     @RequestParam(required = false) List<String> locationCategories,
                                     @RequestParam(required = false) List<String> attractionTypes,
                                     @RequestParam(required = false) List<String> afterTypes,
                                     @RequestParam(required = false) List<String> personalities,
-                                    @PathVariable(value = "page", required = false) Integer page){
-
+                                    @RequestParam(value = "page", required = false, defaultValue = "0") Integer page) {
         int size = 6; // 페이지당 글 개수
-        if (page == null || page < 0) {
+        if (page < 0) {
             page = 0;
         }
 
-        // 서비스로부터 필터링된 결과를 받아옵니다.
-        Page<GoWithBoardFormDto> filteredGoWithBoardsPage = goWithBoardService.searchGoWithBoards(ageCategories, locationCategories, attractionTypes, afterTypes, personalities, page, 6);
+        Page<GoWithBoardFormDto> filteredGoWithBoardsPage = goWithBoardService.searchGoWithBoards(ageCategories, locationCategories, attractionTypes, afterTypes, personalities, page, size);
 
         addCategoryAttributes(model); // 체크박스 데이터 추가
 
         // LocationCategory와 AgeCategory 추가
         model.addAttribute("locationCategories", LocationCategory.values());
         model.addAttribute("ageCategories", AgeCategory.values());
-        // 모델에 검색된 게시글 목록을 추가합니다.
-        model.addAttribute("goWithBoardsPage", filteredGoWithBoardsPage);
-        // 필요한 경우 추가 모델 속성을 설정합니다.
 
-        // 게시글 목록 페이지로 이동합니다.
+        model.addAttribute("goWithBoardsPage", filteredGoWithBoardsPage);
+        model.addAttribute("currentPage", page); // 현재 페이지 정보 추가
+        model.addAttribute("totalPages", filteredGoWithBoardsPage.getTotalPages());
+
         return "board/goWith/goWithBoardList";
     }
 
@@ -267,6 +264,6 @@ public class GoWithBoardController {
         GoWithBoard goWithBoard = goWithBoardService.findById(id);
         model.addAttribute("nickname", nickname);
         model.addAttribute("title", goWithBoard.getTitle());
-        return "chat/roomForm";
+        return "api/roomForm";
     }
 }

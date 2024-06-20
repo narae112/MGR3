@@ -19,6 +19,8 @@ VALUES ('영인', '영인', '$2a$10$Zk2RByDnzb1SlNzSy.QQg.RIW2w51yByTIDLh5WuCTKZ
 INSERT INTO member (name, email, password, nickname, birth, is_suspended, role, oauth2id, profile_img_url, provider, provider_id)
 VALUES ('나래', '나래', '$2a$10$Zk2RByDnzb1SlNzSy.QQg.RIW2w51yByTIDLh5WuCTKZJKVJB3ZXO', '나래', NULL, false, 'ROLE_USER', NULL, '/img/login/profile1.png', NULL, NULL);
 
+INSERT INTO member (name, email, password, nickname, birth, is_suspended, role, oauth2id, profile_img_url, provider, provider_id)
+VALUES ('유저', '유저', '$2a$10$Zk2RByDnzb1SlNzSy.QQg.RIW2w51yByTIDLh5WuCTKZJKVJB3ZXO', '유저', NULL, false, 'ROLE_USER', NULL, '/img/login/profile1.png', NULL, NULL);
 
 -- ticket
 INSERT INTO ticket (name, memo, start_date, end_date, adult_price, child_price, location_category)
