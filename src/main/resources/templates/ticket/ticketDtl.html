@@ -14,9 +14,11 @@
     <script th:inline="javascript">
         $(function(){
             calculateTotalPrice();
+
             $("#adultCount").change(function(){
                 calculateTotalPrice();
             });
+
             $("#childCount").change(function(){
                 calculateTotalPrice();
             });
@@ -30,7 +32,7 @@
                     $("#visitDate").val(dateText);
 
                     // 다음 항목으로 포커스 이동
-                    $("#adultPriceSection").focus();
+                    $("#focus-target").focus();
 
                 }
             });
@@ -200,16 +202,23 @@
         </div>
         <div class="flex-column-full">
             <div>
-                <div class="h4" th:text="${ticket.name} + ' (' + ${ticket.locationCategory.displayName} + '점)'" tabindex="0"></div>
+                <div class="h4" tabindex="0">
+                    <span th:text="${ticket.name} + ' (' + ${ticket.locationCategory.displayName} + '점)'"></span>
+                    <span class="visually-hidden" th:text="' 성인 티켓 가격: ' + ${#numbers.formatInteger(ticket.adultPrice, 0, 'COMMA')} + '원'"></span>
+                    <!--                    <input type="hidden" th:value="${ticket.adultPrice}" id="adultPrice" name="adultPrice">-->
+                    <span class="visually-hidden" th:text="' 어린이 티켓 가격: ' + ${#numbers.formatInteger(ticket.childPrice, 0, 'COMMA')} + '원'"></span>
+                    <!--                    <input type="hidden" th:value="${ticket.childPrice}" id="childPrice" name="childPrice">-->
+                </div>
                 <hr class="my-4">
                 <div>
                     <p tabindex="0">방문예정일</p>
                     <div id="datepicker"  class="text-center" aria-label="방문예정일을 선택하세요"></div> <!-- 달력만 표시 -->
                 </div>
             </div>
+            <div id="focus-target" tabindex="-1"></div>
             <div class="mt-auto">
-                <div class="h4 text-danger text-start ms-3" tabindex="0" id="adultPriceSection">
-                    <input type="hidden" th:value="${ticket.adultPrice}" id="adultPrice" name="adultPrice">
+                <div class="h4 text-danger text-start ms-3" id="adultPriceSection">
+                    <input type="hidden" th:value="${ticket.adultPrice}" id="adultPrice"  name="adultPrice">
                     성인: <span th:text="${#numbers.formatInteger(ticket.adultPrice, 0, 'COMMA')}"></span>원
                 </div>
                 <div class="input-group w-50">
@@ -219,8 +228,8 @@
                     <input aria-label="성인 티켓 수량 입력" type="number" name="adultCount" id="adultCount" class="form-control" value="1" min="1" onchange="calculateTotalPrice()" required>
                 </div>
 
-                <div class="h4 text-danger text-start ms-3" tabindex="0">
-                    <input type="hidden" th:value="${ticket.childPrice}" id="childPrice" name="childPrice">
+                <div class="h4 text-danger text-start ms-3">
+                    <input type="hidden" th:value="${ticket.childPrice}" name="childPrice">
                     어린이: <span th:text="${#numbers.formatInteger(ticket.childPrice, 0, 'COMMA')}"></span>원
                 </div>
 
