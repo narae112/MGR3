@@ -183,7 +183,9 @@ public class NotificationService {
     public void goWithBoard(GoWithBoard goWithBoard, Member member) {
 
         //알림메세지 생성
-        String data = "[동행찾기] 비슷한 취향의 사용자가 글을 올렸습니다.";
+        String data = "[동행찾기] 비슷한 취향의 사용자가 글을 올렸습니다. +[" +
+        goWithBoard.getTitle() + "] - 페이지로 이동하려면 클릭하세요.";
+
         System.out.println("data = " + data);
         SseEmitter sseEmitter = sseEmitters.get(member.getId());
         System.out.println("sseEmitter = " + sseEmitter);
