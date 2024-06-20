@@ -35,6 +35,8 @@ public class PaymentController {
         Page<OrderListDto> paging = orderService.getAllOrderList(page);
         Map<String, Member> memberMap = new HashMap<>();
         Map<String, List<OrderTicket>> orderTicketMap = new HashMap<>();
+        Map<String, Integer> orderTicketAdultCountMap = new HashMap<>();
+        Map<String, Integer> orderTicketChildCountMap = new HashMap<>();
 
         for (OrderListDto orderDto : paging) {
             Order order = orderService.findOrderByOrderNum(orderDto.getOrderNum());
@@ -42,6 +44,11 @@ public class PaymentController {
             memberMap.put(orderDto.getOrderNum(), member);
             List<OrderTicket> orderTicketList = orderService.findOrderTicketByOrderId(order.getId());
             orderTicketMap.put(orderDto.getOrderNum(), orderTicketList);
+
+            int adultCountSum = orderTicketList.stream().mapToInt(OrderTicket::getAdultCount).sum();
+            int childCountSum = orderTicketList.stream().mapToInt(OrderTicket::getChildCount).sum();
+            orderTicketAdultCountMap.put(orderDto.getOrderNum(), adultCountSum);
+            orderTicketChildCountMap.put(orderDto.getOrderNum(), childCountSum);
         }
 
         model.addAttribute("paging", paging);
@@ -49,6 +56,8 @@ public class PaymentController {
         model.addAttribute("memberMap", memberMap);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", paging.getTotalPages());
+        model.addAttribute("orderTicketAdultCountMap", orderTicketAdultCountMap);
+        model.addAttribute("orderTicketChildCountMap", orderTicketChildCountMap);
 
         return "order/paymentList";
     }
