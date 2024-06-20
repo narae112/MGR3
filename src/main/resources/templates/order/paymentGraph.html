@@ -30,46 +30,61 @@
             justify-content: center;
             align-items: center;
         }
+        .chart-container {
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
     </style>
 </th:block>
 
 <th:block layout:fragment="script">
     <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', function() {
-            // 디버깅 로그 추가
-            var totalPriceByDate = /*[[${totalPriceByDate}]]*/ {};
-            console.log(totalPriceByDate);
+       var totalPriceByDate = /*[[${totalPriceByDate}]]*/ {};
+       var totalCountByDate = /*[[${totalCountByDate}]]*/ {};
+       var labels = Object.keys(totalPriceByDate);
+       var totalPrices = Object.values(totalPriceByDate);
+       var totalCounts = Object.values(totalCountByDate);
 
-            var labels = Object.keys(totalPriceByDate);
-            var data = Object.values(totalPriceByDate);
-
-            var ctx = document.getElementById('totalPriceChart').getContext('2d');
-            var chart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: '날짜별 총 결제 금액 (원)',
-                        data: data,
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return value.toLocaleString() + '원';
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        });
+       var ctx = document.getElementById('combinedChart').getContext('2d');
+       var combinedChart = new Chart(ctx, {
+           type: 'bar',
+           data: {
+               labels: labels,
+               datasets: [{
+                   label: '날짜별 총 결제 금액 (원)',
+                   data: totalPrices,
+                   backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                   borderColor: 'rgba(75, 192, 192, 1)',
+                   borderWidth: 1
+               }, {
+                   label: '날짜별 총 인원수',
+                   data: totalCounts,
+                   type: 'line',
+                   borderColor: 'rgba(255, 99, 132, 1)',
+                   backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                   tension: 0.1
+               }]
+           },
+           options: {
+               scales: {
+                   y: {
+                       beginAtZero: true,
+                       ticks: {
+                           callback: function(value, index, values) {
+                               if (index === 0) {
+                                   return value.toLocaleString() + '명';
+                               } else {
+                                   return value.toLocaleString() + '원';
+                               }
+                           }
+                       }
+                   }
+               }
+           }
+       });
+   });
     </script>
 </th:block>
 
@@ -95,7 +110,7 @@
         <p>결제 내역이 없습니다.</p>
     </div>
     <div th:if="${not paging.empty}">
-        <canvas id="totalPriceChart"></canvas>
+        <canvas id="combinedChart" width="800" height="400"></canvas>
     </div>
 
     <nav aria-label="Page navigation">

@@ -178,6 +178,16 @@ public class OrderService {
         return totalPriceByDate;
     }
 
+    public Map<LocalDate, Integer> getTotalCountByDate(List<OrderListDto> orderList) {
+        Map<LocalDate, Integer> totalPriceByDate = new HashMap<>();
+        for (OrderListDto orderDto : orderList) {
+            LocalDate orderDate = orderDto.getOrderDate().toLocalDate();
+            int totalCount = orderDto.calculateTotalCount();
+            totalPriceByDate.merge(orderDate, totalCount, Integer::sum);
+        }
+        return totalPriceByDate;
+    }
+
     public List<OrderTicket> findOrderTicketByOrderId(Long id) {
         return orderTicketRepository.findByOrderId(id);
     }

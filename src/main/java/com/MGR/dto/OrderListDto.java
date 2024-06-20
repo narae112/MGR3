@@ -41,6 +41,14 @@ public class OrderListDto {
         return total;
     }
 
+    public int calculateTotalCount() {
+        int total = 0;
+        for (OrderTicketDto ticket : orderTickets) {
+            total += ticket.getTotalCount();
+        }
+        return total;
+    }
+
     public int calculateDiscountedTotalPrice() {
         int total = calculateTotalPrice();
         return total - (total * discountRate / 100);
