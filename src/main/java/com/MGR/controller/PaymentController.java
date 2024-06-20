@@ -1,6 +1,7 @@
 package com.MGR.controller;
 
 import com.MGR.dto.OrderListDto;
+import com.MGR.dto.OrderSearchDto;
 import com.MGR.entity.Member;
 import com.MGR.entity.Order;
 import com.MGR.entity.OrderTicket;
@@ -9,6 +10,9 @@ import com.MGR.service.OrderService;
 import com.MGR.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor

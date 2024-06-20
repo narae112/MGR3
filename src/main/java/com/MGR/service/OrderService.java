@@ -3,6 +3,7 @@ package com.MGR.service;
 import com.MGR.constant.ReservationStatus;
 import com.MGR.dto.OrderDto;
 import com.MGR.dto.OrderListDto;
+import com.MGR.dto.OrderSearchDto;
 import com.MGR.dto.OrderTicketDto;
 import com.MGR.entity.*;
 import com.MGR.repository.*;
