@@ -308,11 +308,13 @@
 
             $('#sendButton').click(function () {
                 sendMessage();
+                $('#messageInput').val('');
             });
 
             $('#messageInput').keypress(function (event) {
                 if (event.which === 13) {
                     sendMessage();
+                     $('#messageInput').val('');
                 }
             });
         });

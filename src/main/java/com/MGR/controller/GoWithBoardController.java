@@ -267,6 +267,6 @@ public class GoWithBoardController {
         GoWithBoard goWithBoard = goWithBoardService.findById(id);
         model.addAttribute("nickname", nickname);
         model.addAttribute("title", goWithBoard.getTitle());
-        return "api/roomForm";
+        return "chat/roomForm";
     }
 }
