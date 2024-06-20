@@ -27,7 +27,7 @@ public class ChatController {
     private final ChatService chatService;
     private final MemberService memberService;
 
-    @PostMapping("/api/chat/send")
+    @PostMapping("/chat/send")
     public ResponseEntity<Void> sendMessage(
             @RequestParam Long roomId,
             @RequestParam String message,
@@ -53,7 +53,7 @@ public class ChatController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping(value = "/api/chat/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "/chat/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribe(@AuthenticationPrincipal PrincipalDetails member, @RequestParam Long roomId) {
         if (member == null) {
             return null;
@@ -62,7 +62,7 @@ public class ChatController {
         return notificationService.subscribeToRoom(userId, roomId);
     }
 
-    @GetMapping("/api/chats/{roomId}")
+    @GetMapping("/chats/{roomId}")
     public ResponseEntity<Map<String, Object>> getChatHistory(@PathVariable Long roomId, @AuthenticationPrincipal PrincipalDetails member) {
         List<Chat> chatList = chatService.findAllChatByRoomId(roomId);
         ChatRoom roomById = chatService.findRoomById(roomId);
@@ -77,7 +77,7 @@ public class ChatController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("/api/chats/{roomId}/read")
+    @PostMapping("/chats/{roomId}/read")
     public ResponseEntity<?> markAsRead(@PathVariable Long roomId,
                                         @AuthenticationPrincipal PrincipalDetails member) {
         chatService.markMessagesAsRead(roomId, member.getId());
@@ -85,14 +85,14 @@ public class ChatController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/api/chat/sendReadEvent")
+    @PostMapping("/chat/sendReadEvent")
     @ResponseBody
     public ResponseEntity<Void> sendReadEvent(@RequestParam Long roomId, @RequestParam Long userId) {
         notificationService.sendReadEvent(roomId, userId);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/api/chat/updateReadStatus")
+    @PostMapping("/chat/updateReadStatus")
     public ResponseEntity<Map<String, List<Chat>>> updateReadStatus(@RequestParam Long roomId, @RequestParam Long userId) {
         List<Chat> updatedMessages = chatService.updateReadStatus(roomId, userId);
         Map<String, List<Chat>> response = new HashMap<>();
