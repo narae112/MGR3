@@ -32,7 +32,20 @@ public class OrderListDto {
             this.addOrderTicket(new OrderTicketDto(orderTicket));
         }
     }
-
+    public int calculateChildCount(){
+        int total = 0;
+        for(OrderTicketDto ticket : orderTickets){
+            total += ticket.getChildCount();
+        }
+        return total;
+    }
+    public int calculateAdultCount(){
+        int total = 0;
+        for(OrderTicketDto ticket : orderTickets){
+            total += ticket.getAdultCount();
+        }
+        return total;
+    }
     public int calculateTotalPrice() {
         int total = 0;
         for (OrderTicketDto ticket : orderTickets) {
