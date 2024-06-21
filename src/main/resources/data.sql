@@ -8,19 +8,20 @@ DELETE FROM member;
 
 -- member
 INSERT INTO member (name, email, password, nickname, birth, is_suspended, role, oauth2id, profile_img_url, provider, provider_id)
-VALUES ('관리자', 'admin@mgr.com', '$2a$10$Zk2RByDnzb1SlNzSy.QQg.RIW2w51yByTIDLh5WuCTKZJKVJB3ZXO', 'MGR관리자', NULL, false, 'ROLE_ADMIN', NULL, '/img/login/profile1.png', NULL, NULL);
+VALUES ('관리자', 'admin@mgr.com', '$2a$10$Zk2RByDnzb1SlNzSy.QQg.RIW2w51yByTIDLh5WuCTKZJKVJB3ZXO', 'MGR관리자', NULL, false, 'ROLE_ADMIN', NULL, '/img/login/profile.png', NULL, NULL);
 
 INSERT INTO member (name, email, password, nickname, birth, is_suspended, role, oauth2id, profile_img_url, provider, provider_id)
 VALUES ('혜원', '혜원', '$2a$10$Zk2RByDnzb1SlNzSy.QQg.RIW2w51yByTIDLh5WuCTKZJKVJB3ZXO', '혜원', NULL, false, 'ROLE_USER', NULL, '/img/login/profile1.png', NULL, NULL);
 
 INSERT INTO member (name, email, password, nickname, birth, is_suspended, role, oauth2id, profile_img_url, provider, provider_id)
-VALUES ('영인', '영인', '$2a$10$Zk2RByDnzb1SlNzSy.QQg.RIW2w51yByTIDLh5WuCTKZJKVJB3ZXO', '영인', NULL, false, 'ROLE_USER', NULL, '/img/login/profile1.png', NULL, NULL);
+VALUES ('영인', '영인', '$2a$10$Zk2RByDnzb1SlNzSy.QQg.RIW2w51yByTIDLh5WuCTKZJKVJB3ZXO', '영인', NULL, false, 'ROLE_USER', NULL, '/img/login/profile2.png', NULL, NULL);
 
 INSERT INTO member (name, email, password, nickname, birth, is_suspended, role, oauth2id, profile_img_url, provider, provider_id)
-VALUES ('나래', '나래', '$2a$10$Zk2RByDnzb1SlNzSy.QQg.RIW2w51yByTIDLh5WuCTKZJKVJB3ZXO', '나래', NULL, false, 'ROLE_USER', NULL, '/img/login/profile1.png', NULL, NULL);
+VALUES ('나래', '나래', '$2a$10$Zk2RByDnzb1SlNzSy.QQg.RIW2w51yByTIDLh5WuCTKZJKVJB3ZXO', '나래', NULL, false, 'ROLE_USER', NULL, '/img/login/profile3.png', NULL, NULL);
 
 INSERT INTO member (name, email, password, nickname, birth, is_suspended, role, oauth2id, profile_img_url, provider, provider_id)
-VALUES ('유저', '유저', '$2a$10$Zk2RByDnzb1SlNzSy.QQg.RIW2w51yByTIDLh5WuCTKZJKVJB3ZXO', '유저', NULL, false, 'ROLE_USER', NULL, '/img/login/profile1.png', NULL, NULL);
+VALUES ('유저', '유저', '$2a$10$Zk2RByDnzb1SlNzSy.QQg.RIW2w51yByTIDLh5WuCTKZJKVJB3ZXO', '유저', NULL, false, 'ROLE_USER', NULL, '/img/login/profile4.png', NULL, NULL);
+
 
 -- ticket
 INSERT INTO ticket (name, memo, start_date, end_date, adult_price, child_price, location_category)
@@ -28,8 +29,6 @@ VALUES ('MGR종일권', '부산에서 사용 가능한 종일권', '2023-01-01',
 
 INSERT INTO ticket (name, memo, start_date, end_date, adult_price, child_price, location_category)
 VALUES ('MGR오후권', '서울에서 사용 가능한 종일권', '2023-01-01', '2024-12-31', 20000, 12000, 'SEOUL');
-
-
 
 INSERT INTO reservation (member_id) VALUES (2);
 INSERT INTO reservation_ticket (reservation_id, ticket_id, reservation_date, visit_date, adult_count, child_count, reservation_status) VALUES (1,1,'2023-07-01','2023-07-02',45,55,'PAYED');
