@@ -116,26 +116,27 @@ public class SecurityConfig {
         return new CorsFilter(source);
     }
 
-//    @Bean
-//    public CommandLineRunner initDb(MemberRepository memberRepository, PasswordEncoder passwordEncoder){
-//
-//        return createAdmin -> {
-//            boolean isAdminPresent = memberRepository.findByName("관리자").isPresent();
-//
-//            if (!isAdminPresent) {
-//                Member admin = new Member();
-//
-//                admin.setName("관리자");
-//                admin.setEmail("admin@mgr.com");
-//                admin.setNickname("MGR관리자");
-//                admin.setProfileImgUrl("/img/login/profile.png");
-//                admin.setPassword(passwordEncoder.encode("1"));
-//                admin.setRole("ROLE_ADMIN");
-//
-//                memberRepository.save(admin);
-//            }
-//        };
-//    }
+    @Bean
+    public CommandLineRunner initDb(MemberRepository memberRepository, PasswordEncoder passwordEncoder){
+
+        return createAdmin -> {
+            boolean isAdminPresent = memberRepository.findByName("관리자").isPresent();
+
+            if (!isAdminPresent) {
+                Member admin = new Member();
+
+
+                admin.setName("관리자");
+                admin.setEmail("admin@mgr.com");
+                admin.setNickname("MGR관리자");
+                admin.setProfileImgUrl("/img/login/profile1.png");
+                admin.setPassword(passwordEncoder.encode("1"));
+                admin.setRole("ROLE_ADMIN");
+
+                memberRepository.save(admin);
+            }
+        };
+    }
 //
 //    @Bean
 //    public CommandLineRunner initDbUser(MemberRepository memberRepository, PasswordEncoder passwordEncoder){

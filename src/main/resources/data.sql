@@ -7,8 +7,6 @@ DELETE FROM member;
 
 
 -- member
-INSERT INTO member (name, email, password, nickname, birth, is_suspended, role, oauth2id, profile_img_url, provider, provider_id)
-VALUES ('관리자', 'admin@mgr.com', '$2a$10$Zk2RByDnzb1SlNzSy.QQg.RIW2w51yByTIDLh5WuCTKZJKVJB3ZXO', 'MGR관리자', NULL, false, 'ROLE_ADMIN', NULL, '/img/login/profile1.png', NULL, NULL);
 
 INSERT INTO member (name, email, password, nickname, birth, is_suspended, role, oauth2id, profile_img_url, provider, provider_id)
 VALUES ('혜원', '혜원', '$2a$10$Zk2RByDnzb1SlNzSy.QQg.RIW2w51yByTIDLh5WuCTKZJKVJB3ZXO', '혜원', NULL, false, 'ROLE_USER', NULL, '/img/login/profile1.png', NULL, NULL);
