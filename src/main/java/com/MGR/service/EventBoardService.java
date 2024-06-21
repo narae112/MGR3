@@ -179,21 +179,23 @@ public class EventBoardService {
 
                 for (int i = 0; i < eventBoards.size(); i++) {
                     EventBoard eventBoard = eventBoards.get(i);
-                    eventBoardRepository.save(eventBoard);
 
-                    Image image = new Image();
-                    image.setEventBoard(eventBoard);
-                    if (i == 0) {
-                        image.setImgOriName("event" + (i + 1) + ".png");
-                        image.setImgUrl("/images/board/event" + (i + 1) + ".png");
-                    } else {
-                        image.setImgOriName("event" + (i + 1) + ".jpg");
-                        image.setImgUrl("/images/board/event" + (i + 1) + ".jpg");
+                    if (!eventBoardRepository.findByTitle(eventBoard.getTitle()).isPresent()) {
+                        eventBoardRepository.save(eventBoard);
+
+                        Image image = new Image();
+                        image.setEventBoard(eventBoard);
+                        if (i == 0) {
+                            image.setImgOriName("event" + (i + 1) + ".png");
+                            image.setImgUrl("/images/board/event" + (i + 1) + ".png");
+                        } else {
+                            image.setImgOriName("event" + (i + 1) + ".jpg");
+                            image.setImgUrl("/images/board/event" + (i + 1) + ".jpg");
+                        }
+                        imageService.save(image);
                     }
-                    imageService.save(image);
                 }
             }
         };
     }
-
 }

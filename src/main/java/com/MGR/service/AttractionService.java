@@ -89,14 +89,17 @@ public class AttractionService {
             int[] closureDays = {21, 21, 22, 21, 22, 22, 22, 23};
 
             for (int i = 0; i < 8; i++) {
-                Attraction attraction = new Attraction(names[i], informations[i], closureDays[i]);
-                attractionRepository.save(attraction);
+                String name = names[i];
+                if (!attractionRepository.findByName(name).isPresent()) {
+                    Attraction attraction = new Attraction(name, informations[i], closureDays[i]);
+                    attractionRepository.save(attraction);
 
-                Image image = new Image();
-                image.setAttraction(attraction);
-                image.setImgOriName("attraction" + (i + 1) + ".png");
-                image.setImgUrl("/images/attraction/attraction" + (i + 1) + ".png");
-                imageService.save(image);
+                    Image image = new Image();
+                    image.setAttraction(attraction);
+                    image.setImgOriName("attraction" + (i + 1) + ".png");
+                    image.setImgUrl("/images/attraction/attraction" + (i + 1) + ".png");
+                    imageRepository.save(image);
+                }
             }
         };
     }
