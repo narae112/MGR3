@@ -57,7 +57,7 @@ public class ReviewBoard {
         }
         return null;
     }
-    @ManyToOne
+     @ManyToOne(cascade = CascadeType.PERSIST)
     private Member author;
 
     @ManyToMany
