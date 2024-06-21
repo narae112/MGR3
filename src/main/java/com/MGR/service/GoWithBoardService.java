@@ -185,7 +185,7 @@ public class GoWithBoardService {
         }
 
         // 수정된 내용을 저장
-        goWithBoardRepository.save(goWithBoard);
+        saveGoWithBoard(goWithBoard);
     }
 
     @Transactional(readOnly = true)

@@ -56,7 +56,9 @@
     <div class="row justify-content-center">
         <div class="col-md-6">
             <h3 class="mb-5 text-center">동행 구하기</h3>
-            <form id="add_member_form" th:object="${goWithBoardFormDto}" th:action="@{/goWithBoard/create}" method="post" enctype="multipart/form-data">
+            <form id="add_member_form" th:object="${goWithBoardFormDto}"
+                  th:action="${goWithBoardFormDto.id} == null ? @{/goWithBoard/create} : @{/goWithBoard/modify/{id}(id=${goWithBoardFormDto.id})}"
+                  method="post" enctype="multipart/form-data">
                 <hr/>
                 <div class="d-flex justify-content-center mb-5">
                     <div class="text-center">

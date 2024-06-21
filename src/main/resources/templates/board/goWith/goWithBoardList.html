@@ -141,10 +141,15 @@
         <div class="col-md-4">
             <div class="card mb-3 checkbox-card">
                 <div class="card-body">
-                    <div class="text-center mb-4">
+                    <div class="text-center">
+                        <a href="/goWithBoard/create" class="btn btn-create">나만의 동행 찾기 글쓰기</a>
+                    </div>
+                    <hr/>
+                    <div class="text-center my-4">
                         <p class="filter">동행 검색하기</p>
                     </div>
                     <form th:action="@{/goWithBoard/search}" method="GET">
+
                         <!-- Age Category 라디오 버튼 -->
                         <div class="row">
                             <div class="col-auto">
@@ -233,9 +238,6 @@
                             <a href="/goWithBoard/list" class="btn btn-back">되돌리기</a>
                         </div>
                     </form>
-                    <div class="text-center mt-4">
-                        <a href="/goWithBoard/create" class="btn btn-create">나만의 동행 찾기 글쓰기</a>
-                    </div>
                 </div>
             </div>
         </div>
