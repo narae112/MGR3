@@ -6,6 +6,7 @@ import com.MGR.dto.ReservationDtlDto;
 import com.MGR.dto.ReservationOrderDto;
 import com.MGR.dto.ReservationTicketDto;
 import com.MGR.entity.*;
+import com.MGR.exception.InsufficientInventoryException;
 import com.MGR.repository.*;
 import io.netty.channel.EventLoopException;
 import jakarta.persistence.EntityNotFoundException;
@@ -79,22 +80,6 @@ public class ReservationService {
         return reservationTicket.getId();
     }
 
-    // 예약 내역 불러오기
-//    @Transactional(readOnly = true)
-//    public Page<ReservationDtlDto> getReservationList(String email, Pageable pageable) {
-//        Optional<Member> member = memberRepository.findByEmail(email);
-//        Reservation reservation = reservationRepository.findByMemberId(member.get().getId());
-//
-//        Page<ReservationTicket> reservationTickets = reservationTicketRepository.findByReservationId(reservation.getId(), pageable);
-//        List<ReservationDtlDto> dtos = reservationTickets.stream()
-//                .map(ReservationDtlDto::new)
-//                .toList();
-//        // 주문 목록 조회
-//        Long totalCount = reservationTicketRepository.countReservation(reservation.getId());
-//
-//
-//        return new PageImpl<>(dtos, pageable, totalCount);
-//    }
     @Transactional(readOnly = true)
     public Page<ReservationDtlDto> getReservationList(String email, Pageable pageable) {
         Optional<Member> memberOpt = memberRepository.findByEmail(email);
@@ -116,8 +101,6 @@ public class ReservationService {
 
         return dtos;
     }
-
-
 
     // 티켓 수량 수정
     public void updateReservationTicketCount(Long reservationTicketId, Integer adultCount, Integer childCount) {
@@ -142,6 +125,11 @@ public class ReservationService {
         int allReserveCount = adultCountInt + childCountInt;
         // 성인티켓 수량 + 아동티켓 수량
 
+        if (allReserveCount > inventory.getQuantity()) {
+            // 재고가 부족한 경우 예외 던지기
+            throw new InsufficientInventoryException("재고가 부족합니다");
+        }
+
         if (reservationTicket.getAllCount() < allReserveCount) { // 수정된 전체 수량이 원래 예약한 전체 수량보다 커지면
             int result = allReserveCount - reservationTicket.getAllCount(); // 추가한 갯수만큼
             inventory.removeQuantity(result); // 재고에서 빼준다
@@ -150,13 +138,6 @@ public class ReservationService {
             inventory.addQuantity(result); // 재고에 더해준다
         }
 
-//        if (reservationTicket.getAdultCount() != adultCountInt && reservationTicket.getChildCount() == childCountInt) { // 수량의 변동이 어른티켓만 있으면
-//            reservationTicket.updateAdultCount(adultCountInt);
-//        } else if (reservationTicket.getAdultCount() == adultCountInt && reservationTicket.getChildCount() != childCountInt) { // 수량의 변동이 아동티켓만 있으면
-//            reservationTicket.updateChildCount(childCountInt);
-//        } else if (reservationTicket.getAdultCount() != adultCountInt && reservationTicket.getChildCount() != childCountInt) { // 수량의 변동이 양쪽 다 있으면
-//            reservationTicket.updateAllCount(adultCountInt, childCountInt);
-//        }
         reservationTicket.setAdultCount(adultCount);
         reservationTicket.setChildCount(childCount);
 

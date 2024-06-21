@@ -4,6 +4,7 @@ import com.MGR.dto.ReservationDtlDto;
 import com.MGR.dto.ReservationOrderDto;
 import com.MGR.dto.ReservationTicketDto;
 import com.MGR.entity.ReservationTicket;
+import com.MGR.exception.InsufficientInventoryException;
 import com.MGR.security.PrincipalDetails;
 import com.MGR.service.ReservationService;
 import jakarta.validation.Valid;
@@ -78,7 +79,7 @@ public class ReservationController {
     @PatchMapping("/reservationTicket/{reservationTicketId}")
     public @ResponseBody ResponseEntity<?> updateReserveTicket(@PathVariable("reservationTicketId") Long reservationTicketId,
                                                                @RequestBody ReservationTicket updateRequest,
-                                                            @AuthenticationPrincipal PrincipalDetails member) {
+                                                               @AuthenticationPrincipal PrincipalDetails member) {
         System.out.println("reservationTicketId = " + reservationTicketId);
         System.out.println("adultCount = " + updateRequest.getAdultCount());
         System.out.println("childCount = " + updateRequest.getChildCount());
@@ -91,10 +92,16 @@ public class ReservationController {
             return new ResponseEntity<String>("입력 값이 올바르지 않습니다", HttpStatus.BAD_REQUEST);
         }
 
-        if(!reservationService.validateReserveTicket(reservationTicketId, member.getUsername())) {
+        if (!reservationService.validateReserveTicket(reservationTicketId, member.getUsername())) {
             return new ResponseEntity<String>("수정 권한이 없습니다", HttpStatus.FORBIDDEN);
         }
-        reservationService.updateReservationTicketCount(reservationTicketId, adultCount, childCount);
+
+        try {
+            reservationService.updateReservationTicketCount(reservationTicketId, adultCount, childCount);
+        } catch (InsufficientInventoryException e) {
+            // 재고 부족 예외 처리
+            return new ResponseEntity<String>("재고가 부족합니다", HttpStatus.BAD_REQUEST);
+        }
 
         return new ResponseEntity<>(reservationTicketId, HttpStatus.OK);
     }
