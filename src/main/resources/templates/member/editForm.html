@@ -127,8 +127,7 @@
                             $('.verifyPassword').css("display", "none");
                         } else {
                             alert("비밀번호가 일치하지 않습니다");
-                            $('.edit-form').css("display", "none");
-                            $('.verifyPassword').css("display", "inline-block");
+                            location.reload();
                         }
                     },
                     error: function(xhr, status, error) {
@@ -138,13 +137,32 @@
                 });
             }
 
-        document.querySelector('.image-cell').addEventListener('click', function() {
+            // 이미지 셀 클릭 이벤트 리스너
+            document.querySelector('.image-cell').addEventListener('click', function() {
                 document.getElementById('file-input').click();
             });
 
+            // 파일 입력 이벤트 리스너
             document.getElementById('file-input').addEventListener('change', function(event) {
+                var file = event.target.files[0];
+                if (!file) {
+                    alert("파일을 선택해주세요.");
+                    return;
+                }
+
+                // 파일 확장자 확인
+                var fileName = file.name;
+                var fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+                var validExtensions = ["jpg", "jpeg", "gif", "png", "bmp"];
+
+                if (!validExtensions.includes(fileExt)) {
+                    alert("이미지 파일만 등록이 가능합니다.");
+                    event.target.value = ''; // 파일 선택 초기화
+                    return;
+                }
+
                 var formData = new FormData();
-                formData.append('file', event.target.files[0]);
+                formData.append('file', file);
 
                 fetch('/member/uploadProfileImage', {
                     method: 'POST',
@@ -163,36 +181,36 @@
                     alert('프로필 이미지 업데이트 중 오류 발생: ' + error.message);
                 });
             });
-
         });
-                var prevNickname = "";
-            function checkNickname() {
-                var nickname = $('#nickname').val().trim();
-                prevNickname = nickname;
 
-                $.ajax({
-                    url: '/member/nicknameCheck',
-                    type: 'POST',
-                    data: { nickname: nickname },
-                    success: function(result) {
-                        if (result === 0) {
-                            $('.nickname_ok').css("display", "inline-block");
-                            $('.nickname_already').css("display", "none");
-                        } else {
-                            $('.nickname_already').css("display", "inline-block");
-                            $('.nickname_ok').css("display", "none");
-                            $('#nickname').val(prevNickname);
-                        }
-                        if (!nickname) {
-                            $('.nickname_null').css("display", "inline-block");
-                            $('.nickname_ok').css("display", "none");
-                            $('.nickname_already').css("display", "none");
-                        } else {
-                            $('.nickname_null').css("display", "none");
-                        }
+        var prevNickname = "";
+        function checkNickname() {
+            var nickname = $('#nickname').val().trim();
+            prevNickname = nickname;
+
+            $.ajax({
+                url: '/member/nicknameCheck',
+                type: 'POST',
+                data: { nickname: nickname },
+                success: function(result) {
+                    if (result === 0) {
+                        $('.nickname_ok').css("display", "inline-block");
+                        $('.nickname_already').css("display", "none");
+                    } else {
+                        $('.nickname_already').css("display", "inline-block");
+                        $('.nickname_ok').css("display", "none");
+                        $('#nickname').val(prevNickname);
                     }
-                });
-            }
+                    if (!nickname) {
+                        $('.nickname_null').css("display", "inline-block");
+                        $('.nickname_ok').css("display", "none");
+                        $('.nickname_already').css("display", "none");
+                    } else {
+                        $('.nickname_null').css("display", "none");
+                    }
+                }
+            });
+        }
 
         function checkPassword() {
             var password = $('#password').val();
@@ -240,6 +258,7 @@
                 $('.empty-nickname-btn').css("display", "none");
             }
         }
+
     </script>
 </th:block>
 
