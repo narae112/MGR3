@@ -44,7 +44,7 @@ public interface ReviewBoardRepository extends JpaRepository<ReviewBoard, Long> 
             "or u2.nickname like %:kw% " +
             "order by q.count desc")
     Page<ReviewBoard> findByKeywordOrderByCountDesc(@Param("kw") String kw, Pageable pageable);
-
+     Optional<ReviewBoard> findBySubject(String name);
     @Query("SELECT q FROM ReviewBoard q " +
             "LEFT JOIN q.author u1 " +
             "LEFT JOIN q.commentList a " +
