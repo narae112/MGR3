@@ -97,6 +97,21 @@ public class OrderController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", paging.getTotalPages());
 
+        int totalPages = paging.getTotalPages();
+        int startPage = Math.max(0, page - 2);
+        int endPage = Math.min(totalPages - 1, page + 2);
+
+        // 페이지가 5개 미만일 경우 endPage를 조정
+        if (endPage - startPage < 4) {
+            endPage = Math.min(startPage + 4, totalPages - 1);
+        }
+        if (endPage - startPage < 4) {
+            startPage = Math.max(endPage - 4, 0);
+        }
+
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+
         return "order/orderList";
     }
 }

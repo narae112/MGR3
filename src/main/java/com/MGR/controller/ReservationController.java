@@ -57,19 +57,6 @@ public class ReservationController {
     }
 
     // 예약 내역 보기
-//    @GetMapping(value = {"/reservations", "/reservations/{page}"})
-//    public String reservationList(@PathVariable("page") Optional<Integer> page, @AuthenticationPrincipal PrincipalDetails member, Model model) {
-//
-//        Pageable pageable = PageRequest.of(page.orElse(0), 4);
-//        Page<ReservationDtlDto> reservationDtlList = reservationService.getReservationList(member.getUsername(), pageable);
-//
-//        model.addAttribute("reservationTickets", reservationDtlList);
-//        model.addAttribute("page", pageable.getPageNumber());
-//        model.addAttribute("maxPage", reservationDtlList.getTotalPages());
-//        System.out.println("reservationDtlList.getTotalPages() = " + reservationDtlList.getTotalPages());
-//        return "reservation/reservationList";
-//    }
-
     @GetMapping({"/reservations", "/reservations/{page}"})
     public String reservationList(Model model,
                                   @PathVariable(value = "page", required = false) Integer page,
@@ -86,7 +73,6 @@ public class ReservationController {
 
         return "reservation/reservationList";
     }
-
 
     // 티켓 수량 수정
     @PatchMapping("/reservationTicket/{reservationTicketId}")
@@ -146,8 +132,4 @@ public class ReservationController {
 
         return new ResponseEntity<Long>(orderId, HttpStatus.OK);
     }
-
-
-
-
 }

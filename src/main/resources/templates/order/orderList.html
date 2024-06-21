@@ -93,7 +93,7 @@
             </li>
 
             <!-- 페이지 번호 -->
-            <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}" class="page-item" th:classappend="${i == currentPage} ? 'active'">
+            <li th:each="i : ${#numbers.sequence(startPage, endPage)}" class="page-item" th:classappend="${i == currentPage} ? 'active'">
                 <a class="page-link" th:href="@{|~/member/orderList/${i}|}" th:text="${i + 1}"></a>
             </li>
 
@@ -108,9 +108,5 @@
             </li>
         </ul>
     </nav>
-
-
-
-
 </div>
 </html>
