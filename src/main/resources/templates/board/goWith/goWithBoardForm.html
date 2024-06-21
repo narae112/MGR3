@@ -8,37 +8,48 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 </head>
 <th:block layout:fragment="css">
-<style>
-    input[type="radio"] + label,
-    input[type="checkbox"] + label {
-        border: 1px solid #ccc; /* 기본 회색 테두리 */
-    }
+    <style>
+        input[type="radio"] + label,
+        input[type="checkbox"] + label {
+            border: 1px solid #ccc; /* 기본 회색 테두리 */
+        }
 
-    input[type="radio"]:checked + label,
-    input[type="checkbox"]:checked + label {
-        border-width: 2px; /* 선택된 경우 테두리 두께를 두 배로 증가 */
-        border-color: #F20487; /* 선택된 경우 핑크색 테두리로 변경 */
-    }
-    .btn-label-spacing {
-        margin: 0 10px 10px 0; /* 원하는 만큼 여백을 추가하세요 */
-    }
-    p {
-        margin: 10px 0;
-    }
-    /* 달력 크기 조정 */
-    #datepicker {
-        width: 300px; /* 너비를 300px로 설정 */
-        height: 300px; /* 높이를 300px로 설정 */
-        font-size: 1.2em; /* 폰트 크기를 1.2em으로 설정 */
-    }
+        input[type="radio"]:checked + label,
+        input[type="checkbox"]:checked + label {
+            border-width: 2px; /* 선택된 경우 테두리 두께를 두 배로 증가 */
+            border-color: #F20487; /* 선택된 경우 핑크색 테두리로 변경 */
+        }
+        .btn-label-spacing {
+            margin: 0 10px 10px 0; /* 원하는 만큼 여백을 추가하세요 */
+        }
+        p {
+            margin: 10px 0;
+        }
+        /* 달력 크기 조정 */
+        #datepicker {
+            width: 300px; /* 너비를 300px로 설정 */
+            height: 300px; /* 높이를 300px로 설정 */
+            font-size: 1.2em; /* 폰트 크기를 1.2em으로 설정 */
+        }
 
-    /* 달력 내부 폰트 크기 조정 */
-    .ui-datepicker {
-        width: 100%; /* 너비를 100%로 설정 */
-        height: 100%; /* 높이를 100%로 설정 */
-        font-size: inherit; /* 폰트 크기를 상속 */
-    }
-</style>
+        /* 달력 내부 폰트 크기 조정 */
+        .ui-datepicker {
+            width: 100%; /* 너비를 100%로 설정 */
+            height: 100%; /* 높이를 100%로 설정 */
+            font-size: inherit; /* 폰트 크기를 상속 */
+        }
+
+        .btnSave{
+            background-color: #101130;
+            border-color: #101130;
+            color: #fff;
+        }
+        .btnSave:hover {
+            background-color: #f20487;
+            border-color: #f20487;
+            color: #fff;
+        }
+    </style>
 </th:block>
 <body>
 <div layout:fragment="content" class="container my-5">
@@ -149,8 +160,8 @@
                     <input type="file" class="form-control goWithImgFile" name="goWithImgFile" id="fileInput4" style="display: none;">
                 </div>
                 <div class="text-center">
-                    <input type="submit" value="저장하기" class="btn btn-primary my-2">
-                    <button type="button" class="btn btn-secondary mx-2 my-2">취소</button>
+                    <input type="submit" value="저장하기" class="btnSave btn my-2">
+                    <a class="btn btn-light mx-2 my-2" href="/goWithBoard/list">취소</a>
                 </div>
             </form>
         </div>

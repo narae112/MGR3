@@ -188,11 +188,7 @@
                                             <a class="nav-link"  sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/admin/category/list}">키워드 관리</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_USER')" th:href="@{/goWithBoard/create}">글쓰기 폼</a>
-                                        </li>
-                                        <li class="nav-item">
                                             <a class="nav-link" sec:authorize="hasAnyRole('ROLE_USER')" th:href="@{/goWithBoard/list}">게시판</a>
-                                            <a class="nav-link" th:href="@{/goWithBoard/create}">게시판</a>
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/chat/chatList}">채팅 목록</a>

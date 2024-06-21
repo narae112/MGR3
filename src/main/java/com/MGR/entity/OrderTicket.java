@@ -68,4 +68,8 @@ public class OrderTicket {
     public int getTotalPrice() {
         return getAdultTotalPrice() + getChildTotalPrice();
     }
+
+    public int getTotalCount(){
+       return getAdultCount() + getChildCount();
+    }
 }

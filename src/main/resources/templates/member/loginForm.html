@@ -66,10 +66,10 @@
     </script>
 </th:block>
 
-<div layout:fragment="content" class="container my-5">
+<div layout:fragment="content" class="container d-flex flex-column align-items-center my-5">
     <div class="container my-3">
         <h3 class="mb-5 text-center" aria-label="로그인/소셜로그인/회원가입" tabindex="0">로그인</h3>
-        <hr class="my-4">
+        <hr class="col-md-4 offset-md-4 my-4">
         <div class="row justify-content-center">
             <div class="col-md-4">
                 <form th:action="@{/login}" method="POST" onsubmit="encryptPassword(event)">

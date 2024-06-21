@@ -173,8 +173,6 @@
                     $('#messageInput').attr('placeholder', '메세지를 입력하세요');
                 }
 
-                // 메세지 읽음 처리
-                markMessagesAsRead(roomId);
             }).fail(function() {
                 console.error('Failed to fetch chat history');
             });
@@ -187,46 +185,6 @@
             }).fail(function() {
                 console.error('Failed to send read event');
             });
-        }
-
-        function markMessagesAsRead(roomId) {
-            $.post(`/chats/${roomId}/read`, function() {
-                console.log('Messages marked as read');
-                updateReadStatus(roomId);
-            }).fail(function() {
-                console.error('Failed to mark messages as read');
-            });
-        }
-
-        function updateReadStatus(roomId) {
-            const userId = $('#senderId').val();
-            $.post('/chat/updateReadStatus', { roomId: roomId, userId: userId }, function(response) {
-                console.log('Read status updated');
-                const updatedMessages = response.updatedMessages;
-                updatedMessages.forEach(function(updatedMessage) {
-                    $('#chatBox .message').each(function() {
-                        const messageElement = $(this);
-                        const message = JSON.parse(messageElement.attr('data-message'));
-                        if (message.id === updatedMessage.id) {
-                            message.isRead = updatedMessage.isRead;
-                            messageElement.find('.unread-count').text(updatedMessage.isRead ? 0 : 1);
-                            messageElement.attr('data-message', JSON.stringify(message));
-                        }
-                    });
-                });
-            }).fail(function() {
-                console.error('Failed to update read status');
-            });
-        }
-
-        function updateUnreadCount(unreadCount) {
-            if (unreadCount > 0) {
-                console.log("0보다 큼 = " + unreadCount);
-                $('#unreadCount').text(unreadCount).show();
-            } else {
-                console.log("0 이하 = " + unreadCount);
-                $('#unreadCount').hide();
-            }
         }
 
         function sendMessage() {
@@ -244,12 +202,9 @@
 
                 $.post('/chat/send', chatMessage, function() {
                     $('#messageInput').val('');
-                    // 메세지 읽음 처리
-                    markMessagesAsRead(roomId);
                 }).fail(function() {
                     console.error('Failed to send message');
                 });
-
             } else {
                 console.error('Message is empty');
             }
@@ -269,7 +224,6 @@
             minutes = minutes < 10 ? '0' + minutes : minutes;
 
             var time = period + ' ' + hours + ':' + minutes;
-            var unreadCountText = (message.isRead ? 0 : 1) ? '<span class="unread-count">' + (message.isRead ? 0 : 1) + '</span>' : '';
 
             var messageElement =
                 '<div class="message ' + messageClass + '" data-message=\'' + JSON.stringify(message) + '\'>' +
@@ -277,7 +231,6 @@
                     '<div class="content">' +
                         '<div class="name">' + message.sender.nickname + '</div>' +
                         '<div class="text">' + message.message + '</div>' +
-<!--                        '<div class="time">' + unreadCountText + time + '</div>' +-->
                         '<div class="time">'+ time + '</div>' +
                     '</div>' +
                 '</div>';
@@ -353,6 +306,9 @@
                 <a href="/chat/createRoom" class="btn btn-block">채팅방 만들기</a>
             </div>
             <ul class="list-group" id="chatRooms">
+                <li class="list-group-item" data-room-id="1">
+                    <span onclick="connectToRoom(1, '전체 채팅방'); $('#chatRooms .list-group-item').removeClass('active'); $(this).closest('li').addClass('active');">전체 채팅방</span>
+                </li>
                 <li class="list-group-item" th:each="room : ${roomList}" th:data-room-id="${room.id}">
                     <span th:text="${room.name}"></span>
                     <span class="close-button" th:data-room-id="${room.id}" onclick="deleteRoom(this)">&times;</span>

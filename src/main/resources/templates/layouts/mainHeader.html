@@ -75,7 +75,8 @@
                     <nav class="navbar navbar-expand-lg">
                         <a class="navbar-brand mrg" href="/">
                             <!--                            <h3>Merry Go Ride</h3>-->
-                            <img th:src="@{/img/nav_logo/nav_logo_color.png}">
+                            <img class="nav_logo" th:src="@{img/nav_logo/nav_logo.png}">
+                            <img class="nav_logo_color" th:src="@{img/nav_logo/nav_logo_color.png}">
                         </a>
                         <button class="navbar-toggler mobile-menu-btn" type="button" data-bs-toggle="collapse"
                                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
@@ -196,11 +197,7 @@
                                             <a class="nav-link"  sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/admin/category/list}">키워드 관리</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_USER')" th:href="@{/goWithBoard/create}">글쓰기 폼</a>
-                                        </li>
-                                        <li class="nav-item">
                                             <a class="nav-link" sec:authorize="hasAnyRole('ROLE_USER')" th:href="@{/goWithBoard/list}">게시판</a>
-                                            <a class="nav-link" th:href="@{/goWithBoard/create}">게시판</a>
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/chat/chatList}">채팅 목록</a>
@@ -211,7 +208,7 @@
                         </div> <!-- navbar collapse -->
 
                         <!-- 알림 시작 -->
-                        <div class="button">
+                        <div class="button" tabindex="-1">
                             <span data-toggle="modal" data-target="#notificationModal" id="notificationButton">
                                 <div class="icon-badge-container mgr" sec:authorize="isAuthenticated()" style="cursor:pointer;">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-bell-fill text-warning" viewBox="0 0 16 16" tabindex="30" aria-label="알림버튼">

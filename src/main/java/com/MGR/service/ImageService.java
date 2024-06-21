@@ -195,4 +195,8 @@ public class ImageService {
 
         imageRepository.save(image);
     }
+
+    public Image findByGoWith(GoWithBoard goWithBoard) {
+        return imageRepository.findByGoWithBoard(goWithBoard);
+    }
 }
