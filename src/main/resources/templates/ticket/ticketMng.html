@@ -42,6 +42,7 @@
                     <td>티켓명</td>
                     <td>등록일</td>
                     <td>등록자</td>
+                    <td>지점</td>
                 </tr>
             </thead>
             <tbody>
@@ -52,6 +53,7 @@
                 </td>
                 <td i th:text="${#temporals.format(ticket.regTime, 'MM-dd')}"></td>
                 <td th:text="${ticket.createdBy}"></td>
+                <td th:text="${ticket.locationCategory.displayName}"></td>
             </tr>
             </tbody>
         </table>
