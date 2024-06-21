@@ -80,7 +80,7 @@
     </div>
 
     <!-- 페이지 네이션 -->
-    <nav aria-label="Page navigation" class="justify-content-center" th:if="${not paging.empty}">
+    <nav aria-label="Page navigation" class="justify-content-center">
         <ul class="pagination">
             <!-- 이전 버튼 -->
             <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
@@ -108,6 +108,9 @@
             </li>
         </ul>
     </nav>
+
+
+
 
 </div>
 </html>

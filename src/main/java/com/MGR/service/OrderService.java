@@ -111,13 +111,6 @@ public class OrderService {
         for (Order order : orderPage) {
             OrderListDto orderListDto = new OrderListDto(order);
 
-            // 주문에 대한 티켓 정보를 가져와서 OrderTicketDto로 변환하여 추가
-            List<OrderTicket> orderTickets = orderTicketRepository.findByOrderId(order.getId());
-            for (OrderTicket orderTicket : orderTickets) {
-                OrderTicketDto orderTicketDto = new OrderTicketDto(orderTicket);
-                orderListDto.addOrderTicket(orderTicketDto);
-            }
-
             // 회원 쿠폰 정보를 가져와서 할인율 설정
             MemberCoupon memberCoupon = memberCouponRepository.findAllByMemberIdAndOrderId(memberId, order.getId());
             if (memberCoupon != null) {

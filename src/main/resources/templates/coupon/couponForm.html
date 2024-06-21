@@ -245,9 +245,15 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
+<!--                        <div class="col-md-6">-->
+<!--                            <div th:if="${#strings.isEmpty(couponFormDto.id)}">-->
+<!--                                <button th:formaction="@{/admin/coupon/new}" type="submit" class="btn mgrBtn">저장</button>-->
+<!--                            </div>-->
+<!--                            <a class="btn btn-light" href="/admin/coupons">취소</a>-->
+<!--                        </div>-->
+                        <div class="form-group d-flex justify-content-center">
                             <div th:if="${#strings.isEmpty(couponFormDto.id)}">
-                                <button th:formaction="@{/admin/coupon/new}" type="submit" class="btn mgrBtn">저장</button>
+                                <button th:formaction="@{/admin/coupon/new}" type="submit" class="btn mgrBtn me-3">저장</button>
                             </div>
                             <a class="btn btn-light" href="/admin/coupons">취소</a>
                         </div>
