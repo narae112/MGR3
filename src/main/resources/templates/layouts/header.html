@@ -102,23 +102,24 @@
                                         <li class="nav-item">
                                             <a class="nav-link" sec:authorize="hasAnyRole('ROLE_USER')" th:href="@{/member/edit}">회원정보수정</a>
                                         </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_USER')" th:href="@{/member/myCoupon}">쿠폰내역</a>
+                                        </li>
                                     </ul>
                                 </li>
 
-                                <li class="nav-item" tabindex="0">
+                                <li class="nav-item" tabindex="0" >
                                     <a class="dd-menu collapsed" href="javascript:void(0)" data-bs-toggle="collapse"
                                        data-bs-target="#submenu-1-2" aria-controls="navbarSupportedContent"
                                        aria-expanded="false" aria-label="쿠폰" tabindex="-1">쿠폰</a>
-                                    <ul class="sub-menu collapse" id="submenu-1-2">
+                                    <ul class="sub-menu collapse" id="submenu-1-2"  sec:authorize="hasAnyRole('ROLE_ADMIN')" >
                                         <li class="nav-item">
                                             <a class="nav-link" sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/admin/coupon/new}">쿠폰 등록</a>
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link" sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/admin/coupons}">쿠폰 관리</a>
                                         </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_USER')" th:href="@{/member/myCoupon}">쿠폰내역</a>
-                                        </li>
+
                                     </ul>
                                 </li>
 
@@ -143,7 +144,7 @@
                                     <a class="dd-menu collapsed" href="javascript:void(0)" data-bs-toggle="collapse"
                                        data-bs-target="#submenu-1-4" aria-controls="navbarSupportedContent"
                                        aria-expanded="false" aria-label="예약" tabindex="-1">예약</a>
-                                    <ul class="sub-menu collapse" id="submenu-1-4">
+                                    <ul class="sub-menu collapse" id="submenu-1-4" sec:authorize="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')">
                                         <li class="nav-item">
                                             <a class="nav-link" sec:authorize="hasAnyRole('ROLE_USER')" th:href="@{/member/reservations}">예약내역</a>
                                         </li>
@@ -188,7 +189,7 @@
                                             <a class="nav-link"  sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/admin/category/list}">키워드 관리</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_USER')" th:href="@{/goWithBoard/list}">게시판</a>
+                                            <a class="nav-link" th:href="@{/goWithBoard/list}">게시판</a>
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/chat/chatList}">채팅 목록</a>
