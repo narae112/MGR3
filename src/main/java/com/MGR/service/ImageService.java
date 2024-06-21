@@ -190,4 +190,13 @@ public class ImageService {
         System.out.println("이미지 엔티티 확인 = " + imageRepository.findByMember(member));
         return imageRepository.findByMember(member);
     }
+
+    public void save(Image image){
+
+        imageRepository.save(image);
+    }
+
+    public Image findByGoWith(GoWithBoard goWithBoard) {
+        return imageRepository.findByGoWithBoard(goWithBoard);
+    }
 }
