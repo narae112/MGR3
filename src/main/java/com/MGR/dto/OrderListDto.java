@@ -28,12 +28,36 @@ public class OrderListDto {
         this.orderId = order.getId();
         this.orderNum = order.getOrderNum();
         this.orderDate = order.getOrderDate();
+        for (OrderTicket orderTicket : order.getOrderTickets()) {
+            this.addOrderTicket(new OrderTicketDto(orderTicket));
+        }
     }
-
+    public int calculateChildCount(){
+        int total = 0;
+        for(OrderTicketDto ticket : orderTickets){
+            total += ticket.getChildCount();
+        }
+        return total;
+    }
+    public int calculateAdultCount(){
+        int total = 0;
+        for(OrderTicketDto ticket : orderTickets){
+            total += ticket.getAdultCount();
+        }
+        return total;
+    }
     public int calculateTotalPrice() {
         int total = 0;
         for (OrderTicketDto ticket : orderTickets) {
             total += ticket.getTotalPrice();
+        }
+        return total;
+    }
+
+    public int calculateTotalCount() {
+        int total = 0;
+        for (OrderTicketDto ticket : orderTickets) {
+            total += ticket.getTotalCount();
         }
         return total;
     }

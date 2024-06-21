@@ -4,11 +4,9 @@
       layout:decorate="~{layouts/default}">
 
 <head>
-    <!-- Chart.js CDN 추가 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
-<!-- css -->
 <th:block layout:fragment="css">
     <style>
         .content-mg {
@@ -32,89 +30,156 @@
             justify-content: center;
             align-items: center;
         }
+        .chart-container {
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
+       nav[aria-label="Page navigation"] {
+    display: none;
+        }
     </style>
 </th:block>
 
-<!-- js -->
 <th:block layout:fragment="script">
     <script th:inline="javascript">
-        // 페이지 로딩 후 실행되는 함수
+        window.addEventListener('resize', function() {
+        combinedChart.resize();
+        });
         document.addEventListener('DOMContentLoaded', function() {
-            var totalPriceByDate = /*[[${totalPriceByDate}]]*/ {};
-            var labels = Object.keys(totalPriceByDate);
-            var data = Object.values(totalPriceByDate);
 
-            // Chart.js 설정
-            var ctx = document.getElementById('totalPriceChart').getContext('2d');
-            var chart = new Chart(ctx, {
+            var totalPriceByDate = /*[[${totalPriceByDate}]]*/ {};
+            var adultCountByDate = /*[[${adultCountByDate}]]*/ {};
+            var childCountByDate = /*[[${childCountByDate}]]*/ {};
+
+            // 날짜 문자열을 Date 객체로 변환하여 정렬
+            var labels = Object.keys(totalPriceByDate).map(function(dateStr) {
+                return new Date(dateStr);
+            }).sort(function(a, b) {
+                return a - b;
+            }).map(function(date) {
+                return date.toISOString().split('T')[0];
+            });
+
+            var totalPrices = labels.map(function(label) {
+                return totalPriceByDate[label];
+            });
+            var adultCounts = labels.map(function(label) {
+                return adultCountByDate[label];
+            });
+            var childCounts = labels.map(function(label) {
+                return childCountByDate[label];
+            });
+
+            var ctx = document.getElementById('combinedChart').getContext('2d');
+            var combinedChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: labels,
                     datasets: [{
                         label: '날짜별 총 결제 금액 (원)',
-                        data: data,
+                        data: totalPrices,
                         backgroundColor: 'rgba(75, 192, 192, 0.2)',
                         borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
+                        borderWidth: 1,
+                        yAxisID: 'y-price'
+                    }, {
+                        label: '날짜별 총 성인 방문객',
+                        data: adultCounts,
+                        type: 'line',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        tension: 0.1,
+                        yAxisID: 'y-count'
+                    }, {
+                        label: '날짜별 총 어린이 방문객',
+                        data: childCounts,
+                        type: 'line',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        tension: 0.1,
+                        yAxisID: 'y-count'
                     }]
                 },
                 options: {
+                 responsive : false,
                     scales: {
-                        y: {
-                            beginAtZero: true,
+                        'y-price': {
+                            type: 'linear',
+                            position: 'left',
                             ticks: {
-                                callback: function(value, index, values) {
+                                callback: function(value) {
                                     return value.toLocaleString() + '원';
+                                }
+                            }
+                        },
+                        'y-count': {
+                            type: 'linear',
+                            position: 'right',
+                            min: 0,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '명';
                                 }
                             }
                         }
                     }
                 }
             });
+         var startDateInput = document.getElementById('startDate');
+        var endDateInput = document.getElementById('endDate');
 
-            // 날짜 범위 선택 이벤트 처리
-            var dateRangeForm = document.getElementById('dateRangeForm');
-            dateRangeForm.addEventListener('submit', function(event) {
-                event.preventDefault(); // 폼의 기본 동작 방지
+        // Disable future dates in both date inputs
+        var today = new Date().toISOString().split('T')[0];
+        startDateInput.setAttribute('max', today);
+        endDateInput.setAttribute('max', today);
 
-                var startDate = new Date(dateRangeForm.elements['startDate'].value);
-                var endDate = new Date(dateRangeForm.elements['endDate'].value);
-
-                // AJAX를 통해 선택한 범위에 해당하는 데이터를 서버로부터 가져와서 처리할 수 있음
-                console.log('Start Date:', startDate);
-                console.log('End Date:', endDate);
-
-                // 여기서 필요한 서버 요청을 추가할 수 있음
-                // 예를 들어, 서버에 startDate와 endDate를 전달하여 데이터를 가져오고, 그래프를 업데이트할 수 있음
-            });
+        // Validate date range
+        startDateInput.addEventListener('change', function() {
+            if (startDateInput.value > endDateInput.value) {
+                endDateInput.value = startDateInput.value;
+            }
         });
+
+        endDateInput.addEventListener('change', function() {
+            if (endDateInput.value < startDateInput.value) {
+                startDateInput.value = endDateInput.value;
+            }
+        });
+    });
     </script>
 </th:block>
 
 <div layout:fragment="content" class="content-mg">
-    <h3 class="mb-5 text-center">결제 내역 조회</h3>
+    <h3 class="mb-5 text-center">매출 조회</h3>
     <hr class="my-4">
 
-    <!-- 날짜 범위 선택 폼 -->
-    <form id="dateRangeForm">
-        <div class="form-row">
-            <div class="form-group col-md-6">
+    <form id="dateRangeForm" th:action="@{/admin/paymentGraph}" th:object="${orderSearchDto}" method="get">
+        <div class="row mb-3">
+            <div class="form-group col-md-3">
                 <label for="startDate">시작 날짜</label>
-                <input type="date" class="form-control" id="startDate" name="startDate" required>
+                <div class="input-group">
+                    <input type="date" class="form-control" id="startDate" th:field="*{startDate}" required>
+                </div>
             </div>
-            <div class="form-group col-md-6">
+            <div class="form-group col-md-3">
                 <label for="endDate">종료 날짜</label>
-                <input type="date" class="form-control" id="endDate" name="endDate" required>
+                <div class="input-group">
+                    <input type="date" class="form-control" id="endDate" th:field="*{endDate}" required>
+                </div>
+            </div>
+            <div class="form-group col-md-3 align-self-end">
+                <button type="submit" class="btn btn-primary btn-block">조회</button>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">조회</button>
     </form>
 
     <div th:if="${paging.empty}">
         <p>결제 내역이 없습니다.</p>
     </div>
-    <div th:if="${not paging.empty}">
-        <canvas id="totalPriceChart"></canvas>
+    <div th:if="${not paging.empty}" >
+        <canvas id="combinedChart"  style="height:500px; width:100%"></canvas>
     </div>
 
     <nav aria-label="Page navigation">

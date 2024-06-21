@@ -3,6 +3,7 @@ package com.MGR.service;
 import com.MGR.constant.ReservationStatus;
 import com.MGR.dto.OrderDto;
 import com.MGR.dto.OrderListDto;
+import com.MGR.dto.OrderSearchDto;
 import com.MGR.dto.OrderTicketDto;
 import com.MGR.entity.*;
 import com.MGR.repository.*;
@@ -161,18 +162,42 @@ public class OrderService {
         return new PageImpl<>(orderListDtos, pageable, orderPage.getTotalElements());
     }
 
+   public Page<OrderListDto> getAllOrderGraph(OrderSearchDto orderSearchDto, Pageable pageable) {
+        Page<Order> orders = orderRepository.getOrderPage(orderSearchDto, pageable);
+        return orders.map(order -> new OrderListDto(order));
+    }
+
+    // 날짜별 총 결제 금액을 계산하는 메소드
     public Map<LocalDate, Integer> getTotalPriceByDate(List<OrderListDto> orderList) {
         Map<LocalDate, Integer> totalPriceByDate = new HashMap<>();
-
         for (OrderListDto orderDto : orderList) {
             LocalDate orderDate = orderDto.getOrderDate().toLocalDate();
-            int totalPrice = orderDto.calculateTotalPrice(); // Adjust this according to your actual method
+            int totalPrice = orderDto.calculateTotalPrice();
             totalPriceByDate.merge(orderDate, totalPrice, Integer::sum);
         }
-
         return totalPriceByDate;
     }
 
+
+    public Map<LocalDate, Integer> getChildCountByDate(List<OrderListDto> orderList) {
+        Map<LocalDate, Integer> childCountByDate = new HashMap<>();
+        for (OrderListDto orderDto : orderList) {
+            LocalDate orderDate = orderDto.getOrderDate().toLocalDate();
+            int childCount = orderDto.calculateChildCount();
+            childCountByDate.merge(orderDate, childCount, Integer::sum);
+        }
+        return childCountByDate;
+    }
+
+    public Map<LocalDate, Integer> getAdultCountByDate(List<OrderListDto> orderList) {
+        Map<LocalDate, Integer> adultCountByDate = new HashMap<>();
+        for (OrderListDto orderDto : orderList) {
+            LocalDate orderDate = orderDto.getOrderDate().toLocalDate();
+            int adultCount = orderDto.calculateAdultCount();
+            adultCountByDate.merge(orderDate, adultCount, Integer::sum);
+        }
+        return adultCountByDate;
+    }
 
     public List<OrderTicket> findOrderTicketByOrderId(Long id) {
         return orderTicketRepository.findByOrderId(id);

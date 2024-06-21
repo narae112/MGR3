@@ -20,6 +20,7 @@ public class OrderTicketDto {
     private int adultTotalPrice; // 성인 전체 금액
     private int childTotalPrice; // 아동 전체 금액
     private int totalPrice; // 전체(성인 + 아동) 주문 금액
+    private int totalCount;
 
 
     // 생성 메서드
@@ -35,6 +36,7 @@ public class OrderTicketDto {
         this.adultTotalPrice = orderTicket.getAdultTotalPrice();
         this.childTotalPrice = orderTicket.getChildTotalPrice();
         this.totalPrice = orderTicket.getTotalPrice();
+        this.totalCount = orderTicket.getTotalCount();
     }
 
 }
