@@ -121,7 +121,7 @@ public class EventBoardService {
         eventBoardRepository.delete(eventBoard);
     }
 
-    public EventBoard update(Long id, EventBoard boardFormDto, List<MultipartFile> imgFileList) throws Exception {
+    public EventBoard update(Long id, EventBoardFormDto boardFormDto, List<MultipartFile> imgFileList) throws Exception {
         EventBoard eventBoard = eventBoardRepository.findById(id).orElseThrow();
         eventBoard.setContent(boardFormDto.getContent());
         eventBoard.setTitle(boardFormDto.getTitle());

@@ -31,9 +31,7 @@
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            box-sizing: border-box;
+            border: none !important;
             resize: none;
         }
 
@@ -129,13 +127,13 @@
             </div>
         </div>
         <div>
-            <label for="content"></label>
-            <textarea rows="5" id="content" name="content" readonly th:text="${eventBoard.content}"></textarea>
             <!-- 이미지 시작 -->
             <div class="rep-img-div">
                 <img th:if="${not #lists.isEmpty(eventImage)}" th:src="@{|${eventImage.imgUrl}|}" class="rep-img">
             </div>
             <!-- 이미지 끝 -->
+            <label for="content"></label>
+            <textarea rows="5" id="content" name="content" readonly th:text="${eventBoard.content}"></textarea>
         </div>
         <div class="btn-container">
             <a th:href="@{/board/events}" class="btn btn-outline-secondary btn-sm">목록으로</a>
