@@ -3,6 +3,7 @@ package com.MGR.repository;
 import com.MGR.constant.LocationCategory;
 import com.MGR.constant.TicketCategory;
 import com.MGR.entity.Coupon;
+import com.MGR.entity.Member;
 import com.MGR.entity.Ticket;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,4 +23,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> ,
     List<Ticket> findByMemoByNative(@Param("memo") String memo);
     boolean existsByName(String name);
     boolean existsByNameAndIdNot(String name, Long id);
+
+    Optional<Ticket> findByName(String name);
 }

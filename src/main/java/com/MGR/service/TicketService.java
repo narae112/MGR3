@@ -1,5 +1,6 @@
 package com.MGR.service;
 
+import com.MGR.constant.LocationCategory;
 import com.MGR.constant.ReservationStatus;
 import com.MGR.dto.ImageDto;
 import com.MGR.dto.MainTicketDto;
@@ -9,6 +10,8 @@ import com.MGR.entity.*;
 import com.MGR.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,10 +31,11 @@ public class TicketService {
     private final TicketRepository ticketRepository;
     private final ImageRepository imageRepository;
     private final ImageService imageService;
-    private  final InventoryRepository inventoryRepository;
+    private final InventoryRepository inventoryRepository;
     private final ReservationTicketRepository reservationTicketRepository;
     private final OrderTicketRepository orderTicketRepository;
-@Transactional
+
+    @Transactional
     @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
     public void deleteExpiredCoupons() {
         LocalDate currentDate = LocalDate.now();
@@ -39,11 +43,11 @@ public class TicketService {
         // 현재 날짜보다 유효기간이 이전인 티켓들을 조회
 
         for (Ticket ticket : expiredTicket) {
-           ticketRepository.delete(ticket);
+            ticketRepository.delete(ticket);
         }
         // 조회된 티켓들을 삭제
     }
-    
+
     public Long saveTicket(TicketFormDto ticketFormDto, List<MultipartFile> ticketImgFileList) throws Exception {
         // 티켓 저장
         Ticket ticket = ticketFormDto.createTicket();
@@ -81,7 +85,7 @@ public class TicketService {
     }
 
 
-//    public boolean isTicketNameDuplicated(String name) {
+    //    public boolean isTicketNameDuplicated(String name) {
 //        return ticketRepository.existsByName(name);
 //    }
 //    public boolean isExistedTicketNameDuplicated(String name, Long excludeId) {
@@ -89,10 +93,10 @@ public class TicketService {
 //    }
     //티켓 데이터를 읽어오는 함수
     @Transactional(readOnly = true)
-    public TicketFormDto getTicketDtl(Long ticketId){
+    public TicketFormDto getTicketDtl(Long ticketId) {
         List<Image> ticketImgList = imageRepository.findByTicketIdOrderByIdAsc(ticketId);
         List<ImageDto> ticketImgDtoList = new ArrayList<>();
-        for(Image ticketImage : ticketImgList){
+        for (Image ticketImage : ticketImgList) {
             ImageDto ticketImgDto = ImageDto.of(ticketImage);
             ticketImgDtoList.add(ticketImgDto);
         }
@@ -200,14 +204,125 @@ public class TicketService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Ticket> getAdminTicketPage(TicketSearchDto ticketSearchDto, Pageable pageable){
+    public Page<Ticket> getAdminTicketPage(TicketSearchDto ticketSearchDto, Pageable pageable) {
         return ticketRepository.getAdminTicketPage(ticketSearchDto, pageable);
     }
 
     @Transactional(readOnly = true)
-    public Page<MainTicketDto> getMainTicketPage(TicketSearchDto ticketSearchDto, Pageable pageable){
+    public Page<MainTicketDto> getMainTicketPage(TicketSearchDto ticketSearchDto, Pageable pageable) {
         return ticketRepository.getMainTicketPage(ticketSearchDto, pageable);
     }
 
 
+    @Bean
+    public CommandLineRunner initFullDayTicket(TicketRepository ticketRepository, ImageRepository imageRepository) {
+        return args -> {
+            boolean isFullDayTicketPresent = ticketRepository.findByName("종일권").isPresent();
+
+            if (!isFullDayTicketPresent) {
+                Ticket fullDayTicket = new Ticket();
+                fullDayTicket.setName("종일권");
+                fullDayTicket.setStartDate(LocalDate.parse("2024-06-10"));
+                fullDayTicket.setEndDate(LocalDate.parse("2024-06-30"));
+                fullDayTicket.setMemo("많이 이용하세요");
+                fullDayTicket.setAdultPrice(50000);
+                fullDayTicket.setChildPrice(40000);
+                fullDayTicket.setLocationCategory(LocationCategory.SEOUL);
+
+                ticketRepository.save(fullDayTicket);
+
+                String fullDayTicketImgUrl = "/img/logo/placeholder.png";
+
+                Image fullDayTicketImage = new Image();
+                fullDayTicketImage.setTicket(fullDayTicket);
+                fullDayTicketImage.setImgUrl(fullDayTicketImgUrl);
+                fullDayTicketImage.setRepImgYn(true);
+                imageRepository.save(fullDayTicketImage);
+            }
+        };
+    }
+
+    @Bean
+    public CommandLineRunner initAfternoonTicket(TicketRepository ticketRepository, ImageRepository imageRepository) {
+        return args -> {
+            boolean isAfternoonTicketPresent = ticketRepository.findByName("오후권").isPresent();
+
+            if (!isAfternoonTicketPresent) {
+                Ticket afternoonTicket = new Ticket();
+                afternoonTicket.setName("오후권");
+                afternoonTicket.setStartDate(LocalDate.parse("2024-06-22"));
+                afternoonTicket.setEndDate(LocalDate.parse("2024-06-28"));
+                afternoonTicket.setMemo("많이 이용하세요");
+                afternoonTicket.setAdultPrice(25000);
+                afternoonTicket.setChildPrice(20000);
+                afternoonTicket.setLocationCategory(LocationCategory.SEOUL);
+
+                ticketRepository.save(afternoonTicket);
+
+                String afternoonTicketImgUrl = "/img/logo/placeholder.png";
+
+                Image afternoonTicketImage = new Image();
+                afternoonTicketImage.setTicket(afternoonTicket);
+                afternoonTicketImage.setImgUrl(afternoonTicketImgUrl);
+                afternoonTicketImage.setRepImgYn(true);
+                imageRepository.save(afternoonTicketImage);
+            }
+        };
+    }
+
+    @Bean
+    public CommandLineRunner initMorningTicket(TicketRepository ticketRepository, ImageRepository imageRepository) {
+        return args -> {
+            boolean isMorningTicketPresent = ticketRepository.findByName("오전권").isPresent();
+
+            if (!isMorningTicketPresent) {
+                Ticket morningTicket = new Ticket();
+                morningTicket.setName("오전권");
+                morningTicket.setStartDate(LocalDate.parse("2024-06-22"));
+                morningTicket.setEndDate(LocalDate.parse("2024-07-30"));
+                morningTicket.setMemo("많이 이용하세요");
+                morningTicket.setAdultPrice(25000);
+                morningTicket.setChildPrice(20000);
+                morningTicket.setLocationCategory(LocationCategory.SEOUL);
+
+                ticketRepository.save(morningTicket);
+
+                String morningTicketImgUrl = "/img/logo/placeholder.png";
+
+                Image morningTicketImage = new Image();
+                morningTicketImage.setTicket(morningTicket);
+                morningTicketImage.setImgUrl(morningTicketImgUrl);
+                morningTicketImage.setRepImgYn(true);
+                imageRepository.save(morningTicketImage);
+            }
+        };
+    }
+
+    @Bean
+    public CommandLineRunner initSummerTicket(TicketRepository ticketRepository, ImageRepository imageRepository) {
+        return args -> {
+            boolean isSummerTicketPresent = ticketRepository.findByName("썸머 티켓").isPresent();
+
+            if (!isSummerTicketPresent) {
+                Ticket summerTicket = new Ticket();
+                summerTicket.setName("썸머 티켓");
+                summerTicket.setStartDate(LocalDate.parse("2024-06-22"));
+                summerTicket.setEndDate(LocalDate.parse("2024-08-31"));
+                summerTicket.setMemo("많이 이용하세요");
+                summerTicket.setAdultPrice(30000);
+                summerTicket.setChildPrice(20000);
+                summerTicket.setLocationCategory(LocationCategory.BUSAN);
+
+                ticketRepository.save(summerTicket);
+
+                String summerTicketImgUrl = "/img/logo/placeholder.png";
+
+                Image summerTicketImage = new Image();
+                summerTicketImage.setTicket(summerTicket);
+                summerTicketImage.setImgUrl(summerTicketImgUrl);
+                summerTicketImage.setRepImgYn(true);
+                imageRepository.save(summerTicketImage);
+            }
+        };
+    }
 }
