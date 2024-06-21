@@ -9,25 +9,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-<!--<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">-->
-<!--    <div class="modal-dialog" role="document">-->
-<!--        <div class="modal-content">-->
-<!--            <div class="modal-header">-->
-<!--                <h5 class="modal-title" id="errorModalLabel">오류</h5>-->
-<!--                <button type="button" class="close" data-dismiss="modal" aria-label="닫기">-->
-<!--                    <span aria-hidden="true">&times;</span>-->
-<!--                </button>-->
-<!--            </div>-->
-<!--            <div class="modal-body">-->
-<!--                <p id="errorMessage"></p>-->
-<!--            </div>-->
-<!--            <div class="modal-footer">-->
-<!--                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-
 <th:block layout:fragment="script">
     <script th:inline="javascript">
         $(document).ready(function() {
@@ -264,8 +245,17 @@
                                 </div>
                             </div>
                         </div>
-                        <div th:if="${#strings.isEmpty(couponFormDto.id)}" style="text-align: center;">
-                            <button th:formaction="@{/admin/coupon/new}" type="submit" class="btn btn-primary">저장</button>
+<!--                        <div class="col-md-6">-->
+<!--                            <div th:if="${#strings.isEmpty(couponFormDto.id)}">-->
+<!--                                <button th:formaction="@{/admin/coupon/new}" type="submit" class="btn mgrBtn">저장</button>-->
+<!--                            </div>-->
+<!--                            <a class="btn btn-light" href="/admin/coupons">취소</a>-->
+<!--                        </div>-->
+                        <div class="form-group d-flex justify-content-center">
+                            <div th:if="${#strings.isEmpty(couponFormDto.id)}">
+                                <button th:formaction="@{/admin/coupon/new}" type="submit" class="btn mgrBtn me-3">저장</button>
+                            </div>
+                            <a class="btn btn-light" href="/admin/coupons">취소</a>
                         </div>
                     </div>
                 </div>

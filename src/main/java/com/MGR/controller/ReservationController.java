@@ -99,6 +99,7 @@ public class ReservationController {
 
         Integer adultCount = updateRequest.getAdultCount();
         Integer childCount = updateRequest.getChildCount();
+
         if (adultCount == null || adultCount < 1 || childCount == null || childCount < 0) {
             // 조건을 만족하지 않으면 요청을 처리하지 않고 BadRequest를 반환
             return new ResponseEntity<String>("입력 값이 올바르지 않습니다", HttpStatus.BAD_REQUEST);

@@ -85,14 +85,14 @@
                                aria-label="비밀번호 입력 필드"/>
                     </div>
                     <p class="loginError" th:text="${loginError}"></p>
-                    <div class="row mb-4">
-                        <div class="col-6">
-                            <button class="btn btn-primary w-100" type="submit" id="member-create">로그인</button>
-                        </div>
-                        <div class="col-6">
-                            <button class="btn btn-primary w-100" type="button" id="member-join" onClick="location.href='/join'">회원가입</button>
-                        </div>
+                    <div class="mb-3">
+                            <button class="btn mgrBtn w-100" type="submit" id="member-create">로그인</button>
                     </div>
+                    <p class="mb-4 text-center">아직 회원이 아니신가요? · · · · · · · · · · · · · · ·
+                        <a id="member-join" aria-label="회원가입하러가기" href="/join">회원가입 하러 가기</a>
+                    </p>
+                    <hr class="my-4">
+                    <h5 class="mb-4 text-center">SNS 간편 로그인</h5>
                     <div class="row social-login">
                         <a class="col-3 mb-2 btn btn-primary" id="kakao-login" th:href="@{/oauth2/authorization/kakao}" aria-label="카카오 로그인" tabindex="0"> </a>
                         <a class="col-3 mb-2 btn btn-primary" id="naver-login" th:href="@{/oauth2/authorization/naver}" aria-label="네이버 로그인" tabindex="0"> </a>

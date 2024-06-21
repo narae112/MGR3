@@ -149,7 +149,7 @@
                 cache   : false,
                 success  : function(result, status){
                     alert("티켓 예약이 취소 되었습니다.");
-                    location.href='/member/reservations/' + [[${page}]];
+                    location.href='/member/reservations';
                 },
                 error : function(jqXHR, status, error){
                     if(jqXHR.status == '401'){
