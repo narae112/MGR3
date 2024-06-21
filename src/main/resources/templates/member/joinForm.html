@@ -101,6 +101,7 @@
         function checkNickname() {
             var nickname = $('#nickname').val().trim();
             prevNickname = nickname;
+
             $.ajax({
                 url: '/member/nicknameCheck',
                 type: 'POST',

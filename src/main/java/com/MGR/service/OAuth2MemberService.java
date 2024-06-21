@@ -62,7 +62,7 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
         String username = memberInfo.getName();
         String profileImgUrl = memberInfo.getProfileImgUrl();
         String email = memberInfo.getEmail();
-        String nickname = memberInfo.getNickname();
+        String nickname = memberInfo.getNickname() + "_" + oauth2Id;
         String role = "ROLE_USER"; //일반 유저
 
         if (registrationId.equals("github") && (email == null || email.isEmpty())) {

@@ -167,7 +167,7 @@
         });
                 var prevNickname = "";
             function checkNickname() {
-                var nickname = $('#nickname').val();
+                var nickname = $('#nickname').val().trim();
                 prevNickname = nickname;
 
                 $.ajax({
@@ -240,29 +240,6 @@
                 $('.empty-nickname-btn').css("display", "none");
             }
         }
-        <!--         뒤로가기 방지-->
-<!--    window.addEventListener('load', function() {-->
-<!--    if (window.history.replaceState) {-->
-<!--        window.history.replaceState(null, null, window.location.href);-->
-
-<!--        // 뒤로가기 버튼 클릭 시 바로 tickets 페이지로 이동-->
-<!--        window.onpopstate = function() {-->
-<!--            location.replace("/");-->
-<!--        };-->
-<!--    }-->
-
-<!--    // 페이지 로드 후 바로 뒤로가기 막기-->
-<!--    function preventBack() {-->
-<!--        window.history.forward();-->
-<!--    }-->
-
-<!--    setTimeout(preventBack, 0);-->
-
-<!--    // 페이지를 떠날 때 아무 동작도 하지 않도록 설정-->
-<!--    window.onunload = function () {-->
-<!--        // No action needed-->
-<!--    };-->
-<!--});-->
     </script>
 </th:block>
 
@@ -309,6 +286,7 @@
                     </span>
                 </div>
                 <span class="nickname_ok">사용 가능한 닉네임 입니다</span>
+                <span class="nickname_already">이미 사용중인 닉네임 입니다</span>
                 <span class="errorMessage" th:if="${#fields.hasErrors('nickname')}"
                       th:errors="*{nickname}"></span>
             </div>

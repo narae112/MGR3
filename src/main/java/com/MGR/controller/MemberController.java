@@ -58,7 +58,7 @@ public class MemberController {
             model.addAttribute("errors2", e.getMessage());
             return "member/joinForm";
         }
-        return "redirect:/";
+        return "member/loginForm";
     }
 
     @GetMapping("/edit")
