@@ -357,3 +357,14 @@
 .navbar-nav .nav-item .sub-menu.collapse:not(.show) {
   display: block;
 }
+
+.mgrBtn{
+    background-color: #101130;
+    border-color: #101130;
+    color: #fff;
+}
+.mgrBtn:hover {
+    background-color: #f20487;
+    border-color: #f20487;
+    color: #fff;
+}

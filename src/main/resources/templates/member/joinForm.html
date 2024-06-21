@@ -54,17 +54,6 @@
             gap: 10px;
             margin-top: 20px;
         }
-
-        #member-create, .btn_code{
-            background-color: #101130;
-            border-color: #101130;
-            color: #fff;
-        }
-        #member-create:hover, .btn_code:hover {
-            background-color: #f20487;
-            border-color: #f20487;
-            color: #fff;
-        }
     </style>
 </th:block>
 
@@ -197,7 +186,7 @@
             <label th:for="email">이메일</label>
             <div class="email-group">
                 <input th:field="*{email}" id="email" class="form-control" type="email" onblur="checkEmail()"/>
-                <button class="btn btn_code" type="button" id="code-button" onclick="sendEmail()">인증 코드 발송</button>
+                <button class="btn mgrBtn" type="button" id="code-button" onclick="sendEmail()">인증 코드 발송</button>
             </div>
             <span class="email_already">이미 사용중인 이메일 입니다</span>
             <span class="validationError" th:if="${#fields.hasErrors('email')}"
@@ -249,7 +238,7 @@
         </div>
 
         <div class="button-group">
-            <button class="btn" type="submit" id="member-create">가입</button>
+            <button class="btn mgrBtn" type="submit" id="member-create">가입</button>
             <button class="btn btn-light" type="button" onclick="goBack()">취소</button>
         </div>
 
@@ -257,7 +246,7 @@
     <hr class="col-md-4 my-4">
 
     <div>
-        <p>이미 가입된 회원이신가요? · · · · · · <a href="/login">로그인 하러 가기</a></p>
+        <p>이미 가입된 회원이신가요? · · · · · · · · · · · · · · · · · · <a href="/login">로그인 하러 가기</a></p>
     </div>
 
 </div>

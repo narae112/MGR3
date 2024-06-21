@@ -229,7 +229,7 @@
                 </div>
 
                 <div class="h4 text-danger text-start ms-3">
-                    <input type="hidden" th:value="${ticket.childPrice}" name="childPrice">
+                    <input type="hidden" th:value="${ticket.childPrice}" id="childPrice" name="childPrice">
                     어린이: <span th:text="${#numbers.formatInteger(ticket.childPrice, 0, 'COMMA')}"></span>원
                 </div>
 
