@@ -1,5 +1,6 @@
 package com.MGR.service;
 
+import com.MGR.constant.LocationCategory;
 import com.MGR.constant.ReservationStatus;
 import com.MGR.dto.ImageDto;
 import com.MGR.dto.MainTicketDto;
@@ -9,6 +10,8 @@ import com.MGR.entity.*;
 import com.MGR.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
