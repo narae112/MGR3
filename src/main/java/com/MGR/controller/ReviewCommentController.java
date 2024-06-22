@@ -48,7 +48,7 @@ public class ReviewCommentController {
             return "member/loginForm";
         }
 
-        Member siteUser = this.memberService.getUser(member.getName());
+        Member siteUser = this.memberService.getUser(member.getEmail());
 
         // 욕설 필터링
         List<String> profanityList = ProfanityListLoader.loadProfanityList("unsafe.txt");
@@ -77,7 +77,7 @@ public class ReviewCommentController {
     public String commentModify(ReviewCommentForm reviewCommentForm, @PathVariable("id") Long id,
                                @AuthenticationPrincipal PrincipalDetails member) {
         ReviewComment reviewComment = this.reviewCommentService.getComment(id);
-        if (!reviewComment.getAuthor().getName().equals(member.getName())) {
+        if (!reviewComment.getAuthor().getEmail().equals(member.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
         reviewComment.setContent(reviewComment.getContent());
@@ -101,10 +101,10 @@ public class ReviewCommentController {
             return "board/review/comment_form";
         }
         ReviewComment reviewComment = this. reviewCommentService.getComment(id);
-        if (!reviewComment.getAuthor().getName().equals(member.getName())) {
+        if (!reviewComment.getAuthor().getEmail().equals(member.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
-        this. reviewCommentService.modify(reviewComment, reviewComment.getContent());
+        this. reviewCommentService.modify(reviewComment, reviewCommentForm.getContent());
         return String.format("redirect:/review/board/detail/%s#comment_%s", reviewComment.getReviewBoard().getId(), reviewComment.getId());
     }
 
@@ -112,7 +112,7 @@ public class ReviewCommentController {
     @GetMapping("/delete/{id}")
     public String reviewDelete(@AuthenticationPrincipal PrincipalDetails member, @PathVariable("id") Long id) {
         ReviewComment reviewComment = this. reviewCommentService.getComment(id);
-        if (!reviewComment.getAuthor().getName().equals(member.getName())) {
+        if (!reviewComment.getAuthor().getEmail().equals(member.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");
         }
         this. reviewCommentService.delete(reviewComment);
