@@ -67,39 +67,10 @@ public class ChatController {
         List<Chat> chatList = chatService.findAllChatByRoomId(roomId);
         ChatRoom roomById = chatService.findRoomById(roomId);
 
-        int unreadCount = chatService.getUnreadCount(roomId, member.getId());
-
         Map<String, Object> response = new HashMap<>();
         response.put("chatList", chatList);
         response.put("chatRoom", roomById);
-        response.put("unreadCount", unreadCount);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-    @PostMapping("/chats/{roomId}/read")
-    public ResponseEntity<?> markAsRead(@PathVariable Long roomId,
-                                        @AuthenticationPrincipal PrincipalDetails member) {
-        chatService.markMessagesAsRead(roomId, member.getId());
-        notificationService.sendReadEvent(roomId, member.getId());
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping("/chat/sendReadEvent")
-    @ResponseBody
-    public ResponseEntity<Void> sendReadEvent(@RequestParam Long roomId, @RequestParam Long userId) {
-        notificationService.sendReadEvent(roomId, userId);
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping("/chat/updateReadStatus")
-    public ResponseEntity<Map<String, List<Chat>>> updateReadStatus(@RequestParam Long roomId, @RequestParam Long userId) {
-        List<Chat> updatedMessages = chatService.updateReadStatus(roomId, userId);
-        Map<String, List<Chat>> response = new HashMap<>();
-        response.put("updatedMessages", updatedMessages);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-
 }
-
