@@ -165,7 +165,7 @@ public class ReviewBoardController {
             }
         }
 
-        Member siteUser = this.memberService.getUser(member.getName());
+        Member siteUser = this.memberService.getUser(member.getEmail());
         try {
             // 질문 생성과 이미지 저장
             Long reviewBoardId = this.reviewBoardService.createReviewBoard(reviewBoardForm.getSubject(), reviewBoardForm.getContent(), siteUser, reviewImgFileList);
@@ -185,7 +185,7 @@ public class ReviewBoardController {
     public String reviewModify(Model model, @PathVariable("id") Long id,
                                @AuthenticationPrincipal PrincipalDetails member) {
         ReviewBoard reviewBoard = this.reviewBoardService.getReviewBoard(id);
-        if (!reviewBoard.getAuthor().getName().equals(member.getName())) {
+        if (!reviewBoard.getAuthor().getEmail().equals(member.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
 
@@ -224,7 +224,7 @@ public class ReviewBoardController {
         }
 
         ReviewBoard reviewBoard = this.reviewBoardService.getReviewBoard(id);
-        if (!reviewBoard.getAuthor().getName().equals(member.getName())) {
+        if (!reviewBoard.getAuthor().getEmail().equals(member.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
 
@@ -252,7 +252,7 @@ public class ReviewBoardController {
     public String reviewDelete(@AuthenticationPrincipal PrincipalDetails member,
                                @PathVariable("id") Long id) {
         ReviewBoard reviewBoard = this.reviewBoardService.getReviewBoard(id);
-        if (!reviewBoard.getAuthor().getName().equals(member.getName())) {
+        if (!reviewBoard.getAuthor().getEmail().equals(member.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");
         }
 
@@ -277,7 +277,7 @@ public class ReviewBoardController {
 
         try {
             ReviewBoard reviewBoard = this.reviewBoardService.getReviewBoard(id);
-            Member siteUser = this.memberService.getUser(member.getName());
+            Member siteUser = this.memberService.getUser(member.getEmail());
             Set<Member> voters = reviewBoard.getVoter(); // 리뷰의 추천자 목록을 가져옵니다.
             boolean isVoted = voters != null && voters.contains(siteUser);
             // 현재 사용자가 리뷰를 추천했는지 여부를 확인합니다.
