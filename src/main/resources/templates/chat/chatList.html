@@ -125,190 +125,15 @@
     </style>
 </th:block>
 
-<th:block layout:fragment="script">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.34/moment-timezone-with-data.min.js"></script>
-    <script th:inline="javascript">
-        var eventSource = null;
-        var roomId = 1;
-        var currentRoomId = null;
-
-        function connectToRoom(id, title) {
-            if (eventSource !== null) {
-                eventSource.close();
-            }
-
-            $('#chatTitle').text(title);
-
-            eventSource = new EventSource(`/chat/subscribe?roomId=${id}`);
-
-            eventSource.addEventListener('chat', function (event) {
-                const message = JSON.parse(event.data);
-                showMessage(message, message.isRead ? 0 : 1); // 읽음 상태에 따라 표시
-            });
-
-            eventSource.onerror = function (event) {
-                console.error('EventSource failed: ', event);
-            };
-
-            roomId = id;
-            currentRoomId = id;
-
-            $.get(`/chats/${roomId}`, function (response) {
-                const chats = response.chatList;
-                const chatRoom = response.chatRoom;
-                const unreadCount = response.unreadCount;
-
-                $('#chatBox').empty();
-                chats.forEach(function (chat) {
-                    showMessage(chat, unreadCount);
-                });
-
-                if ((roomId !== 1) && (chatRoom.sender == null || chatRoom.receiver == null)) {
-                    $('#messageInput').prop('disabled', true);
-                    $('#messageInput').attr('placeholder', '상대방이 채팅을 종료했습니다');
-                    $('#chatBox').append('<div class="message center-message"><div class="text">상대방이 채팅을 종료했습니다</div></div>');
-                } else {
-                    $('#messageInput').prop('disabled', false);
-                    $('#messageInput').attr('placeholder', '메세지를 입력하세요');
-                }
-
-            }).fail(function() {
-                console.error('Failed to fetch chat history');
-            });
-        }
-
-        function sendReadEvent(roomId) {
-            const userId = $('#senderId').val(); // 사용자 ID를 가져옵니다.
-            $.post('/chat/sendReadEvent', { roomId: roomId, userId: userId }, function() {
-                console.log('Read event sent');
-            }).fail(function() {
-                console.error('Failed to send read event');
-            });
-        }
-
-        function sendMessage() {
-            var message = $('#messageInput').val().trim();
-            var senderNickname = $('#senderNickname').val();
-            if (message) {
-                var chatMessage = {
-                    roomId: roomId || 1,
-                    message: message
-                };
-
-                if (roomId !== null) {
-                    chatMessage.roomId = roomId;
-                }
-
-                $.post('/chat/send', chatMessage, function() {
-                    $('#messageInput').val('');
-                }).fail(function() {
-                    console.error('Failed to send message');
-                });
-            } else {
-                console.error('Message is empty');
-            }
-        }
-
-        function showMessage(message, unreadCount) {
-            var senderNickname = $('#senderNickname').val();
-            var messageClass = message.sender.nickname === senderNickname ? 'right' : 'left';
-            var profileImg = message.profileImgUrl || '/img/login/profile.png';
-
-            var date = moment.tz(message.timestamp, "Asia/Seoul");
-            var hours = date.hours();
-            var minutes = date.minutes();
-            var period = hours >= 12 ? '오후' : '오전';
-            hours = hours % 12;
-            hours = hours ? hours : 12; // 0을 12로 변환
-            minutes = minutes < 10 ? '0' + minutes : minutes;
-
-            var time = period + ' ' + hours + ':' + minutes;
-
-            var messageElement =
-                '<div class="message ' + messageClass + '" data-message=\'' + JSON.stringify(message) + '\'>' +
-                    '<img src="' + profileImg + '" alt="Profile Image">' +
-                    '<div class="content">' +
-                        '<div class="name">' + message.sender.nickname + '</div>' +
-                        '<div class="text">' + message.message + '</div>' +
-                        '<div class="time">'+ time + '</div>' +
-                    '</div>' +
-                '</div>';
-            $('#chatBox').append(messageElement);
-            $('#chatBox').scrollTop($('#chatBox')[0].scrollHeight);
-        }
-
-        $(document).ready(function () {
-            $('#messageInput').attr('placeholder', '채팅 목록을 선택해주세요');
-
-            // 전체 채팅 메시지를 표시
-            connectToRoom(roomId, "전체 채팅방");
-
-            /* 채팅 목록 반복문 처리 */
-            [[${allChatList}]].forEach(function (chat) {
-                showMessage(chat, chat.isRead ? 0 : chat.unreadCount);
-            });
-
-            $('#chatRooms').on('click', 'li', function () {
-                var id = $(this).data('room-id');
-                var title = $(this).text();
-                connectToRoom(id, title);
-                $('#messageInput').attr('placeholder', 'Enter message');
-
-                $('#chatRooms .list-group-item').removeClass('active');
-                $(this).addClass('active');
-            });
-
-            $('#sendButton').click(function () {
-                sendMessage();
-                $('#messageInput').val('');
-            });
-
-            $('#messageInput').keypress(function (event) {
-                if (event.which === 13) {
-                    sendMessage();
-                     $('#messageInput').val('');
-                }
-            });
-        });
-
-        function deleteRoom(button, roomId) {
-            var roomId = $(button).data('room-id');
-
-            // AJAX 요청을 통해 서버에 채팅방 삭제 요청 보내기
-            $.ajax({
-                url: '/chat/deleteRoom',
-                type: 'POST',
-                data: JSON.stringify({ roomId: roomId }),
-                contentType: 'application/json; charset=utf-8',
-                success: function(response) {
-                    // 채팅방 목록에서 해당 항목 삭제
-                    $('li[data-room-id="' + roomId + '"]').remove();
-                    alert(response);
-                    window.location.href = '/chat/chatList';
-                },
-                error: function(xhr, status, error) {
-                    console.error('Failed to delete room:', error);
-                }
-            });
-        }
-
-    </script>
-</th:block>
-
 <div layout:fragment="content">
     <h3 class="mb-5 text-center">채팅 목록</h3>
     <hr class="my-4">
     <div class="row">
-        <h5 id="chatTitle" class="text-center">전체 채팅방</h5>
         <div class="col-md-4">
             <div class="col-md-12 mb-3" style="margin-bottom: 10px;">
                 <a href="/chat/createRoom" class="btn btn-block">채팅방 만들기</a>
             </div>
             <ul class="list-group" id="chatRooms">
-                <li class="list-group-item" data-room-id="1">
-                    <span onclick="connectToRoom(1, '전체 채팅방'); $('#chatRooms .list-group-item').removeClass('active'); $(this).closest('li').addClass('active');">전체 채팅방</span>
-                </li>
                 <li class="list-group-item" th:each="room : ${roomList}" th:data-room-id="${room.id}">
                     <span th:text="${room.name}"></span>
                     <span class="close-button" th:data-room-id="${room.id}" onclick="deleteRoom(this)">&times;</span>
@@ -317,7 +142,6 @@
         </div>
 
         <div class="col-md-8">
-<!--            <h5 id="chatTitle" class="text-center">전체 채팅방</h5>-->
             <div id="chatBox" class="chat-box"></div>
             <div class="message-input">
                 <input type="text" id="messageInput" class="form-control" placeholder="Enter message">
@@ -328,5 +152,170 @@
             </div>
         </div>
     </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.34/moment-timezone-with-data.min.js"></script>
+<script th:inline="javascript">
+    var eventSource = null;
+    var roomId = 1;
+    var currentRoomId = null;
+
+    function connectToRoom(id, title) {
+        if (eventSource !== null) {
+            eventSource.close();
+        }
+
+        $('#chatTitle').text(title);
+
+        eventSource = new EventSource(`/chat/subscribe?roomId=${id}`);
+
+        eventSource.addEventListener('chat', function (event) {
+            const message = JSON.parse(event.data);
+            showMessage(message, message.isRead ? 0 : 1); // 읽음 상태에 따라 표시
+        });
+
+        eventSource.onerror = function (event) {
+            console.error('EventSource failed: ', event);
+        };
+
+        roomId = id;
+        currentRoomId = id;
+
+        $.get(`/chats/${roomId}`, function (response) {
+            const chats = response.chatList;
+            const chatRoom = response.chatRoom;
+            const unreadCount = response.unreadCount;
+
+            $('#chatBox').empty();
+            chats.forEach(function (chat) {
+                showMessage(chat, unreadCount);
+            });
+
+            if ((roomId !== 1) && (chatRoom.sender == null || chatRoom.receiver == null)) {
+                $('#messageInput').prop('disabled', true);
+                $('#messageInput').attr('placeholder', '상대방이 채팅을 종료했습니다');
+                $('#chatBox').append('<div class="message center-message"><div class="text">상대방이 채팅을 종료했습니다</div></div>');
+            } else {
+                $('#messageInput').prop('disabled', false);
+                $('#messageInput').attr('placeholder', '메세지를 입력하세요');
+            }
+
+        }).fail(function() {
+            console.error('Failed to fetch chat history');
+        });
+    }
+
+    function sendReadEvent(roomId) {
+        const userId = $('#senderId').val(); // 사용자 ID를 가져옵니다.
+        $.post('/chat/sendReadEvent', { roomId: roomId, userId: userId }, function() {
+            console.log('Read event sent');
+        }).fail(function() {
+            console.error('Failed to send read event');
+        });
+    }
+
+    function sendMessage() {
+        var message = $('#messageInput').val().trim();
+        var senderNickname = $('#senderNickname').val();
+        if (message) {
+            var chatMessage = {
+                roomId: roomId || 1,
+                message: message
+            };
+
+            if (roomId !== null) {
+                chatMessage.roomId = roomId;
+            }
+
+            $.post('/chat/send', chatMessage, function() {
+                $('#messageInput').val('');
+            }).fail(function() {
+                console.error('Failed to send message');
+            });
+
+        } else {
+            console.error('Message is empty');
+        }
+    }
+
+    function showMessage(message, unreadCount) {
+        var senderNickname = $('#senderNickname').val();
+        var messageClass = message.sender.nickname === senderNickname ? 'right' : 'left';
+        var profileImg = message.profileImgUrl || '/img/login/profile.png';
+
+        var date = moment.tz(message.sendDate, "Asia/Seoul");
+        var hours = date.hours();
+        var minutes = date.minutes();
+        var period = hours >= 12 ? '오후' : '오전';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // 0을 12로 변환
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+
+        var time = period + ' ' + hours + ':' + minutes;
+        var unreadCountText = (message.isRead ? 0 : 1) ? '<span class="unread-count">' + (message.isRead ? 0 : 1) + '</span>' : '';
+
+        var messageElement =
+            '<div class="message ' + messageClass + '" data-message=\'' + JSON.stringify(message) + '\'>' +
+                '<img src="' + profileImg + '" alt="Profile Image">' +
+                '<div class="content">' +
+                    '<div class="name">' + message.sender.nickname + '</div>' +
+                    '<div class="text">' + message.message + '</div>' +
+                    '<div class="time">'+ time + '</div>' +
+                '</div>' +
+            '</div>';
+        $('#chatBox').append(messageElement);
+        $('#chatBox').scrollTop($('#chatBox')[0].scrollHeight);
+    }
+
+    $(document).ready(function () {
+        $('#messageInput').attr('placeholder', '채팅 목록을 선택해주세요');
+
+        connectToRoom(roomId, "전체 채팅방");
+
+        $('#chatRooms').on('click', 'li', function () {
+            var id = $(this).data('room-id');
+            var title = $(this).text();
+            connectToRoom(id, title);
+            $('#messageInput').attr('placeholder', '메세지를 입력해주세요');
+
+            $('#chatRooms .list-group-item').removeClass('active');
+            $(this).addClass('active');
+        });
+
+        $('#sendButton').click(function () {
+            sendMessage();
+            $('#messageInput').val('');
+        });
+
+        $('#messageInput').keypress(function (event) {
+            if (event.which === 13) {
+                sendMessage();
+                 $('#messageInput').val('');
+            }
+        });
+    });
+
+    function deleteRoom(button, roomId) {
+        var roomId = $(button).data('room-id');
+
+        // AJAX 요청을 통해 서버에 채팅방 삭제 요청 보내기
+        $.ajax({
+            url: '/chat/deleteRoom',
+            type: 'POST',
+            data: JSON.stringify({ roomId: roomId }),
+            contentType: 'application/json; charset=utf-8',
+            success: function(response) {
+                // 채팅방 목록에서 해당 항목 삭제
+                $('li[data-room-id="' + roomId + '"]').remove();
+                alert(response);
+                window.location.href = '/chat/chatList';
+            },
+            error: function(xhr, status, error) {
+                console.error('Failed to delete room:', error);
+            }
+        });
+    }
+
+</script>
 </div>
 </html>

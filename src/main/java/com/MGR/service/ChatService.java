@@ -103,48 +103,16 @@ public class ChatService {
         }
     }
 
-    public void markMessagesAsRead(Long roomId, Long memberId){
-        List<Chat> chatList = chatRepository.findAllByRoomId(roomId);
-        for (Chat chat : chatList) {
-            if (!chat.getSender().getId().equals(memberId)) {
-                chat.setIsRead(true);
-                chatRepository.save(chat);
-            }
-        }
-    }
-
-    public int getUnreadCount(Long roomId, Long memberId) {
-        List<Chat> chatList = chatRepository.findAllByRoomId(roomId);
-        return (int) chatList.stream()
-                .filter(chat -> !chat.getSender().getId().equals(memberId) && !chat.getIsRead())
-                .count();
-    }
 
     public Map<String, Object> getChatHistory(Long roomId, Long memberId) {
         List<Chat> chatList = chatRepository.findAllByRoomId(roomId);
         ChatRoom roomById = findRoomById(roomId);
 
-        int unreadCount = getUnreadCount(roomId, memberId);
-
         Map<String, Object> response = new HashMap<>();
         response.put("chatList", chatList);
         response.put("chatRoom", roomById);
-        response.put("unreadCount", unreadCount);
 
         return response;
-    }
-
-    public List<Chat> updateReadStatus(Long roomId, Long userId) {
-        List<Chat> chats = chatRepository.findAllByRoomId(roomId);
-        List<Chat> updatedChats = new ArrayList<>();
-        for (Chat chat : chats) {
-            if (!chat.getSender().getId().equals(userId) && !chat.getIsRead()) {
-                chat.setIsRead(true);
-                chatRepository.save(chat);
-                updatedChats.add(chat);
-            }
-        }
-        return updatedChats;
     }
 
 }
