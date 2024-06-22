@@ -171,9 +171,24 @@
             document.getElementById('birth').setAttribute('max', maxDateString);
         }
 
-        window.onload = function() {
-            setMaxBirthDate();
-        };
+    // 이메일 오류 메시지
+    var emailError = /*[[${emailError != null ? emailError : ''}]]*/ '';
+    if (emailError !== '') {
+        alert(emailError);
+    }
+
+    // 닉네임 오류 메시지
+    var nicknameError = /*[[${nicknameError != null ? nicknameError : ''}]]*/ '';
+    if (nicknameError !== '') {
+        alert(nicknameError);
+    }
+
+    // 인증 오류 메시지
+    var authError = /*[[${authError != null ? authError : ''}]]*/ '';
+    if (authError !== '') {
+        alert(authError);
+    }
+
     </script>
 </th:block>
 
@@ -182,7 +197,7 @@
         <img src="/img/login/join.png" alt="회원가입이미지" class="img-fluid" style="max-width: 100%; height: auto;">
     </div>
 
-    <form class="col-md-4" action="/member/create" role="form" th:object="${memberFormDto}" method="POST">
+    <form id="signup-form" class="col-md-4" action="/member/create" role="form" th:object="${memberFormDto}" method="POST">
         <div class="mb-3">
             <label th:for="email">이메일</label>
             <div class="email-group">
@@ -242,15 +257,11 @@
             <button class="btn mgrBtn" type="submit" id="member-create">가입</button>
             <button class="btn btn-light" type="button" onclick="goBack()">취소</button>
         </div>
-
     </form>
     <hr class="col-md-4 my-4">
 
     <div>
         <p>이미 가입된 회원이신가요? · · · · · · · · · · · · · · · · · · <a href="/login">로그인 하러 가기</a></p>
     </div>
-
 </div>
 </html>
-
-
