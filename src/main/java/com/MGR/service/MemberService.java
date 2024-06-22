@@ -62,14 +62,14 @@ public class MemberService{
         return memberRepository.findById(id);
     }
 //qna question
-    public Member getUser(String name) {
-        Optional<Member> siteUser = this.memberRepository.findByName(name);
-        if (siteUser.isPresent()) {
-            return siteUser.get();
-        } else {
-            throw new DataNotFoundException("siteuser not found");
-        }
+ public Member getUser(String email) {
+    Optional<Member> member = memberRepository.findByEmail(email);
+    if (member.isPresent()) {
+        return member.get();
+    } else {
+        throw new DataNotFoundException("siteuser not found");
     }
+}
 
 
     public void updateNickname(Long id, String nickname) {
