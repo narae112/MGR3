@@ -32,4 +32,6 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
     List<Image> findByGoWithBoardIdOrderByIdAsc(Long goWithBoardId);
 
     List<Image> findByGoWithBoardId(Long goWithBoardId);
+
+    Image findByGoWithBoard(GoWithBoard goWithBoard);
 }
