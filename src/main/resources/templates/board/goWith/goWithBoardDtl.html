@@ -8,14 +8,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
-        /* 일반적인 스타일링 */
-        .card {
-            border: none;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            background-color: #fff;
-            margin-bottom: 20px;
-        }
-
         .btn-outline-secondary {
             color: #6c757d;
             border-color: #6c757d;
@@ -26,18 +18,25 @@
             color: #fff;
         }
 
-        /* 이미지 갤러리 스타일링 */
-        .image-wrapper {
-            max-height: 300px;
-            max-width: 100%;
-            overflow: hidden;
+         .carousel-schedule {
+            display: flex;
+            justify-content: center;
+            overflow-x: auto;
+            white-space: nowrap;
+            min-height: 250px; /* 최소 높이 지정 */
+            padding-left: 100px; /* 왼쪽 패딩 추가 */
         }
-
-        .image-wrapper img {
-            width: 100%;
-            height: auto;
-            display: block;
-            margin: 0 auto;
+        .carousel-item-schedule {
+            flex: 0 0 auto;
+            text-align: center;
+            margin: 0 10px;
+        }
+        .carousel-item-schedule img {
+            max-width: 300px; /* 최대 가로 크기 */
+            max-height: 400px; /* 최대 세로 크기 */
+            object-fit: contain; /* 이미지를 컨테이너에 맞추되, 비율을 유지하며 크기 조절 */
+            object-position: center; /* 이미지를 중앙에서부터 위치시킴 */
+            margin: 20px 10px;
         }
     </style>
 </head>
@@ -64,27 +63,54 @@
                     </div>
                 </div>
             </div>
-
+            <hr/>
             <!-- 이미지 갤러리 -->
-            <div class="my-3">
-                <div class="row row-cols-1 row-cols-md-2 g-4 justify-content-center">
-                    <div th:each="goWithImage, iterStat : ${goWithBoardForm.goWithImgDtoList}" class="col mb-3 d-flex justify-content-center align-items-center">
-                        <a th:if="${not #strings.isEmpty(goWithImage.imgUrl)}" href="${goWithImage.imgUrl}" data-lightbox="gallery">
-                            <div class="image-wrapper">
-                                <img th:src="${goWithImage.imgUrl}" class="rounded mx-auto d-block align-center">
-                            </div>
-                        </a>
-                    </div>
+            <div class="carousel-schedule my-3">
+                <div th:each="goWithImage, iterStat : ${goWithBoardForm.goWithImgDtoList}" class="carousel-item-schedule">
+                    <a th:if="${not #strings.isEmpty(goWithImage.imgUrl)}" th:href="${goWithImage.imgUrl}" data-lightbox="gallery">
+                        <img th:src="${goWithImage.imgUrl}" class="rounded">
+                    </a>
                 </div>
             </div>
 
             <!-- 글 내용 -->
             <div class="goWith-content">
-                <div class="card my-3">
-                    <div class="card-body">
-                        <div class="card-text" th:utext="${@commonUtil.markdown(goWithBoardForm.content)}"></div>
-                    </div>
+                <div class=" my-3">
+                    <div class="" th:utext="${@commonUtil.markdown(goWithBoardForm.content)}"></div>
                     <hr>
+
+                    <div class="mt-2">
+                        <!-- attractionTypes 섹션 -->
+                        <div class="attraction-types-header my-2">놀이기구 취향</div>
+                        <div class="attraction-types-content d-flex flex-wrap">
+                            <div th:if="${#lists.size(goWithBoard.attractionTypes) > 0}">
+                                <div th:each="attractionType : ${goWithBoard.attractionTypes}">
+                                    <p th:text="${attractionType}"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <hr/>
+                        <!-- afterTypes 섹션 -->
+                        <div class="after-types-header my-2">동행 후 행선지</div>
+                        <div class="after-types-content d-flex flex-wrap">
+                            <div th:if="${#lists.size(goWithBoard.afterTypes) > 0}">
+                                <div th:each="afterType : ${goWithBoard.afterTypes}">
+                                    <p th:text="${afterType}"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <hr/>
+                        <!-- personalities 섹션 -->
+                        <div class="personalities-header my-2">성격</div>
+                        <div class="personalities-content d-flex flex-wrap">
+                            <div th:if="${#lists.size(goWithBoard.personalities) > 0}">
+                                <div th:each="personality : ${goWithBoard.personalities}">
+                                    <p th:text="${personality}"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
                     <div class="my-3">
                         <a th:href="@{/goWithBoard/list}" class="btn btn-sm btn-outline-secondary">목록으로</a>
                         <a th:href="@{|/startChat/${goWithBoard.id}/${goWithBoard.member.nickname}|}" class="btn btn-primary my-2"
@@ -109,42 +135,45 @@
 
     <!-- 댓글 섹션 -->
     <div class="row justify-content-center">
-        <div class="col-md-10">
-            <h5 class="border-bottom my-3 py-2" th:text="|${#lists.size(goWithBoard.commentList)}개의 댓글이 있습니다.|"></h5>
+        <div class="col-md-8">
+            <h5 class="border-bottom my-3 py-2" th:text="|댓글 ${#lists.size(goWithBoard.commentList)}|"></h5>
+
+            <!-- 댓글 폼 -->
+            <form th:action="@{|/goWith/comment/create/${goWithBoard.id}|}" th:object="${goWithCommentFormDto}" method="post" class="my-2">
+                <div th:replace="board/goWith/form_errors :: formErrorsFragment"></div>
+                <div class="d-flex">
+                    <textarea placeholder="댓글을 등록해보세요!" th:field="*{content}" class="form-control me-2" rows="2"></textarea>
+                    <input type="submit" value="등록" class="btn mgrBtn">
+                </div>
+            </form>
+
             <!-- 댓글 반복 시작 -->
-            <div class="card my-3" th:each="goWithComment : ${goWithBoard.commentList}">
-                <div class="card-body">
-                    <div class="card-text" th:utext="${@commonUtil.markdown(goWithComment.content)}"></div>
-                    <div class="d-flex justify-content-end">
-                        <div th:if="${goWithComment.modifiedDate != null}" class="badge bg-light text-dark p-2 text-start mx-3">
-                            <div class="mb-2">수정일</div>
-                            <div th:text="${#temporals.format(goWithComment.modifiedDate, 'yyyy-MM-dd HH:mm')}"></div>
-                        </div>
-                        <div class="badge bg-light text-dark p-2 text-start">
-                            <div class="mb-2">
-                                <span th:if="${goWithBoard.author != null}" th:text="${goWithBoard.author.nickname}"></span>
-                            </div>
-                            <div th:text="${#temporals.format(goWithComment.createDate, 'yyyy-MM-dd HH:mm')}"></div>
-                        </div>
+            <div th:each="goWithComment : ${goWithBoard.commentList}" class="my-3 border rounded p-3">
+                <div class="col-12">
+                    <div class="text-muted me-3">
+                        <span th:text="${goWithComment.member.nickname}" class="userNick"></span>
+                        <span th:text="${#temporals.format(goWithComment.createDate, 'yyyy-MM-dd HH:mm')}"></span>
+                        <span th:if="${goWithComment.modifiedDate != null}">
+                            <span th:text="${#temporals.format(goWithComment.modifiedDate, 'yyyy-MM-dd HH:mm')} + '수정됨'"></span>
+                        </span>
                     </div>
-                    <div class="my-3">
-                        <a th:href="@{|/goWith/comment/modify/${goWithComment.id}|}" class="btn btn-sm btn-outline-secondary"
+                    <hr/>
+                    <div th:utext="${@commonUtil.markdown(goWithComment.content)}"></div>
+
+                    <div class="d-flex justify-content-end mt-3">
+                        <a th:href="@{|/goWith/comment/modify/${goWithComment.id}|}" class="btn btn-sm btn-outline-secondary me-2"
                            sec:authorize="isAuthenticated()"
-                           th:if="${goWithComment.member != null and #authentication.getPrincipal().getName() == goWithComment.member.name}"
+                           th:if="${goWithComment.member != null and #authentication.getPrincipal().getEmail() == goWithComment.member.email}"
                            th:text="수정"></a>
                         <a href="javascript:void(0);" th:data-uri="@{|/goWith/comment/delete/${goWithComment.id}|}"
-                           class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()"
-                           th:if="${goWithComment.member != null and #authentication.getPrincipal().getName() == goWithComment.member.name}"
+                           class="delete btn btn-sm btn-outline-secondary"
+                           sec:authorize="isAuthenticated()"
+                           th:if="${goWithComment.member != null and #authentication.getPrincipal().getEmail() == goWithComment.member.email}"
                            th:text="삭제" onclick="deleteQuestion(event)"></a>
                     </div>
                 </div>
             </div>
-            <!-- 답변 폼 -->
-            <form th:action="@{|/goWith/comment/create/${goWithBoard.id}|}" th:object="${goWithCommentFormDto}" method="post" class="container my-5">
-                <div th:replace="board/goWith/form_errors :: formErrorsFragment"></div>
-                <textarea th:field="*{content}" class="form-control" rows="5"></textarea>
-                <input type="submit" value="답변등록" class="btn btn-primary my-2">
-            </form>
+
         </div>
     </div>
 </div>
