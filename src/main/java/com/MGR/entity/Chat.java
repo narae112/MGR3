@@ -36,8 +36,6 @@ public class Chat {
     @Column(updatable = false)
     private LocalDateTime sendDate;
 
-    private Boolean isRead = false;
-
     @Builder
     public Chat(ChatRoom room, Member sender, String senderEmail, String message, String profileImgUrl) {
         this.room = room;
@@ -46,7 +44,6 @@ public class Chat {
         this.message = message;
         this.sendDate = LocalDateTime.now();
         this.profileImgUrl = profileImgUrl;
-        this.isRead = false;
     }
 
     /**

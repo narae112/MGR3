@@ -2,8 +2,8 @@ DELETE FROM order_ticket;
 DELETE FROM orders;
 DELETE FROM reservation_ticket;
 DELETE FROM reservation;
-DELETE FROM ticket;
-DELETE FROM member;
+--DELETE FROM ticket;
+--DELETE FROM member;
 
 
 -- member
@@ -12,7 +12,7 @@ INSERT INTO member (name, email, password, nickname, birth, is_suspended, role, 
 VALUES ('혜원', '혜원', '$2a$10$Zk2RByDnzb1SlNzSy.QQg.RIW2w51yByTIDLh5WuCTKZJKVJB3ZXO', '혜원', NULL, false, 'ROLE_USER', NULL, '/img/login/profile1.png', NULL, NULL);
 
 INSERT INTO member (name, email, password, nickname, birth, is_suspended, role, oauth2id, profile_img_url, provider, provider_id)
-VALUES ('영인', '영인', '$2a$10$Zk2RByDnzb1SlNzSy.QQg.RIW2w51yByTIDLh5WuCTKZJKVJB3ZXO', '영인', NULL, false, 'ROLE_USER', NULL, '/img/login/profile2.png', NULL, NULL);
+VALUES ('영인', '영인123', '$2a$10$Zk2RByDnzb1SlNzSy.QQg.RIW2w51yByTIDLh5WuCTKZJKVJB3ZXO', '영인', NULL, false, 'ROLE_USER', NULL, '/img/login/profile2.png', NULL, NULL);
 
 INSERT INTO member (name, email, password, nickname, birth, is_suspended, role, oauth2id, profile_img_url, provider, provider_id)
 VALUES ('나래', '나래', '$2a$10$Zk2RByDnzb1SlNzSy.QQg.RIW2w51yByTIDLh5WuCTKZJKVJB3ZXO', '나래', NULL, false, 'ROLE_USER', NULL, '/img/login/profile3.png', NULL, NULL);
