@@ -368,3 +368,16 @@
     border-color: #f20487;
     color: #fff;
 }
+.form_line{
+    display: none;
+}
+@media only screen and (min-width: 1290px){
+    .form_line{
+        display: inline-block;
+    }
+}
+.userNick{
+    color: black;
+    font-size: 17px;
+    font-weight: 500;
+}

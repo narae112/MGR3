@@ -233,9 +233,9 @@
                 <!--        이미지 등록 끝-->
 
                 <div>
-                    <button th:if="${eventBoardFormDto.id == null}" th:formaction="@{/board/eventBoard/new}" class="btn btn-primary" type="submit" id="eventBoard-create">등록</button>
+                    <button th:if="${eventBoardFormDto.id == null}" th:formaction="@{/board/eventBoard/new}" class="btn mgrBtn" type="submit" id="eventBoard-create">등록</button>
 
-                    <button th:if="${eventBoardFormDto.id != null}" th:formaction="@{/board/eventBoard/edit/{id}(id=${eventBoardFormDto.id})}" class="btn btn-primary" type="submit" id="eventBoard-edit">수정완료</button>
+                    <button th:if="${eventBoardFormDto.id != null}" th:formaction="@{/board/eventBoard/edit/{id}(id=${eventBoardFormDto.id})}" class="btn mgrBtn" type="submit" id="eventBoard-edit">수정완료</button>
                 </div>
             </form>
         </div>

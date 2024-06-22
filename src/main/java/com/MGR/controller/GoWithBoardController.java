@@ -66,7 +66,8 @@ public class GoWithBoardController {
             return "board/goWith/goWithBoardForm";
         }
 
-        Member siteUser = this.memberService.getUser(member.getName());
+        Member siteUser = this.memberService.getUser(member.getEmail());
+
         System.out.println("로그인한 사용자 정보 = " + siteUser);
         // 디버깅 로그 추가
         System.out.println("ㅇㅇㅇAttraction Types: " + goWithBoardFormDto.getAttractionTypes());
@@ -126,7 +127,7 @@ public class GoWithBoardController {
     public String goWithModify(Model model, @PathVariable("id") Long id,
                                @AuthenticationPrincipal PrincipalDetails member) {
         GoWithBoard goWithBoard = this.goWithBoardService.getGoWithBoard(id);
-        if (!goWithBoard.getMember().getName().equals(member.getName())) {
+        if (!goWithBoard.getMember().getEmail().equals(member.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다");
         }
 
@@ -159,7 +160,7 @@ public class GoWithBoardController {
         }
 
         GoWithBoard goWithBoard = this.goWithBoardService.getGoWithBoard(id);
-        if (!goWithBoard.getMember().getName().equals(member.getName())) {
+        if (!goWithBoard.getMember().getEmail().equals(member.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다");
         }
 
@@ -194,7 +195,7 @@ public class GoWithBoardController {
     public String goWithDelete(@AuthenticationPrincipal PrincipalDetails member,
                                @PathVariable("id") Long id) {
         GoWithBoard goWithBoard = this.goWithBoardService.getGoWithBoard(id);
-        if (!goWithBoard.getMember().getName().equals(member.getName())) {
+        if (!goWithBoard.getMember().getEmail().equals(member.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");
         }
 
