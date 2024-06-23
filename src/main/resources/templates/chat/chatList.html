@@ -134,6 +134,9 @@
                 <a href="/chat/createRoom" class="btn btn-block">채팅방 만들기</a>
             </div>
             <ul class="list-group" id="chatRooms">
+                <li class="list-group-item" th:data-room-id="${groupChat.id}">
+                    <span th:text="${groupChat.name}"></span>
+                </li>
                 <li class="list-group-item" th:each="room : ${roomList}" th:data-room-id="${room.id}">
                     <span th:text="${room.name}"></span>
                     <span class="close-button" th:data-room-id="${room.id}" onclick="deleteRoom(this)">&times;</span>
@@ -156,26 +159,26 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.34/moment-timezone-with-data.min.js"></script>
 <script th:inline="javascript">
-    var eventSource = null;
+    var chatEventSource  = null;
     var roomId = 1;
     var currentRoomId = null;
 
     function connectToRoom(id, title) {
-        if (eventSource !== null) {
-            eventSource.close();
+        if (chatEventSource  !== null) {
+            chatEventSource .close();
         }
 
         $('#chatTitle').text(title);
 
-        eventSource = new EventSource(`/chat/subscribe?roomId=${id}`);
+        chatEventSource  = new EventSource(`/chat/subscribe?roomId=${id}`);
 
-        eventSource.addEventListener('chat', function (event) {
+        chatEventSource .addEventListener('chat', function (event) {
             const message = JSON.parse(event.data);
             showMessage(message, message.isRead ? 0 : 1); // 읽음 상태에 따라 표시
         });
 
-        eventSource.onerror = function (event) {
-            console.error('EventSource failed: ', event);
+        chatEventSource .onerror = function (event) {
+            console.error('chatEventSource  failed: ', event);
         };
 
         roomId = id;

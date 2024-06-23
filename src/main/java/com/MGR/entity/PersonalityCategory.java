@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 @Getter
 @Setter
 @Entity
-@ToString
 public class PersonalityCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,6 +22,7 @@ public class PersonalityCategory {
     public void updatePersonalityCategory(String name){
         this.name = name;
     }
+
     @Override
     public String toString() {
         return name;
