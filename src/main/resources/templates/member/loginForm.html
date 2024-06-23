@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
 
 <!-- css -->
 <th:block layout:fragment="css">
     <style>
+        .high-contrast {
+            color: #000;
+            background-color: #fff;
+        }
         .loginError{
             color: red;
-        }
-        img {
-            width: 80px;
-            margin: 0;
-            cursor: pointer;
         }
         .social-login {
             display: flex;
@@ -22,6 +22,30 @@
             flex: 1;
             display: flex;
             justify-content: center;
+            background-color: transparent;
+        }
+        .social-login a {
+            width: 80px;
+            height: 80px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            margin: 0 5px;
+        }
+        .social-login a#kakao-login {
+            background-image: url('/img/login/btn_kakao.png');
+        }
+        .social-login a#naver-login {
+            background-image: url('/img/login/btn_naver.png');
+        }
+        .social-login a#google-login {
+            background-image: url('/img/login/btn_google.png');
+        }
+        .social-login a#github-login {
+            background-image: url('/img/login/btn_github.png');
         }
     </style>
 </th:block>
@@ -39,69 +63,41 @@
             }).toString();
             passwordField.value = encryptedPassword;
         }
-
-<!--         뒤로가기 방지-->
-<!--              window.addEventListener('load', function() {-->
-<!--    if (window.history.replaceState) {-->
-<!--        window.history.replaceState(null, null, window.location.href);-->
-
-<!--        // 뒤로가기 버튼 클릭 시 바로 tickets 페이지로 이동-->
-<!--        window.onpopstate = function() {-->
-<!--            location.replace("/");-->
-<!--        };-->
-<!--    }-->
-
-<!--    // 페이지 로드 후 바로 뒤로가기 막기-->
-<!--    function preventBack() {-->
-<!--        window.history.forward();-->
-<!--    }-->
-
-<!--    setTimeout(preventBack, 0);-->
-
-<!--    // 페이지를 떠날 때 아무 동작도 하지 않도록 설정-->
-<!--    window.onunload = function () {-->
-<!--        // No action needed-->
-<!--    };-->
-<!--});-->
     </script>
 </th:block>
 
-<div layout:fragment="content" class="container my-5">
+<div layout:fragment="content" class="container d-flex flex-column align-items-center my-5">
     <div class="container my-3">
-        <h5 class="mb-5 border-bottom pb-2 text-center">로그인</h5>
+        <h3 class="mb-5 text-center" aria-label="로그인/소셜로그인/회원가입" tabindex="0">로그인</h3>
+        <hr class="col-md-4 offset-md-4 my-4">
         <div class="row justify-content-center">
             <div class="col-md-4">
                 <form th:action="@{/login}" method="POST" onsubmit="encryptPassword(event)">
                     <div class="mb-3">
-                        <label for="email"> 이메일</label>
-                        <input class="form-control" type="text" name="email" id="email"/>
+                        <label for="email">이메일</label>
+                        <input class="form-control" type="text" name="email" id="email"
+                               aria-label="이메일 입력 필드"/>
                     </div>
+
                     <div class="mb-4">
                         <label for="password"> 비밀번호</label>
-                        <input class="form-control" type="password" name="password" id="password"/>
+                        <input class="form-control" type="password" name="password" id="password"
+                               aria-label="비밀번호 입력 필드"/>
                     </div>
                     <p class="loginError" th:text="${loginError}"></p>
-                    <div class="row mb-4">
-                        <div class="col-6">
-                            <button class="btn btn-primary w-100" type="submit" id="member-create">로그인</button>
-                        </div>
-                        <div class="col-6">
-                            <button class="btn btn-primary w-100" type="button" id="member-join" onClick="location.href='/join'">회원가입</button>
-                        </div>
+                    <div class="mb-3">
+                            <button class="btn mgrBtn w-100" type="submit" id="member-create">로그인</button>
                     </div>
+                    <p class="mb-4 text-center">아직 회원이 아니신가요?<span class="form_line">&nbsp;&nbsp;&nbsp;· · · · · · · · · · · · ·&nbsp;&nbsp;&nbsp;</span>
+                        <a id="member-join" aria-label="회원가입하러가기" href="/join">회원가입 하러 가기</a>
+                    </p>
+                    <hr class="my-4">
+                    <h5 class="mb-4 text-center">SNS 간편 로그인</h5>
                     <div class="row social-login">
-                        <div class="col-3 mb-2">
-                            <img src="/img/login/btn_kakao.png" id="kakao-login" onClick="location.href='/oauth2/authorization/kakao'" alt="kakao">
-                        </div>
-                        <div class="col-3 mb-2">
-                            <img src="/img/login/btn_naver.png" id="naver-login" onClick="location.href='/oauth2/authorization/naver'" alt="naver">
-                        </div>
-                        <div class="col-3 mb-2">
-                            <img src="/img/login/btn_google.png" id="google-login" onClick="location.href='/oauth2/authorization/google'" alt="google">
-                        </div>
-                        <div class="col-3 mb-2">
-                            <img src="/img/login/btn_github.png" id="github-login" onClick="location.href='/oauth2/authorization/github'" alt="github">
-                        </div>
+                        <a class="col-3 mb-2 btn btn-primary" id="kakao-login" th:href="@{/oauth2/authorization/kakao}" aria-label="카카오 로그인" tabindex="0"> </a>
+                        <a class="col-3 mb-2 btn btn-primary" id="naver-login" th:href="@{/oauth2/authorization/naver}" aria-label="네이버 로그인" tabindex="0"> </a>
+                        <a class="col-3 mb-2 btn btn-primary" id="google-login" th:href="@{/oauth2/authorization/google}" aria-label="구글 로그인" tabindex="0"> </a>
+                        <a class="col-3 mb-2 btn btn-primary" id="github-login" th:href="@{/oauth2/authorization/github}" aria-label="깃허브 로그인" tabindex="0"></a>
                     </div>
                 </form>
             </div>

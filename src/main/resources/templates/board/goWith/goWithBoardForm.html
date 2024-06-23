@@ -8,44 +8,46 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 </head>
 <th:block layout:fragment="css">
-<style>
-    input[type="radio"] + label,
-    input[type="checkbox"] + label {
-        border: 1px solid #ccc; /* 기본 회색 테두리 */
-    }
+    <style>
+        input[type="radio"] + label,
+        input[type="checkbox"] + label {
+            border: 1px solid #ccc; /* 기본 회색 테두리 */
+        }
 
-    input[type="radio"]:checked + label,
-    input[type="checkbox"]:checked + label {
-        border-width: 2px; /* 선택된 경우 테두리 두께를 두 배로 증가 */
-        border-color: #F20487; /* 선택된 경우 핑크색 테두리로 변경 */
-    }
-    .btn-label-spacing {
-        margin: 0 10px 10px 0; /* 원하는 만큼 여백을 추가하세요 */
-    }
-    p {
-        margin: 10px 0;
-    }
-    /* 달력 크기 조정 */
-    #datepicker {
-        width: 300px; /* 너비를 300px로 설정 */
-        height: 300px; /* 높이를 300px로 설정 */
-        font-size: 1.2em; /* 폰트 크기를 1.2em으로 설정 */
-    }
+        input[type="radio"]:checked + label,
+        input[type="checkbox"]:checked + label {
+            border-width: 2px; /* 선택된 경우 테두리 두께를 두 배로 증가 */
+            border-color: #F20487; /* 선택된 경우 핑크색 테두리로 변경 */
+        }
+        .btn-label-spacing {
+            margin: 0 10px 10px 0; /* 원하는 만큼 여백을 추가하세요 */
+        }
+        p {
+            margin: 10px 0;
+        }
+        /* 달력 크기 조정 */
+        #datepicker {
+            width: 300px; /* 너비를 300px로 설정 */
+            height: 300px; /* 높이를 300px로 설정 */
+            font-size: 1.2em; /* 폰트 크기를 1.2em으로 설정 */
+        }
 
-    /* 달력 내부 폰트 크기 조정 */
-    .ui-datepicker {
-        width: 100%; /* 너비를 100%로 설정 */
-        height: 100%; /* 높이를 100%로 설정 */
-        font-size: inherit; /* 폰트 크기를 상속 */
-    }
-</style>
+        /* 달력 내부 폰트 크기 조정 */
+        .ui-datepicker {
+            width: 100%; /* 너비를 100%로 설정 */
+            height: 100%; /* 높이를 100%로 설정 */
+            font-size: inherit; /* 폰트 크기를 상속 */
+        }
+    </style>
 </th:block>
 <body>
 <div layout:fragment="content" class="container my-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
             <h3 class="mb-5 text-center">동행 구하기</h3>
-            <form id="add_member_form" th:object="${goWithBoardFormDto}" th:action="@{/goWithBoard/create}" method="post" enctype="multipart/form-data">
+            <form id="add_member_form" th:object="${goWithBoardFormDto}"
+                  th:action="${goWithBoardFormDto.id} == null ? @{/goWithBoard/create} : @{/goWithBoard/modify/{id}(id=${goWithBoardFormDto.id})}"
+                  method="post" enctype="multipart/form-data">
                 <hr/>
                 <div class="d-flex justify-content-center mb-5">
                     <div class="text-center">
@@ -91,42 +93,55 @@
                     <textarea th:field="*{content}" class="form-control" rows="10" id="content"></textarea>
                 </div>
                 <hr/>
+
                 <div class="form-group mb-3">
                     <label for="attractionTypes" class="mb-3">어트랙션 취향을 선택해보세요!</label>
                     <div class="row">
-                        <div class="col-auto" th:each="attractionType : ${attractionTypes}">
-                            <div class="mr-2 mb-2">
-                                <input type="checkbox" class="btn-check" name="attractionTypes" th:id="'attractionType' + ${attractionType.name}" th:value="${attractionType.name}" autocomplete="off">
-                                <label class="btn" th:for="'attractionType' + ${attractionType.name}" th:text="${attractionType.name}"></label>
+                        <div class="col">
+                            <div class="d-flex flex-row flex-wrap">
+                                <div th:each="attractionType : ${attractionTypes}" th:if="${attractionType.name != ''}" class="me-2 mb-2">
+                                    <input type="checkbox" class="btn-check" name="attractionTypes" th:id="'attractionType' + ${attractionType.name}" th:value="${attractionType.name}" autocomplete="off">
+                                    <label class="btn" th:for="'attractionType' + ${attractionType.name}" th:text="${attractionType.name}"></label>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <hr/>
+
                 <div class="form-group mb-3">
-                    <label for="afterTypes" class="mb-3">동행을 끝낼 때, 어떻게 하고 싶으신가요?</label>
+                    <label for="afterTypes" class="mb-3">즐거운 동행을 마치고, 당신의 다음 스텝은?</label>
                     <div class="row">
-                        <div class="col-auto" th:each="afterType : ${afterTypes}">
-                            <div class="mr-2 mb-2">
-                                <input type="checkbox" class="btn-check" name="afterTypes" th:id="'afterType' + ${afterType.name}" th:value="${afterType.name}" autocomplete="off">
-                                <label class="btn" th:for="'afterType' + ${afterType.name}" th:text="${afterType.name}"></label>
+                        <div class="col">
+                            <div class="d-flex flex-row flex-wrap">
+                                <div th:each="afterType : ${afterTypes}" th:if="${afterType.name != ''}" class="me-2 mb-2">
+                                    <input type="checkbox" class="btn-check" name="afterTypes" th:id="'afterType' + ${afterType.name}" th:value="${afterType.name}" autocomplete="off">
+                                    <label class="btn" th:for="'afterType' + ${afterType.name}" th:text="${afterType.name}"></label>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <hr/>
+
                 <div class="form-group mb-3">
                     <label for="personalities" class="mb-3">성격에 맞는 키워드를 선택해주세요!</label>
                     <div class="row">
-                        <div class="col-auto" th:each="personality : ${personalities}">
-                            <div class="mr-2 mb-2">
-                                <input type="checkbox" class="btn-check" name="personalities" th:id="'personality' + ${personality.name}" th:value="${personality.name}" autocomplete="off">
-                                <label class="btn" th:for="'personality' + ${personality.name}" th:text="${personality.name}"></label>
+                        <div class="col">
+                            <div class="d-flex flex-row flex-wrap">
+                                <div th:each="personality : ${personalities}" th:if="${personality.name != ''}" class="me-2 mb-2">
+                                    <input type="checkbox" class="btn-check" name="personalities" th:id="'personality' + ${personality.name}" th:value="${personality.name}" autocomplete="off">
+                                    <label class="btn" th:for="'personality' + ${personality.name}" th:text="${personality.name}"></label>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <hr/>
+
                 <div id="imageUploadContainer" class="form-group mb-3">
                     <label class="form-group mb-3">이미지 업로드하기</label>
                     <input type="file" class="form-control goWithImgFile" name="goWithImgFile" id="fileInput0">
@@ -136,8 +151,8 @@
                     <input type="file" class="form-control goWithImgFile" name="goWithImgFile" id="fileInput4" style="display: none;">
                 </div>
                 <div class="text-center">
-                    <input type="submit" value="저장하기" class="btn btn-primary my-2">
-                    <button type="button" class="btn btn-secondary mx-2 my-2">취소</button>
+                    <input type="submit" value="저장하기" class="mgrBtn btn my-2">
+                    <a class="btn btn-light mx-2 my-2" href="/goWithBoard/list">취소</a>
                 </div>
             </form>
         </div>

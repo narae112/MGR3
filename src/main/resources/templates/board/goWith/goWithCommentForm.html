@@ -14,7 +14,7 @@
         <div class="col-md-6">
             <h3 class="mb-5 text-center">댓글 수정</h3>
             <!-- 답변 수정 폼 -->
-            <form th:object="${goWithCommentForm}" method="post">
+            <form th:object="${goWithCommentFormDto}" method="post">
 
                 <!-- 폼 에러 메시지 표시 부분 -->
                 <div th:replace="board/goWith/form_errors :: formErrorsFragment"></div>

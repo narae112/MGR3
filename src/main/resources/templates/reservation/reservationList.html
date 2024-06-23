@@ -126,6 +126,7 @@
                         location.href = '/member/login';
                     } else {
                         alert(jqXHR.responseText);
+                        location.href = '/member/reservations';
                     }
                 }
             });
@@ -149,7 +150,7 @@
                 cache   : false,
                 success  : function(result, status){
                     alert("티켓 예약이 취소 되었습니다.");
-                    location.href='/member/reservations/' + [[${page}]];
+                    location.href='/member/reservations';
                 },
                 error : function(jqXHR, status, error){
                     if(jqXHR.status == '401'){
@@ -231,8 +232,7 @@
 </th:block>
 
 <div layout:fragment="content" class="content-mg">
-
-    <h2 class="mb-4">
+    <h2 class="mb-4 text-center" title="티켓 예약 내역" tabindex="0">
         티켓 예약 내역
     </h2>
 
@@ -248,7 +248,7 @@
             <thead>
             <tr class="text-center">
                 <td>
-                    <input type="checkbox" id="checkAll" onclick="checkAll()"> 전체
+                    <input type="checkbox" id="checkAll" onclick="checkAll()" title="모두 선택" tabindex="0"> 전체
                 </td>
                 <td>티켓 정보</td>
                 <td>방문 예정일</td>
@@ -258,19 +258,16 @@
             </thead>
             <tbody>
             <!-- 예약 티켓 항목 -->
-            <tr th:each="reservationTicket : ${reservationTickets}">
-                <!--            <tr>-->
-                <!--                <td th:text="'예약날짜' + ${reservationTicket.reservationDate}"></td>-->
-                <!--            </tr>-->
-                <td class="text-center align-middle"><!-- 체크박스 -->
+            <tr th:each="reservationTicket, iterStat : ${paging.content}">
+                <td class="text-center align-middle">
                     <th:block th:if="${reservationTicket.reservationStatus == T(com.MGR.constant.ReservationStatus).RESERVE}">
-                        <input type="checkbox" name="reserveChkBox" th:value="${reservationTicket.reservationTicketId}">
+                        <input type="checkbox" tabindex="0" name="reserveChkBox" th:value="${reservationTicket.reservationTicketId}" th:title="'[' + ${reservationTicket.locationCategory.displayName} + '점] ' + ${reservationTicket.name} + '을 선택하시겠습니까?'">
                     </th:block>
-                </td><!-- 티켓 정보 -->
+                </td>
                 <td class="d-flex">
                     <div class="align-self-center">
-                        <span th:text="'[' + ${reservationTicket.locationCategory.displayName} + '점] '
-                        + ${reservationTicket.name}" class="fs24 font-weight-bold"></span>
+                        <span th:text="'[' + ${reservationTicket.locationCategory.displayName} + '점] ' + ${reservationTicket.name}" class="fs24 font-weight-bold" ></span>
+
                         <!-- [지점]티켓 이름 -->
                         <div class="row g-2">
                             <div class="col">
@@ -281,78 +278,80 @@
                                 </span>
                                 <!-- 성인 수량 -->
                                 <input type="number" name="adultCount" th:id="'adultCount_' + ${reservationTicket.reservationTicketId}"
-                                       th:value="${reservationTicket.adultCount}" min="1" onchange="changeAdultCount(this)" class="form-control" >
+                                       th:value="${reservationTicket.adultCount}" min="1" onchange="changeAdultCount(this)" class="form-control" tabindex="0"
+                                       th:title="'[성인 티켓의 수량은' + ${reservationTicket.adultCount} + '개 입니다. 수정하시겠습니까?] '">
                             </div>
                             <div class="col">
-                            <!-- 아동 금액 -->
+                                <!-- 아동 금액 -->
                                 <span th:id="'childPrice_' + ${reservationTicket.reservationTicketId}"
                                       th:data-price="${reservationTicket.childPrice}"
-                                      th:text="'[아동] ' + ${#numbers.formatInteger(reservationTicket.childPrice, 0, 'COMMA')} + '원'" class="align-self-center me-2">
+                                      th:text="'[아동] ' + ${#numbers.formatInteger(reservationTicket.childPrice, 0, 'COMMA')} + '원'"
+                                      class="align-self-center me-2">
                                 </span>
                                 <!-- 아동 수량 -->
-                                <input type="number" name="childCount" th:id="'childCount_' + ${reservationTicket.reservationTicketId}"
-                                       th:value="${reservationTicket.childCount}" min="0" onchange="changeChildCount(this)" class="form-control" >
+                                <input type="number" name="childCount"
+                                       th:id="'childCount_' + ${reservationTicket.reservationTicketId}"
+                                       th:value="${reservationTicket.childCount}"
+                                       min="0"
+                                       onchange="changeChildCount(this)"
+                                       class="form-control"
+                                       tabindex="0"
+                                       th:title="'[어린이 티켓의 수량은' + ${reservationTicket.childCount} + '개 입니다. 수정하시겠습니까?] '">
                             </div>
                         </div>
                     </div>
                 </td>
-                <td class="text-center align-middle"><!-- 방문 예정일 -->
-                    <span th:text="${reservationTicket.visitDate}"></span>
-                </td>
-                <td class="text-center align-middle"><!-- 예약 상태 -->
-                    <th:block th:if="${reservationTicket.reservationStatus == T(com.MGR.constant.ReservationStatus).RESERVE}">
-                        <span>예&nbsp&nbsp&nbsp약</span><br/>
-                        <button type="button" class="btn btn-outline-secondary btn-sm" th:value="${reservationTicket.reservationTicketId}"
-                                onclick="cancelReservation(this.value)">예약 취소</button>
-                    </th:block>
-                    <th:block th:if="${reservationTicket.reservationStatus == T(com.MGR.constant.ReservationStatus).CANCEL}">
-                        <span>취소 완료</span>
-                    </th:block>
-<!--                    <th:block th:if="${reservationTicket.reservationStatus == T(com.MGR.constant.ReservationStatus).PAYED}">-->
-<!--                        <span>결제 완료</span>-->
-<!--                        <button type="button" class="btn btn-outline-secondary" th:value="${reservationTicket.reservationTicketId}"-->
-<!--                                onclick="cancelOrder(this.value)">결제 취소</button>-->
-<!--                    </th:block>-->
+                <td class="text-center align-middle">
+                    <span th:text="${reservationTicket.visitDate}" tabindex="0"></span>
                 </td>
                 <td class="text-center align-middle">
-                    <span th:id="'totalPrice_' + ${reservationTicket.reservationTicketId}"
-                          name="totalPrice" th:text="${#numbers.formatInteger((reservationTicket.adultPrice * reservationTicket.adultCount) + (reservationTicket.childPrice * reservationTicket.childCount), 0, 'COMMA')} + '원'"><!-- 티켓 한 항목 당 수량 * 가격 -->
-                    </span>
+                    <th:block th:if="${reservationTicket.reservationStatus == T(com.MGR.constant.ReservationStatus).RESERVE}">
+                        <span tabindex="0" aria-label="예약 상태는 예약입니다">예&nbsp;&nbsp;&nbsp;약</span><br/>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" th:value="${reservationTicket.reservationTicketId}" onclick="cancelReservation(this.value)" tabindex="0">예약 취소</button>
+                    </th:block>
+                    <th:block th:if="${reservationTicket.reservationStatus == T(com.MGR.constant.ReservationStatus).CANCEL}">
+                        <span tabindex="0" aria-label="예약 상태는 취소입니다">취소 완료</span>
+                    </th:block>
+                </td>
+                <td class="text-center align-middle">
+                    <span th:id="'totalPrice_' + ${reservationTicket.reservationTicketId}" name="totalPrice" th:text="${#numbers.formatInteger((reservationTicket.adultPrice * reservationTicket.adultCount) + (reservationTicket.childPrice * reservationTicket.childCount), 0, 'COMMA')} + '원'" tabindex="0"></span>
                 </td>
             </tr>
             </tbody>
         </table>
 
-        <!-- Paging -->
-        <div class="Page text-center">
-            <ul class="pagination page-reservation">
-                <!-- 이전 버튼 -->
-                <li th:class="${page == 0} ? 'page-item disabled' : 'page-item'">
-                    <a th:href="@{~/member/reservations/{page}(page=${page - 1})}" class="page-link">&laquo;</a>
+        <nav aria-label="Page navigation">
+            <ul class="pagination d-flex justify-content-center">
+                <li class="page-item" th:classappend="${paging.first} ? 'disabled'">
+                    <a class="page-link" th:if="${!paging.first}" th:href="@{|~/member/reservations/${paging.number - 1}|}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                    <a th:if="${paging.first}" class="page-link disabled" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
                 </li>
-
-                <!-- 페이지 번호 -->
-                <li th:each="i : ${#numbers.sequence(0, maxPage - 1)}" th:classappend="${i == page} ? ' active' : ''" class="page-item">
-                    <a th:href="@{~/member/reservations/{page}(page=${i})}" class="page-link" th:text="${i + 1}"></a>
+                <li class="page-item" th:each="i : ${#numbers.sequence(1, paging.totalPages > 0 ? paging.totalPages : 1)}"
+                    th:classappend="${paging.number == i - 1} ? 'active'">
+                    <a class="page-link" th:href="@{|~/member/reservations/${i - 1}|}" th:text="${i}">1</a>
                 </li>
-
-                <!-- 다음 버튼 -->
-                <li th:class="${page == maxPage - 1} ? 'page-item disabled' : 'page-item'">
-                    <a th:href="@{~/member/reservations/{page}(page=${page + 1})}" class="page-link">&raquo;</a>
+                <li class="page-item" th:classappend="${paging.last} ? 'disabled'">
+                    <a class="page-link" th:if="${!paging.last}" th:href="@{|~/member/reservations/${paging.number + 1}|}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                    <a th:if="${paging.last}" class="page-link disabled" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
                 </li>
             </ul>
-        </div>
+        </nav>
 
 
         <h2 class="text-center">
-            총 결제 금액 : <span id="orderTotalPrice" class="text-danger">0원</span><!-- 체크된 예약 티켓 항목 전체 금액 -->
+            <span tabindex="0"> 총 결제 금액 </span>: <span id="orderTotalPrice" class="text-danger" tabindex="0">0원</span><!-- 체크된 예약 티켓 항목 전체 금액 -->
         </h2>
 
         <div class="text-center mt-3">
-<!--            <button type="button" class="btn btn-primary btn-lg" onclick="orders()">결제하기</button>-->
             <button id="paymentButton" type="button" class="btn btn-primary btn-lg" onclick="orders()" disabled>결제하기</button>
         </div>
     </div>
-
 </div>
-</html>

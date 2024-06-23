@@ -1,14 +1,21 @@
 package com.MGR.service;
 
+import com.MGR.constant.EventType;
 import com.MGR.dto.EventBoardFormDto;
+import com.MGR.entity.Attraction;
 import com.MGR.entity.EventBoard;
 import com.MGR.entity.Image;
 import com.MGR.entity.Member;
 import com.MGR.repository.EventBoardRepository;
+import com.MGR.repository.ImageRepository;
+import com.MGR.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.*;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -30,6 +38,7 @@ public class EventBoardService {
     private final EventBoardRepository eventBoardRepository;
     private final ImageService imageService;
     private final NotificationService notificationService;
+
 
     @Transactional
     @Scheduled(cron = "0 0 0 * * ?")  // 이벤트가 진행중인 게시글의 진행여부를 매일 자정에 업데이트
@@ -121,7 +130,7 @@ public class EventBoardService {
         eventBoardRepository.delete(eventBoard);
     }
 
-    public EventBoard update(Long id, EventBoard boardFormDto, List<MultipartFile> imgFileList) throws Exception {
+    public EventBoard update(Long id, EventBoardFormDto boardFormDto, List<MultipartFile> imgFileList) throws Exception {
         EventBoard eventBoard = eventBoardRepository.findById(id).orElseThrow();
         eventBoard.setContent(boardFormDto.getContent());
         eventBoard.setTitle(boardFormDto.getTitle());
@@ -148,5 +157,45 @@ public class EventBoardService {
             }
         }
         return currentEventList;
+    }
+
+    @Bean
+    public CommandLineRunner initEventBoard(PasswordEncoder passwordEncoder, EventBoardRepository eventBoardRepository, MemberRepository memberRepository) {
+        return args -> {
+
+            Member member = memberRepository.findByRole("ROLE_ADMIN");
+
+            if (member != null) {
+
+                List<EventBoard> eventBoards = List.of(
+                        new EventBoard(EventType.EVENT, "현대M포인트 프로모션 ", " ", "2024-06-01", "2024-06-30", member),
+                        new EventBoard(EventType.EVENT, "슬기로운 MGR 생활", " ", "2024-06-01", "2024-07-31", member),
+                        new EventBoard(EventType.EVENT, "슬기로운 네이버페이 생활(온라인/모바일 예매)", " ", "2024-06-01", "2024-08-31", member),
+                        new EventBoard(EventType.EVENT, "조선시대 교복체험 패키지", " ", "2024-06-01", "2024-09-30", member),
+                        new EventBoard(EventType.EVENT, "혜택은 KT가 준비할게, MGR는 누가 올래?", " ", "2024-06-01", "2024-10-31", member),
+                        new EventBoard(EventType.EVENT, "케이뱅크 여름나들이 이벤트", " ", "2024-06-01", "2024-11-30", member),
+                        new EventBoard(EventType.NOTICE, "주차시스템 개선 안내", " ", "2024-06-01", "2024-12-31", member)
+                );
+
+                for (int i = 0; i < eventBoards.size(); i++) {
+                    EventBoard eventBoard = eventBoards.get(i);
+
+                    if (!eventBoardRepository.findByTitle(eventBoard.getTitle()).isPresent()) {
+                        eventBoardRepository.save(eventBoard);
+
+                        Image image = new Image();
+                        image.setEventBoard(eventBoard);
+                        if (i == 0) {
+                            image.setImgOriName("event" + (i + 1) + ".png");
+                            image.setImgUrl("/images/board/event" + (i + 1) + ".png");
+                        } else {
+                            image.setImgOriName("event" + (i + 1) + ".jpg");
+                            image.setImgUrl("/images/board/event" + (i + 1) + ".jpg");
+                        }
+                        imageService.save(image);
+                    }
+                }
+            }
+        };
     }
 }

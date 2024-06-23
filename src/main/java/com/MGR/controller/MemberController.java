@@ -51,6 +51,19 @@ public class MemberController {
             //메일 인증번호 검증
             return "member/joinForm";
         }
+
+        // 이메일 중복 검사
+        if (memberService.emailCheck(memberFormDto.getEmail()) == 1) {
+            model.addAttribute("emailError", "이미 사용 중인 이메일입니다.");
+            return "member/joinForm";
+        }
+
+        // 닉네임 중복 검사
+        if (memberService.nicknameCheck(memberFormDto.getNickname()) == 1) {
+            model.addAttribute("nicknameError", "이미 사용 중인 닉네임입니다.");
+            return "member/joinForm";
+        }
+
         try {
             Member member = Member.createMember(memberFormDto, passwordEncoder);
             memberService.saveMember(member);
@@ -58,7 +71,7 @@ public class MemberController {
             model.addAttribute("errors2", e.getMessage());
             return "member/joinForm";
         }
-        return "redirect:/";
+        return "member/loginForm";
     }
 
     @GetMapping("/edit")

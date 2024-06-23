@@ -37,11 +37,19 @@ public class CouponService {
     private final MemberService memberService;
     private final MemberCouponRepository memberCouponRepository;
 
-     @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
+    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
     public void sendBirthdayCoupons() {
         LocalDate currentDate = LocalDate.now();
         List<Member> membersWithBirthdayToday = memberService.findMembersWithBirthdayToday();
         List<Coupon> birthdayCoupons = couponRepository.findByCouponType(CouponType.BIRTH);
+
+        // 쿠폰의 할인율을 설정합니다.
+        Integer discountRate = 10; // 10%
+
+        for (Coupon coupon : birthdayCoupons) {
+            coupon.setDiscountRate(discountRate);
+            couponRepository.save(coupon);
+        }
 
         for (Member member : membersWithBirthdayToday) {
             for (Coupon coupon : birthdayCoupons) {

@@ -22,4 +22,5 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> ,
     List<Ticket> findByMemoByNative(@Param("memo") String memo);
     boolean existsByName(String name);
     boolean existsByNameAndIdNot(String name, Long id);
+         Optional<Ticket> findByName(String name);
 }

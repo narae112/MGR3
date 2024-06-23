@@ -60,6 +60,8 @@ public class EventBoard {
         //-> 시작~끝 기간 안에 현재 날짜가 없으면 false
     }
 
+    public EventBoard() {}
+
     public String dateFormat(){
         LocalDateTime dateTime = LocalDateTime.now();
         SimpleDateFormat createDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -78,10 +80,6 @@ public class EventBoard {
         board.setMember(member);
 
         board.isEventActive(boardFormDto.getStartDate(),boardFormDto.getEndDate());
-        //이벤트가 진행중인지 확인 후 변수에 넣음
-        System.out.println(boardFormDto.getStartDate());
-        System.out.println(boardFormDto.getEndDate());
-        System.out.println(board.isEventCurrent.toString());
 
         return board;
 
@@ -91,5 +89,15 @@ public class EventBoard {
         return this.count += 1;
     }
 
-
+    public EventBoard(EventType type, String title, String content, String startDate, String endDate, Member member) {
+        this.type = type;
+        this.title = title;
+        this.content = content;
+        this.createDate = LocalDateTime.now();
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.member = member;
+        this.isEventCurrent = true;
+        this.count = 0;
+    }
 }

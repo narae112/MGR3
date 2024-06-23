@@ -19,6 +19,7 @@ Author: GrayGrids
     /*=====================================
     Sticky
     ======================================= */
+document.addEventListener("DOMContentLoaded", function () {
     window.onscroll = function () {
         var nav_logo = document.querySelector(".nav_logo");
         var nav_logo_color = document.querySelector(".nav_logo_color");
@@ -31,7 +32,7 @@ Author: GrayGrids
             nav_logo_color.style.display = "block";
         }
 
-        var header_navbar = document.querySelector(".navbar-area");
+        var header_navbar = document.querySelector(".navbar-area.main");
         var sticky = header_navbar.offsetTop;
 
         if (window.pageYOffset > sticky) {
@@ -50,6 +51,7 @@ Author: GrayGrids
         }
 
     };
+});
 
     // WOW active
     new WOW().init();

@@ -1,5 +1,6 @@
 package com.MGR.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,6 +29,10 @@ public class ChatRoom {
 
     @Column
     private Boolean isGlobal = false;
+
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Chat> chats;
 
     @Builder
     public ChatRoom(String name, Member sender, Member receiver, boolean isGlobal) {

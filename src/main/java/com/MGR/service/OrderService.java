@@ -3,6 +3,7 @@ package com.MGR.service;
 import com.MGR.constant.ReservationStatus;
 import com.MGR.dto.OrderDto;
 import com.MGR.dto.OrderListDto;
+import com.MGR.dto.OrderSearchDto;
 import com.MGR.dto.OrderTicketDto;
 import com.MGR.entity.*;
 import com.MGR.repository.*;
@@ -13,10 +14,11 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -109,13 +111,6 @@ public class OrderService {
         for (Order order : orderPage) {
             OrderListDto orderListDto = new OrderListDto(order);
 
-            // 주문에 대한 티켓 정보를 가져와서 OrderTicketDto로 변환하여 추가
-            List<OrderTicket> orderTickets = orderTicketRepository.findByOrderId(order.getId());
-            for (OrderTicket orderTicket : orderTickets) {
-                OrderTicketDto orderTicketDto = new OrderTicketDto(orderTicket);
-                orderListDto.addOrderTicket(orderTicketDto);
-            }
-
             // 회원 쿠폰 정보를 가져와서 할인율 설정
             MemberCoupon memberCoupon = memberCouponRepository.findAllByMemberIdAndOrderId(memberId, order.getId());
             if (memberCoupon != null) {
@@ -160,4 +155,44 @@ public class OrderService {
         return new PageImpl<>(orderListDtos, pageable, orderPage.getTotalElements());
     }
 
+   public Page<OrderListDto> getAllOrderGraph(OrderSearchDto orderSearchDto, Pageable pageable) {
+        Page<Order> orders = orderRepository.getOrderPage(orderSearchDto, pageable);
+        return orders.map(order -> new OrderListDto(order));
+    }
+
+    // 날짜별 총 결제 금액을 계산하는 메소드
+    public Map<LocalDate, Integer> getTotalPriceByDate(List<OrderListDto> orderList) {
+        Map<LocalDate, Integer> totalPriceByDate = new HashMap<>();
+        for (OrderListDto orderDto : orderList) {
+            LocalDate orderDate = orderDto.getOrderDate().toLocalDate();
+            int totalPrice = orderDto.calculateTotalPrice();
+            totalPriceByDate.merge(orderDate, totalPrice, Integer::sum);
+        }
+        return totalPriceByDate;
+    }
+
+
+    public Map<LocalDate, Integer> getChildCountByDate(List<OrderListDto> orderList) {
+        Map<LocalDate, Integer> childCountByDate = new HashMap<>();
+        for (OrderListDto orderDto : orderList) {
+            LocalDate orderDate = orderDto.getOrderDate().toLocalDate();
+            int childCount = orderDto.calculateChildCount();
+            childCountByDate.merge(orderDate, childCount, Integer::sum);
+        }
+        return childCountByDate;
+    }
+
+    public Map<LocalDate, Integer> getAdultCountByDate(List<OrderListDto> orderList) {
+        Map<LocalDate, Integer> adultCountByDate = new HashMap<>();
+        for (OrderListDto orderDto : orderList) {
+            LocalDate orderDate = orderDto.getOrderDate().toLocalDate();
+            int adultCount = orderDto.calculateAdultCount();
+            adultCountByDate.merge(orderDate, adultCount, Integer::sum);
+        }
+        return adultCountByDate;
+    }
+
+    public List<OrderTicket> findOrderTicketByOrderId(Long id) {
+        return orderTicketRepository.findByOrderId(id);
+    }
 }

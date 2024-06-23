@@ -18,6 +18,16 @@ public class AESUtil {
         return new String(decryptedBytes);
     }
 
+    public static String decrypt(String encryptedText, String base64Key) throws Exception {
+        byte[] decodedKey = Base64.getDecoder().decode(base64Key);
+        SecretKeySpec keySpec = new SecretKeySpec(decodedKey, "AES");
+        Cipher cipher = Cipher.getInstance(ALGORITHM);
+        cipher.init(Cipher.DECRYPT_MODE, keySpec);
+        byte[] decodedBytes = Base64.getDecoder().decode(encryptedText);
+        byte[] decryptedBytes = cipher.doFinal(decodedBytes);
+        return new String(decryptedBytes);
+    }
+
     public static String encrypt(String plainText, String base64Key) throws Exception {
         byte[] decodedKey = Base64.getDecoder().decode(base64Key);
         SecretKeySpec keySpec = new SecretKeySpec(decodedKey, "AES");

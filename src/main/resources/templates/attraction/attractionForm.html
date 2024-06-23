@@ -120,11 +120,11 @@
 
         <button th:if="${#strings.isEmpty(attractionDto.id)}"
                 th:formaction="@{'/attraction/create'}"
-                class="btn btn-primary" type="submit" id="attraction-create">등록</button>
+                class="btn mgrBtn" type="submit" id="attraction-create">등록</button>
 
         <button th:unless="${#strings.isEmpty(attractionDto.id)}"
                 th:formaction="@{'/attraction/update/' + ${attractionDto.id}}"
-                class="btn btn-primary" type="submit" id="attraction-edit">수정완료</button>
+                class="btn mgrBtn" type="submit" id="attraction-edit">수정완료</button>
     </form>
 </div>
 </html>

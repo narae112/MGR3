@@ -2,6 +2,7 @@ package com.MGR.entity;
 
 import com.MGR.dto.AttractionDto;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,5 +31,14 @@ public class Attraction {
         attraction.setClosureDay(attractionDto.getClosureDay());
 
         return attraction;
+    }
+
+    public Attraction() {
+    }
+
+    public Attraction(String name, String information, int closureDay) {
+        this.name = name;
+        this.closureDay = closureDay;
+        this.information = information;
     }
 }

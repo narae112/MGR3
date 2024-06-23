@@ -4,6 +4,7 @@ import com.MGR.dto.ReservationDtlDto;
 import com.MGR.dto.ReservationOrderDto;
 import com.MGR.dto.ReservationTicketDto;
 import com.MGR.entity.ReservationTicket;
+import com.MGR.exception.InsufficientInventoryException;
 import com.MGR.security.PrincipalDetails;
 import com.MGR.service.ReservationService;
 import jakarta.validation.Valid;
@@ -57,16 +58,20 @@ public class ReservationController {
     }
 
     // 예약 내역 보기
-    @GetMapping(value = {"/reservations", "/reservations/{page}"})
-    public String reservationList(@PathVariable("page") Optional<Integer> page, @AuthenticationPrincipal PrincipalDetails member, Model model) {
+    @GetMapping({"/reservations", "/reservations/{page}"})
+    public String reservationList(Model model,
+                                  @PathVariable(value = "page", required = false) Integer page,
+                                  @AuthenticationPrincipal PrincipalDetails member){
 
-        Pageable pageable = PageRequest.of(page.orElse(0), 4);
-        Page<ReservationDtlDto> reservationDtlList = reservationService.getReservationList(member.getUsername(), pageable);
+        if (page == null) {
+            page = 0; // 페이지 값이 없을 경우 기본값을 0으로 설정
+        }
 
-        model.addAttribute("reservationTickets", reservationDtlList);
-        model.addAttribute("page", pageable.getPageNumber());
-        model.addAttribute("maxPage", reservationDtlList.getTotalPages());
-        System.out.println("reservationDtlList.getTotalPages() = " + reservationDtlList.getTotalPages());
+        Page<ReservationDtlDto> paging = reservationService.getReservationList(member.getUsername(), PageRequest.of(page, 4));
+        model.addAttribute("paging", paging);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", paging.getTotalPages());
+
         return "reservation/reservationList";
     }
 
@@ -74,22 +79,29 @@ public class ReservationController {
     @PatchMapping("/reservationTicket/{reservationTicketId}")
     public @ResponseBody ResponseEntity<?> updateReserveTicket(@PathVariable("reservationTicketId") Long reservationTicketId,
                                                                @RequestBody ReservationTicket updateRequest,
-                                                            @AuthenticationPrincipal PrincipalDetails member) {
+                                                               @AuthenticationPrincipal PrincipalDetails member) {
         System.out.println("reservationTicketId = " + reservationTicketId);
         System.out.println("adultCount = " + updateRequest.getAdultCount());
         System.out.println("childCount = " + updateRequest.getChildCount());
 
         Integer adultCount = updateRequest.getAdultCount();
         Integer childCount = updateRequest.getChildCount();
+
         if (adultCount == null || adultCount < 1 || childCount == null || childCount < 0) {
             // 조건을 만족하지 않으면 요청을 처리하지 않고 BadRequest를 반환
             return new ResponseEntity<String>("입력 값이 올바르지 않습니다", HttpStatus.BAD_REQUEST);
         }
 
-        if(!reservationService.validateReserveTicket(reservationTicketId, member.getUsername())) {
+        if (!reservationService.validateReserveTicket(reservationTicketId, member.getUsername())) {
             return new ResponseEntity<String>("수정 권한이 없습니다", HttpStatus.FORBIDDEN);
         }
-        reservationService.updateReservationTicketCount(reservationTicketId, adultCount, childCount);
+
+        try {
+            reservationService.updateReservationTicketCount(reservationTicketId, adultCount, childCount);
+        } catch (InsufficientInventoryException e) {
+            // 재고 부족 예외 처리
+            return new ResponseEntity<String>("재고가 부족합니다", HttpStatus.BAD_REQUEST);
+        }
 
         return new ResponseEntity<>(reservationTicketId, HttpStatus.OK);
     }
@@ -127,8 +139,4 @@ public class ReservationController {
 
         return new ResponseEntity<Long>(orderId, HttpStatus.OK);
     }
-
-
-
-
 }

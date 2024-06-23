@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface EventBoardRepository extends JpaRepository<EventBoard, Long> {
 
@@ -17,4 +18,6 @@ public interface EventBoardRepository extends JpaRepository<EventBoard, Long> {
 
     @Override
     Page<EventBoard> findAll(Pageable pageable);
+
+    Optional<Object> findByTitle(String title);
 }

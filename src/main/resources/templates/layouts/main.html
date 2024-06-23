@@ -3,6 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>MERRY GO RIDE.｡.:*☆</title>
 
     <!-- 파비콘(브라우저탭 아이콘) -->
@@ -41,6 +42,21 @@
             right: 0 !important;
             transform: translate(50%, -50%) !important;
         }
+
+        .skip-nav {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #000;
+            color: #fff;
+            padding: 8px;
+            z-index: 100;
+            transition: top 0.3s;
+        }
+
+        .skip-nav:focus {
+            top: 0;
+        }
     </style>
     <th:block layout:fragment="script"></th:block>
     <th:block layout:fragment="css"></th:block>
@@ -48,21 +64,25 @@
 </head>
 <body>
 
+<a href="#header" class="skip-nav">메인 메뉴로 바로가기</a>
+<a href="#content" class="skip-nav">본문 내용으로 바로가기</a>
+<a href="#footer" class="skip-nav">하단 내용으로 바로가기</a>
+
 <script type="text/javascript" src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 <script src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 
-<div th:replace="~{layouts/mainHeader::mainHeader}"></div>
+<div th:replace="~{layouts/mainHeader::mainHeader}" id="header"></div>
 
-<div layout:fragment="content" >
+<div layout:fragment="content" id="content">
 
 </div>
 
-<div th:replace="~{layouts/footer::footer}"></div>
+<div th:replace="~{layouts/mainFooter::mainFooter}" id="footer"></div>
+
 
 <script>
 
 $(document).ready(function() {
-
 
 <!--     알림 수 가져오기-->
     $.ajax({
@@ -106,18 +126,20 @@ $(document).ready(function() {
         $('#notificationCount').text(numericCount); // 연산 결과를 다시 설정
     }
 
-    function displayMessage(message, id, reviewId) {
-        const messagesDiv = document.getElementById('notify');
-        const fragment = document.createDocumentFragment();
-        const cardElement = document.createElement('div');
-        cardElement.className = 'card mb-3';
+            function displayMessage(message, id, reviewId, goWidthBoardId) {
+                const messagesDiv = document.getElementById('notify');
+                const fragment = document.createDocumentFragment();
+                const cardElement = document.createElement('div');
+                cardElement.className = 'card mb-3';
 
-        let messageHtml = '';
-        if (reviewId !== null && reviewId !== undefined) {
-            messageHtml = `<a href="/review/board/detail/${reviewId}" class="card-text mb-0 flex-grow-1">${message}</a>`;
-        } else {
-            messageHtml = `<p class="card-text mb-0 flex-grow-1">${message}</p>`;
-        }
+                let messageHtml = '';
+                if (reviewId !== null && reviewId !== undefined) {
+                    messageHtml = `<a href="/review/board/detail/${reviewId}" class="card-text mb-0 flex-grow-1">${message}</a>`;
+                } else if (goWidthBoardId !== null && goWidthBoardId !== undefined) {
+                    messageHtml = `<a href="/goWithBoard/detail/${goWidthBoardId}" class="card-text mb-0 flex-grow-1">${message}</a>`;
+                } else {
+                    messageHtml = `<p class="card-text mb-0 flex-grow-1">${message}</p>`;
+                }
 
         cardElement.innerHTML = `
             <div class="card-body d-flex align-items-center">
@@ -144,7 +166,7 @@ $(document).ready(function() {
                     const messagesDiv = document.getElementById('notify');
                     messagesDiv.innerHTML = ''; // 기존 알림 지우기
                     notifications.reverse().forEach(notification => {
-                        displayMessage(notification.message, notification.id, notification.reviewId);
+                        displayMessage(notification.message, notification.id, notification.reviewId, notification.goWidthBoardId);
                     });
                     notificationsLoaded = true; // 알림 로드 상태 업데이트
                 },
