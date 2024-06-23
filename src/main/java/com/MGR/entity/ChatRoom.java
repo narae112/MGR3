@@ -30,8 +30,8 @@ public class ChatRoom {
     @Column
     private Boolean isGlobal = false;
 
-    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @OneToMany
+    @JoinColumn(name = "roomId", referencedColumnName = "chatRoom_id")
     private List<Chat> chats;
 
     @Builder

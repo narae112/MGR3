@@ -5,6 +5,8 @@ import com.MGR.repository.CouponRepository;
 import com.MGR.repository.MemberCouponRepository;
 import com.MGR.repository.NotificationRepository;
 import com.MGR.repository.OrderRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.text.NumberFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,6 +34,7 @@ public class NotificationService {
     private final Map<Long, Map<Long, SseEmitter>> roomEmitters = new ConcurrentHashMap<>();
     // 1. 모든 Emitters 를 저장하는 ConcurrentHashMap
 
+    private final ObjectMapper objectMapper = new ObjectMapper(); // ObjectMapper 인스턴스 추가
     // 메시지 알림
     public SseEmitter subscribe(Long memberId) {
 
@@ -288,6 +292,25 @@ public class NotificationService {
         return sseEmitter;
     }
 
+//    @Transactional
+//    public void sendMessage(Long roomId, Long fromId, String message) {
+//        Map<Long, SseEmitter> userEmitters = roomEmitters.get(roomId);
+//        Member member = memberService.findById(fromId).orElseThrow();
+//        if (userEmitters != null) {
+//            userEmitters.forEach((toId, sseEmitter) -> {
+//                try {
+////                    boolean isRead = fromId.equals(toId);
+//                    String data = "{\"sender\":{\"nickname\":\"" + member.getNickname()
+//                            + "\"},\"message\":\"" + message + "\",\"profileImgUrl\":\""
+//                            + member.getProfileImgUrl() + "}";
+//
+//                    sseEmitter.send(SseEmitter.event().name("chat").data(data));
+//                } catch (IOException e) {
+//                    userEmitters.remove(toId);
+//                }
+//            });
+//        }
+//    }
     @Transactional
     public void sendMessage(Long roomId, Long fromId, String message) {
         Map<Long, SseEmitter> userEmitters = roomEmitters.get(roomId);
@@ -295,10 +318,12 @@ public class NotificationService {
         if (userEmitters != null) {
             userEmitters.forEach((toId, sseEmitter) -> {
                 try {
-                    boolean isRead = fromId.equals(toId);
-                    String data = "{\"sender\":{\"nickname\":\"" + member.getNickname()
-                            + "\"},\"message\":\"" + message + "\",\"profileImgUrl\":\""
-                            + member.getProfileImgUrl() + "\",\"isRead\":" + isRead + "}";
+                    ObjectNode dataNode = objectMapper.createObjectNode();
+                    dataNode.put("senderNickname", member.getNickname());
+                    dataNode.put("message", message);
+                    dataNode.put("profileImgUrl", member.getProfileImgUrl());
+
+                    String data = objectMapper.writeValueAsString(dataNode);
 
                     sseEmitter.send(SseEmitter.event().name("chat").data(data));
                 } catch (IOException e) {
@@ -308,18 +333,18 @@ public class NotificationService {
         }
     }
 
-    public void sendReadEvent(Long roomId, Long userId) {
-        Map<Long, SseEmitter> userEmitters = roomEmitters.get(roomId);
-        if (userEmitters != null) {
-            userEmitters.forEach((toId, sseEmitter) -> {
-                try {
-                    String data = "{\"roomId\":" + roomId + ",\"userId\":" + userId + "}";
-                    sseEmitter.send(SseEmitter.event().name("read").data(data));
-                    System.out.println("Read event sent: " + data);
-                } catch (IOException e) {
-                    userEmitters.remove(toId);
-                }
-            });
-        }
-    }
+//    public void sendReadEvent(Long roomId, Long userId) {
+//        Map<Long, SseEmitter> userEmitters = roomEmitters.get(roomId);
+//        if (userEmitters != null) {
+//            userEmitters.forEach((toId, sseEmitter) -> {
+//                try {
+//                    String data = "{\"roomId\":" + roomId + ",\"userId\":" + userId + "}";
+//                    sseEmitter.send(SseEmitter.event().name("read").data(data));
+//                    System.out.println("Read event sent: " + data);
+//                } catch (IOException e) {
+//                    userEmitters.remove(toId);
+//                }
+//            });
+//        }
+//    }
 }

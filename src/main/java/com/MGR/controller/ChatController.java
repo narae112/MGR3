@@ -1,5 +1,7 @@
 package com.MGR.controller;
 
+import com.MGR.dto.ChatDTO;
+import com.MGR.dto.ChatRoomDTO;
 import com.MGR.entity.Chat;
 import com.MGR.entity.ChatRoom;
 import com.MGR.entity.Member;
@@ -19,6 +21,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -49,12 +52,33 @@ public class ChatController {
         chatService.createChat(roomId, sender, sender.getEmail(), message, sender.getProfileImgUrl());
         notificationService.sendMessage(roomId, sender.getId(), message);
 
-        if(!roomId.equals(1L)) {
-            notificationService.sendReadEvent(roomId, receiver.getId());
-        }
+//        if(!roomId.equals(1L)) {
+//            notificationService.sendReadEvent(roomId, receiver.getId());
+//        }
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+//    @GetMapping(value = "/chat/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+//    public SseEmitter subscribe(@AuthenticationPrincipal PrincipalDetails member, @RequestParam Long roomId) {
+//        if (member == null) {
+//            return null;
+//        }
+//        Long userId = member.getId();
+//        return notificationService.subscribeToRoom(userId, roomId);
+//    }
+//
+//    @GetMapping("/chats/{roomId}")
+//    public ResponseEntity<Map<String, Object>> getChatHistory(@PathVariable Long roomId, @AuthenticationPrincipal PrincipalDetails member) {
+//        List<Chat> chatList = chatService.findAllChatByRoomId(roomId);
+//        ChatRoom roomById = chatService.findRoomById(roomId);
+//
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("chatList", chatList);
+//        response.put("chatRoom", roomById);
+//
+//        return new ResponseEntity<>(response, HttpStatus.OK);
+//    }
 
     @GetMapping(value = "/chat/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribe(@AuthenticationPrincipal PrincipalDetails member, @RequestParam Long roomId) {
@@ -70,9 +94,15 @@ public class ChatController {
         List<Chat> chatList = chatService.findAllChatByRoomId(roomId);
         ChatRoom roomById = chatService.findRoomById(roomId);
 
+        List<ChatDTO> chatDTOList = chatList.stream()
+                .map(chatService::convertToChatDTO)
+                .collect(Collectors.toList());
+
+        ChatRoomDTO chatRoomDTO = chatService.convertToChatRoomDTO(roomById);
+
         Map<String, Object> response = new HashMap<>();
-        response.put("chatList", chatList);
-        response.put("chatRoom", roomById);
+        response.put("chatList", chatDTOList);
+        response.put("chatRoom", chatRoomDTO);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
