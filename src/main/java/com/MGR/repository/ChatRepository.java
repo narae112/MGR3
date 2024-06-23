@@ -14,12 +14,10 @@ import java.util.List;
 public interface ChatRepository extends JpaRepository<Chat, Long> {
     List<Chat> findAllByRoomId(Long roomId);
 
-    List<Chat> findByRoom(ChatRoom room);
-
     void deleteByRoomId(Long roomId);
 
     @Modifying
     @Transactional
-    @Query("DELETE FROM Chat c WHERE c.room.id = :roomId AND c.sendDate < :sendDate")
+    @Query("DELETE FROM Chat c WHERE c.roomId = :roomId AND c.sendDate < :sendDate")
     void deleteByRoomIdAndSendDateBefore(Long roomId, LocalDateTime sendDate);
 }

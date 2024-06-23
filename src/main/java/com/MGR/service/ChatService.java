@@ -1,5 +1,7 @@
 package com.MGR.service;
 
+import com.MGR.dto.ChatDTO;
+import com.MGR.dto.ChatRoomDTO;
 import com.MGR.entity.Chat;
 import com.MGR.entity.ChatRoom;
 import com.MGR.entity.Member;
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -57,7 +60,7 @@ public class ChatService {
     //채팅 메시지 생성
     public void createChat(Long roomId, Member sender, String senderEmail, String message, String profileImgUrl) {
         ChatRoom room = roomRepository.findById(roomId).orElseThrow(() -> new IllegalArgumentException("Invalid room ID")); // 방 찾기 -> 없는 방일 경우 예외처리
-        chatRepository.save(Chat.createChat(room, sender, senderEmail, message, profileImgUrl));
+        chatRepository.save(Chat.createChat(roomId, sender, senderEmail, message, profileImgUrl));
     }
 
     public List<ChatRoom> findAllRoomsByMember(Long memberId) {
@@ -70,12 +73,12 @@ public class ChatService {
     }
 
     public void sendMessage(Long roomId, Long id, String message) {
-        ChatRoom room = roomRepository.findById(roomId).orElseThrow(() ->
-                new IllegalStateException("Chat room not found"));
+//        ChatRoom room = roomRepository.findById(roomId).orElseThrow(() ->
+//                new IllegalStateException("Chat room not found"));
         Member sender = memberService.findById(id).orElseThrow(() ->
                 new IllegalStateException("Member not found"));
         Chat chat = Chat.builder()
-                .room(room)
+                .roomId(roomId)
                 .sender(sender)
                 .senderEmail(sender.getEmail())
                 .message(message)
@@ -125,4 +128,28 @@ public class ChatService {
         chatRepository.deleteByRoomIdAndSendDateBefore(roomId, twoDaysAgo);
     }
 
+    // 엔티티를 DTO로 변환하는 메서드 추가
+    public ChatRoomDTO convertToChatRoomDTO(ChatRoom chatRoom) {
+        ChatRoomDTO chatRoomDTO = new ChatRoomDTO();
+        chatRoomDTO.setId(chatRoom.getId());
+        chatRoomDTO.setName(chatRoom.getName());
+        chatRoomDTO.setSenderId(chatRoom.getSender() != null ? chatRoom.getSender().getId() : null);
+        chatRoomDTO.setReceiverId(chatRoom.getReceiver() != null ? chatRoom.getReceiver().getId() : null);
+        chatRoomDTO.setIsGlobal(chatRoom.getIsGlobal());
+        chatRoomDTO.setChats(chatRoom.getChats().stream().map(this::convertToChatDTO).collect(Collectors.toList()));
+        return chatRoomDTO;
+    }
+
+    public ChatDTO convertToChatDTO(Chat chat) {
+        ChatDTO chatDTO = new ChatDTO();
+        chatDTO.setId(chat.getId());
+        chatDTO.setRoomId(chat.getRoomId());
+        chatDTO.setSenderId(chat.getSender().getId());
+        chatDTO.setSenderNickname(chat.getSender().getNickname());
+        chatDTO.setSenderEmail(chat.getSenderEmail());
+        chatDTO.setProfileImgUrl(chat.getProfileImgUrl());
+        chatDTO.setMessage(chat.getMessage());
+        chatDTO.setSendDate(chat.getSendDate());
+        return chatDTO;
+    }
 }

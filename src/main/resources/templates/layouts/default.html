@@ -87,13 +87,11 @@
 <script type="text/javascript" th:inline="javascript">
 
     $(document).ready(function() {
-
-        <!--     알림 수 가져오기-->
+    //알림 수 가져오기
             $.ajax({
                 url: '/api/notifications/count',
                 type: 'GET',
                 success: function(data) {
-        <!--            $('#notificationCount').text(data);-->
                     $('#notificationCount').text(Number(data));
                     let notificationsLoaded = false;
                 },
@@ -102,9 +100,8 @@
                 }
             });
 
-        <!--     EventSource 초기화-->
+            // EventSource
             let eventSource = new EventSource('/api/notifications/subscribe');
-            let notificationsLoaded = false;
 
             eventSource.addEventListener('connect', function(event) {
                 displayMessage(event.data, null);
@@ -112,13 +109,14 @@
             eventSource.addEventListener('message', function(event) {
                 displayMessage(event.data, null);
             });
-            eventSource.onerror = function(event) {
-                displayMessage('EventSource failed: ' + event, null);
-            };
 
             eventSource.addEventListener('notificationCount', function(event) {
                 updateNotificationCount(event.data);
             });
+
+           eventSource.onerror = function(event) {
+                console.error('EventSource failed:', event);
+            };
 
             function updateNotificationCount(count) {
                 var numericCount = parseInt(count, 10); // count를 숫자로 변환
@@ -126,7 +124,6 @@
                     numericCount = 0; // count가 숫자로 변환되지 않으면 0으로 설정
                 }
                 numericCount += 1; // 숫자로 변환된 count에 1을 더함
-                console.log(numericCount);
                 $('#notificationCount').text(numericCount); // 연산 결과를 다시 설정
             }
 
@@ -159,10 +156,10 @@
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
             }
 
-        <!--    // 알림 모달 버튼 클릭 이벤트-->
+            // 알림 모달 버튼 클릭 이벤트
             $('#notificationButton').click(function() {
                if (!notificationsLoaded) {
-        <!--        // DB에서 기존 알림 가져오기-->
+                    // DB에서 기존 알림 가져오기
                     $.ajax({
                         url: '/api/notifications',
                         type: 'GET',
