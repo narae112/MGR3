@@ -32,6 +32,9 @@ public class ChatRoomController {
         Member findMember = memberService.findById(member.getId()).orElseThrow();
         List<Chat> allChatList = chatService.findAllGlobalChats(); // 전체 채팅 메시지 가져오기
 
+        ChatRoom groupChat = chatService.findRoomById(1L);
+        model.addAttribute("groupChat",groupChat);
+
         model.addAttribute("roomList", roomList);
         model.addAttribute("profileImgUrl", findMember.getProfileImgUrl());
         model.addAttribute("nickname", findMember.getNickname());

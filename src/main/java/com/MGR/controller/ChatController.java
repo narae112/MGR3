@@ -48,7 +48,10 @@ public class ChatController {
         }
         chatService.createChat(roomId, sender, sender.getEmail(), message, sender.getProfileImgUrl());
         notificationService.sendMessage(roomId, sender.getId(), message);
-        notificationService.sendReadEvent(roomId, receiver.getId());
+
+        if(!roomId.equals(1L)) {
+            notificationService.sendReadEvent(roomId, receiver.getId());
+        }
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

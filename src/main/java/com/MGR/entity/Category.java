@@ -27,5 +27,4 @@ public class Category {
     private List<PersonalityCategory> personalityCategories = new ArrayList<>();
 
     // Getter, Setter, 생성자 생략 (Lombok으로 자동 생성)
-
 }

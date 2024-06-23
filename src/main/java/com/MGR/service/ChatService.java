@@ -9,13 +9,13 @@ import com.MGR.security.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -113,6 +113,16 @@ public class ChatService {
         response.put("chatRoom", roomById);
 
         return response;
+    }
+
+    @Scheduled(cron = "0 0 0 * * *") // 매일 자정 실행
+    @Transactional
+    public void deleteOldChats() {
+        Long roomId = 1L;
+        LocalDateTime twoDaysAgo = LocalDateTime.now().minusDays(2);
+
+        // 채팅방 ID가 1인 경우 2일 전의 채팅 삭제
+        chatRepository.deleteByRoomIdAndSendDateBefore(roomId, twoDaysAgo);
     }
 
 }
