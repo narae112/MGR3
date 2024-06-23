@@ -7,31 +7,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <script layout:fragment="script" type='text/javascript' src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.5.8/swiper-bundle.min.js"></script>
-    <script type='text/javascript'>
-        var swiper = new Swiper('.swiper-container', {
-        slidesPerView: 'auto',
-        spaceBetween: 10,
-        pagination: {
-            el: '.swiper-pagination',
-            clickable: true,
-        },
-    });
-    </script>
     <style>
-        /* 카드 및 댓글 스타일링 */
-        .card {
-            border: none;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            background-color: #fff;
-            margin-bottom: 20px;
-        }
-
-        .comment-card {
-            background-color: #f8f9fa;
-        }
-
-
         .btn-outline-secondary {
             color: #6c757d;
             border-color: #6c757d;
@@ -42,236 +18,162 @@
             color: #fff;
         }
 
-        /* 답변 폼 스타일링 */
-        .answer-form {
-            margin-top: 20px;
+         .carousel-schedule {
+            display: flex;
+            justify-content: center;
+            overflow-x: auto;
+            white-space: nowrap;
+            min-height: 250px; /* 최소 높이 지정 */
+            padding-left: 100px; /* 왼쪽 패딩 추가 */
         }
-  /* 이미지 갤러리 스타일링 */
-        .image-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        align-items: center; /* 수직 정렬을 위해 추가 */
-        position: relative; /* 부모 요소의 position을 설정합니다. */
-    }
-
-       .image-wrapper {
-        display: inline-block;
-        justify-content: center;
-        align-items: center;
-        width: 50%;
-        transition: transform 0.5s ease;
-        position: relative; /* 자식 요소의 position을 설정합니다. */
-    }
-        .swiper-wrapper {
-        display: flex;
-        height: max-auto;
-         position: relative;
-    }
-        .image-wrapper img {
-        max-width: 100%;
-        max-height: 100%;
-        transition: transform 0.3s ease;
-    }
-
-        .swiper-container {
-        width: 50%;
-        height: auto;
-        position: relative; /* 스와이퍼 컨테이너의 position을 설정합니다. */
-        }
-
-        .swiper-pagination {
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            width: 100%;
+        .carousel-item-schedule {
+            flex: 0 0 auto;
             text-align: center;
+            margin: 0 10px;
         }
-
-        .more-link {
-            text-align: center;
-            margin-top: 10px;
+        .carousel-item-schedule img {
+            max-width: 300px; /* 최대 가로 크기 */
+            max-height: 400px; /* 최대 세로 크기 */
+            object-fit: contain; /* 이미지를 컨테이너에 맞추되, 비율을 유지하며 크기 조절 */
+            object-position: center; /* 이미지를 중앙에서부터 위치시킴 */
+            margin: 20px 10px;
         }
-        .image-wrapper .fas {
-        position: absolute;
-        bottom: 5px; /* 이미지의 아래에 여백을 조절 */
-        right: 5px; /* 이미지의 오른쪽에 여백을 조절 */
-        font-size: 30px; /* 아이콘 크기 조정 */
-        z-index: 1; /* 아이콘을 이미지 위에 표시합니다. */
-     }
-        .attraction-types-box, .after-types-box, .personalities-box {
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        padding: 10px;
-        margin-bottom: 10px;
-    }
-
-    .attraction-types-header, .after-types-header, .personalities-header {
-        font-weight: bold;
-        font-size: 16px;
-        margin-bottom: 5px;
-    }
-
-    .attraction-types-content, .after-types-content, .personalities-content {
-        display: flex;
-        flex-wrap: wrap;
-    }
-
-    .attraction-type, .after-type, .personality {
-        padding: 5px 10px;
-        margin: 5px;
-        background-color: #f0f0f0;
-        border-radius: 3px;
-    }
     </style>
 </head>
 <body>
 
 <div layout:fragment="content" class="container my-5">
-
     <div th:if="${error}" class="alert alert-danger" role="alert">
         <span th:text="${error}"></span>
     </div>
 
     <div class="row justify-content-center">
-        <!-- 프로필 사진 및 닉네임 -->
+        <div class="col-md-8">
+            <h3 class="mb-5 text-center boardTitle" th:text="${goWithBoardForm.title}"></h3>
 
-        <!-- 게시글 내용 -->
-        <div class="row justify-content-center">
-            <div class="col-md-10">
+            <!-- 작성자 프로필 및 날짜 -->
+            <div class="d-flex align-items-center justify-content-start">
+                <img th:if="${goWithBoardForm.memberProfileImgUrl != null}" th:src="${goWithBoardForm.memberProfileImgUrl}" class="rounded-circle ms-3" width="40" height="40">
+                <img th:if="${goWithBoardForm.memberProfileImgUrl == null}" src="/img/unicorn.png" class="rounded-circle ms-3" width="40" height="40">
+                <div class="d-flex flex-column ms-2">
+                    <div class="d-flex align-items-center">
+                        <span th:text="${goWithBoardForm.memberName}" class="userNick"></span>
+                        <span class="ms-2" th:if="${goWithBoard.modifiedDate == null}" th:text="${#temporals.format(goWithBoard.createDate, 'yyyy-MM-dd HH:mm')}"></span>
+                        <span class="ms-2" th:if="${goWithBoard.modifiedDate != null}" th:text="${#temporals.format(goWithBoard.modifiedDate, 'yyyy-MM-dd HH:mm')} + ' 수정됨'"></span>
+                    </div>
+                </div>
+            </div>
+            <hr/>
+            <!-- 이미지 갤러리 -->
+            <div class="carousel-schedule my-3">
+                <div th:each="goWithImage, iterStat : ${goWithBoardForm.goWithImgDtoList}" class="carousel-item-schedule">
+                    <a th:if="${not #strings.isEmpty(goWithImage.imgUrl)}" th:href="${goWithImage.imgUrl}" data-lightbox="gallery">
+                        <img th:src="${goWithImage.imgUrl}" class="rounded">
+                    </a>
+                </div>
+            </div>
 
-                <!-- 이미지 칸 -->
-                <div class="image-container my-3">
-                    <div class="swiper-container">
-                        <div class="swiper-wrapper">
-                            <div th:each="goWithImage, iterStat : ${goWithBoardForm.goWithImgDtoList}" class="swiper-slide">
-                                <a th:if="${not #strings.isEmpty(goWithImage.imgUrl)}" th:href="${goWithImage.imgUrl}" data-lightbox="image-gallery">
-                                    <img th:src="${goWithImage.imgUrl}" class="rounded" >
-                                </a>
+            <!-- 글 내용 -->
+            <div class="goWith-content">
+                <div class=" my-3">
+                    <div class="" th:utext="${@commonUtil.markdown(goWithBoardForm.content)}"></div>
+                    <hr>
+
+                    <div class="mt-2">
+                        <!-- attractionTypes 섹션 -->
+                        <div class="attraction-types-header my-2">놀이기구 취향</div>
+                        <div class="attraction-types-content d-flex flex-wrap">
+                            <div th:if="${#lists.size(goWithBoard.attractionTypes) > 0}">
+                                <div th:each="attractionType : ${goWithBoard.attractionTypes}">
+                                    <p th:text="${attractionType}"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <hr/>
+                        <!-- afterTypes 섹션 -->
+                        <div class="after-types-header my-2">동행 후 행선지</div>
+                        <div class="after-types-content d-flex flex-wrap">
+                            <div th:if="${#lists.size(goWithBoard.afterTypes) > 0}">
+                                <div th:each="afterType : ${goWithBoard.afterTypes}">
+                                    <p th:text="${afterType}"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <hr/>
+                        <!-- personalities 섹션 -->
+                        <div class="personalities-header my-2">성격</div>
+                        <div class="personalities-content d-flex flex-wrap">
+                            <div th:if="${#lists.size(goWithBoard.personalities) > 0}">
+                                <div th:each="personality : ${goWithBoard.personalities}">
+                                    <p th:text="${personality}"></p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="swiper-pagination"></div>
-                </div>
-                <h3 class="mb-5 text-center" th:text="${goWithBoardForm.title}"></h3>
-                <div class="d-flex justify-content-end">
-                    <img th:if="${goWithBoardForm.memberProfileImgUrl != null}" th:src="${goWithBoardForm.memberProfileImgUrl}" class="rounded-circle" width="50" height="50">
-                    <img th:if="${goWithBoardForm.memberProfileImgUrl == null}" src="/img/unicorn.png" class="rounded-circle" width="50" height="50">
-                    <span th:text="${goWithBoardForm.memberName}" class="ms-2"></span>
-                </div>
-                <!-- 컨텐츠 -->
-                <div class="goWith-content">
-                    <div class="card my-3">
-                        <div class="card-body">
-                            <div class="card-text "  th:utext="${@commonUtil.markdown(goWithBoardForm.content)}"></div>
-                            <div class="d-flex justify-content-end">
-                                <div th:if="${goWithBoard.modifiedDate != null}" class="badge bg-light text-dark p-2 text-start mx-3">
-                                    <div class="mb-2">modified at</div>
-                                    <div th:text="${#temporals.format(goWithBoard.modifiedDate, 'yyyy-MM-dd HH:mm')}"></div>
-                                </div>
-                                <div class="badge bg-light text-dark p-2 text-start">
-<!--                                    <div class="mb-2">-->
-<!--                                        <div th:text="${goWithBoard != null ? goWithBoard.memberName : 'Unknown'}"></div>-->
-<!--                                    </div>-->
-                                    <div th:text="${goWithBoardForm.memberName}"></div>
-                                    <div th:text="${#temporals.format(goWithBoard.createDate, 'yyyy-MM-dd HH:mm')}"></div>
-                                </div>
-                            </div>
-
-                        </div>
-                        <hr>
-                        <div class="my-3">
-                            <!-- attractionTypes 출력 -->
-                            <div class="attraction-types-box">
-                                <div class="attraction-types-header">놀이기구 취향</div>
-                                <div class="attraction-types-content">
-                                    <div th:each="attractionType : ${goWithBoard.attractionTypes}" class="attraction-type">
-                                        <p th:text="${attractionType}"></p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- afterTypes 출력 -->
-                            <div class="after-types-box">
-                                <div class="after-types-header">동행 후 행선지</div>
-                                <div class="after-types-content">
-                                    <div th:each="afterType : ${goWithBoard.afterTypes}" class="after-type">
-                                        <p th:text="${afterType}"></p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- personalities 출력 -->
-                            <div class="personalities-box">
-                                <div class="personalities-header">성격</div>
-                                <div class="personalities-content">
-                                    <div th:each="personality : ${goWithBoard.personalities}" class="personality">
-                                        <p th:text="${personality}"></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="my-3">
-                            <a th:href="@{/goWith/goWithBoardList}" class="btn btn-sm btn-outline-secondary">목록으로</a>
-                            <a th:href="@{|/startChat/${goWithBoard.id}/${goWithBoard.member.nickname}|}" class="btn btn-primary my-2"
-                               sec:authorize="isAuthenticated()"
-                               th:unless="${goWithBoard.member != null and #authentication.getPrincipal().getName() == goWithBoard.member.name}"
-                               th:text="채팅하기"></a>
-                            <a th:href="@{|/goWithBoard/modify/${goWithBoard.id}|}" class="btn btn-sm btn-outline-secondary"
-                               sec:authorize="isAuthenticated()"
-                               th:if="${goWithBoard.member != null and #authentication.getPrincipal().getName() == goWithBoard.member.name}"
-                               th:text="수정"></a>
-                            <a href="javascript:void(0);" class="delete btn btn-sm btn-outline-secondary"
-                               th:data-uri="@{|/goWithBoard/delete/${goWithBoard.id}|}"
-                               sec:authorize="isAuthenticated()"
-                               th:if="${goWithBoard.member != null and #authentication.getPrincipal().getName() == goWithBoard.member.name}"
-                               th:text="삭제" onclick="deleteQuestion(event)">
-                            </a>
-                        </div>
+                    <hr/>
+                    <div class="my-3">
+                        <a th:href="@{/goWithBoard/list}" class="btn btn-sm btn-outline-secondary">목록으로</a>
+                        <a th:href="@{|/startChat/${goWithBoard.id}/${goWithBoard.member.nickname}|}" class="btn btn-sm mgrBtn my-2"
+                           sec:authorize="isAuthenticated()"
+                           th:unless="${goWithBoard.member != null and #authentication.getPrincipal().getName() == goWithBoard.member.name}"
+                           th:text="채팅하기"></a>
+                        <a th:href="@{|/goWithBoard/modify/${goWithBoard.id}|}" class="btn btn-sm btn-outline-secondary"
+                           sec:authorize="isAuthenticated()"
+                           th:if="${goWithBoard.member != null and #authentication.getPrincipal().getName() == goWithBoard.member.name}"
+                           th:text="수정"></a>
+                        <a href="javascript:void(0);" class="delete btn btn-sm btn-outline-secondary"
+                           th:data-uri="@{|/goWithBoard/delete/${goWithBoard.id}|}"
+                           sec:authorize="isAuthenticated()"
+                           th:if="${goWithBoard.member != null and #authentication.getPrincipal().getName() == goWithBoard.member.name}"
+                           th:text="삭제" onclick="deleteQuestion(event)">
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-        <div class="row justify-content-center">
-            <div class="col-md-10">
-                <h5 class="border-bottom my-3 py-2" th:text="|${#lists.size(goWithBoard.commentList)}개의 답변이 있습니다.|"></h5>
-                <!-- 답변 반복 시작 -->
-                <div class="card my-3" th:each="goWithComment : ${goWithBoard.commentList}">
-                    <a th:id="|goWithComment_${goWithComment.id}|"></a>
-                    <div class="card-body">
-                        <div class="card-text" th:utext="${@commonUtil.markdown(goWithComment.content)}"></div>
-                        <div class="d-flex justify-content-end">
-                            <div th:if="${goWithComment.modifiedDate != null}" class="badge bg-light text-dark p-2 text-start mx-3">
-                                <div class="mb-2">modified at</div>
-                                <div th:text="${#temporals.format(goWithComment.modifiedDate, 'yyyy-MM-dd HH:mm')}"></div>
-                            </div>
-                            <div class="badge bg-light text-dark p-2 text-start">
-                                <div class="mb-2">
-                                    <span th:if="${goWithBoard.author != null}" th:text="${goWithBoard.author.nickname}"></span>
-                                </div>
-                                <div th:text="${#temporals.format(goWithComment.createDate, 'yyyy-MM-dd HH:mm')}"></div>
-                            </div>
-                        </div>
-                        <div class="my-3">
-                            <a th:href="@{|/goWith/comment/modify/${goWithComment.id}|}" class="btn btn-sm btn-outline-secondary"
-                               sec:authorize="isAuthenticated()"
-                               th:if="${goWithComment.member != null and #authentication.getPrincipal().getName() == goWithComment.member.name}"
-                               th:text="수정"></a>
-                            <a href="javascript:void(0);" th:data-uri="@{|/goWith/comment/delete/${goWithComment.id}|}"
-                               class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()"
-                               th:if="${goWithComment.member != null and #authentication.getPrincipal().getName() == goWithComment.member.name}"
-                               th:text="삭제" onclick="deleteQuestion(event)"></a>
-                        </div>
+
+    <!-- 댓글 섹션 -->
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h5 class="border-bottom my-3 py-2" th:text="|댓글 ${#lists.size(goWithBoard.commentList)}|"></h5>
+
+            <!-- 댓글 폼 -->
+            <form th:action="@{|/goWith/comment/create/${goWithBoard.id}|}" th:object="${goWithCommentFormDto}" method="post" class="my-2">
+                <div th:replace="board/goWith/form_errors :: formErrorsFragment"></div>
+                <div class="d-flex">
+                    <textarea placeholder="댓글을 등록해보세요!" th:field="*{content}" class="form-control me-2" rows="2"></textarea>
+                    <input type="submit" value="등록" class="btn mgrBtn">
+                </div>
+            </form>
+
+            <!-- 댓글 반복 시작 -->
+            <div th:each="goWithComment : ${goWithBoard.commentList}" class="my-3 border rounded p-3">
+                <div class="col-12">
+                    <div class="text-muted me-3">
+                        <span th:text="${goWithComment.member.nickname}" class="userNick"></span>
+                        <span th:text="${#temporals.format(goWithComment.createDate, 'yyyy-MM-dd HH:mm')}"></span>
+                        <span th:if="${goWithComment.modifiedDate != null}">
+                            <span th:text="${#temporals.format(goWithComment.modifiedDate, 'yyyy-MM-dd HH:mm')} + '수정됨'"></span>
+                        </span>
+                    </div>
+                    <hr/>
+                    <div th:utext="${@commonUtil.markdown(goWithComment.content)}"></div>
+
+                    <div class="d-flex justify-content-end mt-3">
+                        <a th:href="@{|/goWith/comment/modify/${goWithComment.id}|}" class="btn btn-sm btn-outline-secondary me-2"
+                           sec:authorize="isAuthenticated()"
+                           th:if="${goWithComment.member != null and #authentication.getPrincipal().getEmail() == goWithComment.member.email}"
+                           th:text="수정"></a>
+                        <a href="javascript:void(0);" th:data-uri="@{|/goWith/comment/delete/${goWithComment.id}|}"
+                           class="delete btn btn-sm btn-outline-secondary"
+                           sec:authorize="isAuthenticated()"
+                           th:if="${goWithComment.member != null and #authentication.getPrincipal().getEmail() == goWithComment.member.email}"
+                           th:text="삭제" onclick="deleteQuestion(event)"></a>
                     </div>
                 </div>
-                <form th:action="@{|/goWith/comment/create/${goWithBoard.id}|}" th:object="${goWithCommentFormDto}" method="post" class="container my-5">
-                    <div th:replace="board/goWith/form_errors :: formErrorsFragment"></div>
-                    <textarea th:field="*{content}" class="form-control" rows="5"></textarea>
-                    <input type="submit" value="답변등록" class="btn btn-primary my-2">
-                </form>
             </div>
+
         </div>
     </div>
 </div>
@@ -283,19 +185,6 @@
             const uri = event.target.getAttribute('data-uri'); // 버튼의 data-uri 속성 값 가져오기
             location.href = uri; // URI로 이동
         }
-    }
-
-    function deleteAnswer(event) {
-        event.preventDefault(); // 기본 동작인 링크 이동을 방지합니다.
-        if (confirm("글을 삭제하시겠습니까?")) {
-            const uri = event.target.getAttribute('data-uri'); // 버튼의 data-uri 속성 값 가져오기
-            location.href = uri; // URI로 이동
-        }
-    }
-
-   function recommendQuestion(event) {
-        const uri = event.target.getAttribute('data-uri'); // 버튼의 data-uri 속성 값 가져오기
-        location.href = uri; // URI로 이동
     }
 </script>
 </body>

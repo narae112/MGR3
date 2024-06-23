@@ -34,18 +34,19 @@
 <!-- js -->
 <th:block layout:fragment="script">
     <script th:inline="javascript">
-        // 추가적인 JavaScript 코드를 여기에 작성할 수 있습니다.
+
     </script>
 </th:block>
 
 <div layout:fragment="content" class="content-mg">
-    <h3 class="mb-5 text-center">결제 내역 조회</h3>
+    <h3 class="mb-5 text-center">매출 조회</h3>
     <hr class="my-4">
 
     <div th:if="${paging.empty}">
         <p>결제 내역이 없습니다.</p>
     </div>
     <div th:if="${not paging.empty}">
+        <a th:href="@{/admin/paymentGraph}" class="btn btn-primary mb-4">자세히 보기</a>
         <table class="table">
             <thead>
             <tr>
@@ -55,6 +56,7 @@
                 <th>주문 금액</th>
                 <th>쿠폰 할인율</th>
                 <th>결제 금액</th>
+                <th>인원</th>
                 <th>주문 번호</th>
             </tr>
             </thead>
@@ -66,29 +68,92 @@
                 <td th:text="${#numbers.formatInteger(orderListDto.calculateTotalPrice(), 0, 'COMMA')} + '원'"></td>
                 <td th:text="${orderListDto.discountRate} + '%'"></td>
                 <td th:text="${#numbers.formatInteger(orderListDto.calculateDiscountedTotalPrice(), 0, 'COMMA')} + '원'"></td>
+                <td>
+                    <span th:text="'어른: ' + ${orderTicketAdultCountMap[orderListDto.orderNum]} + '명, '"></span>
+                    <span th:text="'어린이: ' + ${orderTicketChildCountMap[orderListDto.orderNum]} + '명'"></span>
+                </td>
                 <td th:text="${orderListDto.orderNum}"></td>
             </tr>
             </tbody>
         </table>
     </div>
 
-    <nav aria-label="Page navigation">
-        <ul class="pagination d-flex justify-content-center">
-            <li class="page-item" th:classappend="${paging.first} ? 'disabled'">
-                <a class="page-link" th:href="@{|~/admin/paymentList/${paging.number - 1}|}" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
+<!--    <nav aria-label="Page navigation">-->
+<!--        <ul class="pagination d-flex justify-content-center">-->
+<!--            <li class="page-item" th:classappend="${paging.first} ? 'disabled'">-->
+<!--                <a class="page-link" th:href="@{|~/admin/paymentList/${paging.number - 1}|}" aria-label="Previous">-->
+<!--                    <span aria-hidden="true">&laquo;</span>-->
+<!--                </a>-->
+<!--            </li>-->
+<!--            <li class="page-item" th:each="i : ${#numbers.sequence(paging.totalPages < 5 ? 1 : (paging.number > paging.totalPages - 3 ? paging.totalPages - 4 : (paging.number > 2 ? paging.number - 2 : 1)), paging.totalPages < 5 ? paging.totalPages : (paging.number > paging.totalPages - 3 ? paging.totalPages : (paging.number > 2 ? paging.number + 2 : 5)))}"-->
+<!--                th:classappend="${paging.number == i - 1} ? 'active'">-->
+<!--                <a class="page-link" th:href="@{|~/admin/paymentList/${i - 1}|}" th:text="${i}">1</a>-->
+<!--            </li>-->
+<!--            <li class="page-item" th:classappend="${paging.last} ? 'disabled'">-->
+<!--                <a class="page-link" th:href="@{|~/admin/paymentList/${paging.number + 1}|}" aria-label="Next">-->
+<!--                    <span aria-hidden="true">&raquo;</span>-->
+<!--                </a>-->
+<!--            </li>-->
+<!--        </ul>-->
+<!--    </nav>-->
+    <!-- 페이지 네이션 -->
+<!--    <nav aria-label="Page navigation" class="justify-content-center" th:if="${not paging.empty}">-->
+<!--        <ul class="pagination">-->
+<!--            &lt;!&ndash; 이전 버튼 &ndash;&gt;-->
+<!--            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">-->
+<!--                <a class="page-link" th:if="${currentPage != 0}" th:href="@{|~/admin/memberList/${currentPage - 1}|}" aria-label="Previous">-->
+<!--                    <span aria-hidden="true">&lt;</span>-->
+<!--                </a>-->
+<!--                <span th:if="${currentPage == 0}" class="page-link disabled" aria-hidden="true" tabindex="-1">-->
+<!--                <span aria-hidden="true">&lt;</span>-->
+<!--            </span>-->
+<!--            </li>-->
+
+<!--            &lt;!&ndash; 페이지 번호 &ndash;&gt;-->
+<!--            <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}" class="page-item" th:classappend="${i == currentPage} ? 'active'">-->
+<!--                <a class="page-link" th:href="@{|~/admin/memberList/${i}|}" th:text="${i + 1}"></a>-->
+<!--            </li>-->
+
+<!--            &lt;!&ndash; 다음 버튼 &ndash;&gt;-->
+<!--            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">-->
+<!--                <a class="page-link" th:if="${currentPage != totalPages - 1}" th:href="@{|~/admin/memberList/${currentPage + 1}|}" aria-label="Next">-->
+<!--                    <span aria-hidden="true">&gt;</span>-->
+<!--                </a>-->
+<!--                <span th:if="${currentPage == totalPages - 1}" class="page-link disabled" aria-hidden="true" tabindex="-1">-->
+<!--                <span aria-hidden="true">&gt;</span>-->
+<!--            </span>-->
+<!--            </li>-->
+<!--        </ul>-->
+<!--    </nav>-->
+
+    <nav aria-label="Page navigation" class="justify-content-center" th:if="${not paging.empty}">
+        <ul class="pagination">
+            <!-- 이전 버튼 -->
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                <a class="page-link" th:if="${currentPage != 0}" th:href="@{|~/admin/paymentList/${currentPage - 1}|}" aria-label="Previous">
+                    <span aria-hidden="true">&lt;</span>
                 </a>
+                <span th:if="${currentPage == 0}" class="page-link disabled" aria-hidden="true" tabindex="-1">
+                <span aria-hidden="true">&lt;</span>
+            </span>
             </li>
-            <li class="page-item" th:each="i : ${#numbers.sequence(1, paging.totalPages > 0 ? paging.totalPages : 1)}"
-                th:classappend="${paging.number == i - 1} ? 'active'">
-                <a class="page-link" th:href="@{|~/admin/paymentList/${i - 1}|}" th:text="${i}">1</a>
+
+            <!-- 페이지 번호 -->
+            <li th:each="i : ${#numbers.sequence((currentPage - 2) > 0 ? (currentPage - 2) : 0, (currentPage + 2) < (totalPages - 1) ? (currentPage + 2) : (totalPages - 1))}" class="page-item" th:classappend="${i == currentPage} ? 'active'">
+                <a class="page-link" th:href="@{|~/admin/paymentList/${i}|}" th:text="${i + 1}"></a>
             </li>
-            <li class="page-item" th:classappend="${paging.last} ? 'disabled'">
-                <a class="page-link" th:href="@{|~/admin/paymentList/${paging.number + 1}|}" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
+
+            <!-- 다음 버튼 -->
+            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                <a class="page-link" th:if="${currentPage != totalPages - 1}" th:href="@{|~/admin/paymentList/${currentPage + 1}|}" aria-label="Next">
+                    <span aria-hidden="true">&gt;</span>
                 </a>
+                <span th:if="${currentPage == totalPages - 1}" class="page-link disabled" aria-hidden="true" tabindex="-1">
+                <span aria-hidden="true">&gt;</span>
+            </span>
             </li>
         </ul>
     </nav>
+
 </div>
 </html>

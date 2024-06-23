@@ -21,10 +21,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 @RequestMapping("/board")
@@ -52,23 +49,56 @@ public class EventBoardController {
     }
 
     @PostMapping("/eventBoard/new")
-    public ResponseEntity<String> eventBoardCreate(@Valid EventBoardFormDto BoardFormDto,
-                                                   BindingResult result, Model model,
-                                                   @AuthenticationPrincipal PrincipalDetails member,
-                                                   @RequestParam("eventImgFile") List<MultipartFile> imgFileList) {
-        if (result.hasErrors()) {
-            return ResponseEntity.badRequest().body("입력한 값들을 확인해주세요.");
+    public ResponseEntity<Map<String, String>> eventBoardCreate(@Valid EventBoardFormDto BoardFormDto,
+                                                                BindingResult result, Model model,
+                                                                @AuthenticationPrincipal PrincipalDetails member,
+                                                                @RequestParam("eventImgFile") List<MultipartFile> imgFileList) {
+        Map<String, String> errorResponse = new HashMap<>();
+
+        // 각 필드별 오류 체크
+        if (result.hasFieldErrors("title")) {
+            errorResponse.put("field", "title");
+            errorResponse.put("message", "제목을 입력하세요");
+            return ResponseEntity.badRequest().body(errorResponse);
         }
+        if (result.hasFieldErrors("content")) {
+            errorResponse.put("field", "content");
+            errorResponse.put("message", "내용을 입력하세요");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        if (result.hasFieldErrors("startDate")) {
+            errorResponse.put("field", "startDate");
+            errorResponse.put("message", "이벤트 시작 날짜를 입력하세요");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        if (result.hasFieldErrors("endDate")) {
+            errorResponse.put("field", "endDate");
+            errorResponse.put("message", "이벤트 종료 날짜를 입력하세요");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+
+        // 이미지 파일이 없는 경우
+        if (imgFileList.isEmpty() || imgFileList.get(0).isEmpty()) {
+            errorResponse.put("field", "eventImgFile");
+            errorResponse.put("message", "이벤트 이미지는 필수 입력 값입니다");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+
         try {
             Member findMember = memberService.findByEmail(member.getUsername()).orElseThrow();
             eventBoardService.saveBoard(BoardFormDto, findMember, imgFileList);
-            return ResponseEntity.ok("이벤트가 성공적으로 등록되었습니다.");
+            Map<String, String> successResponse = new HashMap<>();
+            successResponse.put("message", "이벤트가 성공적으로 등록되었습니다");
+            return ResponseEntity.ok().body(successResponse);
         } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("게시판 등록 중 오류가 발생했습니다");
+            errorResponse.put("message", "게시판 등록 중 오류가 발생했습니다");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
+
 
     @GetMapping("/eventBoard/edit/{id}")
     public String editEventBoard(@PathVariable("id") Long id, Model model,
@@ -84,21 +114,58 @@ public class EventBoardController {
     }
 
     @PostMapping("/eventBoard/edit/{id}")
-    public ResponseEntity<String> updateEventBoard(@PathVariable Long id,
-                                                   @Valid EventBoard eventBoard,
-                                                   BindingResult result,
-                                                   @RequestParam(value = "eventImgFile", required = false) List<MultipartFile> imgFileList) {
-        if (result.hasErrors()) {
-            return ResponseEntity.badRequest().body("입력한 값들을 확인해주세요.");
+    public ResponseEntity<Map<String, String>> updateEventBoard(@PathVariable Long id,
+                                                                @Valid EventBoardFormDto BoardFormDto,
+                                                                BindingResult result,
+                                                                @AuthenticationPrincipal PrincipalDetails member,
+                                                                @RequestParam(value = "eventImgFile", required = false) List<MultipartFile> imgFileList) {
+        Map<String, String> errorResponse = new HashMap<>();
+
+        // 각 필드별 오류 체크
+        if (result.hasFieldErrors("title")) {
+            errorResponse.put("field", "title");
+            errorResponse.put("message", "제목을 입력하세요");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        if (result.hasFieldErrors("content")) {
+            errorResponse.put("field", "content");
+            errorResponse.put("message", "내용을 입력하세요");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        if (result.hasFieldErrors("startDate")) {
+            errorResponse.put("field", "startDate");
+            errorResponse.put("message", "이벤트 시작 날짜를 입력하세요");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        if (result.hasFieldErrors("endDate")) {
+            errorResponse.put("field", "endDate");
+            errorResponse.put("message", "이벤트 종료 날짜를 입력하세요");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+
+        // 이미지 파일이 없는 경우 (기존 이미지를 유지할 수 있으므로 체크하지 않습니다)
+        if (imgFileList != null && imgFileList.get(0).isEmpty()) {
+            errorResponse.put("field", "eventImgFile");
+            errorResponse.put("message", "이벤트 이미지는 필수 입력 값입니다");
+            return ResponseEntity.badRequest().body(errorResponse);
         }
 
         try {
-            eventBoardService.update(id, eventBoard, imgFileList);  // 업데이트 로직 수행
-            return ResponseEntity.ok().body("이벤트가 성공적으로 수정되었습니다.");
+            Member findMember = memberService.findByEmail(member.getUsername()).orElseThrow();
+            eventBoardService.update(id, BoardFormDto, imgFileList);  // 업데이트 로직 수행
+            Map<String, String> successResponse = new HashMap<>();
+            successResponse.put("message", "이벤트가 성공적으로 수정되었습니다");
+            return ResponseEntity.ok().body(successResponse);
+        } catch (IllegalStateException e) {
+            errorResponse.put("message", "게시판 수정 중 오류가 발생했습니다");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("수정 중 오류가 발생했습니다.");
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
+
+
     @GetMapping("/event/{id}") //이벤트 게시판 게시글 id
     public String eventBoardDetail(@PathVariable("id") Long id,Model model){
 

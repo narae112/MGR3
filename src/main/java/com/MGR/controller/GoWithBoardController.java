@@ -31,6 +31,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Controller
@@ -65,7 +66,8 @@ public class GoWithBoardController {
             return "board/goWith/goWithBoardForm";
         }
 
-        Member siteUser = this.memberService.getUser(member.getName());
+        Member siteUser = this.memberService.getUser(member.getEmail());
+
         System.out.println("로그인한 사용자 정보 = " + siteUser);
         // 디버깅 로그 추가
         System.out.println("ㅇㅇㅇAttraction Types: " + goWithBoardFormDto.getAttractionTypes());
@@ -95,7 +97,7 @@ public class GoWithBoardController {
             return "board/goWith/goWithBoardForm";
         }
 
-        return "redirect:/"; // 홈 화면으로 리다이렉트
+        return "redirect:/goWithBoard/list"; // 홈 화면으로 리다이렉트
     }
 
     private void addCategoryAttributes(Model model) {
@@ -125,7 +127,7 @@ public class GoWithBoardController {
     public String goWithModify(Model model, @PathVariable("id") Long id,
                                @AuthenticationPrincipal PrincipalDetails member) {
         GoWithBoard goWithBoard = this.goWithBoardService.getGoWithBoard(id);
-        if (!goWithBoard.getMember().getName().equals(member.getName())) {
+        if (!goWithBoard.getMember().getEmail().equals(member.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다");
         }
 
@@ -158,7 +160,7 @@ public class GoWithBoardController {
         }
 
         GoWithBoard goWithBoard = this.goWithBoardService.getGoWithBoard(id);
-        if (!goWithBoard.getMember().getName().equals(member.getName())) {
+        if (!goWithBoard.getMember().getEmail().equals(member.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다");
         }
 
@@ -193,7 +195,7 @@ public class GoWithBoardController {
     public String goWithDelete(@AuthenticationPrincipal PrincipalDetails member,
                                @PathVariable("id") Long id) {
         GoWithBoard goWithBoard = this.goWithBoardService.getGoWithBoard(id);
-        if (!goWithBoard.getMember().getName().equals(member.getName())) {
+        if (!goWithBoard.getMember().getEmail().equals(member.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");
         }
 
@@ -205,13 +207,16 @@ public class GoWithBoardController {
             return "redirect:/error";
         }
 
-        return "redirect:/board/goWith/goWithBoardList";
+        return "redirect:/goWithBoard/list";
     }
 
     // 게시글 목록 조회
-    @GetMapping("/goWithBoard/list")
-    public String showGoWithBoardList(Model model, @RequestParam(defaultValue = "0") int page) {
+    @GetMapping({"/goWithBoard/list", "/goWithBoard/list/{page}"})
+    public String showGoWithBoardList(Model model, @PathVariable(value = "page", required = false) Integer page) {
         int size = 6; // 페이지당 글 개수
+        if (page == null || page < 0) {
+            page = 0;
+        }
         Page<GoWithBoardFormDto> goWithBoardsPage = goWithBoardService.getAllGoWithBoards(page, size);
 
         addCategoryAttributes(model); // 체크박스 데이터 추가
@@ -221,7 +226,7 @@ public class GoWithBoardController {
         model.addAttribute("ageCategories", AgeCategory.values());
 
         model.addAttribute("goWithBoardsPage", goWithBoardsPage);
-        model.addAttribute("currentPage", page);
+        model.addAttribute("currentPage", page); // 현재 페이지 정보 추가
         model.addAttribute("totalPages", goWithBoardsPage.getTotalPages());
 
         return "board/goWith/goWithBoardList";
@@ -233,16 +238,26 @@ public class GoWithBoardController {
                                     @RequestParam(required = false) List<String> locationCategories,
                                     @RequestParam(required = false) List<String> attractionTypes,
                                     @RequestParam(required = false) List<String> afterTypes,
-                                    @RequestParam(required = false) List<String> personalities) {
-        // 선택된 값을 기반으로 필터링된 게시글 목록을 조회하는 메서드를 호출합니다.
-        // 이 메서드는 선택된 값들을 조건으로 사용하여 필터링된 페이지를 반환해야 합니다.
-        Page<GoWithBoardFormDto> filteredGoWithBoardsPage = goWithBoardService.searchGoWithBoards(ageCategories, locationCategories, attractionTypes, afterTypes, personalities);
+                                    @RequestParam(required = false) List<String> personalities,
+                                    @RequestParam(value = "page", required = false, defaultValue = "0") Integer page) {
+        int size = 6; // 페이지당 글 개수
+        if (page < 0) {
+            page = 0;
+        }
 
-        // 기존의 모델 속성을 추가하는 부분과 동일하게 결과를 모델에 추가합니다.
+        Page<GoWithBoardFormDto> filteredGoWithBoardsPage = goWithBoardService.searchGoWithBoards(ageCategories, locationCategories, attractionTypes, afterTypes, personalities, page, size);
+
+        addCategoryAttributes(model); // 체크박스 데이터 추가
+
+        // LocationCategory와 AgeCategory 추가
+        model.addAttribute("locationCategories", LocationCategory.values());
+        model.addAttribute("ageCategories", AgeCategory.values());
+
         model.addAttribute("goWithBoardsPage", filteredGoWithBoardsPage);
-        // 필요한 경우 추가 모델 속성을 설정합니다.
+        model.addAttribute("currentPage", page); // 현재 페이지 정보 추가
+        model.addAttribute("totalPages", filteredGoWithBoardsPage.getTotalPages());
 
-        return "board/goWith/goWithBoardList"; // 필요한 뷰로 반환합니다.
+        return "board/goWith/goWithBoardList";
     }
 
     @GetMapping("/startChat/{id}/{nickname}")

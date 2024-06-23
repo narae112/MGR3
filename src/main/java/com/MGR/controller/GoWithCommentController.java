@@ -45,7 +45,7 @@ public class GoWithCommentController {
             return "member/loginForm";
         }
 
-        Member siteUser = this.memberService.getUser(member.getName());
+        Member siteUser = this.memberService.getUser(member.getEmail());
 
         // 욕설 필터링
         List<String> profanityList = ProfanityListLoader.loadProfanityList("unsafe.txt");
@@ -74,7 +74,7 @@ public class GoWithCommentController {
     public String commentModify(GoWithCommentFormDto goWithCommentFormDto, @PathVariable("id") Long id,
                                 @AuthenticationPrincipal PrincipalDetails member) {
         GoWithComment goWithComment = this.goWithCommentService.getComment(id);
-        if (!goWithComment.getMember().getName().equals(member.getName())) {
+        if (!goWithComment.getMember().getEmail().equals(member.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
         goWithComment.setContent(goWithComment.getContent());
@@ -98,7 +98,7 @@ public class GoWithCommentController {
             return "board/goWith/goWithCommentForm";
         }
         GoWithComment goWithComment = this.goWithCommentService.getComment(id);
-        if (!goWithComment.getMember().getName().equals(member.getName())) {
+        if (!goWithComment.getMember().getEmail().equals(member.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
         this. goWithCommentService.modify(goWithComment, goWithComment.getContent());
@@ -106,13 +106,13 @@ public class GoWithCommentController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/GoWith/comment/delete/{id}")
+    @GetMapping("/goWith/comment/delete/{id}")
     public String goWithCommentDelete(@AuthenticationPrincipal PrincipalDetails member, @PathVariable("id") Long id) {
         GoWithComment goWithComment = this.goWithCommentService.getComment(id);
-        if (!goWithComment.getMember().getName().equals(member.getName())) {
+        if (!goWithComment.getMember().getEmail().equals(member.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");
         }
         this.goWithCommentService.delete(goWithComment);
-        return String.format("redirect:/goWithBoard/detail/%s#comment_%s", goWithComment.getGoWithBoard().getId());
+        return String.format("redirect:/goWithBoard/detail/%s", goWithComment.getGoWithBoard().getId());
     }
 }

@@ -12,11 +12,11 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Getter @Setter @ToString
+@Getter @Setter
 @Table(name="orders")
 public class Order {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
     private Long id;
 

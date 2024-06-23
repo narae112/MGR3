@@ -99,6 +99,7 @@
         font-size: 30px; /* 아이콘 크기 조정 */
         z-index: 1; /* 아이콘을 이미지 위에 표시합니다. */
      }
+
     </style>
 </head>
 <body>
@@ -150,27 +151,34 @@
                         <a href="#" class="recommend btn btn-sm btn-outline-secondary"
                            th:href="@{|/review/board/vote/${reviewBoard.id}|}"
                            th:attr="data-uri=@{|/review/board/vote/${reviewBoard.id}|}">
-                            추천
-                            <span class="badge rounded-pill bg-success" th:text="${#lists.size(reviewBoard.voter)}"></span>
+                            <svg th:if="${isVoted}"
+                                 xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="red" class="bi bi-heart-fill" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
+                            </svg>
+                            <svg th:unless="${isVoted}"
+                                 xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="red" class="bi bi-heart" viewBox="0 0 16 16">
+                                <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+                            </svg>
+                            좋아요
+                            <span th:text="${#lists.size(reviewBoard.voter)}"></span>
                         </a>
                         <a th:href="@{|/review/board/modify/${reviewBoard.id}|}" class="btn btn-sm btn-outline-secondary"
                            sec:authorize="isAuthenticated()"
-                           th:if="${reviewBoard.author != null and #authentication.getPrincipal().getName() == reviewBoard.author.name}"
+                           th:if="${reviewBoard.author != null and #authentication.getPrincipal().getEmail() == reviewBoard.author.email}"
                            th:text="수정"></a>
                         <a href="javascript:void(0);" class="delete btn btn-sm btn-outline-secondary"
                            th:data-uri="@{|/review/board/delete/${reviewBoard.id}|}"
                            sec:authorize="isAuthenticated()"
-                           th:if="${reviewBoard.author != null and #authentication.getPrincipal().getName() == reviewBoard.author.name}"
+                           th:if="${reviewBoard.author != null and #authentication.getPrincipal().getEmail() == reviewBoard.author.email}"
                            th:text="삭제" onclick="deleteQuestion(event)">
                         </a>
-
                     </div>
                 </div>
             </div>
         </div>
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <h5 class="border-bottom my-3 py-2" th:text="|${#lists.size(reviewBoard.commentList)}개의 답변이 있습니다.|"></h5>
+                <h5 class="border-bottom my-3 py-2" th:text="|${#lists.size(reviewBoard.commentList)}개의 댓글이 있습니다.|"></h5>
                 <!-- 답변 반복 시작 -->
                 <div class="card my-3" th:each="reviewComment : ${reviewBoard.commentList}">
                     <a th:id="|reviewComment_${reviewComment.id}|"></a>
@@ -191,11 +199,11 @@
                         <div class="my-3">
                             <a th:href="@{|/review/comment/modify/${reviewComment.id}|}" class="btn btn-sm btn-outline-secondary"
                                sec:authorize="isAuthenticated()"
-                               th:if="${reviewComment.author != null and #authentication.getPrincipal().getName() == reviewComment.author.name}"
+                               th:if="${reviewComment.author != null and #authentication.getPrincipal().getEmail() == reviewComment.author.email}"
                                th:text="수정"></a>
                             <a href="javascript:void(0);" th:data-uri="@{|/review/comment/delete/${reviewComment.id}|}"
                                class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()"
-                               th:if="${reviewComment.author != null and #authentication.getPrincipal().getName() == reviewComment.author.name}"
+                               th:if="${reviewComment.author != null and #authentication.getPrincipal().getEmail() == reviewComment.author.email}"
                                th:text="삭제" onclick="deleteQuestion(event)"></a>
                         </div>
                     </div>

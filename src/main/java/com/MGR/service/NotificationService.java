@@ -183,7 +183,9 @@ public class NotificationService {
     public void goWithBoard(GoWithBoard goWithBoard, Member member) {
 
         //알림메세지 생성
-        String data = "[동행찾기] 비슷한 취향의 사용자가 글을 올렸습니다.";
+        String data = "[동행찾기] 비슷한 취향의 사용자가 글을 올렸습니다. +[" +
+        goWithBoard.getTitle() + "] - 페이지로 이동하려면 클릭하세요.";
+
         System.out.println("data = " + data);
         SseEmitter sseEmitter = sseEmitters.get(member.getId());
         System.out.println("sseEmitter = " + sseEmitter);
@@ -275,7 +277,6 @@ public class NotificationService {
         return byMemberId.size();
     }
 
-    // 구독 메서드 수정
     public SseEmitter subscribeToRoom(Long userId, Long roomId) {
         SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
         roomEmitters.computeIfAbsent(roomId, k -> new ConcurrentHashMap<>()).put(userId, sseEmitter);
@@ -314,6 +315,7 @@ public class NotificationService {
                 try {
                     String data = "{\"roomId\":" + roomId + ",\"userId\":" + userId + "}";
                     sseEmitter.send(SseEmitter.event().name("read").data(data));
+                    System.out.println("Read event sent: " + data);
                 } catch (IOException e) {
                     userEmitters.remove(toId);
                 }

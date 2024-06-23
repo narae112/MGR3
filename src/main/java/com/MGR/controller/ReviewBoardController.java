@@ -67,7 +67,8 @@ public class ReviewBoardController {
         return "board/review/board_list";
     }
     @GetMapping(value = "/detail/{id}")
-    public String detail(Model model, @PathVariable("id") Long id, ReviewCommentForm reviewCommentForm) {
+    public String detail(Model model, @PathVariable("id") Long id, ReviewCommentForm reviewCommentForm,
+                         @AuthenticationPrincipal PrincipalDetails member) {
         ReviewBoard reviewBoard = this.reviewBoardService.getReviewBoard(id);
         int count = reviewBoard.viewCount();
         reviewBoard.setCount(count);
@@ -75,6 +76,14 @@ public class ReviewBoardController {
         model.addAttribute("reviewBoard", reviewBoard);
         ReviewBoardForm reviewBoardForm = reviewBoardService.getReviewBoardDtl(id);
         model.addAttribute("reviewBoardForm",reviewBoardForm);
+
+        boolean isVoted = false;
+        if(member != null){
+            Member siteMember = memberService.findById(member.getId()).orElseThrow();
+            isVoted = reviewBoard.getVoter().contains(siteMember);
+        }
+        model.addAttribute("isVoted", isVoted);
+
         return "board/review/board_detail";
     }
 
@@ -111,6 +120,7 @@ public class ReviewBoardController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
     public String reviewCreate(ReviewBoardForm reviewBoardForm, @AuthenticationPrincipal PrincipalDetails member, Model model) {
+
         if (member == null) {
             model.addAttribute("error", "로그인이 필요한 서비스입니다.");
             return "member/loginForm";
@@ -122,8 +132,8 @@ public class ReviewBoardController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
     public String reviewCreate(Model model, @Valid ReviewBoardForm reviewBoardForm, BindingResult bindingResult,
-                                 @AuthenticationPrincipal PrincipalDetails member, HttpServletRequest request,
-                                 @RequestParam("reviewImgFile") List<MultipartFile> reviewImgFileList, RedirectAttributes redirectAttributes) {
+                               @AuthenticationPrincipal PrincipalDetails member, HttpServletRequest request,
+                               @RequestParam("reviewImgFile") List<MultipartFile> reviewImgFileList, RedirectAttributes redirectAttributes) {
         String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
         if (member == null) {
             redirectAttributes.addFlashAttribute("error", "로그인이 필요한 서비스입니다.");
@@ -155,7 +165,7 @@ public class ReviewBoardController {
             }
         }
 
-        Member siteUser = this.memberService.getUser(member.getName());
+        Member siteUser = this.memberService.getUser(member.getEmail());
         try {
             // 질문 생성과 이미지 저장
             Long reviewBoardId = this.reviewBoardService.createReviewBoard(reviewBoardForm.getSubject(), reviewBoardForm.getContent(), siteUser, reviewImgFileList);
@@ -173,9 +183,9 @@ public class ReviewBoardController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify/{id}")
     public String reviewModify(Model model, @PathVariable("id") Long id,
-                                 @AuthenticationPrincipal PrincipalDetails member) {
+                               @AuthenticationPrincipal PrincipalDetails member) {
         ReviewBoard reviewBoard = this.reviewBoardService.getReviewBoard(id);
-        if (!reviewBoard.getAuthor().getName().equals(member.getName())) {
+        if (!reviewBoard.getAuthor().getEmail().equals(member.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
 
@@ -190,9 +200,9 @@ public class ReviewBoardController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/modify/{id}")
     public String reviewModify(Model model, @Valid ReviewBoardForm reviewBoardForm, BindingResult bindingResult,
-                                 @AuthenticationPrincipal PrincipalDetails member,
-                                 @PathVariable("id") Long id, HttpServletRequest request,
-                                 @RequestParam("reviewImgFile") List<MultipartFile> reviewImgFileList) {
+                               @AuthenticationPrincipal PrincipalDetails member,
+                               @PathVariable("id") Long id, HttpServletRequest request,
+                               @RequestParam("reviewImgFile") List<MultipartFile> reviewImgFileList) {
         String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
 
         try {
@@ -214,7 +224,7 @@ public class ReviewBoardController {
         }
 
         ReviewBoard reviewBoard = this.reviewBoardService.getReviewBoard(id);
-        if (!reviewBoard.getAuthor().getName().equals(member.getName())) {
+        if (!reviewBoard.getAuthor().getEmail().equals(member.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
 
@@ -240,9 +250,9 @@ public class ReviewBoardController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/delete/{id}")
     public String reviewDelete(@AuthenticationPrincipal PrincipalDetails member,
-                                 @PathVariable("id") Long id) {
+                               @PathVariable("id") Long id) {
         ReviewBoard reviewBoard = this.reviewBoardService.getReviewBoard(id);
-        if (!reviewBoard.getAuthor().getName().equals(member.getName())) {
+        if (!reviewBoard.getAuthor().getEmail().equals(member.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");
         }
 
@@ -267,11 +277,12 @@ public class ReviewBoardController {
 
         try {
             ReviewBoard reviewBoard = this.reviewBoardService.getReviewBoard(id);
-            Member siteUser = this.memberService.getUser(member.getName());
+            Member siteUser = this.memberService.getUser(member.getEmail());
             Set<Member> voters = reviewBoard.getVoter(); // 리뷰의 추천자 목록을 가져옵니다.
             boolean isVoted = voters != null && voters.contains(siteUser);
             // 현재 사용자가 리뷰를 추천했는지 여부를 확인합니다.
-            model.addAttribute("isVoted", isVoted);
+            System.out.println("isVoted 추천여부 = " + isVoted);
+
             // 추천 여부에 따라 동작을 수행합니다.
             if (isVoted) {
                 // 이미 추천한 경우, 추천을 취소합니다.
@@ -280,6 +291,7 @@ public class ReviewBoardController {
                 // 추천하지 않은 경우, 추천을 합니다.
                 this.reviewBoardService.vote(reviewBoard, siteUser);
             }
+            redirectAttributes.addFlashAttribute("isVoted", !isVoted);
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "오류가 발생했습니다. 다시 시도해주세요.");
             System.out.println("예외 발생: {}"+e.getMessage());

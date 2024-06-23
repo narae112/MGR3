@@ -30,7 +30,7 @@
     <!--    등록버튼-->
     <div class="col-6 reviewContainer">
         <a th:href="@{/review/board/orderCheck}" class="btn btn-primary mb-4">리뷰 등록하기</a>
-            </div>
+    </div>
     <div class="row">
         <div th:each="reviewBoard : ${paging}" class="col-md-4 mb-4">
             <a th:href="@{|/review/board/detail/${reviewBoard.id}|}" class="card h-100 card-link">

@@ -50,6 +50,7 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/**").permitAll()
+                        .requestMatchers("/chat/**").permitAll()
                         .requestMatchers("/ws/**").permitAll()
                         .requestMatchers("/gemini/**").permitAll()
                         .requestMatchers("/js/**").permitAll()
@@ -124,10 +125,11 @@ public class SecurityConfig {
             if (!isAdminPresent) {
                 Member admin = new Member();
 
+
                 admin.setName("관리자");
                 admin.setEmail("admin@mgr.com");
                 admin.setNickname("MGR관리자");
-                admin.setProfileImgUrl("/img/login/profile.png");
+                admin.setProfileImgUrl("/img/login/profile1.png");
                 admin.setPassword(passwordEncoder.encode("1"));
                 admin.setRole("ROLE_ADMIN");
 
@@ -135,26 +137,26 @@ public class SecurityConfig {
             }
         };
     }
-
-    @Bean
-    public CommandLineRunner initDbUser(MemberRepository memberRepository, PasswordEncoder passwordEncoder){
-
-        return createAdmin -> {
-            boolean isUserPresent = memberRepository.findByName("사용자").isPresent();
-
-            if (!isUserPresent) {
-                Member user = new Member();
-
-                user.setName("사용자");
-                user.setEmail("user@mgr.com");
-                user.setNickname("지구123");
-                user.setBirth("2023-05-31");
-                user.setProfileImgUrl("/img/login/profile.png");
-                user.setPassword(passwordEncoder.encode("1"));
-                user.setRole("ROLE_USER");
-
-                memberRepository.save(user);
-            }
-        };
-    }
+//
+//    @Bean
+//    public CommandLineRunner initDbUser(MemberRepository memberRepository, PasswordEncoder passwordEncoder){
+//
+//        return createAdmin -> {
+//            boolean isUserPresent = memberRepository.findByName("사용자1").isPresent();
+//
+//            if (!isUserPresent) {
+//                Member user = new Member();
+//
+//                user.setName("사용자1");
+//                user.setEmail("user1@mgr.com");
+//                user.setNickname("지구123");
+//                user.setBirth("2023-05-31");
+//                user.setProfileImgUrl("/img/login/profile.png");
+//                user.setPassword(passwordEncoder.encode("1"));
+//                user.setRole("ROLE_USER");
+//
+//                memberRepository.save(user);
+//            }
+//        };
+//    }
 }

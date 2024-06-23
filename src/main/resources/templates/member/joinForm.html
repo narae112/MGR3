@@ -4,67 +4,64 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
 <!-- css -->
-
-
 <th:block layout:fragment="css">
     <style>
-    .email_already{
-        color: red;
-        display: none;
-    }
-    .nickname_ok{
-        color: blue;
-        display: none;
-    }
-    .nickname_already{
-        color: red;
-        display: none;
-    }
-    .nickname_null{
-        color: red;
-        display: none;
-    }
-    .password_ok{
-        color: blue;
-        display: none;
-    }
-    .password_already{
-        color: red;
-        display: none;
-    }
-    .password_null{
-        color: red;
-        display: none;
-    }
-    .validationError{
-        color: red;
-    }
-    .email-group {
-        display: flex;
-        align-items: center;
-    }
-    .email-group input {
-        margin-right: 10px;
-    }
-    .email-group button {
-        white-space: nowrap;
-    }
-    .button-group {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 10px;
-        margin-top: 20px;
-    }
+        .email_already {
+            color: red;
+            display: none;
+        }
+        .nickname_ok {
+            color: blue;
+            display: none;
+        }
+        .nickname_already {
+            color: red;
+            display: none;
+        }
+        .nickname_null {
+            color: red;
+            display: none;
+        }
+        .password_ok {
+            color: blue;
+            display: none;
+        }
+        .password_already {
+            color: red;
+            display: none;
+        }
+        .password_null {
+            color: red;
+            display: none;
+        }
+        .validationError {
+            color: red;
+        }
+        .email-group {
+            display: flex;
+            align-items: center;
+        }
+        .email-group input {
+            margin-right: 10px;
+        }
+        .email-group button {
+            white-space: nowrap;
+        }
+        .button-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
     </style>
 </th:block>
 
 <!-- js -->
 <th:block layout:fragment="script">
     <script th:inline="javascript">
-
         var prevEmail = "";
-        function checkEmail(){
+        function checkEmail() {
             var email = $('#email').val(); // #email 에서 입력받은 값 변수 저장
             prevEmail = email;
 
@@ -72,47 +69,47 @@
             $('.email_error').css("display", "none");
 
             $.ajax({
-                url:'/member/emailCheck', //controller 에서 요청 받을 주소
-                type:'POST',
-                data:{email:email},
-                success:function(result){
-                //controller 에서 넘어온 result 값이 1이면 중복
-                console.log("result= " + result)
-                    if(result == 0){
+                url: '/member/emailCheck', //controller 에서 요청 받을 주소
+                type: 'POST',
+                data: { email: email },
+                success: function(result) {
+                    //controller 에서 넘어온 result 값이 1이면 중복
+                    console.log("result= " + result)
+                    if (result == 0) {
                         $('.email_already').css("display", "none");
                         $('.email_error').css("display", "none");
                     } else {
-                        $('.email_already').css("display","inline-block");
+                        $('.email_already').css("display", "inline-block");
                         $('#email').val(prevEmail);
                     }
-
                 }
             });
         };
 
         var prevNickname = "";
-        function checkNickname(){
+        function checkNickname() {
             var nickname = $('#nickname').val().trim();
             prevNickname = nickname;
+
             $.ajax({
-                url:'/member/nicknameCheck',
-                type:'POST',
-                data:{nickname:nickname},
-                success:function(result){
-                    if(result === 0){
-                        $('.nickname_ok').css("display","inline-block");
+                url: '/member/nicknameCheck',
+                type: 'POST',
+                data: { nickname: nickname },
+                success: function(result) {
+                    if (result === 0) {
+                        $('.nickname_ok').css("display", "inline-block");
                         $('.nickname_already').css("display", "none");
                     } else {
-                        $('.nickname_already').css("display","inline-block");
+                        $('.nickname_already').css("display", "inline-block");
                         $('.nickname_ok').css("display", "none");
                         $('#nickname').val(prevNickname);
                     }
-                    if(!nickname){
-                        $('.nickname_null').css("display","inline-block");
+                    if (!nickname) {
+                        $('.nickname_null').css("display", "inline-block");
                         $('.nickname_ok').css("display", "none");
                         $('.nickname_already').css("display", "none");
-                    }else{
-                        $('.nickname_null').css("display","none");
+                    } else {
+                        $('.nickname_null').css("display", "none");
                     }
                 }
             });
@@ -137,33 +134,33 @@
                         $('.password_already').css("display", "inline-block");
                         $('.password_ok').css("display", "none");
                     }
-                    if(!password){
-                        $('.password_null').css("display","inline-block");
+                    if (!password) {
+                        $('.password_null').css("display", "inline-block");
                         $('.password_ok').css("display", "none");
                         $('.password_already').css("display", "none");
-                    }else{
-                        $('.password_null').css("display","none");
+                    } else {
+                        $('.password_null').css("display", "none");
                     }
                 }
             });
         }
 
-       function sendEmail() {
-             var email = $('#email').val();
+        function sendEmail() {
+            var email = $('#email').val();
             $.ajax({
-                url:'/member/sendEmail',
-                type:'GET',
-                data:{email:email},
-                success:function(result){
+                url: '/member/sendEmail',
+                type: 'GET',
+                data: { email: email },
+                success: function(result) {
                     alert(result);
                 },
-                error:function(){
+                error: function() {
                     alert("이메일 발송 실패했습니다");
                 }
             });
         }
 
-       function goBack() {
+        function goBack() {
             window.history.back();
         }
 
@@ -174,49 +171,52 @@
             document.getElementById('birth').setAttribute('max', maxDateString);
         }
 
-        window.onload = function() {
-            setMaxBirthDate();
-        };
+    // 이메일 오류 메시지
+    var emailError = /*[[${emailError != null ? emailError : ''}]]*/ '';
+    if (emailError !== '') {
+        alert(emailError);
+    }
 
+    // 닉네임 오류 메시지
+    var nicknameError = /*[[${nicknameError != null ? nicknameError : ''}]]*/ '';
+    if (nicknameError !== '') {
+        alert(nicknameError);
+    }
 
-<!--&lt;!&ndash;         뒤로가기 방지&ndash;&gt;-->
-<!--  if (window.history.replaceState) {-->
-<!--        window.history.replaceState(null, null, window.location.href);-->
+    // 인증 오류 메시지
+    var authError = /*[[${authError != null ? authError : ''}]]*/ '';
+    if (authError !== '') {
+        alert(authError);
+    }
 
-<!--        // 뒤로가기 버튼 클릭 시 바로 tickets 페이지로 이동-->
-<!--        window.onpopstate = function() {-->
-<!--            location.replace("/");-->
-<!--        };-->
-<!--    }-->
-
-<!--    // 페이지 로드 후 바로 뒤로가기 막기-->
-<!--    function preventBack() {-->
-<!--        window.history.forward();-->
-<!--    }-->
-
-<!--    setTimeout(preventBack, 0);-->
-
-<!--    // 페이지를 떠날 때 아무 동작도 하지 않도록 설정-->
-<!--    window.onunload = function () {-->
-<!--        // No action needed-->
-<!--    };-->
-<!--});-->
     </script>
 </th:block>
 
-<div layout:fragment="content">
+<div layout:fragment="content" class="container d-flex flex-column align-items-center my-4">
+    <div class="text-center" style="width: 150px;">
+        <img src="/img/login/join.png" alt="회원가입이미지" class="img-fluid" style="max-width: 100%; height: auto;">
+    </div>
 
-    <form action="/member/create" role="form" th:object="${memberFormDto}" method="POST">
+    <form id="signup-form" class="col-md-4" action="/member/create" role="form" th:object="${memberFormDto}" method="POST">
         <div class="mb-3">
             <label th:for="email">이메일</label>
             <div class="email-group">
                 <input th:field="*{email}" id="email" class="form-control" type="email" onblur="checkEmail()"/>
-                <button class="btn btn-primary" type="button" id="code-button" onclick="sendEmail()">인증 코드 발송</button>
+                <button class="btn mgrBtn" type="button" id="code-button" onclick="sendEmail()">인증 코드 발송</button>
             </div>
             <span class="email_already">이미 사용중인 이메일 입니다</span>
             <span class="validationError" th:if="${#fields.hasErrors('email')}"
                   th:errors="*{email}"></span>
         </div>
+
+        <div class="mb-3">
+            <label for="code">메일인증 코드</label>
+            <input class="form-control" type="text" id="code" th:field="*{code}"/>
+            <span class="validationError" th:if="${#fields.hasErrors('code')}"
+                  th:errors="*{code}"></span>
+            <input type="hidden" name="authCode" th:value="*{authCode}">
+        </div>
+
         <div class="mb-3">
             <label for="password">비밀번호</label>
             <input class="form-control" type="password" id="password" th:field="*{password}" onblur="checkPassword()"/>
@@ -250,24 +250,18 @@
 
         <div class="mb-3">
             <label for="birth">생일(선택)</label>
-            <input class="form-control" type="date" id="birth" th:field="*{birth}"
-                   th:max="2024-05-09"/>
-        </div>
-
-        <div class="mb-3">
-            <label for="code">메일인증 코드</label>
-            <input class="form-control" type="text" id="code" th:field="*{code}"/>
-            <span class="validationError" th:if="${#fields.hasErrors('code')}"
-                  th:errors="*{code}"></span>
-            <input type="hidden" name="authCode" th:value="*{authCode}">
+            <input class="form-control" type="date" id="birth" th:field="*{birth}"/>
         </div>
 
         <div class="button-group">
-            <button class="btn btn-primary" type="submit" id="member-create">가입</button>
-            <button class="btn btn-primary" type="button" onclick="goBack()">취소</button>
+            <button class="btn mgrBtn" type="submit" id="member-create">가입</button>
+            <button class="btn btn-light" type="button" onclick="goBack()">취소</button>
         </div>
     </form>
+    <hr class="col-md-4 mt-3">
+
+    <div>
+        <p>이미 가입된 회원이신가요?<span class="form_line">&nbsp;&nbsp;&nbsp;· · · · · · · · · · · · · · · ·&nbsp;&nbsp;&nbsp;</span><a href="/login">로그인 하러 가기</a></p>
+    </div>
 </div>
 </html>
-
-

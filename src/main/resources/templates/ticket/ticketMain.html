@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
 
 <!-- CSS 스타일 시트 -->
@@ -49,14 +50,12 @@
             padding: 0;
             font-size: 0.875rem;
         }
-
         .select-search input {
             border-bottom: 1px solid #000;
             padding-bottom: 0px !important;
             border-radius: 0 !important; /* 보더 라디오스를 없애서 밑줄 표시 효과 */
             padding: 5px;
             font-size: 0.875rem; /* 폰트 크기 줄이기 */
-
         }
     </style>
 </th:block>
@@ -64,62 +63,75 @@
 <!-- 스크립트 -->
 <th:block layout:fragment="script">
     <script th:inline="javascript">
-        $(document).ready(function(){
-           var errorMessage = /*[[${errorMessage}]]*/ '';
-           if(errorMessage != null && errorMessage !== ''){
-               alert(errorMessage);
-           }
+        $(document).ready(function() {
+            var errorMessage = /*[[${errorMessage}]]*/ '';
+            if (errorMessage != null && errorMessage !== '') {
+                alert(errorMessage);
+            }
 
-           bindDomEvent();
-       });
+            $('#searchQuery').keypress(function(event) {
+                if (event.which === 13) {
+                    search();
+                }
+            });
 
-       function search() {
-           var searchPeriodType = $("#searchPeriodType").val();
-           var locationCategory = $("#locationCategory").val();
-           var searchBy = $("#searchBy").val();
-           var searchQuery = $("#searchQuery").val();
+            $('#searchButton').on('click', function(event) {
+                event.preventDefault(); // 기본 버튼 클릭 동작을 막기 위해 추가
+                search();
+            });
 
-           location.href = "/tickets?searchPeriodType=" + searchPeriodType
-               + "&locationCategory=" + locationCategory
-               + "&searchBy=" + searchBy
-               + "&searchQuery=" + searchQuery;
-       }
+            function search() {
+                var searchPeriodType = $("#searchPeriodType").val();
+                var locationCategory = $("#locationCategory").val();
+                var searchBy = $("#searchBy").val();
+                var searchQuery = $("#searchQuery").val();
+
+                location.href = "/tickets?searchPeriodType=" + searchPeriodType
+                    + "&locationCategory=" + locationCategory
+                    + "&searchBy=" + searchBy
+                    + "&searchQuery=" + searchQuery;
+            }
+        });
     </script>
+
 </th:block>
 
 <!-- 페이지 내용 -->
 <div layout:fragment="content" class="container my-5">
-
-    <h3 class="mb-5 text-center">티켓 목록</h3>
-
+    <h3 class="mb-5 text-center" aria-label="티켓 목록 조회" tabindex="0">티켓 목록</h3>
+    <hr class="my-4">
     <!-- 검색 폼 -->
-    <div class="form-row d-flex justify-content-center" th:object="${ticketSearchDto}">
-        <div class="select-container col-auto">
-            <select id="searchPeriodType" class="form-control">
-                <option value="all">남은 유효 기간(전체)</option>
+    <div class="form-row d-flex justify-content-center" th:object="${ticketSearchDto}"
+         aria-label="티켓 검색 메뉴" tabindex="0">
+        <div class="select-container col-auto"  tabindex="-1">
+            <select id="searchPeriodType" class="ticketSearchSelect form-control"
+                    aria-label="남은 유효 기간 선택 목록, 항목 5개" aria-expanded="false" tabindex="0">
+                <option value="all" >남은 유효 기간(전체)</option>
                 <option value="1d">1일 이내</option>
                 <option value="1w">1주 이내</option>
                 <option value="1m">1개월 이내</option>
                 <option value="6m">6개월 이내</option>
             </select>
         </div>
-        <div class="select-container col-auto">
-            <select id="locationCategory" class="form-control">
+        <div class="select-container col-auto"  tabindex="-1">
+            <select id="locationCategory" class="form-control"
+                    aria-label="남은 유효 기간 선택 목록, 항목 3개" tabindex="0">
                 <option value="">지역 구분(전체)</option>
                 <option value="BUSAN">부산</option>
                 <option value="SEOUL">서울</option>
             </select>
         </div>
-        <div class="select-container col-auto">
-            <select id="searchBy" class="form-control">
+        <div class="select-container col-auto"  tabindex="-1">
+            <select id="searchBy" class="form-control" tabindex="-1">
                 <option value="name">티켓명</option>
             </select>
         </div>
-        <div class="select select-search col-auto">
-            <input id="searchQuery" type="text" class="form-control" placeholder="검색어를 입력해주세요">
+        <div class="select select-search col-auto" tabindex="-1">
+            <input id="searchQuery" type="text" class="form-control" placeholder="검색어를 입력해주세요"
+                   aria-label="검색할 티켓명을 입력해주세요">
         </div>
         <div class="select col-auto">
-            <button onclick="search()" class="btn btn-primary">검색</button>
+            <button id="searchButton" class="btn btn-primary" tabindex="0">검색</button>
         </div>
     </div>
 
@@ -133,14 +145,14 @@
                 sec:authorize="hasRole('ADMIN')">티켓 등록하기</button>
     </div>
     <!-- 티켓 목록 -->
-    <div class="row my-5" >
+    <div class="row my-5">
         <th:block th:each="ticket, status: ${tickets.getContent()}" class="col-md-4 mb-4">
             <!-- 티켓 카드 영역 -->
             <div class="col-md-4">
                 <a th:href="@{'/ticket/' + ${ticket.id}}" class="text-dark card h-100 card-link">
-                    <div class="card-body d-flex flex-column justify-content-between" >
+                    <div class="card-body d-flex flex-column justify-content-between" th:attr="aria-label='티켓 안내, 티켓명은 ' + ${ticket.name} + ', 지점은 ' + ${ticket.locationCategory.displayName} + '점, 상세 설명 : ' + ${ticket.memo}">
                         <img th:src="${ticket.imgUrl}" class="card-img-top" th:alt="${ticket.id}" style="height: 400px; overflow: hidden; display: flex; justify-content: center; align-items: center;">
-                        <div class="card-body text-center bg-light ">
+                        <div class="card-body text-center bg-light">
                             <h4 class="card-title" th:text="${ticket.name}"></h4>
                             <p class="card-text" th:text="${ticket.memo}"></p>
                             <p class="card-text" th:text="${ticket.locationCategory.displayName}+'점'"></p>
@@ -156,7 +168,7 @@
         <ul class="pagination justify-content-center">
             <!-- 이전 버튼 -->
             <li class="page-item" th:classappend="${!tickets.hasPrevious()} ? 'disabled'">
-                <a class="page-link" th:href="@{|/tickets/${tickets.number - 1}|}">
+                <a class="page-link" th:href="@{|/tickets/${tickets.number - 1}|}" aria-label="이전 페이지 이동">
                     <span>&laquo;</span>
                 </a>
             </li>
@@ -165,17 +177,17 @@
             <li th:each="page: ${#numbers.sequence(0, tickets.totalPages - 1)}"
                 th:if="${page >= tickets.number - 2 and page <= tickets.number + 2}"
                 th:classappend="${page == tickets.number} ? 'active'" class="page-item">
-                <a th:text="${page + 1}" class="page-link" th:href="@{|/tickets/${page}|}"></a>
+                <a th:text="${page + 1}" class="page-link" th:href="@{|/tickets/${page}|}"
+                   th:attr="aria-label='현재 페이지는 ' + (${page + 1}) + ' 페이지 입니다.'"></a>
             </li>
 
             <!-- 다음 버튼 -->
             <li class="page-item" th:classappend="${!tickets.hasNext()} ? 'disabled'">
-                <a class="page-link" th:href="@{|/tickets/${tickets.number + 1}|}">
+                <a class="page-link" th:href="@{|/tickets/${tickets.number + 1}|}"  aria-label="다음 페이지 이동">
                     <span>&raquo;</span>
                 </a>
             </li>
         </ul>
     </div>
-</div>
 </div>
 </html>
