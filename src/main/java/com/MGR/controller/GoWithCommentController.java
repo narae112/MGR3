@@ -101,7 +101,7 @@ public class GoWithCommentController {
         if (!goWithComment.getMember().getEmail().equals(member.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
-        this. goWithCommentService.modify(goWithComment, goWithComment.getContent());
+        this. goWithCommentService.modify(goWithComment, goWithCommentFormDto.getContent());
         return String.format("redirect:/goWithBoard/detail/%s#comment_%s", goWithComment.getGoWithBoard().getId(), goWithComment.getId());
     }
 
