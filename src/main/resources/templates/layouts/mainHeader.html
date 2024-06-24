@@ -118,17 +118,21 @@
                                 </li>
 
                                 <li class="nav-item" tabindex="0">
-                                    <a class="dd-menu collapsed" href="javascript:void(0)" data-bs-toggle="collapse"
-                                       data-bs-target="#submenu-1-2" aria-controls="navbarSupportedContent"
+                                    <a th:if="${#authorization.expression('hasRole(''ROLE_USER'')')}" class="dd-menu collapsed" th:href="@{/member/myCoupon}"
+                                       aria-label="쿠폰" tabindex="0">쿠폰</a>
+                                    <a th:if="${#authorization.expression('isAnonymous()')}" class="dd-menu collapsed" th:href="@{/login}"
+                                       aria-label="쿠폰" tabindex="0">쿠폰</a>
+                                    <a th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}" class="dd-menu collapsed" href="javascript:void(0)"
+                                       data-bs-toggle="collapse" data-bs-target="#submenu-1-2" aria-controls="navbarSupportedContent"
                                        aria-expanded="false" aria-label="쿠폰" tabindex="-1">쿠폰</a>
+
                                     <ul class="sub-menu collapse" id="submenu-1-2" sec:authorize="hasAnyRole('ROLE_ADMIN')">
                                         <li class="nav-item">
-                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/admin/coupon/new}">쿠폰 등록</a>
+                                            <a class="nav-link" th:href="@{/admin/coupon/new}">쿠폰 등록</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="@{/admin/coupons}">쿠폰 관리</a>
+                                            <a class="nav-link" th:href="@{/admin/coupons}">쿠폰 관리</a>
                                         </li>
-
                                     </ul>
                                 </li>
 
@@ -150,7 +154,10 @@
                                 </li>
 
                                 <li class="nav-item" tabindex="0">
-                                    <a class="dd-menu collapsed" href="javascript:void(0)" data-bs-toggle="collapse"
+                                    <a th:if="${#authorization.expression('isAnonymous()')}" class="dd-menu collapsed" th:href="@{/login}"
+                                       aria-label="예약" tabindex="0">예약</a>
+                                    <a th:unless="${#authorization.expression('isAnonymous()')}" class="dd-menu collapsed"
+                                       href="javascript:void(0)" data-bs-toggle="collapse"
                                        data-bs-target="#submenu-1-4" aria-controls="navbarSupportedContent"
                                        aria-expanded="false" aria-label="예약" tabindex="-1">예약</a>
                                     <ul class="sub-menu collapse" id="submenu-1-4" sec:authorize="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')">
