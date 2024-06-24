@@ -6,8 +6,6 @@
 <head>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <script layout:fragment="script" type='text/javascript' src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.5.8/swiper-bundle.min.js"></script>
     <script type='text/javascript'>
         var swiper = new Swiper('.swiper-container', {
         slidesPerView: 'auto',
@@ -137,7 +135,6 @@
                                     <div th:each="reviewImage, iterStat : ${reviewBoardForm.reviewImgDtoList}" class="swiper-slide">
                                         <a th:if="${not #strings.isEmpty(reviewImage.imgUrl)}" th:href="${reviewImage.imgUrl}" data-lightbox="image-gallery">
                                             <img th:src="${reviewImage.imgUrl}" class="rounded">
-                                            <i class="fas fa-plus-circle"></i>
                                         </a>
                                     </div>
                                 </div>
