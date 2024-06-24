@@ -42,12 +42,16 @@
 </th:block>
 <body>
 <div layout:fragment="content" class="container my-5">
+    <div th:if="${error}" class="alert alert-danger" role="alert">
+        <span th:text="${error}"></span>
+    </div>
     <div class="row justify-content-center">
         <div class="col-md-6">
             <h3 class="mb-5 text-center">동행 구하기</h3>
             <form id="add_member_form" th:object="${goWithBoardFormDto}"
                   th:action="${goWithBoardFormDto.id} == null ? @{/goWithBoard/create} : @{/goWithBoard/modify/{id}(id=${goWithBoardFormDto.id})}"
                   method="post" enctype="multipart/form-data">
+                <div th:replace="board/review/form_errors :: formErrorsFragment"></div>
                 <hr/>
                 <div class="d-flex justify-content-center mb-5">
                     <div class="text-center">
