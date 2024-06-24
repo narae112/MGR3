@@ -23,8 +23,7 @@
     <div class="col-6" th:unless="${#lists.isEmpty(categories)}" th:each="category : ${categories}">
         <button class="btn btn-primary mb-4" onclick="showAlert()">키워드 등록하기</button>
         <a th:href="@{/admin/category/modify/{id}(id=${category.id})}" class="btn btn-primary mb-4">수정</a>
-        <a th:href="@{/admin/category/delete/{id}(id=${category.id})}" class="btn btn-danger mb-4">삭제</a>
-
+        <a th:data-uri="@{/admin/category/delete/{id}(id=${category.id})}" class="btn btn-danger mb-4" onclick="deleteQuestion(event)">삭제</a>
     </div>
     <table class="table">
         <thead>
@@ -66,6 +65,13 @@
     function showAlert() {
       alert('이미 등록된 키워드가 있습니다.\n기존 키워드 목록을 삭제하고 진행해주세요.');
   }
+        function deleteQuestion(event) {
+        event.preventDefault(); // 기본 동작인 링크 이동을 방지합니다.
+        if (confirm("정말로 삭제하시겠습니까?")) {
+            const uri = event.target.getAttribute('data-uri'); // 버튼의 data-uri 속성 값 가져오기
+            location.href = uri; // URI로 이동
+        }
+    }
 </script>
 </body>
 </html>
