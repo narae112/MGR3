@@ -42,7 +42,6 @@ public class JwtProvider {
             Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
             return true;
         } catch (Exception e) {
-            System.out.println("validateToken JWT 토큰 검증 실패 = " + e.getMessage());
             return false;
         }
     }
@@ -66,7 +65,6 @@ public class JwtProvider {
         Claims claims = Jwts.claims();
         claims.put("email", email);
         claims.put("id", id);
-        System.out.println("createRefreshToken claims 발행 확인 = " + claims);
 
         String token = Jwts.builder()
                 .setClaims(claims)
@@ -81,7 +79,7 @@ public class JwtProvider {
         Claims claims = Jwts.claims();
         claims.put("email", email);
         claims.put("id", id);
-        System.out.println("createToken claims 발행 확인 = " + claims);
+//        System.out.println("createToken claims 발행 확인 = " + claims);
 
         String token = Jwts.builder()
                 .setClaims(claims)
@@ -103,7 +101,6 @@ public class JwtProvider {
 
     public String getEmailFromToken(String token) {
         Claims claims = getClaims(token);
-        System.out.println("클레임 이메일 = " + claims.get("email", String.class));
         return claims.get("email", String.class);
     }
 }

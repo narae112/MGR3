@@ -10,6 +10,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -20,6 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -119,7 +123,6 @@ public class NotificationService {
             Notification notification = new Notification(member.getId(), data, "쿠폰", coupon.getId());
             notificationRepository.save(notification); // 보낸 메세지 저장
         }
-
     }
 
     // 리뷰 추천 알림
@@ -183,6 +186,7 @@ public class NotificationService {
             notificationRepository.save(notification); // 보낸 메세지 저장
         }
     }
+
     @Transactional
     public void goWithBoard(GoWithBoard goWithBoard, Member member) {
 
@@ -213,6 +217,7 @@ public class NotificationService {
             notificationRepository.save(notification); // 보낸 메세지 저장
         }
     }
+
     // 결제 완료 알림
     @Transactional
     public void notifyOrder(Long id, Long couponId) {
@@ -275,10 +280,9 @@ public class NotificationService {
         notificationRepository.deleteById(id);
     }
 
-    public int countNotificationsForMember(Long memberId){
-        //알림이 등록된 수 반환
-        List<Notification> byMemberId = notificationRepository.findByMemberId(memberId);
-        return byMemberId.size();
+    @Cacheable(value = "notificationCount", key = "#memberId", unless = "#result == 0")
+    public int countNotificationsForMember(Long memberId) {
+        return notificationRepository.countByMemberId(memberId);
     }
 
     public SseEmitter subscribeToRoom(Long userId, Long roomId) {
@@ -292,25 +296,6 @@ public class NotificationService {
         return sseEmitter;
     }
 
-//    @Transactional
-//    public void sendMessage(Long roomId, Long fromId, String message) {
-//        Map<Long, SseEmitter> userEmitters = roomEmitters.get(roomId);
-//        Member member = memberService.findById(fromId).orElseThrow();
-//        if (userEmitters != null) {
-//            userEmitters.forEach((toId, sseEmitter) -> {
-//                try {
-////                    boolean isRead = fromId.equals(toId);
-//                    String data = "{\"sender\":{\"nickname\":\"" + member.getNickname()
-//                            + "\"},\"message\":\"" + message + "\",\"profileImgUrl\":\""
-//                            + member.getProfileImgUrl() + "}";
-//
-//                    sseEmitter.send(SseEmitter.event().name("chat").data(data));
-//                } catch (IOException e) {
-//                    userEmitters.remove(toId);
-//                }
-//            });
-//        }
-//    }
     @Transactional
     public void sendMessage(Long roomId, Long fromId, String message) {
         Map<Long, SseEmitter> userEmitters = roomEmitters.get(roomId);
@@ -333,18 +318,10 @@ public class NotificationService {
         }
     }
 
-//    public void sendReadEvent(Long roomId, Long userId) {
-//        Map<Long, SseEmitter> userEmitters = roomEmitters.get(roomId);
-//        if (userEmitters != null) {
-//            userEmitters.forEach((toId, sseEmitter) -> {
-//                try {
-//                    String data = "{\"roomId\":" + roomId + ",\"userId\":" + userId + "}";
-//                    sseEmitter.send(SseEmitter.event().name("read").data(data));
-//                    System.out.println("Read event sent: " + data);
-//                } catch (IOException e) {
-//                    userEmitters.remove(toId);
-//                }
-//            });
-//        }
-//    }
+    @Async
+    public CompletableFuture<Integer> countNotificationsForMemberAsync(Long memberId) {
+        int count = notificationRepository.countByMemberId(memberId);
+        return CompletableFuture.completedFuture(count);
+    }
+
 }

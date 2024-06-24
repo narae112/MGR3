@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.net.URI;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,16 +45,15 @@ public class NotificationController {
     }
 
     @GetMapping("/api/notifications/count")
-    public ResponseEntity<Integer> getNotificationCount(@AuthenticationPrincipal PrincipalDetails member) {
+    public CompletableFuture<ResponseEntity<Integer>> getNotificationCount(@AuthenticationPrincipal PrincipalDetails member) {
         if (member == null) {
             // 사용자가 로그인하지 않은 경우
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return CompletableFuture.completedFuture(new ResponseEntity<>(HttpStatus.UNAUTHORIZED));
         }
 
         Long memberId = member.getId();
-        int notificationCount = notificationService.countNotificationsForMember(memberId);
-
-        return new ResponseEntity<>(notificationCount, HttpStatus.OK);
+        return notificationService.countNotificationsForMemberAsync(memberId)
+                .thenApply(notificationCount -> new ResponseEntity<>(notificationCount, HttpStatus.OK));
     }
 
 }
