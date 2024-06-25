@@ -29,7 +29,6 @@
              });
          }
 
-         // API 요청 예제
          function getData() {
              apiRequest('/api/data', {
                  method: 'GET',
@@ -67,6 +66,7 @@
 
          // 페이지가 로드될 때 데이터 가져오기
          document.addEventListener('DOMContentLoaded', getData);
+
     </script>
 </th:block>
 
@@ -104,6 +104,115 @@
         </div>
     </div>
 
-<!-- End Copyright Area -->
+<!--<script>-->
+<!--    $(document).ready(function() {-->
+<!--let notificationsLoaded = false;-->
+
+<!--// 알림 수 가져오기-->
+<!--fetchNotificationCount();-->
+
+<!--// EventSource-->
+<!--let eventSource = new EventSource('/api/notifications/subscribe');-->
+
+<!--eventSource.addEventListener('message', function(event) {-->
+<!--    displayMessage(event.data, null);-->
+<!--});-->
+
+<!--eventSource.addEventListener('notificationCount', function(event) {-->
+<!--    updateNotificationCount(event.data);-->
+<!--});-->
+
+<!--eventSource.onerror = function(event) {-->
+<!--    console.error('EventSource failed:', event);-->
+<!--};-->
+
+<!--function fetchNotificationCount() {-->
+<!--    $.ajax({-->
+<!--        url: '/api/notifications/count',-->
+<!--        type: 'GET',-->
+<!--        success: function(data) {-->
+<!--            $('#notificationCount').text(Number(data));-->
+<!--        },-->
+<!--        error: function(xhr, status, error) {-->
+<!--            console.error('Failed to fetch notification count:', error);-->
+<!--        }-->
+<!--    });-->
+<!--}-->
+
+<!--function updateNotificationCount(count) {-->
+<!--    var numericCount = parseInt(count, 10); // count를 숫자로 변환-->
+<!--    if (isNaN(numericCount)) {-->
+<!--        numericCount = 0; // count가 숫자로 변환되지 않으면 0으로 설정-->
+<!--    }-->
+<!--    numericCount += 1; // 숫자로 변환된 count에 1을 더함-->
+<!--    $('#notificationCount').text(numericCount); // 연산 결과를 다시 설정-->
+<!--}-->
+
+<!--function displayMessage(message, id, reviewId, goWidthBoardId) {-->
+<!--    const messagesDiv = document.getElementById('notify');-->
+<!--    const fragment = document.createDocumentFragment();-->
+<!--    const cardElement = document.createElement('div');-->
+<!--    cardElement.className = 'card mb-3';-->
+
+<!--    let messageHtml = '';-->
+<!--    if (reviewId !== null && reviewId !== undefined) {-->
+<!--        messageHtml = `<a href="/review/board/detail/${reviewId}" class="card-text mb-0 flex-grow-1">${message}</a>`;-->
+<!--    } else if (goWidthBoardId !== null && goWidthBoardId !== undefined) {-->
+<!--        messageHtml = `<a href="/goWithBoard/detail/${goWidthBoardId}" class="card-text mb-0 flex-grow-1">${message}</a>`;-->
+<!--    } else {-->
+<!--        messageHtml = `<p class="card-text mb-0 flex-grow-1">${message}</p>`;-->
+<!--    }-->
+
+<!--    cardElement.innerHTML = `-->
+<!--        <div class="card-body d-flex align-items-center">-->
+<!--            ${messageHtml}-->
+<!--            <button type="button" class="close ml-auto" aria-label="Close"-->
+<!--            onclick="deleteNotification(${id}, this)">-->
+<!--                <span aria-hidden="true">&times;</span>-->
+<!--            </button>-->
+<!--        </div>-->
+<!--    `;-->
+<!--    fragment.appendChild(cardElement);-->
+<!--    messagesDiv.appendChild(fragment);-->
+<!--    messagesDiv.scrollTop = messagesDiv.scrollHeight;-->
+<!--}-->
+
+<!--// 알림 모달 버튼 클릭 이벤트-->
+<!--$('#notificationButton').click(function() {-->
+<!--   if (!notificationsLoaded) {-->
+<!--        // DB에서 기존 알림 가져오기-->
+<!--        $.ajax({-->
+<!--            url: '/api/notifications',-->
+<!--            type: 'GET',-->
+<!--            success: function(notifications) {-->
+<!--                const messagesDiv = document.getElementById('notify');-->
+<!--                messagesDiv.innerHTML = ''; // 기존 알림 지우기-->
+<!--                notifications.reverse().forEach(notification => {-->
+<!--                    displayMessage(notification.message, notification.id, notification.reviewId, notification.goWidthBoardId);-->
+<!--                });-->
+<!--                notificationsLoaded = true; // 알림 로드 상태 업데이트-->
+<!--            },-->
+<!--            error: function(xhr, status, error) {-->
+<!--                console.error('Failed to load notifications:', error);-->
+<!--            }-->
+<!--        });-->
+<!--    }-->
+<!--});-->
+
+<!--function deleteNotification(id, button) {-->
+<!--    $.ajax({-->
+<!--        url: `/api/notifications/${id}`,-->
+<!--        type: 'DELETE',-->
+<!--        success: function() {-->
+<!--            button.closest('.card').remove();-->
+<!--        },-->
+<!--        error: function(xhr, status, error) {-->
+<!--            console.error('Failed to delete notification:', error);-->
+<!--        }-->
+<!--    });-->
+<!--}-->
+<!--});-->
+
+<!--</script>-->
 </footer>
 </html>
